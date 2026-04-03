@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | IMPACT Food Tag</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 300,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .modal-transition {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* 📄 โครงสร้างป้ายจริง */
+      .preview-paper {
+        background: white;
+        box-shadow:
+          0 10px 40px rgba(0, 0, 0, 0.1),
+          0 0 0 1px rgba(0, 0, 0, 0.05);
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        transform-origin: top center;
+        flex-shrink: 0;
+      }
+      .inner-grid {
+        display: grid;
+        width: 100%;
+        height: 100%;
+        flex-grow: 1;
+        border-top: 1px dashed #cbd5e1;
+        border-left: 1px dashed #cbd5e1;
+      }
+      .grid-plate {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+      }
+      .grid-western {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+      }
+      .grid-buffet {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+      }
+      .slot {
+        border-right: 1px dashed #cbd5e1;
+        border-bottom: 1px dashed #cbd5e1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .card-preview-container {
+        height: 200px;
+        background-color: #f1f5f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        position: relative;
+      }
+      .scaled-preview {
+        transform-origin: center center;
+        pointer-events: none;
+      }
+
+      /* 🖨️ การสั่ง Print: แก้ไขให้มีหน้าเดียวเป๊ะ */
+      @media print {
+        body > *:not(#printArea) {
+          display: none !important;
+        }
+        html,
+        body {
+          height: 100% !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          overflow: hidden !important;
+          background: white;
+        }
+
+        #printArea {
+          display: block !important;
+          width: 100% !important;
+          height: 100% !important;
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
+        }
+
+        .preview-paper {
+          box-shadow: none !important;
+          transform: none !important;
+          margin: 0 !important;
+          width: 100% !important;
+          height: 100% !important;
+          border: none !important;
+        }
+
+        #previewModal {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-[#f8fafc] flex h-screen overflow-hidden">
+    <aside
+      class="w-64 bg-white border-r border-slate-200 flex flex-col p-6 shrink-0 z-10"
+    >
+      <div class="mb-10 px-2">
+        <img
+          src="Impact_Logo.png"
+          alt="IMPACT Logo"
+          class="h-10 w-auto object-contain"
+          onerror="this.style.display = 'none'"
+        />
+      </div>
+
+      <div
+        class="bg-slate-50 border border-slate-100 p-4 rounded-xl mb-8 flex items-center gap-3"
+      >
+        <div
+          class="w-10 h-10 bg-[#003B71] rounded-full flex items-center justify-center text-white font-bold shrink-0"
+        >
+          <span class="material-symbols-outlined text-lg">person</span>
+        </div>
+        <div class="overflow-hidden">
+          <p id="profileName" class="font-bold text-sm text-slate-800 truncate">
+            Admin_Siriprapa
+          </p>
+          <p
+            id="profileRole"
+            class="text-[11px] font-medium text-slate-500 uppercase tracking-wider"
+          >
+            ADMIN
+          </p>
+        </div>
+      </div>
+
+      <nav class="space-y-2 flex-1">
+        <a
+          href="#"
+          class="flex items-center gap-3 px-4 py-3 bg-[#006d4b]/10 text-[#006d4b] rounded-lg font-semibold"
+        >
+          <span class="material-symbols-outlined">dashboard</span> Dashboard
+        </a>
+        <a
+          href="#"
+          class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-medium transition-all"
+        >
+          <span class="material-symbols-outlined">history</span> User Logs
+        </a>
+      </nav>
+
+      <button
+        onclick="showLogoutModal()"
+        class="flex items-center gap-3 text-red-500 font-medium px-4 py-3 hover:bg-red-50 rounded-lg transition-all mt-auto border border-transparent hover:border-red-100"
+      >
+        <span class="material-symbols-outlined">logout</span> Logout
+      </button>
+    </aside>
+
+    <main class="flex-1 p-10 overflow-y-auto z-0 relative">
+      <div class="flex justify-between items-end mb-8">
+        <div>
+          <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">
+            Food Tag Profiles
+          </h2>
+          <p class="text-slate-500 font-medium mt-1">
+            Manage, edit, and print your saved event tags
+          </p>
+        </div>
+        <button
+          onclick="window.location.href = 'create.html'"
+          class="bg-[#006d4b] text-white px-5 py-2.5 rounded-lg font-semibold shadow-md shadow-[#006d4b]/20 hover:bg-[#005a3d] hover:-translate-y-0.5 transition-all flex items-center gap-2"
+        >
+          <span class="material-symbols-outlined text-lg">add_circle</span>
+          Create New Tag
+        </button>
+      </div>
+
+      <div class="flex gap-4 mb-8">
+        <div class="flex-1 relative">
+          <span
+            class="material-symbols-outlined absolute left-4 top-3 text-slate-400"
+            >search</span
+          >
+          <input
+            type="text"
+            id="searchInput"
+            onkeyup="filterCards()"
+            placeholder="Search by event name (e.g. AIA)..."
+            class="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#006d4b] outline-none text-sm transition-all shadow-sm"
+          />
+        </div>
+        <select
+          id="sizeFilter"
+          onchange="filterCards()"
+          class="px-4 py-3 bg-white border border-slate-200 rounded-lg text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer"
+        >
+          <option value="all">All Sizes</option>
+          <option value="Plate / Food Stall">Plate Service</option>
+          <option value="Western Set">Western Set</option>
+          <option value="Buffet / Coffee Break">Buffet</option>
+        </select>
+      </div>
+
+      <div
+        id="cardGrid"
+        class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+      ></div>
+    </main>
+
+    <div id="printArea" class="hidden"></div>
+
+    <div
+      id="previewModal"
+      class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center opacity-0 modal-transition"
+    >
+      <div
+        class="bg-white rounded-3xl w-[95%] max-w-6xl h-[92vh] flex flex-col shadow-2xl transform scale-95 modal-transition overflow-hidden"
+        id="previewModalContent"
+      >
+        <div
+          class="bg-white px-8 py-5 border-b border-slate-200 flex justify-between items-center shrink-0 z-10 shadow-sm relative"
+        >
+          <div>
+            <h3
+              id="modalTitle"
+              class="text-2xl font-bold text-slate-800 tracking-tight"
+            >
+              Profile Name
+            </h3>
+            <div class="flex items-center gap-2 text-slate-500 mt-1">
+              <span class="material-symbols-outlined text-lg">straighten</span>
+              <p id="modalSubtitle" class="text-sm font-medium">
+                Template Size
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <button
+              id="modalPrintBtn"
+              class="bg-[#006d4b] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-[#005a3d] transition-all flex items-center gap-2 shadow-lg active:scale-95"
+            >
+              <span class="material-symbols-outlined text-[20px]">print</span>
+              Print Now
+            </button>
+            <button
+              onclick="closePreviewModal()"
+              class="p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-full transition-colors"
+            >
+              <span class="material-symbols-outlined text-[28px]">close</span>
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="modalBody"
+          class="flex-1 overflow-auto flex justify-center items-start pt-8 pb-12 bg-slate-100 relative"
+        >
+          <div
+            id="modalPaperWrapper"
+            class="relative flex justify-center items-start"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const TEMPLATE_CONFIGS = {
+        "Plate / Food Stall": {
+          orientation: "landscape",
+          slots_count: 2,
+          grid_class: "grid-plate",
+          hide_allergies: false,
+          w: 1123,
+          h: 794,
+        },
+        "Western Set": {
+          orientation: "portrait",
+          slots_count: 4,
+          grid_class: "grid-western",
+          hide_allergies: false,
+          w: 794,
+          h: 1123,
+        },
+        "Buffet / Coffee Break": {
+          orientation: "landscape",
+          slots_count: 6,
+          grid_class: "grid-buffet",
+          hide_allergies: false,
+          w: 1123,
+          h: 794,
+        },
+      };
+
+      const userData = JSON.parse(localStorage.getItem("userData"));
+      if (userData) {
+        document.getElementById("profileName").innerText = userData.name;
+        document.getElementById("profileRole").innerText = userData.role;
+      }
+
+      function getSavedTags() {
+        return JSON.parse(localStorage.getItem("savedTags")) || [];
+      }
+
+      function loadSavedTags() {
+        const cardGrid = document.getElementById("cardGrid");
+        const savedTags = getSavedTags();
+        cardGrid.innerHTML = "";
+        savedTags
+          .slice()
+          .reverse()
+          .forEach((tag) => {
+            const config = TEMPLATE_CONFIGS[tag.templateName];
+            const cardHTML = `
+                <div class="profile-card bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col" 
+                     data-name="${tag.title}" data-size="${tag.templateName}">
+                  <div onclick="openPreviewModal('${tag.id}')" class="card-preview-container cursor-pointer hover:opacity-90 transition-opacity group relative bg-slate-100">
+                    <div class="scaled-preview" id="mini-preview-${tag.id}"></div>
+                    <div class="absolute inset-0 bg-slate-900/0 group-hover:bg-[#006d4b]/10 flex items-center justify-center transition-all z-20">
+                         <div class="bg-white/90 p-3 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100">
+                            <span class="material-symbols-outlined text-[#006d4b] text-3xl">zoom_in</span>
+                         </div>
+                    </div>
+                  </div>
+                  <div class="p-6 flex-1 flex flex-col">
+                    <h3 class="font-bold text-xl text-slate-800 mb-4 truncate">${tag.title}</h3>
+                    <div class="space-y-2.5 mb-6 text-slate-500 text-sm font-medium">
+                        <p class="flex items-center gap-2.5"><span class="material-symbols-outlined text-[18px]">calendar_today</span> ${tag.createdAt}</p>
+                        <p class="flex items-center gap-2.5"><span class="material-symbols-outlined text-[18px]">aspect_ratio</span> ${tag.templateName}</p>
+                    </div>
+                    <div class="flex justify-between items-center border-t border-slate-100 pt-5 mt-auto">
+                      <button onclick="window.location.href='create.html?edit=${tag.id}'" class="p-2.5 text-slate-400 hover:text-[#006d4b] hover:bg-emerald-50 rounded-xl transition-all"><span class="material-symbols-outlined text-[22px]">edit_note</span></button>
+                      <button onclick="executePrint('${tag.id}')" class="text-[#006d4b] font-bold text-sm flex items-center gap-2 hover:bg-emerald-50 px-4 py-2 rounded-xl transition-all border border-transparent hover:border-emerald-100">
+                        <span class="material-symbols-outlined text-[20px]">print</span> Print Tag
+                      </button>
+                    </div>
+                  </div>
+                </div>`;
+            cardGrid.insertAdjacentHTML("beforeend", cardHTML);
+            const miniPreview = document.getElementById(
+              `mini-preview-${tag.id}`,
+            );
+            miniPreview.innerHTML = generatePaperHTML(tag);
+            const scale = Math.min(300 / config.w, 200 / config.h) * 0.8;
+            miniPreview.style.transform = `scale(${scale})`;
+          });
+      }
+
+      function generatePaperHTML(tagData) {
+        const config = TEMPLATE_CONFIGS[tagData.templateName];
+        if (!config) return "";
+        let slotsHTML = "";
+        const slotsData = tagData.slotsData || {};
+        for (let i = 1; i <= config.slots_count; i++) {
+          const menu = slotsData[i] || {};
+          const allergensHtml = menu.allergens
+            ? menu.allergens
+                .map((a) => `<span class="text-3xl mx-1">${a.icon}</span>`)
+                .join("")
+            : "";
+          slotsHTML += `
+              <div class="slot">
+                  <img src="Impact_Logo.png" class="h-10 opacity-20 mb-4" onerror="this.style.display='none'">
+                  <div class="text-2xl font-black text-slate-800 mb-2 leading-tight uppercase">${menu.name_th || ""}</div>
+                  <div class="text-base italic text-slate-500 font-semibold mb-4 leading-tight">${menu.name_en || ""}</div>
+                  <div class="flex gap-2 justify-center">${allergensHtml}</div>
+              </div>`;
+        }
+        return `<div class="preview-paper" style="width: ${config.w}px; height: ${config.h}px; padding: 40px;"><div class="inner-grid ${config.grid_class}">${slotsHTML}</div></div>`;
+      }
+
+      function openPreviewModal(tagId) {
+        const tag = getSavedTags().find((t) => t.id === tagId);
+        if (!tag) return;
+        const modal = document.getElementById("previewModal");
+        const modalContent = document.getElementById("previewModalContent");
+        modal.classList.remove("hidden");
+        document.getElementById("modalTitle").innerText = tag.title;
+        document.getElementById("modalSubtitle").innerText = tag.templateName;
+        const wrapper = document.getElementById("modalPaperWrapper");
+        wrapper.innerHTML = generatePaperHTML(tag);
+        const config = TEMPLATE_CONFIGS[tag.templateName];
+        setTimeout(() => {
+          const modalBody = document.getElementById("modalBody");
+          const availW = modalBody.clientWidth - 100;
+          const availH = modalBody.clientHeight - 100;
+          const scale = Math.min(availW / config.w, availH / config.h);
+          const paper = wrapper.querySelector(".preview-paper");
+          paper.style.transform = `scale(${scale})`;
+          wrapper.style.width = config.w * scale + "px";
+          wrapper.style.height = config.h * scale + "px";
+          modal.classList.add("opacity-100");
+          modalContent.classList.remove("scale-95");
+        }, 50);
+        document.getElementById("modalPrintBtn").onclick = () =>
+          executePrint(tagId);
+      }
+
+      function closePreviewModal() {
+        document.getElementById("previewModal").classList.remove("opacity-100");
+        document
+          .getElementById("previewModalContent")
+          .classList.add("scale-95");
+        setTimeout(
+          () => document.getElementById("previewModal").classList.add("hidden"),
+          300,
+        );
+      }
+
+      function executePrint(tagId) {
+        const tag = getSavedTags().find((t) => t.id === tagId);
+        if (!tag) return;
+        const config = TEMPLATE_CONFIGS[tag.templateName];
+        const printArea = document.getElementById("printArea");
+        printArea.innerHTML = generatePaperHTML(tag);
+        const oldStyle = document.getElementById("printPageOrientation");
+        if (oldStyle) oldStyle.remove();
+        const style = document.createElement("style");
+        style.id = "printPageOrientation";
+
+        // 🔹 เพิ่ม body { margin: 0 } ในสไตล์สั่งพริ้นต์เพื่อป้องกันการดันขึ้นหน้าใหม่
+        style.innerHTML = `
+          @page { size: A4 ${config.orientation}; margin: 0mm; } 
+          body { margin: 0; }
+        `;
+        document.head.appendChild(style);
+
+        printArea.classList.remove("hidden");
+        window.print();
+        printArea.classList.add("hidden");
+      }
+
+      function filterCards() {
+        const searchText = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const sizeFilter = document.getElementById("sizeFilter").value;
+        const cards = document.getElementsByClassName("profile-card");
+        for (let card of cards) {
+          const name = card.getAttribute("data-name").toLowerCase();
+          const size = card.getAttribute("data-size");
+          card.style.display =
+            name.includes(searchText) &&
+            (sizeFilter === "all" || size === sizeFilter)
+              ? "flex"
+              : "none";
+        }
+      }
+
+      function showLogoutModal() {
+        document.getElementById("logoutModal").classList.remove("hidden");
+        setTimeout(() => {
+          document.getElementById("logoutModal").classList.add("opacity-100");
+          document
+            .getElementById("logoutModal")
+            .firstElementChild.classList.remove("scale-95");
+        }, 10);
+      }
+
+      function hideLogoutModal() {
+        document.getElementById("logoutModal").classList.remove("opacity-100");
+        document
+          .getElementById("logoutModal")
+          .firstElementChild.classList.add("scale-95");
+        setTimeout(
+          () => document.getElementById("logoutModal").classList.add("hidden"),
+          200,
+        );
+      }
+
+      function confirmLogout() {
+        localStorage.removeItem("userData");
+        window.location.href = "index.html";
+      }
+
+      loadSavedTags();
+    </script>
+  </body>
+</html>

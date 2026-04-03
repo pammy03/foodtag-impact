@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Tag Profile | IMPACT Food Tag</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .a4-paper {
+        background: white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        padding: 40px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        transform-origin: center center;
+        transition: outline 0.3s;
+      }
+      .inner-grid {
+        display: grid;
+        width: 100%;
+        height: 100%;
+        flex-grow: 1;
+        border-top: 1px dashed #cbd5e1;
+        border-left: 1px dashed #cbd5e1;
+      }
+      .grid-plate {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+      }
+      .grid-western {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+      }
+      .grid-buffet {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+      }
+      .slot {
+        border-right: 1px dashed #cbd5e1;
+        border-bottom: 1px dashed #cbd5e1;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        transition: all 0.2s;
+      }
+      .slot.active {
+        outline: 3px solid #006d4b;
+        outline-offset: -3px;
+        background-color: #f8fafc;
+        z-index: 10;
+      }
+      aside .scroll-area::-webkit-scrollbar {
+        width: 4px;
+      }
+      aside .scroll-area::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      @media print {
+        @page {
+          size: auto;
+          margin: 0;
+        }
+        body {
+          margin: 0;
+          padding: 0;
+          background: white;
+          overflow: visible !important;
+        }
+        header,
+        aside,
+        .preview-header {
+          display: none !important;
+        }
+        main {
+          padding: 0 !important;
+          background: white !important;
+          display: block !important;
+          overflow: visible !important;
+        }
+        #paperContainer {
+          display: block !important;
+          width: 100% !important;
+          height: 100% !important;
+          padding: 0 !important;
+        }
+        #a4Paper {
+          transform: none !important;
+          box-shadow: none !important;
+          margin: 0 !important;
+        }
+        #a4Paper.landscape {
+          width: 297mm !important;
+          height: 210mm !important;
+        }
+        #a4Paper.portrait {
+          width: 210mm !important;
+          height: 297mm !important;
+        }
+        .slot.active {
+          outline: none !important;
+          background-color: white !important;
+        }
+        .print\:hidden {
+          display: none !important;
+        }
+      }
+      .template-btn.selected {
+        border-color: #006d4b;
+        background-color: #f0fdf4;
+        box-shadow: 0 0 0 1px #006d4b;
+      }
+    </style>
+  </head>
+  <body class="bg-[#f1f5f9] h-screen flex flex-col overflow-hidden">
+    <header
+      class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center z-20 shrink-0"
+    >
+      <div class="flex items-center gap-2">
+        <button
+          onclick="window.location.href = 'dashboard.html'"
+          class="w-10 h-10 flex items-center justify-center hover:bg-slate-100 rounded-full text-slate-500 transition-colors"
+        >
+          <span class="material-symbols-outlined text-[24px]">arrow_back</span>
+        </button>
+        <h1
+          id="pageTitle"
+          class="text-xl font-bold text-slate-800 leading-none"
+        >
+          Create New Tag
+        </h1>
+      </div>
+      <button
+        onclick="showSaveModal()"
+        class="px-5 py-2.5 bg-white border-2 border-[#006d4b] text-[#006d4b] font-bold rounded-lg hover:bg-[#f0fdf4] transition-all flex items-center gap-2 shadow-sm"
+      >
+        <span class="material-symbols-outlined text-[20px]">save</span>
+        <span id="saveButtonText">Save Profile</span>
+      </button>
+    </header>
+
+    <div class="flex-1 flex overflow-hidden">
+      <aside
+        class="w-[380px] bg-white border-r border-slate-200 flex flex-col z-10 shadow-lg shrink-0"
+      >
+        <div class="flex-1 overflow-y-auto p-6 space-y-6 scroll-area">
+          <div>
+            <label class="block text-[18px] font-bold text-slate-500 mb-2"
+              >Title</label
+            >
+            <input
+              type="text"
+              id="profileName"
+              placeholder="e.g. AIA01"
+              class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b]"
+            />
+          </div>
+          <div>
+            <label class="block text-[18px] font-bold text-slate-500 mb-2"
+              >Select Template Size</label
+            >
+            <div id="templateButtons" class="grid grid-cols-1 gap-2">
+              <button
+                onclick="
+                  applyTemplate(
+                    {
+                      name: 'Plate / Food Stall',
+                      orientation: 'landscape',
+                      slots_count: 2,
+                      grid_class: 'grid-plate',
+                      hide_allergies: false,
+                    },
+                    this,
+                  )
+                "
+                class="template-btn border-2 p-3 rounded-lg text-left hover:border-[#006d4b] transition-all bg-white group"
+              >
+                <div
+                  class="text-sm font-bold text-slate-700 group-focus:text-[#006d4b]"
+                >
+                  Plate Service / Food Stall
+                </div>
+                <div class="text-xs text-slate-500 mt-1">
+                  13x18 cm | 2 Slots
+                </div>
+              </button>
+              <button
+                onclick="
+                  applyTemplate(
+                    {
+                      name: 'Western Set',
+                      orientation: 'portrait',
+                      slots_count: 4,
+                      grid_class: 'grid-western',
+                      hide_allergies: false,
+                    },
+                    this,
+                  )
+                "
+                class="template-btn border-2 p-3 rounded-lg text-left hover:border-[#006d4b] transition-all bg-white group"
+              >
+                <div
+                  class="text-sm font-bold text-slate-700 group-focus:text-[#006d4b]"
+                >
+                  Western Set (ซ่อนภูมิแพ้)
+                </div>
+                <div class="text-xs text-slate-500 mt-1">
+                  10.5x14.8 cm | 4 Slots
+                </div>
+              </button>
+              <button
+                onclick="
+                  applyTemplate(
+                    {
+                      name: 'Buffet / Coffee Break',
+                      orientation: 'landscape',
+                      slots_count: 6,
+                      grid_class: 'grid-buffet',
+                      hide_allergies: false,
+                    },
+                    this,
+                  )
+                "
+                class="template-btn border-2 p-3 rounded-lg text-left hover:border-[#006d4b] transition-all bg-white group"
+              >
+                <div
+                  class="text-sm font-bold text-slate-700 group-focus:text-[#006d4b]"
+                >
+                  Buffet / Coffee Break
+                </div>
+                <div class="text-xs text-slate-500 mt-1">
+                  10.2x9.7 cm | 6 Slots
+                </div>
+              </button>
+            </div>
+          </div>
+          <div>
+            <label class="block text-[18px] font-bold text-slate-500 mb-2"
+              >Editing Position</label
+            >
+            <div id="slotControls" class="grid grid-cols-2 gap-2"></div>
+          </div>
+          <div class="relative">
+            <label class="block text-[18px] font-bold text-slate-500 mb-2"
+              >Menu Search</label
+            >
+            <div class="relative">
+              <span
+                class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400"
+                >search</span
+              >
+              <input
+                type="text"
+                id="menuSearch"
+                onkeyup="searchMenu(this.value)"
+                placeholder="ค้นหาเมนู..."
+                class="w-full pl-10 pr-4 py-2 bg-slate-50 border rounded-lg outline-none transition-all focus:ring-2 focus:ring-[#006d4b]"
+              />
+            </div>
+            <div
+              id="searchResults"
+              class="absolute w-full mt-1 bg-white border rounded-lg shadow-xl hidden z-20 max-h-60 overflow-y-auto"
+            ></div>
+          </div>
+          <div class="space-y-4">
+            <label class="block text-[18px] font-bold text-slate-500 mb-2"
+              >Descriptions</label
+            >
+            <div
+              class="relative border border-slate-200 rounded-xl bg-white p-4 pt-10 min-h-[80px]"
+            >
+              <div
+                class="bg-[#2d6a4f] text-white text-[11px] font-bold px-3 py-1 absolute top-0 left-0 rounded-br-lg rounded-tl-xl uppercase shadow-sm"
+              >
+                Thai
+              </div>
+              <div
+                id="nameTh"
+                class="text-base font-bold text-slate-700 whitespace-pre-line break-words"
+              ></div>
+            </div>
+            <div
+              class="relative border border-slate-200 rounded-xl bg-white p-4 pt-10 min-h-[80px]"
+            >
+              <div
+                class="bg-[#64748b] text-white text-[11px] font-bold px-3 py-1 absolute top-0 left-0 rounded-br-lg rounded-tl-xl uppercase shadow-sm"
+              >
+                English
+              </div>
+              <div
+                id="nameEn"
+                class="text-base text-slate-600 whitespace-pre-line break-words"
+              ></div>
+            </div>
+          </div>
+          <div id="allergenSection" class="space-y-2 pb-6">
+            <label class="block text-[18px] font-bold text-slate-500 mb-2"
+              >Ingredients / Allergies</label
+            >
+            <div
+              id="allergenList"
+              class="space-y-2 text-sm font-bold text-slate-700"
+            ></div>
+          </div>
+        </div>
+        <div class="p-6 bg-[#ebf0f4] border-t border-slate-200 shrink-0">
+          <button
+            onclick="window.print()"
+            class="w-full py-4 bg-gradient-to-r from-[#448660] to-[#8be3b0] text-white font-bold rounded-xl shadow-md hover:opacity-90 transition-all flex items-center justify-center gap-2 text-lg tracking-wide mb-3"
+          >
+            <span class="material-symbols-outlined">print</span> PRINT
+          </button>
+          <div class="grid grid-cols-2 gap-2">
+            <button
+              onclick="exportFile('jpg')"
+              class="py-2.5 bg-white border border-slate-200 rounded-lg font-bold text-slate-600 hover:bg-slate-50 flex items-center justify-center gap-2 text-[13px] shadow-sm transition-all"
+            >
+              <span class="material-symbols-outlined text-[18px]">image</span>
+              JPG
+            </button>
+            <button
+              onclick="exportFile('png')"
+              class="py-2.5 bg-white border border-slate-200 rounded-lg font-bold text-slate-600 hover:bg-slate-50 flex items-center justify-center gap-2 text-[13px] shadow-sm transition-all"
+            >
+              <span class="material-symbols-outlined text-[18px]">image</span>
+              PNG
+            </button>
+            <button
+              onclick="exportFile('pdf')"
+              class="py-2.5 bg-white border border-slate-200 rounded-lg font-bold text-slate-600 hover:bg-slate-50 flex items-center justify-center gap-2 text-[13px] shadow-sm transition-all"
+            >
+              <span class="material-symbols-outlined text-[18px]"
+                >picture_as_pdf</span
+              >
+              PDF
+            </button>
+            <button
+              onclick="shareDirectly()"
+              class="py-2.5 bg-white border border-slate-200 rounded-lg font-bold text-slate-600 hover:bg-slate-50 flex items-center justify-center gap-2 text-[13px] shadow-sm transition-all"
+            >
+              <span class="material-symbols-outlined text-[18px]">share</span>
+              SHARE
+            </button>
+          </div>
+        </div>
+      </aside>
+      <main class="flex-1 bg-slate-50 flex flex-col overflow-hidden relative">
+        <div class="preview-header p-6 pb-2 flex-shrink-0 z-10">
+          <h2
+            class="text-2xl font-black text-[#006d4b] uppercase tracking-tight"
+          >
+            Preview
+          </h2>
+          <p class="text-sm text-slate-500">A4 Paper</p>
+        </div>
+        <div
+          id="paperContainer"
+          class="flex-1 w-full h-full flex justify-center items-center overflow-hidden p-6"
+        >
+          <div id="a4Paper" class="a4-paper">
+            <div id="innerGrid" class="inner-grid"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div
+      id="saveModal"
+      class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300"
+    >
+      <div
+        class="bg-white rounded-2xl shadow-2xl w-[400px] p-6 transform scale-95 transition-transform duration-300"
+        id="saveModalContent"
+      ></div>
+    </div>
+
+    <script>
+      let currentTemplateConfig = {};
+      let activeSlot = 1;
+      let slotsData = {};
+      let isInitialLoading = false;
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const editId = urlParams.get("edit");
+
+      window.onload = () => {
+        if (editId) {
+          isInitialLoading = true;
+          document.getElementById("pageTitle").innerText = "Edit Tag Profile";
+          document.getElementById("saveButtonText").innerText =
+            "Update Profile";
+
+          const savedTags = JSON.parse(localStorage.getItem("savedTags")) || [];
+          const tagToEdit = savedTags.find((t) => t.id === editId);
+
+          if (tagToEdit) {
+            document.getElementById("profileName").value = tagToEdit.title;
+            slotsData = tagToEdit.slotsData || {};
+
+            const mockConfigs = {
+              "Plate / Food Stall": {
+                name: "Plate / Food Stall",
+                orientation: "landscape",
+                slots_count: 2,
+                grid_class: "grid-plate",
+                hide_allergies: false,
+              },
+              "Western Set": {
+                name: "Western Set",
+                orientation: "portrait",
+                slots_count: 4,
+                grid_class: "grid-western",
+                hide_allergies: false,
+              },
+              "Buffet / Coffee Break": {
+                name: "Buffet / Coffee Break",
+                orientation: "landscape",
+                slots_count: 6,
+                grid_class: "grid-buffet",
+                hide_allergies: false,
+              },
+            };
+
+            const config = mockConfigs[tagToEdit.templateName];
+            if (config) {
+              const btnIdxMap = {
+                "Plate / Food Stall": 0,
+                "Western Set": 1,
+                "Buffet / Coffee Break": 2,
+              };
+              const targetBtn =
+                document.querySelectorAll(".template-btn")[
+                  btnIdxMap[tagToEdit.templateName]
+                ];
+
+              applyTemplate(config, targetBtn);
+
+              // วาดเนื้อหาลงในกระดาษ
+              for (let i = 1; i <= config.slots_count; i++) {
+                if (slotsData[i]) {
+                  const slotDiv = document.getElementById(`slot-${i}`);
+                  const wrapper = slotDiv.querySelector("div:last-child");
+                  renderSlotContent(wrapper, slotsData[i], i);
+                }
+              }
+
+              // **จุดที่แก้ไข:** บังคับให้แถบด้านข้างแสดงผลของ Slot 1 ทันที
+              if (slotsData[1]) {
+                setTimeout(() => updateInputs(slotsData[1]), 50);
+              }
+              setTimeout(resizePaper, 100);
+            }
+          }
+          isInitialLoading = false;
+        } else {
+          applyTemplate(
+            {
+              name: "Buffet / Coffee Break",
+              orientation: "landscape",
+              slots_count: 6,
+              grid_class: "grid-buffet",
+              hide_allergies: false,
+            },
+            document.querySelectorAll(".template-btn")[2],
+          );
+        }
+      };
+
+      function resizePaper() {
+        const container = document.getElementById("paperContainer");
+        const paper = document.getElementById("a4Paper");
+        if (!container || !paper || !currentTemplateConfig.orientation) return;
+        const cWidth = container.clientWidth - 40;
+        const cHeight = container.clientHeight - 40;
+        let pWidth =
+          currentTemplateConfig.orientation === "landscape" ? 1123 : 794;
+        let pHeight =
+          currentTemplateConfig.orientation === "landscape" ? 794 : 1123;
+        paper.style.width = `${pWidth}px`;
+        paper.style.height = `${pHeight}px`;
+        if (currentTemplateConfig.orientation === "landscape") {
+          paper.classList.add("landscape");
+          paper.classList.remove("portrait");
+        } else {
+          paper.classList.add("portrait");
+          paper.classList.remove("landscape");
+        }
+        const scale = Math.min(cWidth / pWidth, cHeight / pHeight);
+        paper.style.transform = `scale(${scale})`;
+      }
+
+      window.addEventListener("resize", resizePaper);
+
+      function applyTemplate(temp, btnElement) {
+        currentTemplateConfig = temp;
+        document
+          .querySelectorAll(".template-btn")
+          .forEach((btn) => btn.classList.remove("selected"));
+        if (btnElement) btnElement.classList.add("selected");
+
+        if (!isInitialLoading) slotsData = {};
+        activeSlot = 1;
+        setupGridStructure();
+        renderSlotControls(temp.slots_count);
+        clearInputs();
+        setTimeout(resizePaper, 50);
+      }
+
+      function setupGridStructure() {
+        const innerGrid = document.getElementById("innerGrid");
+        innerGrid.className = `inner-grid ${currentTemplateConfig.grid_class}`;
+        document.getElementById("allergenSection").style.display =
+          currentTemplateConfig.hide_allergies ? "none" : "block";
+        innerGrid.innerHTML = "";
+        for (let i = 1; i <= currentTemplateConfig.slots_count; i++) {
+          const div = document.createElement("div");
+          div.id = `slot-${i}`;
+          div.className = `slot ${i === activeSlot ? "active" : ""}`;
+          const indicator = document.createElement("div");
+          indicator.className = `absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded print:hidden z-20 transition-colors hidden-on-export ${i === activeSlot ? "bg-[#006d4b] text-white shadow-sm" : "bg-slate-100 text-slate-400"}`;
+          indicator.innerText =
+            i === activeSlot ? `Slot ${i} (Editing...)` : `Slot ${i}`;
+          div.appendChild(indicator);
+          const contentWrapper = document.createElement("div");
+          contentWrapper.className =
+            "w-full h-full flex flex-col items-center justify-center relative z-10 p-6";
+          div.appendChild(contentWrapper);
+          innerGrid.appendChild(div);
+        }
+      }
+
+      function renderSlotContent(element, menu, index) {
+        const showAllergies = !currentTemplateConfig.hide_allergies;
+        const allergensHtml =
+          showAllergies && menu.allergens
+            ? menu.allergens
+                .map(
+                  (a) =>
+                    `<span title="${a.name}" class="text-2xl">${a.icon}</span>`,
+                )
+                .join("")
+            : "";
+        element.innerHTML = `
+            <img src="Impact_Logo.png" class="h-6 opacity-30 mb-4" alt="logo" onerror="this.style.display='none'">
+            <div class="text-lg font-black text-slate-800 mb-2 leading-relaxed text-center whitespace-pre-line">${menu.name_th || ""}</div>
+            <div class="text-xs italic text-slate-500 font-medium mb-4 leading-relaxed text-center whitespace-pre-line">${menu.name_en || ""}</div>
+            <div class="flex gap-2 justify-center">${allergensHtml}</div>
+        `;
+      }
+
+      function renderSlotControls(count) {
+        const container = document.getElementById("slotControls");
+        container.innerHTML = "";
+        for (let i = 1; i <= count; i++) {
+          const btn = document.createElement("button");
+          btn.className = `py-2 rounded-lg border font-bold text-xs transition-all ${i === activeSlot ? "bg-[#006d4b] border-[#006d4b] text-white shadow-md" : "bg-white text-slate-600 hover:bg-slate-50"}`;
+          btn.innerText = `Slot ${i}`;
+          btn.onclick = () => {
+            activeSlot = i;
+            renderSlotControls(count);
+            document
+              .querySelectorAll(".slot")
+              .forEach((s) => s.classList.remove("active"));
+            const currentSlot = document.getElementById(`slot-${i}`);
+            currentSlot.classList.add("active");
+            document
+              .querySelectorAll(".slot > div:first-child")
+              .forEach((el, idx) => {
+                el.innerText =
+                  idx + 1 === activeSlot
+                    ? `Slot ${idx + 1} (Editing...)`
+                    : `Slot ${idx + 1}`;
+                el.className = `absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded print:hidden z-20 transition-colors hidden-on-export ${idx + 1 === activeSlot ? "bg-[#006d4b] text-white shadow-sm" : "bg-slate-100 text-slate-400"}`;
+              });
+            if (slotsData[i]) {
+              updateInputs(slotsData[i]);
+            } else {
+              clearInputs();
+            }
+          };
+          container.appendChild(btn);
+        }
+      }
+
+      function updateInputs(menu) {
+        // แก้ไขให้ดึงค่าจาก Object ให้ถูกต้อง
+        document.getElementById("nameTh").innerText = menu.name_th || "";
+        document.getElementById("nameEn").innerText = menu.name_en || "";
+        document.getElementById("menuSearch").value = menu.name_th
+          ? menu.name_th.split("\n")[0]
+          : "";
+        const list = document.getElementById("allergenList");
+        if (menu.allergens && menu.allergens.length > 0) {
+          list.innerHTML = menu.allergens
+            .map(
+              (a) =>
+                `<div class="flex items-center gap-3 p-2 bg-slate-50 border border-slate-100 rounded-lg shadow-sm"><span class="text-xl">${a.icon || "⚠️"}</span><span class="text-xs font-bold text-slate-700">${a.name}</span></div>`,
+            )
+            .join("");
+        } else {
+          list.innerHTML = "";
+        }
+      }
+
+      function clearInputs() {
+        document.getElementById("nameTh").innerText = "";
+        document.getElementById("nameEn").innerText = "";
+        document.getElementById("menuSearch").value = "";
+        document.getElementById("allergenList").innerHTML = "";
+      }
+
+      async function searchMenu(query) {
+        const results = document.getElementById("searchResults");
+        if (query.length < 2) {
+          results.classList.add("hidden");
+          return;
+        }
+        const dummyMenus = [
+          {
+            id: 1,
+            name_th: "ทอดมันกุ้ง",
+            name_en: "Deep-fried Prawn cake",
+            allergens: [{ name: "Crustaceans", icon: "🦐" }],
+          },
+          {
+            id: 2,
+            name_th: "ไก่ผัดเม็ดมะม่วง",
+            name_en: "Stir-fried Chicken with Cashew Nuts",
+            allergens: [
+              { name: "Chicken", icon: "🍗" },
+              { name: "Nuts", icon: "🥜" },
+            ],
+          },
+        ].filter(
+          (m) =>
+            m.name_th.includes(query) ||
+            m.name_en.toLowerCase().includes(query.toLowerCase()),
+        );
+        if (dummyMenus.length > 0) {
+          results.innerHTML = dummyMenus
+            .map(
+              (m) =>
+                `<div onclick='selectMenu(${JSON.stringify(m)})' class="p-3 hover:bg-emerald-50 cursor-pointer border-b last:border-0 transition-colors"><div class="font-bold text-sm text-slate-800">${m.name_th}</div><div class="text-xs text-slate-500">${m.name_en}</div></div>`,
+            )
+            .join("");
+          results.classList.remove("hidden");
+        } else {
+          results.innerHTML =
+            '<div class="p-3 text-xs text-slate-400">ไม่พบข้อมูลเมนู</div>';
+          results.classList.remove("hidden");
+        }
+      }
+
+      function selectMenu(menu) {
+        slotsData[activeSlot] = JSON.parse(JSON.stringify(menu));
+        updateInputs(menu);
+        document.getElementById("searchResults").classList.add("hidden");
+        const slotDiv = document.getElementById(`slot-${activeSlot}`);
+        const contentWrapper = slotDiv.querySelector("div:last-child");
+        renderSlotContent(contentWrapper, menu, activeSlot);
+      }
+
+      function showSaveModal() {
+        const profileNameInput = document
+          .getElementById("profileName")
+          .value.trim();
+        if (!profileNameInput) {
+          alert("⚠️ กรุณากรอกช่อง Title (ชื่อโปรไฟล์) ก่อนทำการบันทึก");
+          document.getElementById("profileName").focus();
+          return;
+        }
+        const modal = document.getElementById("saveModal");
+        const content = document.getElementById("saveModalContent");
+        content.innerHTML = `<div class="text-center"><div class="w-16 h-16 bg-emerald-50 text-[#006d4b] rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-emerald-100"><span class="material-symbols-outlined text-3xl">save</span></div><h3 class="text-xl font-bold text-slate-800 mb-2">ยืนยันการบันทึกโปรไฟล์</h3><p class="text-sm text-slate-500 mb-6 leading-relaxed">คุณต้องการบันทึกโปรไฟล์นี้<br>ในชื่อ <span class="font-black text-[#006d4b] text-base">"${profileNameInput}"</span> ใช่หรือไม่?</p><div class="flex gap-3 w-full"><button onclick="closeSaveModal()" class="flex-1 py-2.5 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors">ยกเลิก</button><button onclick="confirmSave()" class="flex-1 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-md transition-colors flex justify-center items-center gap-2"><span class="material-symbols-outlined text-[18px]">check</span> ยืนยัน</button></div></div>`;
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+          modal.classList.remove("opacity-0");
+          content.classList.remove("scale-95");
+        }, 10);
+      }
+
+      function closeSaveModal() {
+        const modal = document.getElementById("saveModal");
+        const content = document.getElementById("saveModalContent");
+        modal.classList.add("opacity-0");
+        content.classList.add("scale-95");
+        setTimeout(() => {
+          modal.classList.add("hidden");
+        }, 300);
+      }
+
+      function confirmSave() {
+        const content = document.getElementById("saveModalContent");
+        content.innerHTML = `<div class="text-center py-6"><span class="material-symbols-outlined text-5xl text-[#006d4b] animate-spin mb-4">progress_activity</span><h3 class="text-lg font-bold text-slate-800">กำลังบันทึกข้อมูล...</h3><p class="text-xs text-slate-400 mt-2">กรุณารอสักครู่</p></div>`;
+        setTimeout(() => {
+          try {
+            let savedTags = JSON.parse(localStorage.getItem("savedTags")) || [];
+            const profileName = document
+              .getElementById("profileName")
+              .value.trim();
+            const newTag = {
+              title: profileName,
+              templateName: currentTemplateConfig.name,
+              createdAt: new Date().toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              }),
+              slotsData: slotsData,
+            };
+            if (editId) {
+              const idx = savedTags.findIndex((t) => t.id === editId);
+              if (idx !== -1) {
+                newTag.id = editId;
+                savedTags[idx] = newTag;
+              } else {
+                newTag.id = Date.now().toString();
+                savedTags.push(newTag);
+              }
+            } else {
+              newTag.id = Date.now().toString();
+              savedTags.push(newTag);
+            }
+            localStorage.setItem("savedTags", JSON.stringify(savedTags));
+          } catch (error) {
+            console.error("Error saving:", error);
+          }
+          content.innerHTML = `<div class="text-center py-4"><div class="w-16 h-16 bg-[#e6f4ea] text-[#006d4b] rounded-full flex items-center justify-center mx-auto mb-4"><span class="material-symbols-outlined text-4xl">check_circle</span></div><h3 class="text-xl font-bold text-[#1e293b] mb-3">บันทึกเสร็จสิ้น!</h3><p class="text-sm text-[#475569] mb-6">ข้อมูลโปรไฟล์ถูกบันทึกเรียบร้อยแล้ว</p><button onclick="window.location.href='dashboard.html'" class="w-full py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-sm transition-colors">ตกลง</button></div>`;
+        }, 1500);
+      }
+
+      async function capturePaper() {
+        document.body.style.cursor = "wait";
+        const paper = document.getElementById("a4Paper");
+        document
+          .querySelectorAll(".hidden-on-export")
+          .forEach((el) => (el.style.display = "none"));
+        const activeSlotEl = document.querySelector(".slot.active");
+        if (activeSlotEl) {
+          activeSlotEl.style.outline = "none";
+          activeSlotEl.style.backgroundColor = "white";
+        }
+        const originalTransform = paper.style.transform;
+        paper.style.transform = "none";
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        const canvas = await html2canvas(paper, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+        });
+        paper.style.transform = originalTransform;
+        document
+          .querySelectorAll(".hidden-on-export")
+          .forEach((el) => (el.style.display = ""));
+        if (activeSlotEl) {
+          activeSlotEl.style.outline = "";
+          activeSlotEl.style.backgroundColor = "";
+        }
+        document.body.style.cursor = "default";
+        return canvas;
+      }
+
+      async function exportFile(type) {
+        const canvas = await capturePaper();
+        const fileName = `Food-Tag_${document.getElementById("profileName").value || "Export"}`;
+        if (type === "pdf") {
+          const { jsPDF } = window.jspdf;
+          const orientation =
+            currentTemplateConfig.orientation === "landscape" ? "l" : "p";
+          const pdf = new jsPDF({
+            orientation: orientation,
+            unit: "mm",
+            format: "a4",
+          });
+          const imgData = canvas.toDataURL("image/jpeg", 1.0);
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = pdf.internal.pageSize.getHeight();
+          pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
+          pdf.save(`${fileName}.pdf`);
+        } else {
+          const link = document.createElement("a");
+          link.download = `${fileName}.${type}`;
+          link.href = canvas.toDataURL(
+            `image/${type === "jpg" ? "jpeg" : "png"}`,
+          );
+          link.click();
+        }
+      }
+
+      async function shareDirectly() {
+        const canvas = await capturePaper();
+        const fileName = `Food-Tag_${document.getElementById("profileName").value || "Export"}.png`;
+        canvas.toBlob(async (blob) => {
+          const file = new File([blob], fileName, { type: "image/png" });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({
+                title: "IMPACT Food Tag",
+                text: `Tag ป้ายอาหาร: ${document.getElementById("profileName").value || "ไม่ระบุชื่อ"}`,
+                files: [file],
+              });
+            } catch (error) {
+              console.log("Share failed:", error);
+            }
+          } else {
+            alert("⚠️ Browser ไม่รองรับการแชร์ไฟล์ภาพโดยตรง");
+          }
+        }, "image/png");
+      }
+    </script>
+  </body>
+</html>

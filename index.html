@@ -1,0 +1,97 @@
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Login | IMPACT Food Tag</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-50 font-body text-slate-800 min-h-screen flex flex-col items-center justify-center relative"
+  >
+    <main class="relative z-10 w-full max-w-md px-6">
+      <div
+        class="glass-card rounded-2xl overflow-hidden border border-slate-100"
+      >
+        <div class="p-8 pb-6 text-center">
+          <h1
+            class="font-headline font-extrabold text-3xl tracking-tighter text-[#003B71]"
+          >
+            IMPACT
+          </h1>
+          <p class="text-slate-500 font-medium text-sm mt-1">
+            Food Tag Initiative
+          </p>
+        </div>
+
+        <form id="loginForm" class="px-8 pb-8 space-y-5">
+          <div class="space-y-2">
+            <label
+              class="block text-xs font-semibold uppercase tracking-widest text-slate-500 ml-1"
+              >Employee ID</label
+            >
+            <input
+              id="emp_id"
+              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#006d4b] outline-none transition-all text-sm"
+              placeholder="Enter your Employee ID"
+              type="text"
+              required
+            />
+          </div>
+
+          <div class="space-y-2">
+            <label
+              class="block text-xs font-semibold uppercase tracking-widest text-slate-500 ml-1"
+              >Password</label
+            >
+            <input
+              id="password"
+              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#006d4b] outline-none transition-all text-sm"
+              placeholder="Enter your password"
+              type="password"
+              required
+            />
+          </div>
+
+          <p
+            id="errorMessage"
+            class="text-red-500 text-xs text-center font-medium hidden"
+          ></p>
+
+          <div class="pt-2">
+            <button
+              type="submit"
+              class="w-full bg-[#006d4b] text-white font-headline font-bold py-3.5 rounded-lg shadow-lg hover:bg-[#005a3d] transition-all flex items-center justify-center space-x-2"
+            >
+              <span>Login</span>
+              <span class="material-symbols-outlined text-lg">login</span>
+            </button>
+          </div>
+
+          <div class="pt-4 mt-4 text-center border-t border-slate-100">
+            <p class="text-[11px] font-medium text-slate-400">
+              Access for Admin and Print Staff Only
+            </p>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
