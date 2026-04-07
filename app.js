@@ -10,8 +10,8 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   errorText.classList.add("hidden");
 
   try {
-    // 2. ยิงข้อมูลไปที่หลังบ้าน (เหมือนที่เคยกด Send ใน Postman เป๊ะ!)
-    const response = await fetch("http://localhost:3000/api/login", {
+    // 2. ยิงข้อมูลไปที่หลังบ้าน (เปลี่ยน URL เป็นของ Render แล้ว!)
+    const response = await fetch("https://foodtag-api.onrender.com/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -29,7 +29,6 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
       // แล้วสั่งให้วาร์ป (Redirect) ไปหน้า Dashboard ทันที
       window.location.href = "dashboard.html";
-      // อนาคตเราจะเขียนโค้ดเปลี่ยนหน้าไป Dashboard ตรงนี้ครับ
     } else {
       // ถ้าไม่สำเร็จ (รหัสผิด) ให้โชว์ตัวแดง
       errorText.textContent = data.message;
