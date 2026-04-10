@@ -296,20 +296,20 @@
             >
             <div id="slotControls" class="grid grid-cols-2 gap-2"></div>
 
-            <div class="mt-3">
+            <div class="mt-4">
               <button
                 onclick="clearCurrentSlot()"
-                class="w-full py-2 text-[13px] font-bold text-red-500 bg-white border border-red-200 hover:bg-red-50 rounded-lg transition-colors flex items-center justify-center gap-1 shadow-sm"
+                class="w-full py-2.5 text-[14px] font-bold text-[#e15b58] bg-white border border-[#e15b58]/30 hover:bg-red-50 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
               >
-                <span class="material-symbols-outlined text-[16px]"
+                <span class="material-symbols-outlined text-[18px]"
                   >delete</span
                 >
-                ล้างช่องนี้
+                ล้างข้อมูลช่องนี้
               </button>
             </div>
           </div>
 
-          <div class="relative">
+          <div class="relative mt-2">
             <label class="block text-[18px] font-bold text-slate-500 mb-2"
               >Menu Search</label
             >
@@ -434,7 +434,7 @@
             </div>
           </div>
 
-          <div id="allergenSection" class="space-y-2 pb-6 relative">
+          <div id="allergenSection" class="space-y-2 pb-6">
             <label class="block text-[18px] font-bold text-slate-500 mb-2"
               >Ingredients / Allergies</label
             >
@@ -443,15 +443,15 @@
               class="space-y-2 text-sm font-bold text-slate-700"
             ></div>
 
-            <div class="pt-5 mt-5 border-t border-slate-200">
+            <div class="pt-4 mt-4 flex flex-col gap-2">
               <button
                 onclick="applyToAllSlots()"
-                class="w-full py-2.5 text-[14px] font-bold text-[#006d4b] bg-[#e6f4ea] border border-[#006d4b]/20 hover:bg-[#d1eadd] rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
+                class="w-full py-2.5 text-[14px] font-bold text-[#2e7d53] bg-[#eaf4ed] border border-[#2e7d53]/30 hover:bg-[#d1eadd] rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
               >
                 <span class="material-symbols-outlined text-[18px]"
                   >content_copy</span
                 >
-                นำข้อมูลช่องนี้ไปใช้กับทุก Slot
+                ใช้กับทุก Slot
               </button>
             </div>
           </div>
@@ -794,7 +794,7 @@
         document.getElementById("allergenList").innerHTML = "";
       }
 
-      // 🆕 ฟังก์ชันลบข้อมูลของ Slot ปัจจุบัน (Clear)
+      // ฟังก์ชันลบข้อมูลของ Slot ปัจจุบัน (Clear)
       function clearCurrentSlot() {
         if (confirm(`ต้องการลบข้อมูลของ Slot ${activeSlot} ใช่หรือไม่?`)) {
           delete slotsData[activeSlot];
@@ -807,7 +807,7 @@
         }
       }
 
-      // 🆕 ฟังก์ชันใช้เมนูนี้กับทุก Slot (Apply to All)
+      // ฟังก์ชันใช้เมนูนี้กับทุก Slot (Apply to All)
       function applyToAllSlots() {
         const currentMenu = slotsData[activeSlot];
         if (!currentMenu || Object.keys(currentMenu).length === 0) {
