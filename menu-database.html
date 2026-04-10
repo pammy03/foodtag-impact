@@ -18,19 +18,18 @@
       body {
         font-family: "Inter", sans-serif;
       }
-      /* CSS สำหรับควบคุมการแสดงผล Pop-up */
       .modal-overlay {
         position: fixed;
         inset: 0;
         background: rgba(15, 23, 42, 0.5);
         backdrop-filter: blur(4px);
-        display: none; /* เริ่มต้นซ่อนไว้ */
+        display: none;
         align-items: center;
         justify-content: center;
-        z-index: 50;
+        z-index: 99999;
       }
       .modal-overlay.active {
-        display: flex; /* แสดงเมื่อมีคลาส active */
+        display: flex !important;
       }
       .ingredient-checkbox:checked + div {
         border-color: #006d4b;
@@ -42,14 +41,14 @@
       }
     </style>
   </head>
-  <body class="bg-[#f1f5f9] h-screen flex flex-col overflow-hidden">
+  <body class="bg-[#f1f5f9] h-screen flex flex-col">
     <header
-      class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center z-20 shrink-0"
+      class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center z-20"
     >
       <div class="flex items-center gap-2">
         <button
           onclick="window.location.href = 'dashboard.html'"
-          class="w-10 h-10 flex items-center justify-center hover:bg-slate-100 rounded-full text-slate-500 transition-colors"
+          class="w-10 h-10 flex items-center justify-center hover:bg-slate-100 rounded-full text-slate-500 transition-colors cursor-pointer"
         >
           <span class="material-symbols-outlined text-[24px]">arrow_back</span>
         </button>
@@ -57,22 +56,39 @@
           Menu Database
         </h1>
       </div>
-      <button
-        onclick="openMenuModal()"
-        class="px-5 py-2.5 bg-[#006d4b] text-white font-bold rounded-lg hover:bg-[#005a3d] transition-all flex items-center gap-2 shadow-sm"
-      >
-        <span class="material-symbols-outlined text-[20px]">add</span> Add New
-        Menu
-      </button>
+      <div class="flex gap-3 items-center">
+        <label
+          class="px-5 py-2.5 bg-emerald-50 border border-[#006d4b] text-[#006d4b] font-bold rounded-lg hover:bg-emerald-100 transition-all flex items-center gap-2 shadow-sm cursor-pointer"
+        >
+          <span class="material-symbols-outlined text-[20px]">upload_file</span>
+          Import CSV
+          <input
+            type="file"
+            id="csvFileInput"
+            accept=".csv"
+            class="hidden"
+            onchange="importCSV(event)"
+          />
+        </label>
+
+        <button
+          type="button"
+          onclick="openMenuModal()"
+          class="px-5 py-2.5 bg-[#006d4b] text-white font-bold rounded-lg hover:bg-[#005a3d] transition-all flex items-center gap-2 shadow-sm cursor-pointer"
+        >
+          <span class="material-symbols-outlined text-[20px]">add</span> Add New
+          Menu
+        </button>
+      </div>
     </header>
 
-    <main class="flex-1 flex flex-col p-8 overflow-hidden">
+    <main class="flex-1 flex flex-col p-8 overflow-hidden z-10">
       <div
-        class="bg-white p-4 rounded-t-xl border border-slate-200 border-b-0 flex gap-4 items-center shrink-0"
+        class="bg-white p-4 rounded-t-xl border border-slate-200 border-b-0 flex gap-4 items-center"
       >
-        <div class="relative flex-1 max-w-md">
+        <div class="flex-1 max-w-md relative">
           <span
-            class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400"
+            class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 pointer-events-none"
             >search</span
           >
           <input
@@ -85,11 +101,20 @@
         </div>
         <div class="flex-1"></div>
         <button
+          type="button"
           onclick="openIngredientModal()"
-          class="px-4 py-2 bg-slate-100 text-slate-700 font-bold rounded-lg hover:bg-slate-200 transition-all flex items-center gap-2 text-sm border border-slate-200"
+          class="px-4 py-2 bg-slate-100 text-slate-700 font-bold rounded-lg hover:bg-slate-200 transition-all flex items-center gap-2 text-sm border border-slate-200 cursor-pointer"
         >
           <span class="material-symbols-outlined text-[18px]">category</span>
           Manage Ingredients
+        </button>
+        <button
+          type="button"
+          onclick="openBgModal()"
+          class="px-4 py-2 bg-slate-100 text-slate-700 font-bold rounded-lg hover:bg-slate-200 transition-all flex items-center gap-2 text-sm border border-slate-200 cursor-pointer"
+        >
+          <span class="material-symbols-outlined text-[18px]">wallpaper</span>
+          Manage Backgrounds
         </button>
       </div>
 
@@ -97,7 +122,7 @@
         class="bg-white border border-slate-200 rounded-b-xl flex-1 overflow-auto shadow-sm"
       >
         <table class="w-full text-left border-collapse">
-          <thead class="bg-slate-50 sticky top-0 z-10">
+          <thead class="bg-slate-50 sticky top-0 shadow-sm z-10">
             <tr>
               <th
                 class="py-3 px-6 text-sm font-bold text-slate-500 w-24 border-b"
@@ -125,7 +150,7 @@
                 colspan="4"
                 class="py-8 text-center text-slate-400 font-medium"
               >
-                Loading from Supabase...
+                Loading data...
               </td>
             </tr>
           </tbody>
@@ -135,15 +160,16 @@
 
     <div id="menuModal" class="modal-overlay">
       <div
-        class="bg-white rounded-2xl shadow-2xl w-[600px] max-h-[90vh] flex flex-col scale-100 transition-transform"
+        class="bg-white rounded-2xl shadow-2xl w-[600px] max-h-[90vh] flex flex-col relative z-50"
       >
         <div class="px-6 py-4 border-b flex justify-between items-center">
           <h2 id="menuModalTitle" class="text-xl font-bold text-slate-800">
             Add New Menu
           </h2>
           <button
+            type="button"
             onclick="closeModal('menuModal')"
-            class="text-slate-400 hover:text-slate-600"
+            class="text-slate-400 hover:text-slate-600 cursor-pointer"
           >
             <span class="material-symbols-outlined">close</span>
           </button>
@@ -152,7 +178,8 @@
           <div>
             <label class="block text-sm font-bold text-slate-600 mb-1"
               >Menu ID</label
-            ><input
+            >
+            <input
               type="text"
               id="inputMenuId"
               class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b]"
@@ -162,7 +189,8 @@
           <div>
             <label class="block text-sm font-bold text-slate-600 mb-1"
               >Thai Name</label
-            ><input
+            >
+            <input
               type="text"
               id="inputNameTh"
               class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b]"
@@ -172,7 +200,8 @@
           <div>
             <label class="block text-sm font-bold text-slate-600 mb-1"
               >English Name</label
-            ><input
+            >
+            <input
               type="text"
               id="inputNameEn"
               class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b]"
@@ -188,14 +217,17 @@
         </div>
         <div class="p-6 border-t flex justify-end gap-3">
           <button
+            type="button"
             onclick="closeModal('menuModal')"
-            class="px-5 py-2 border border-slate-300 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors"
+            class="px-5 py-2 border border-slate-300 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors cursor-pointer"
           >
-            Cancel</button
-          ><button
+            Cancel
+          </button>
+          <button
+            type="button"
             onclick="saveMenu()"
             id="saveMenuBtn"
-            class="px-5 py-2 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-md transition-all"
+            class="px-5 py-2 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-md transition-all cursor-pointer"
           >
             Save Menu
           </button>
@@ -204,14 +236,15 @@
     </div>
 
     <div id="ingredientModal" class="modal-overlay">
-      <div class="bg-white rounded-2xl shadow-2xl w-[450px]">
+      <div class="bg-white rounded-2xl shadow-2xl w-[450px] relative z-50">
         <div
           class="px-6 py-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl"
         >
           <h2 class="text-lg font-bold text-slate-800">Add Ingredient</h2>
           <button
+            type="button"
             onclick="closeModal('ingredientModal')"
-            class="text-slate-400 hover:text-slate-600"
+            class="text-slate-400 hover:text-slate-600 cursor-pointer"
           >
             <span class="material-symbols-outlined">close</span>
           </button>
@@ -220,10 +253,12 @@
           <div>
             <label class="block text-sm font-bold text-slate-600 mb-1"
               >Name</label
-            ><input
+            >
+            <input
               type="text"
               id="inputIngName"
               class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b]"
+              placeholder="e.g. Crustaceans"
             />
           </div>
           <div>
@@ -231,43 +266,143 @@
               >Icon (Upload Image)</label
             >
             <div
-              class="border-2 border-dashed border-slate-300 rounded-lg p-6 flex flex-col items-center justify-center relative hover:bg-slate-50"
+              class="border-2 border-dashed border-slate-300 rounded-lg p-6 flex flex-col items-center justify-center relative hover:bg-slate-50 cursor-pointer"
             >
               <input
                 type="file"
                 id="inputIngImage"
                 accept="image/*"
-                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 onchange="previewImage(event)"
               />
               <div
                 id="imagePreviewContainer"
-                class="hidden flex flex-col items-center"
+                class="hidden flex flex-col items-center pointer-events-none"
               >
                 <img
                   id="imagePreview"
                   src=""
-                  class="w-12 h-12 object-contain mb-2"
-                /><span class="text-xs text-[#006d4b] font-bold">Change</span>
+                  class="w-full h-12 object-contain mb-2"
+                />
+                <span class="text-xs text-[#006d4b] font-bold">Change</span>
               </div>
               <div
                 id="uploadPrompt"
-                class="flex flex-col items-center text-slate-400"
+                class="flex flex-col items-center text-slate-400 pointer-events-none"
               >
                 <span class="material-symbols-outlined text-3xl mb-1"
                   >cloud_upload</span
-                ><span class="text-xs font-medium">Click to upload</span>
+                >
+                <span class="text-xs font-medium">Click to upload</span>
               </div>
             </div>
           </div>
         </div>
         <div class="p-6 border-t">
           <button
+            type="button"
             id="saveIngBtn"
             onclick="saveIngredient()"
-            class="w-full py-2.5 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-700 shadow-md transition-all"
+            class="w-full py-2.5 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-700 shadow-md transition-all cursor-pointer"
           >
             Save Ingredient
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="bgModal" class="modal-overlay">
+      <div class="bg-white rounded-2xl shadow-2xl w-[450px] relative z-50">
+        <div
+          class="px-6 py-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl"
+        >
+          <h2 class="text-lg font-bold text-slate-800">
+            Add Template Background
+          </h2>
+          <button
+            type="button"
+            onclick="closeModal('bgModal')"
+            class="text-slate-400 hover:text-slate-600 cursor-pointer"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <div>
+            <label class="block text-sm font-bold text-slate-600 mb-1"
+              >Background Name</label
+            >
+            <input
+              type="text"
+              id="inputBgName"
+              class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b]"
+              placeholder="e.g. ลายดอกไม้ธีมงานแต่ง"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-slate-600 mb-1"
+              >For Template Size</label
+            >
+            <select
+              id="inputBgSize"
+              class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] cursor-pointer"
+            >
+              <option value="Plate / Food Stall">
+                Plate Service / Food Stall
+              </option>
+              <option value="Western Set">Western Set</option>
+              <option value="Buffet / Coffee Break">
+                Buffet / Coffee Break
+              </option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-slate-600 mb-1"
+              >Image File</label
+            >
+            <div
+              class="border-2 border-dashed border-slate-300 rounded-lg p-6 flex flex-col items-center justify-center relative hover:bg-slate-50 cursor-pointer"
+            >
+              <input
+                type="file"
+                id="inputBgImage"
+                accept="image/*"
+                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                onchange="previewBgImage(event)"
+              />
+              <div
+                id="bgImagePreviewContainer"
+                class="hidden flex flex-col items-center w-full pointer-events-none"
+              >
+                <img
+                  id="bgImagePreview"
+                  src=""
+                  class="w-full h-32 object-contain mb-2 rounded border border-slate-200 shadow-sm"
+                />
+                <span class="text-xs text-[#006d4b] font-bold mt-2"
+                  >Click to Change</span
+                >
+              </div>
+              <div
+                id="bgUploadPrompt"
+                class="flex flex-col items-center text-slate-400 pointer-events-none"
+              >
+                <span class="material-symbols-outlined text-3xl mb-1"
+                  >cloud_upload</span
+                >
+                <span class="text-xs font-medium">Click to upload</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-6 border-t">
+          <button
+            type="button"
+            id="saveBgBtn"
+            onclick="saveBackground()"
+            class="w-full py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-md transition-all cursor-pointer"
+          >
+            Save Background
           </button>
         </div>
       </div>
@@ -276,25 +411,31 @@
     <script>
       const supabaseUrl = "https://nexvompdeubppbkvnwor.supabase.co";
       const supabaseKey = "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI";
-      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+      const dbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
       let dbMenus = [];
       let dbIngredients = [];
 
       async function fetchData() {
         try {
-          const { data: ingData } = await supabase
+          const { data: ingData, error: ingError } = await dbClient
             .from("ingredients")
             .select("*");
+          if (ingError) throw ingError;
           dbIngredients = ingData || [];
-          const { data: menuData } = await supabase
+
+          const { data: menuData, error: menuError } = await dbClient
             .from("menus")
             .select("*")
             .order("created_at", { ascending: false });
+          if (menuError) throw menuError;
           dbMenus = menuData || [];
+
           renderTable();
         } catch (e) {
-          console.error(e);
+          console.error("Fetch Data Error:", e);
+          document.getElementById("menuTableBody").innerHTML =
+            `<tr><td colspan="4" class="py-8 text-center text-red-500 font-bold bg-red-50">⚠️ ไม่สามารถเชื่อมต่อฐานข้อมูลได้: ${e.message}</td></tr>`;
         }
       }
 
@@ -306,6 +447,7 @@
           .getElementById("searchInput")
           .value.toLowerCase();
         let html = "";
+
         const filtered = dbMenus.filter(
           (m) =>
             (m.menu_id || "").toLowerCase().includes(query) ||
@@ -313,7 +455,7 @@
         );
 
         if (filtered.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400">No data found.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400">ไม่พบข้อมูลเมนู</td></tr>`;
           return;
         }
 
@@ -327,11 +469,12 @@
                 `<div class="inline-flex items-center gap-1.5 bg-slate-100 border px-2 py-1 rounded mr-1 mb-1"><img src="${ing.image_url}" class="w-4 h-4 object-contain"><span class="text-[10px] font-bold text-slate-600">${ing.name}</span></div>`,
             )
             .join("");
+
           html += `<tr class="hover:bg-slate-50 transition-colors">
             <td class="py-4 px-6 border-b font-bold text-[#006d4b]">${menu.menu_id}</td>
             <td class="py-4 px-6 border-b"><div class="font-bold text-slate-800">${menu.name_th}</div><div class="text-xs text-slate-400 italic">${menu.name_en}</div></td>
             <td class="py-4 px-6 border-b">${ingHtml || "-"}</td>
-            <td class="py-4 px-6 border-b text-center"><button onclick="deleteMenu('${menu.menu_id}')" class="text-slate-400 hover:text-red-500 transition-colors p-2"><span class="material-symbols-outlined">delete</span></button></td>
+            <td class="py-4 px-6 border-b text-center"><button onclick="deleteMenu('${menu.menu_id}')" class="text-slate-400 hover:text-red-500 transition-colors p-2 cursor-pointer"><span class="material-symbols-outlined">delete</span></button></td>
           </tr>`;
         });
         tbody.innerHTML = html;
@@ -341,29 +484,54 @@
         document.getElementById("inputMenuId").value = "";
         document.getElementById("inputNameTh").value = "";
         document.getElementById("inputNameEn").value = "";
+
         const container = document.getElementById("ingredientChecklist");
-        container.innerHTML = dbIngredients
-          .map(
-            (ing) => `
-          <label class="cursor-pointer relative">
-            <input type="checkbox" class="ingredient-checkbox hidden" value="${ing.id}">
-            <div class="border border-slate-200 rounded-lg p-2 flex items-center gap-2 hover:bg-slate-50 transition-all select-none">
-              <img src="${ing.image_url}" class="w-6 h-6 object-contain">
-              <span class="text-sm font-medium flex-1 text-slate-700">${ing.name}</span>
-              <span class="material-symbols-outlined text-[#006d4b] opacity-0 check-icon">check_circle</span>
-            </div>
-          </label>`,
-          )
-          .join("");
-        document.getElementById("menuModal").classList.add("active");
+        if (dbIngredients.length > 0) {
+          container.innerHTML = dbIngredients
+            .map(
+              (ing) => `
+            <label class="cursor-pointer relative flex-1">
+              <input type="checkbox" class="ingredient-checkbox hidden" value="${ing.id}">
+              <div class="border border-slate-200 rounded-lg p-2 flex items-center gap-2 hover:bg-slate-50 transition-all select-none">
+                <img src="${ing.image_url}" class="w-6 h-6 object-contain">
+                <span class="text-sm font-medium flex-1 text-slate-700">${ing.name}</span>
+                <span class="material-symbols-outlined text-[#006d4b] opacity-0 check-icon">check_circle</span>
+              </div>
+            </label>`,
+            )
+            .join("");
+        } else {
+          container.innerHTML =
+            "<p class='text-sm text-slate-400 col-span-2'>ยังไม่มีข้อมูลส่วนผสมในระบบ</p>";
+        }
+
+        document.getElementById("menuModal").style.display = "flex";
       }
 
       function openIngredientModal() {
-        document.getElementById("ingredientModal").classList.add("active");
+        document.getElementById("ingredientModal").style.display = "flex";
+
+        document.getElementById("inputIngName").value = "";
+        document.getElementById("inputIngImage").value = "";
+        document.getElementById("uploadPrompt").classList.remove("hidden");
+        document
+          .getElementById("imagePreviewContainer")
+          .classList.add("hidden");
+      }
+
+      function openBgModal() {
+        document.getElementById("bgModal").style.display = "flex";
+
+        document.getElementById("inputBgName").value = "";
+        document.getElementById("inputBgImage").value = "";
+        document.getElementById("bgUploadPrompt").classList.remove("hidden");
+        document
+          .getElementById("bgImagePreviewContainer")
+          .classList.add("hidden");
       }
 
       function closeModal(id) {
-        document.getElementById(id).classList.remove("active");
+        document.getElementById(id).style.display = "none";
       }
 
       async function saveMenu() {
@@ -373,62 +541,130 @@
         const selected = Array.from(
           document.querySelectorAll(".ingredient-checkbox:checked"),
         ).map((cb) => cb.value);
-        if (!id || !th) return alert("Please fill ID and Thai Name");
+
+        if (!id || !th) return alert("กรุณากรอก Menu ID และชื่อภาษาไทย");
 
         const btn = document.getElementById("saveMenuBtn");
         btn.disabled = true;
         btn.innerText = "Saving...";
-        const { error } = await supabase
-          .from("menus")
-          .upsert({
-            menu_id: id,
-            name_th: th,
-            name_en: en,
-            ingredient_ids: selected,
-          });
-        if (error) alert(error.message);
-        else {
+
+        try {
+          const { error } = await dbClient
+            .from("menus")
+            .upsert({
+              menu_id: id,
+              name_th: th,
+              name_en: en,
+              ingredient_ids: selected,
+            });
+          if (error) throw error;
+
           closeModal("menuModal");
           fetchData();
+        } catch (e) {
+          alert("Error: " + e.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerText = "Save Menu";
         }
-        btn.disabled = false;
-        btn.innerText = "Save Menu";
       }
 
       async function saveIngredient() {
         const name = document.getElementById("inputIngName").value.trim();
         const file = document.getElementById("inputIngImage").files[0];
-        if (!name || !file) return alert("Name and Image required");
+
+        if (!name || !file) return alert("กรุณากรอกชื่อและอัปโหลดรูปภาพ");
 
         const btn = document.getElementById("saveIngBtn");
         btn.disabled = true;
         btn.innerText = "Uploading...";
+
         try {
           const fileName = `icon_${Date.now()}.png`;
-          await supabase.storage.from("ingredients").upload(fileName, file);
-          const { data: urlData } = supabase.storage
+          const { error: uploadError } = await dbClient.storage
+            .from("ingredients")
+            .upload(fileName, file);
+          if (uploadError) throw uploadError;
+
+          const { data: urlData } = dbClient.storage
             .from("ingredients")
             .getPublicUrl(fileName);
-          await supabase
+
+          const { error: dbError } = await dbClient
             .from("ingredients")
             .insert({
               id: "ing_" + Date.now(),
               name,
               image_url: urlData.publicUrl,
             });
+          if (dbError) throw dbError;
+
           closeModal("ingredientModal");
+          document.getElementById("inputIngName").value = "";
+          document.getElementById("uploadPrompt").classList.remove("hidden");
+          document
+            .getElementById("imagePreviewContainer")
+            .classList.add("hidden");
           fetchData();
         } catch (e) {
-          alert(e.message);
+          alert("Error: " + e.message);
         } finally {
           btn.disabled = false;
           btn.innerText = "Save Ingredient";
         }
       }
 
+      async function saveBackground() {
+        const name = document.getElementById("inputBgName").value.trim();
+        const size = document.getElementById("inputBgSize").value;
+        const file = document.getElementById("inputBgImage").files[0];
+
+        if (!name || !file) return alert("กรุณากรอกชื่อและอัปโหลดรูปภาพ");
+
+        const btn = document.getElementById("saveBgBtn");
+        btn.disabled = true;
+        btn.innerText = "Uploading...";
+
+        try {
+          const fileName = `bg_${Date.now()}.png`;
+          const { error: uploadError } = await dbClient.storage
+            .from("backgrounds")
+            .upload(fileName, file);
+          if (uploadError) throw uploadError;
+
+          const { data: urlData } = dbClient.storage
+            .from("backgrounds")
+            .getPublicUrl(fileName);
+
+          const response = await fetch(
+            "https://foodtag-api.onrender.com/api/backgrounds",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name: name,
+                template_size: size,
+                image_url: urlData.publicUrl,
+              }),
+            },
+          );
+
+          if (!response.ok)
+            throw new Error("บันทึกลง Database หลังบ้านไม่สำเร็จ");
+
+          alert("เพิ่มรูปพื้นหลังสำเร็จ!");
+          closeModal("bgModal");
+        } catch (e) {
+          alert("Error: " + e.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerText = "Save Background";
+        }
+      }
+
       async function deleteMenu(id) {
-        if (confirm("Delete this menu?")) {
-          await supabase.from("menus").delete().eq("menu_id", id);
+        if (confirm("ต้องการลบเมนูนี้ใช่หรือไม่?")) {
+          await dbClient.from("menus").delete().eq("menu_id", id);
           fetchData();
         }
       }
@@ -446,6 +682,85 @@
           };
           reader.readAsDataURL(file);
         }
+      }
+
+      function previewBgImage(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            document.getElementById("bgUploadPrompt").classList.add("hidden");
+            document
+              .getElementById("bgImagePreviewContainer")
+              .classList.remove("hidden");
+            document.getElementById("bgImagePreview").src = ev.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      // --- ฟังก์ชัน 🆕 IMPORT CSV (เพิ่มใหม่) ---
+      async function importCSV(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        alert("กำลังนำเข้าข้อมูล กรุณารอสักครู่..."); // แจ้งเตือนแบบคลาสสิค ไม่พึ่งพา CSS
+
+        const reader = new FileReader();
+        reader.onload = async function (e) {
+          const text = e.target.result;
+          const rows = text
+            .split("\n")
+            .map((row) => row.trim())
+            .filter((row) => row);
+
+          if (rows.length < 2) {
+            return alert("ไฟล์ CSV ไม่มีข้อมูล หรือมีแค่หัวคอลัมน์");
+          }
+
+          const dataRows = rows.slice(1);
+          let successCount = 0;
+          let failCount = 0;
+
+          for (let i = 0; i < dataRows.length; i++) {
+            const cols = dataRows[i].split(",");
+            if (cols.length < 3) {
+              failCount++;
+              continue;
+            }
+
+            const menuId = cols[0].trim();
+            const nameTh = cols[1].trim();
+            const nameEn = cols[2].trim();
+
+            let ingredientIds = [];
+            if (cols[3]) {
+              const rawIngredients = cols[3].trim().split(/\s+/);
+              ingredientIds = rawIngredients
+                .map((id) => parseInt(id))
+                .filter((id) => !isNaN(id));
+            }
+
+            const { error } = await dbClient.from("menus").upsert({
+              menu_id: menuId,
+              name_th: nameTh,
+              name_en: nameEn,
+              ingredient_ids: ingredientIds,
+            });
+
+            if (error) failCount++;
+            else successCount++;
+          }
+
+          event.target.value = "";
+          alert(
+            `นำเข้าข้อมูลเสร็จสิ้น!\nสำเร็จ: ${successCount} รายการ\nล้มเหลว: ${failCount} รายการ`,
+          );
+
+          fetchData();
+        };
+
+        reader.readAsText(file);
       }
     </script>
   </body>

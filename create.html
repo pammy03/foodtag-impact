@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Tag Profile | IMPACT Food Tag</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=Mali:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link
@@ -19,6 +19,30 @@
       body {
         font-family: "Inter", sans-serif;
       }
+      /* เพิ่มคลาสสำหรับรูป Allergen และ Background */
+      .allergen-icon {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+        border-radius: 4px;
+      }
+      .slot-bg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+      }
+      .slot-content {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      }
+
       .a4-paper {
         background: white;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -59,6 +83,7 @@
         justify-content: center;
         background-color: white;
         transition: all 0.2s;
+        overflow: hidden; /* ป้องกัน Background ล้นขอบ */
       }
       .slot.active {
         outline: 3px solid #006d4b;
@@ -251,12 +276,39 @@
               </button>
             </div>
           </div>
+
+          <div>
+            <label class="block text-[15px] font-bold text-slate-500 mb-2"
+              >Background</label
+            >
+            <select
+              id="bgSelect"
+              onchange="changeBackground(this.value)"
+              class="w-full px-3 py-2 bg-slate-50 border rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-sm"
+            >
+              <option value="">-- สีขาว (Default) --</option>
+            </select>
+          </div>
+
           <div>
             <label class="block text-[18px] font-bold text-slate-500 mb-2"
               >Editing Position</label
             >
             <div id="slotControls" class="grid grid-cols-2 gap-2"></div>
+
+            <div class="mt-3">
+              <button
+                onclick="clearCurrentSlot()"
+                class="w-full py-2 text-[13px] font-bold text-red-500 bg-white border border-red-200 hover:bg-red-50 rounded-lg transition-colors flex items-center justify-center gap-1 shadow-sm"
+              >
+                <span class="material-symbols-outlined text-[16px]"
+                  >delete</span
+                >
+                ล้างช่องนี้
+              </button>
+            </div>
           </div>
+
           <div class="relative">
             <label class="block text-[18px] font-bold text-slate-500 mb-2"
               >Menu Search</label
@@ -279,12 +331,14 @@
               class="absolute w-full mt-1 bg-white border rounded-lg shadow-xl hidden z-20 max-h-60 overflow-y-auto"
             ></div>
           </div>
+
           <div class="space-y-4">
             <label class="block text-[18px] font-bold text-slate-500 mb-2"
               >Descriptions</label
             >
+
             <div
-              class="relative border border-slate-200 rounded-xl bg-white p-4 pt-10 min-h-[80px]"
+              class="relative border border-slate-200 rounded-xl bg-white p-4 pt-10 flex flex-col"
             >
               <div
                 class="bg-[#2d6a4f] text-white text-[11px] font-bold px-3 py-1 absolute top-0 left-0 rounded-br-lg rounded-tl-xl uppercase shadow-sm"
@@ -293,11 +347,47 @@
               </div>
               <div
                 id="nameTh"
-                class="text-base font-bold text-slate-700 whitespace-pre-line break-words"
+                class="text-base font-bold text-slate-700 whitespace-pre-line break-words mb-4"
               ></div>
+
+              <div
+                class="mt-auto border-t border-slate-100 pt-3 grid grid-cols-[1.5fr_1fr] gap-3"
+              >
+                <div>
+                  <label
+                    class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide"
+                    >Font Style</label
+                  >
+                  <select
+                    id="fontSelectTh"
+                    onchange="changeFontTh(this.value)"
+                    class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600 cursor-pointer"
+                  >
+                    <option value="'Sarabun', sans-serif" selected>
+                      Sarabun
+                    </option>
+                    <option value="'Inter', sans-serif">Inter</option>
+                    <option value="'Mali', cursive">Mali (น่ารัก)</option>
+                  </select>
+                </div>
+                <div>
+                  <label
+                    class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide"
+                    >Size (px)</label
+                  >
+                  <input
+                    type="number"
+                    id="fontSizeTh"
+                    onchange="changeFontSizeTh(this.value)"
+                    value="22"
+                    class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600"
+                  />
+                </div>
+              </div>
             </div>
+
             <div
-              class="relative border border-slate-200 rounded-xl bg-white p-4 pt-10 min-h-[80px]"
+              class="relative border border-slate-200 rounded-xl bg-white p-4 pt-10 flex flex-col"
             >
               <div
                 class="bg-[#64748b] text-white text-[11px] font-bold px-3 py-1 absolute top-0 left-0 rounded-br-lg rounded-tl-xl uppercase shadow-sm"
@@ -306,11 +396,45 @@
               </div>
               <div
                 id="nameEn"
-                class="text-base text-slate-600 whitespace-pre-line break-words"
+                class="text-base text-slate-600 whitespace-pre-line break-words mb-4"
               ></div>
+
+              <div
+                class="mt-auto border-t border-slate-100 pt-3 grid grid-cols-[1.5fr_1fr] gap-3"
+              >
+                <div>
+                  <label
+                    class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide"
+                    >Font Style</label
+                  >
+                  <select
+                    id="fontSelectEn"
+                    onchange="changeFontEn(this.value)"
+                    class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600 cursor-pointer"
+                  >
+                    <option value="'Inter', sans-serif" selected>Inter</option>
+                    <option value="'Sarabun', sans-serif">Sarabun</option>
+                    <option value="'Mali', cursive">Mali (น่ารัก)</option>
+                  </select>
+                </div>
+                <div>
+                  <label
+                    class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide"
+                    >Size (px)</label
+                  >
+                  <input
+                    type="number"
+                    id="fontSizeEn"
+                    onchange="changeFontSizeEn(this.value)"
+                    value="22"
+                    class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600"
+                  />
+                </div>
+              </div>
             </div>
           </div>
-          <div id="allergenSection" class="space-y-2 pb-6">
+
+          <div id="allergenSection" class="space-y-2 pb-6 relative">
             <label class="block text-[18px] font-bold text-slate-500 mb-2"
               >Ingredients / Allergies</label
             >
@@ -318,8 +442,21 @@
               id="allergenList"
               class="space-y-2 text-sm font-bold text-slate-700"
             ></div>
+
+            <div class="pt-5 mt-5 border-t border-slate-200">
+              <button
+                onclick="applyToAllSlots()"
+                class="w-full py-2.5 text-[14px] font-bold text-[#006d4b] bg-[#e6f4ea] border border-[#006d4b]/20 hover:bg-[#d1eadd] rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
+              >
+                <span class="material-symbols-outlined text-[18px]"
+                  >content_copy</span
+                >
+                นำข้อมูลช่องนี้ไปใช้กับทุก Slot
+              </button>
+            </div>
           </div>
         </div>
+
         <div class="p-6 bg-[#ebf0f4] border-t border-slate-200 shrink-0">
           <button
             onclick="window.print()"
@@ -361,6 +498,7 @@
           </div>
         </div>
       </aside>
+
       <main class="flex-1 bg-slate-50 flex flex-col overflow-hidden relative">
         <div class="preview-header p-6 pb-2 flex-shrink-0 z-10">
           <h2
@@ -396,6 +534,12 @@
       let activeSlot = 1;
       let slotsData = {};
       let isInitialLoading = false;
+
+      let currentFontTh = "'Sarabun', sans-serif";
+      let currentFontEn = "'Inter', sans-serif";
+      let currentFontSizeTh = "22px";
+      let currentFontSizeEn = "22px";
+      let currentBgUrl = "";
 
       const urlParams = new URLSearchParams(window.location.search);
       const editId = urlParams.get("edit");
@@ -452,7 +596,6 @@
 
               applyTemplate(config, targetBtn);
 
-              // วาดเนื้อหาลงในกระดาษ
               for (let i = 1; i <= config.slots_count; i++) {
                 if (slotsData[i]) {
                   const slotDiv = document.getElementById(`slot-${i}`);
@@ -461,7 +604,6 @@
                 }
               }
 
-              // **จุดที่แก้ไข:** บังคับให้แถบด้านข้างแสดงผลของ Slot 1 ทันที
               if (slotsData[1]) {
                 setTimeout(() => updateInputs(slotsData[1]), 50);
               }
@@ -495,6 +637,7 @@
           currentTemplateConfig.orientation === "landscape" ? 794 : 1123;
         paper.style.width = `${pWidth}px`;
         paper.style.height = `${pHeight}px`;
+
         if (currentTemplateConfig.orientation === "landscape") {
           paper.classList.add("landscape");
           paper.classList.remove("portrait");
@@ -502,6 +645,7 @@
           paper.classList.add("portrait");
           paper.classList.remove("landscape");
         }
+
         const scale = Math.min(cWidth / pWidth, cHeight / pHeight);
         paper.style.transform = `scale(${scale})`;
       }
@@ -520,6 +664,7 @@
         setupGridStructure();
         renderSlotControls(temp.slots_count);
         clearInputs();
+        loadBackgrounds(temp.name);
         setTimeout(resizePaper, 50);
       }
 
@@ -529,6 +674,7 @@
         document.getElementById("allergenSection").style.display =
           currentTemplateConfig.hide_allergies ? "none" : "block";
         innerGrid.innerHTML = "";
+
         for (let i = 1; i <= currentTemplateConfig.slots_count; i++) {
           const div = document.createElement("div");
           div.id = `slot-${i}`;
@@ -538,6 +684,7 @@
           indicator.innerText =
             i === activeSlot ? `Slot ${i} (Editing...)` : `Slot ${i}`;
           div.appendChild(indicator);
+
           const contentWrapper = document.createElement("div");
           contentWrapper.className =
             "w-full h-full flex flex-col items-center justify-center relative z-10 p-6";
@@ -548,20 +695,39 @@
 
       function renderSlotContent(element, menu, index) {
         const showAllergies = !currentTemplateConfig.hide_allergies;
+
+        if (!menu || Object.keys(menu).length === 0) {
+          const bgHtml = currentBgUrl
+            ? `<img src="${currentBgUrl}" class="slot-bg">`
+            : "";
+          element.innerHTML = bgHtml + `<div class="slot-content"></div>`;
+          return;
+        }
+
         const allergensHtml =
           showAllergies && menu.allergens
             ? menu.allergens
-                .map(
-                  (a) =>
-                    `<span title="${a.name}" class="text-2xl">${a.icon}</span>`,
-                )
+                .map((a) => {
+                  const imgUrl =
+                    a.icon_url ||
+                    "https://via.placeholder.com/40/ffffff/cccccc?text=IMG";
+                  return `<img src="${imgUrl}" class="allergen-icon shadow-sm" title="${a.name}">`;
+                })
                 .join("")
             : "";
+
+        const bgHtml = currentBgUrl
+          ? `<img src="${currentBgUrl}" class="slot-bg">`
+          : "";
+
         element.innerHTML = `
-            <img src="Impact_Logo.png" class="h-6 opacity-30 mb-4" alt="logo" onerror="this.style.display='none'">
-            <div class="text-lg font-black text-slate-800 mb-2 leading-relaxed text-center whitespace-pre-line">${menu.name_th || ""}</div>
-            <div class="text-xs italic text-slate-500 font-medium mb-4 leading-relaxed text-center whitespace-pre-line">${menu.name_en || ""}</div>
-            <div class="flex gap-2 justify-center">${allergensHtml}</div>
+            ${bgHtml}
+            <div class="slot-content">
+              <img src="Impact_Logo.png" class="h-6 opacity-30 mb-4" alt="logo" onerror="this.style.display='none'">
+              <div class="slot-text-th font-black text-slate-800 mb-2 leading-relaxed text-center whitespace-pre-line" style="font-family: ${currentFontTh}; font-size: ${currentFontSizeTh};">${menu.name_th || ""}</div>
+              <div class="slot-text-en font-medium text-slate-500 mb-4 leading-relaxed text-center whitespace-pre-line" style="font-family: ${currentFontEn}; font-size: ${currentFontSizeEn};">${menu.name_en || ""}</div>
+              <div class="flex gap-2 justify-center mt-2">${allergensHtml}</div>
+            </div>
         `;
       }
 
@@ -600,7 +766,6 @@
       }
 
       function updateInputs(menu) {
-        // แก้ไขให้ดึงค่าจาก Object ให้ถูกต้อง
         document.getElementById("nameTh").innerText = menu.name_th || "";
         document.getElementById("nameEn").innerText = menu.name_en || "";
         document.getElementById("menuSearch").value = menu.name_th
@@ -611,7 +776,10 @@
           list.innerHTML = menu.allergens
             .map(
               (a) =>
-                `<div class="flex items-center gap-3 p-2 bg-slate-50 border border-slate-100 rounded-lg shadow-sm"><span class="text-xl">${a.icon || "⚠️"}</span><span class="text-xs font-bold text-slate-700">${a.name}</span></div>`,
+                `<div class="flex items-center gap-3 p-2 bg-slate-50 border border-slate-100 rounded-lg shadow-sm">
+                <img src="${a.icon_url || "https://via.placeholder.com/40/ffffff/cccccc?text=IMG"}" class="w-6 h-6 object-contain rounded">
+                <span class="text-xs font-bold text-slate-700">${a.name}</span>
+             </div>`,
             )
             .join("");
         } else {
@@ -626,26 +794,66 @@
         document.getElementById("allergenList").innerHTML = "";
       }
 
+      // 🆕 ฟังก์ชันลบข้อมูลของ Slot ปัจจุบัน (Clear)
+      function clearCurrentSlot() {
+        if (confirm(`ต้องการลบข้อมูลของ Slot ${activeSlot} ใช่หรือไม่?`)) {
+          delete slotsData[activeSlot];
+          clearInputs();
+          const slotDiv = document.getElementById(`slot-${activeSlot}`);
+          if (slotDiv) {
+            const wrapper = slotDiv.querySelector("div:last-child");
+            renderSlotContent(wrapper, {}, activeSlot);
+          }
+        }
+      }
+
+      // 🆕 ฟังก์ชันใช้เมนูนี้กับทุก Slot (Apply to All)
+      function applyToAllSlots() {
+        const currentMenu = slotsData[activeSlot];
+        if (!currentMenu || Object.keys(currentMenu).length === 0) {
+          alert("⚠️ กรุณาเลือกหรือค้นหาเมนูให้ช่องนี้ก่อนทำการคัดลอกครับ");
+          return;
+        }
+
+        if (
+          confirm(
+            `ต้องการใช้เมนู "${currentMenu.name_th}" กับทุก Slot ใช่หรือไม่?`,
+          )
+        ) {
+          const count = currentTemplateConfig.slots_count;
+          for (let i = 1; i <= count; i++) {
+            slotsData[i] = JSON.parse(JSON.stringify(currentMenu));
+            const slotDiv = document.getElementById(`slot-${i}`);
+            if (slotDiv) {
+              const wrapper = slotDiv.querySelector("div:last-child");
+              renderSlotContent(wrapper, slotsData[i], i);
+            }
+          }
+        }
+      }
+
       async function searchMenu(query) {
         const results = document.getElementById("searchResults");
-        if (query.length < 2) {
+
+        if (query.length < 1) {
           results.classList.add("hidden");
           return;
         }
+
         const dummyMenus = [
           {
             id: 1,
             name_th: "ทอดมันกุ้ง",
             name_en: "Deep-fried Prawn cake",
-            allergens: [{ name: "Crustaceans", icon: "🦐" }],
+            allergens: [{ name: "Crustaceans", icon_url: "" }],
           },
           {
             id: 2,
             name_th: "ไก่ผัดเม็ดมะม่วง",
             name_en: "Stir-fried Chicken with Cashew Nuts",
             allergens: [
-              { name: "Chicken", icon: "🍗" },
-              { name: "Nuts", icon: "🥜" },
+              { name: "Chicken", icon_url: "" },
+              { name: "Nuts", icon_url: "" },
             ],
           },
         ].filter(
@@ -653,6 +861,7 @@
             m.name_th.includes(query) ||
             m.name_en.toLowerCase().includes(query.toLowerCase()),
         );
+
         if (dummyMenus.length > 0) {
           results.innerHTML = dummyMenus
             .map(
@@ -823,6 +1032,60 @@
             alert("⚠️ Browser ไม่รองรับการแชร์ไฟล์ภาพโดยตรง");
           }
         }, "image/png");
+      }
+
+      function changeFontTh(fontValue) {
+        currentFontTh = fontValue;
+        document.querySelectorAll(".slot-text-th").forEach((el) => {
+          el.style.fontFamily = currentFontTh;
+        });
+      }
+      function changeFontSizeTh(sizeValue) {
+        currentFontSizeTh = sizeValue + "px";
+        document.querySelectorAll(".slot-text-th").forEach((el) => {
+          el.style.fontSize = currentFontSizeTh;
+        });
+      }
+
+      function changeFontEn(fontValue) {
+        currentFontEn = fontValue;
+        document.querySelectorAll(".slot-text-en").forEach((el) => {
+          el.style.fontFamily = currentFontEn;
+        });
+      }
+      function changeFontSizeEn(sizeValue) {
+        currentFontSizeEn = sizeValue + "px";
+        document.querySelectorAll(".slot-text-en").forEach((el) => {
+          el.style.fontSize = currentFontSizeEn;
+        });
+      }
+
+      function changeBackground(bgUrl) {
+        currentBgUrl = bgUrl;
+        for (let i = 1; i <= currentTemplateConfig.slots_count; i++) {
+          const slotDiv = document.getElementById(`slot-${i}`);
+          if (slotDiv) {
+            const wrapper = slotDiv.querySelector("div:last-child");
+            const menu = slotsData[i] || {};
+            renderSlotContent(wrapper, menu, i);
+          }
+        }
+      }
+
+      async function loadBackgrounds(sizeName) {
+        const select = document.getElementById("bgSelect");
+        select.innerHTML = '<option value="">-- สีขาว (Default) --</option>';
+        try {
+          const res = await fetch(
+            `https://foodtag-api.onrender.com/api/backgrounds?size=${sizeName}`,
+          );
+          const bgs = await res.json();
+          bgs.forEach((bg) => {
+            select.innerHTML += `<option value="${bg.image_url}">${bg.name}</option>`;
+          });
+        } catch (err) {
+          console.log("Cannot load backgrounds yet or no API", err);
+        }
       }
     </script>
   </body>
