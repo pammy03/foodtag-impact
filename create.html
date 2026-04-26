@@ -15,23 +15,42 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
       body {
         font-family: "Inter", sans-serif;
       }
-      /* เพิ่มคลาสสำหรับรูป Allergen และ Background */
+
+      /* ===== ALLERGEN STYLES ===== */
       .allergen-icon {
-        width: 32px;
-        height: 32px;
+        width: 60px;
+        height: 60px;
         object-fit: contain;
-        border-radius: 4px;
+        border-radius: 6px;
+        display: block;
       }
+      .allergen-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        justify-content: center;
+        align-items: flex-start;
+        margin: 10px auto 0;
+        padding: 0;
+        width: calc(5 * 60px + 4 * 4px);
+      }
+      /* ============================= */
+
       .slot-bg {
         position: absolute;
         inset: 0;
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: fill;
         z-index: 0;
       }
       .slot-content {
@@ -42,11 +61,10 @@
         align-items: center;
         width: 100%;
       }
-
       .a4-paper {
         background: white;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        padding: 40px;
+        padding: 0;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
@@ -55,23 +73,22 @@
       }
       .inner-grid {
         display: grid;
-        width: 100%;
-        height: 100%;
-        flex-grow: 1;
+        margin: auto;
         border-top: 1px dashed #cbd5e1;
         border-left: 1px dashed #cbd5e1;
+        background-color: white;
       }
       .grid-plate {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr;
+        grid-template-columns: repeat(2, 13cm);
+        grid-template-rows: repeat(1, 18cm);
       }
       .grid-western {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr 1fr;
+        grid-template-columns: repeat(2, 10.5cm);
+        grid-template-rows: repeat(2, 14.8cm);
       }
       .grid-buffet {
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 9.9cm);
+        grid-template-rows: repeat(2, 9.7cm);
       }
       .slot {
         border-right: 1px dashed #cbd5e1;
@@ -83,7 +100,7 @@
         justify-content: center;
         background-color: white;
         transition: all 0.2s;
-        overflow: hidden; /* ป้องกัน Background ล้นขอบ */
+        overflow: hidden;
       }
       .slot.active {
         outline: 3px solid #006d4b;
@@ -145,6 +162,15 @@
         }
         .print\:hidden {
           display: none !important;
+        }
+        .allergen-icon {
+          width: 52px !important;
+          height: 52px !important;
+        }
+        .allergen-container {
+          grid-template-columns: repeat(5, 52px) !important;
+          gap: 3px !important;
+          margin-top: 8px !important;
         }
       }
       .template-btn.selected {
@@ -277,26 +303,42 @@
             </div>
           </div>
 
-          <div>
-            <label class="block text-[15px] font-bold text-slate-500 mb-2"
-              >Background</label
-            >
-            <select
-              id="bgSelect"
-              onchange="changeBackground(this.value)"
-              class="w-full px-3 py-2 bg-slate-50 border rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-sm"
-            >
-              <option value="">-- สีขาว (Default) --</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-[18px] font-bold text-slate-500 mb-2"
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <label class="block text-[18px] font-bold text-slate-500 mb-3"
               >Editing Position</label
             >
-            <div id="slotControls" class="grid grid-cols-2 gap-2"></div>
+            <div id="slotControls" class="grid grid-cols-2 gap-2 mb-4"></div>
 
-            <div class="mt-4">
+            <div class="border-t border-slate-200 pt-4 mt-2">
+              <label
+                class="block text-[16px] font-bold text-slate-500 mb-2 flex items-center gap-1"
+              >
+                Background (For Current Slot)
+              </label>
+              <select
+                id="bgSelect"
+                onchange="changeBackgroundForCurrentSlot(this.value)"
+                class="w-full pl-4 pr-10 py-2.5 bg-white border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-sm cursor-pointer shadow-sm transition-all appearance-none"
+                style="
+                  background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;);
+                  background-repeat: no-repeat;
+                  background-position: right 1rem center;
+                  background-size: 1.2em;
+                "
+              ></select>
+
+              <button
+                onclick="applyBackgroundToAllSlots()"
+                class="w-full mt-2 py-2 text-[13px] font-bold text-[#006d4b] bg-white border border-[#006d4b]/30 hover:bg-emerald-50 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
+              >
+                <span class="material-symbols-outlined text-[16px]"
+                  >imagesmode</span
+                >
+                ใช้พื้นหลังนี้กับทุก Slot
+              </button>
+            </div>
+
+            <div class="mt-4 pt-2">
               <button
                 onclick="clearCurrentSlot()"
                 class="w-full py-2.5 text-[14px] font-bold text-[#e15b58] bg-white border border-[#e15b58]/30 hover:bg-red-50 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
@@ -308,7 +350,6 @@
               </button>
             </div>
           </div>
-
           <div class="relative mt-2">
             <label class="block text-[18px] font-bold text-slate-500 mb-2"
               >Menu Search</label
@@ -336,7 +377,6 @@
             <label class="block text-[18px] font-bold text-slate-500 mb-2"
               >Descriptions</label
             >
-
             <div
               class="relative border border-slate-200 rounded-xl bg-white p-4 pt-10 flex flex-col"
             >
@@ -349,7 +389,6 @@
                 id="nameTh"
                 class="text-base font-bold text-slate-700 whitespace-pre-line break-words mb-4"
               ></div>
-
               <div
                 class="mt-auto border-t border-slate-100 pt-3 grid grid-cols-[1.5fr_1fr] gap-3"
               >
@@ -363,9 +402,7 @@
                     onchange="changeFontTh(this.value)"
                     class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600 cursor-pointer"
                   >
-                    <option value="'Sarabun', sans-serif" selected>
-                      Sarabun
-                    </option>
+                    <option value="'Sarabun', sans-serif">Sarabun</option>
                     <option value="'Inter', sans-serif">Inter</option>
                     <option value="'Mali', cursive">Mali (น่ารัก)</option>
                   </select>
@@ -379,7 +416,6 @@
                     type="number"
                     id="fontSizeTh"
                     onchange="changeFontSizeTh(this.value)"
-                    value="22"
                     class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600"
                   />
                 </div>
@@ -398,7 +434,6 @@
                 id="nameEn"
                 class="text-base text-slate-600 whitespace-pre-line break-words mb-4"
               ></div>
-
               <div
                 class="mt-auto border-t border-slate-100 pt-3 grid grid-cols-[1.5fr_1fr] gap-3"
               >
@@ -412,7 +447,7 @@
                     onchange="changeFontEn(this.value)"
                     class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600 cursor-pointer"
                   >
-                    <option value="'Inter', sans-serif" selected>Inter</option>
+                    <option value="'Inter', sans-serif">Inter</option>
                     <option value="'Sarabun', sans-serif">Sarabun</option>
                     <option value="'Mali', cursive">Mali (น่ารัก)</option>
                   </select>
@@ -426,7 +461,6 @@
                     type="number"
                     id="fontSizeEn"
                     onchange="changeFontSizeEn(this.value)"
-                    value="22"
                     class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600"
                   />
                 </div>
@@ -442,7 +476,6 @@
               id="allergenList"
               class="space-y-2 text-sm font-bold text-slate-700"
             ></div>
-
             <div class="pt-4 mt-4 flex flex-col gap-2">
               <button
                 onclick="applyToAllSlots()"
@@ -451,7 +484,7 @@
                 <span class="material-symbols-outlined text-[18px]"
                   >content_copy</span
                 >
-                ใช้กับทุก Slot
+                ใช้เมนูนี้กับทุก Slot
               </button>
             </div>
           </div>
@@ -469,15 +502,15 @@
               onclick="exportFile('jpg')"
               class="py-2.5 bg-white border border-slate-200 rounded-lg font-bold text-slate-600 hover:bg-slate-50 flex items-center justify-center gap-2 text-[13px] shadow-sm transition-all"
             >
-              <span class="material-symbols-outlined text-[18px]">image</span>
-              JPG
+              <span class="material-symbols-outlined text-[18px]">image</span
+              >JPG
             </button>
             <button
               onclick="exportFile('png')"
               class="py-2.5 bg-white border border-slate-200 rounded-lg font-bold text-slate-600 hover:bg-slate-50 flex items-center justify-center gap-2 text-[13px] shadow-sm transition-all"
             >
-              <span class="material-symbols-outlined text-[18px]">image</span>
-              PNG
+              <span class="material-symbols-outlined text-[18px]">image</span
+              >PNG
             </button>
             <button
               onclick="exportFile('pdf')"
@@ -485,15 +518,14 @@
             >
               <span class="material-symbols-outlined text-[18px]"
                 >picture_as_pdf</span
-              >
-              PDF
+              >PDF
             </button>
             <button
               onclick="shareDirectly()"
               class="py-2.5 bg-white border border-slate-200 rounded-lg font-bold text-slate-600 hover:bg-slate-50 flex items-center justify-center gap-2 text-[13px] shadow-sm transition-all"
             >
-              <span class="material-symbols-outlined text-[18px]">share</span>
-              SHARE
+              <span class="material-symbols-outlined text-[18px]">share</span
+              >SHARE
             </button>
           </div>
         </div>
@@ -530,16 +562,19 @@
     </div>
 
     <script>
+      const supabaseUrl = "https://nexvompdeubppbkvnwor.supabase.co";
+      const supabaseKey = "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI";
+      const dbClient = supabase.createClient(supabaseUrl, supabaseKey);
+
       let currentTemplateConfig = {};
       let activeSlot = 1;
       let slotsData = {};
       let isInitialLoading = false;
 
-      let currentFontTh = "'Sarabun', sans-serif";
-      let currentFontEn = "'Inter', sans-serif";
-      let currentFontSizeTh = "22px";
-      let currentFontSizeEn = "22px";
-      let currentBgUrl = "";
+      const DEFAULT_FONT_TH = "'Sarabun', sans-serif";
+      const DEFAULT_FONT_EN = "'Inter', sans-serif";
+      const DEFAULT_SIZE_TH = "22px";
+      const DEFAULT_SIZE_EN = "22px";
 
       const urlParams = new URLSearchParams(window.location.search);
       const editId = urlParams.get("edit");
@@ -596,18 +631,18 @@
 
               applyTemplate(config, targetBtn);
 
-              for (let i = 1; i <= config.slots_count; i++) {
-                if (slotsData[i]) {
+              setTimeout(() => {
+                for (let i = 1; i <= config.slots_count; i++) {
                   const slotDiv = document.getElementById(`slot-${i}`);
-                  const wrapper = slotDiv.querySelector("div:last-child");
-                  renderSlotContent(wrapper, slotsData[i], i);
+                  if (slotDiv) {
+                    const wrapper = slotDiv.querySelector("div:last-child");
+                    const menu = slotsData[i] || {};
+                    renderSlotContent(wrapper, menu, i);
+                  }
                 }
-              }
-
-              if (slotsData[1]) {
-                setTimeout(() => updateInputs(slotsData[1]), 50);
-              }
-              setTimeout(resizePaper, 100);
+                if (slotsData[1]) updateInputs(slotsData[1]);
+                resizePaper();
+              }, 300);
             }
           }
           isInitialLoading = false;
@@ -661,11 +696,13 @@
 
         if (!isInitialLoading) slotsData = {};
         activeSlot = 1;
-        setupGridStructure();
-        renderSlotControls(temp.slots_count);
-        clearInputs();
-        loadBackgrounds(temp.name);
-        setTimeout(resizePaper, 50);
+
+        loadBackgrounds(temp.name).then(() => {
+          setupGridStructure();
+          renderSlotControls(temp.slots_count);
+          clearInputs();
+          setTimeout(resizePaper, 50);
+        });
       }
 
       function setupGridStructure() {
@@ -690,43 +727,61 @@
             "w-full h-full flex flex-col items-center justify-center relative z-10 p-6";
           div.appendChild(contentWrapper);
           innerGrid.appendChild(div);
+
+          if (!slotsData[i]) {
+            slotsData[i] = { bgUrl: "" };
+          } else if (!slotsData[i].bgUrl) {
+            slotsData[i].bgUrl = "";
+          }
+
+          renderSlotContent(contentWrapper, slotsData[i], i);
         }
+
+        syncBgSelectWithCurrentSlot();
       }
 
       function renderSlotContent(element, menu, index) {
         const showAllergies = !currentTemplateConfig.hide_allergies;
 
-        if (!menu || Object.keys(menu).length === 0) {
-          const bgHtml = currentBgUrl
-            ? `<img src="${currentBgUrl}" class="slot-bg">`
-            : "";
+        const slotBgUrl = menu.bgUrl || "";
+        const bgHtml = slotBgUrl
+          ? `<img src="${slotBgUrl}" class="slot-bg">`
+          : "";
+
+        if (!menu.name_th && !menu.name_en) {
           element.innerHTML = bgHtml + `<div class="slot-content"></div>`;
           return;
         }
 
+        const fTh = menu.fontTh || DEFAULT_FONT_TH;
+        const sTh = menu.fontSizeTh || DEFAULT_SIZE_TH;
+        const fEn = menu.fontEn || DEFAULT_FONT_EN;
+        const sEn = menu.fontSizeEn || DEFAULT_SIZE_EN;
+
+        // ===== ALLERGEN HTML — แสดงเป็น grid ไอคอน + ชื่อ =====
         const allergensHtml =
-          showAllergies && menu.allergens
-            ? menu.allergens
+          showAllergies && menu.allergens && menu.allergens.length > 0
+            ? `<div class="allergen-container">` +
+              menu.allergens
                 .map((a) => {
                   const imgUrl =
                     a.icon_url ||
+                    a.image_url ||
                     "https://via.placeholder.com/40/ffffff/cccccc?text=IMG";
-                  return `<img src="${imgUrl}" class="allergen-icon shadow-sm" title="${a.name}">`;
+                  const nameText = a.name_th || a.name_en || "";
+                  return `<img src="${imgUrl}" class="allergen-icon" title="${nameText}" crossorigin="anonymous">`;
                 })
-                .join("")
+                .join("") +
+              `</div>`
             : "";
-
-        const bgHtml = currentBgUrl
-          ? `<img src="${currentBgUrl}" class="slot-bg">`
-          : "";
 
         element.innerHTML = `
             ${bgHtml}
             <div class="slot-content">
               <img src="Impact_Logo.png" class="h-6 opacity-30 mb-4" alt="logo" onerror="this.style.display='none'">
-              <div class="slot-text-th font-black text-slate-800 mb-2 leading-relaxed text-center whitespace-pre-line" style="font-family: ${currentFontTh}; font-size: ${currentFontSizeTh};">${menu.name_th || ""}</div>
-              <div class="slot-text-en font-medium text-slate-500 mb-4 leading-relaxed text-center whitespace-pre-line" style="font-family: ${currentFontEn}; font-size: ${currentFontSizeEn};">${menu.name_en || ""}</div>
-              <div class="flex gap-2 justify-center mt-2">${allergensHtml}</div>
+              <div class="slot-text-th font-black text-slate-800 mb-2 leading-relaxed text-center whitespace-pre-line" style="font-family: ${fTh}; font-size: ${sTh};">${menu.name_th || ""}</div>
+              <div class="slot-text-en font-medium text-slate-500 mb-4 leading-relaxed text-center whitespace-pre-line" style="font-family: ${fEn}; font-size: ${sEn};">${menu.name_en || ""}</div>
+              ${allergensHtml}
             </div>
         `;
       }
@@ -744,8 +799,10 @@
             document
               .querySelectorAll(".slot")
               .forEach((s) => s.classList.remove("active"));
+
             const currentSlot = document.getElementById(`slot-${i}`);
             currentSlot.classList.add("active");
+
             document
               .querySelectorAll(".slot > div:first-child")
               .forEach((el, idx) => {
@@ -755,14 +812,23 @@
                     : `Slot ${idx + 1}`;
                 el.className = `absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded print:hidden z-20 transition-colors hidden-on-export ${idx + 1 === activeSlot ? "bg-[#006d4b] text-white shadow-sm" : "bg-slate-100 text-slate-400"}`;
               });
+
             if (slotsData[i]) {
               updateInputs(slotsData[i]);
             } else {
               clearInputs();
             }
+
+            syncBgSelectWithCurrentSlot();
           };
           container.appendChild(btn);
         }
+      }
+
+      function syncBgSelectWithCurrentSlot() {
+        const select = document.getElementById("bgSelect");
+        const currentBg = slotsData[activeSlot]?.bgUrl || "";
+        select.value = currentBg;
       }
 
       function updateInputs(menu) {
@@ -771,19 +837,35 @@
         document.getElementById("menuSearch").value = menu.name_th
           ? menu.name_th.split("\n")[0]
           : "";
+
+        document.getElementById("fontSelectTh").value =
+          menu.fontTh || DEFAULT_FONT_TH;
+        document.getElementById("fontSizeTh").value = parseInt(
+          menu.fontSizeTh || DEFAULT_SIZE_TH,
+        );
+        document.getElementById("fontSelectEn").value =
+          menu.fontEn || DEFAULT_FONT_EN;
+        document.getElementById("fontSizeEn").value = parseInt(
+          menu.fontSizeEn || DEFAULT_SIZE_EN,
+        );
+
         const list = document.getElementById("allergenList");
         if (menu.allergens && menu.allergens.length > 0) {
           list.innerHTML = menu.allergens
-            .map(
-              (a) =>
-                `<div class="flex items-center gap-3 p-2 bg-slate-50 border border-slate-100 rounded-lg shadow-sm">
-                <img src="${a.icon_url || "https://via.placeholder.com/40/ffffff/cccccc?text=IMG"}" class="w-6 h-6 object-contain rounded">
-                <span class="text-xs font-bold text-slate-700">${a.name}</span>
-             </div>`,
-            )
+            .map((a) => {
+              const imgUrl =
+                a.icon_url ||
+                a.image_url ||
+                "https://via.placeholder.com/40/ffffff/cccccc?text=IMG";
+              const displayName = a.name_th || a.name_en || "Unknown";
+              return `<div class="flex items-center gap-3 p-2 bg-slate-50 border border-slate-100 rounded-lg shadow-sm">
+                <img src="${imgUrl}" class="w-8 h-8 object-contain rounded border border-slate-200 bg-white p-0.5" onerror="this.src='https://placehold.co/100x100/e2e8f0/94a3b8?text=No+Image'">
+                <span class="text-xs font-bold text-slate-700 uppercase tracking-widest">${displayName}</span>
+             </div>`;
+            })
             .join("");
         } else {
-          list.innerHTML = "";
+          list.innerHTML = `<div class="text-xs text-slate-400 italic">No images assigned</div>`;
         }
       }
 
@@ -792,32 +874,34 @@
         document.getElementById("nameEn").innerText = "";
         document.getElementById("menuSearch").value = "";
         document.getElementById("allergenList").innerHTML = "";
+
+        document.getElementById("fontSelectTh").value = DEFAULT_FONT_TH;
+        document.getElementById("fontSizeTh").value = parseInt(DEFAULT_SIZE_TH);
+        document.getElementById("fontSelectEn").value = DEFAULT_FONT_EN;
+        document.getElementById("fontSizeEn").value = parseInt(DEFAULT_SIZE_EN);
       }
 
-      // ฟังก์ชันลบข้อมูลของ Slot ปัจจุบัน (Clear)
       function clearCurrentSlot() {
-        if (confirm(`ต้องการลบข้อมูลของ Slot ${activeSlot} ใช่หรือไม่?`)) {
-          delete slotsData[activeSlot];
+        if (
+          confirm(`ต้องการลบข้อมูลทั้งหมดของ Slot ${activeSlot} ใช่หรือไม่?`)
+        ) {
+          slotsData[activeSlot] = { bgUrl: "" };
           clearInputs();
-          const slotDiv = document.getElementById(`slot-${activeSlot}`);
-          if (slotDiv) {
-            const wrapper = slotDiv.querySelector("div:last-child");
-            renderSlotContent(wrapper, {}, activeSlot);
-          }
+          syncBgSelectWithCurrentSlot();
+          renderActiveSlotOnly();
         }
       }
 
-      // ฟังก์ชันใช้เมนูนี้กับทุก Slot (Apply to All)
       function applyToAllSlots() {
         const currentMenu = slotsData[activeSlot];
-        if (!currentMenu || Object.keys(currentMenu).length === 0) {
-          alert("⚠️ กรุณาเลือกหรือค้นหาเมนูให้ช่องนี้ก่อนทำการคัดลอกครับ");
+        if (!currentMenu || (!currentMenu.name_th && !currentMenu.bgUrl)) {
+          alert("⚠️ ไม่มีข้อมูลในช่องนี้ให้คัดลอกครับ");
           return;
         }
 
         if (
           confirm(
-            `ต้องการใช้เมนู "${currentMenu.name_th}" กับทุก Slot ใช่หรือไม่?`,
+            `ต้องการคัดลอกข้อมูล การตั้งค่าฟอนต์ และพื้นหลังของช่องที่ ${activeSlot} ไปยังทุก Slot ใช่หรือไม่?`,
           )
         ) {
           const count = currentTemplateConfig.slots_count;
@@ -832,58 +916,109 @@
         }
       }
 
+      function applyBackgroundToAllSlots() {
+        const select = document.getElementById("bgSelect");
+        const bgUrl = select.value;
+
+        if (confirm(`ต้องการใช้ภาพพื้นหลังนี้กับทุก Slot ใช่หรือไม่?`)) {
+          const count = currentTemplateConfig.slots_count;
+          for (let i = 1; i <= count; i++) {
+            if (!slotsData[i]) slotsData[i] = {};
+            slotsData[i].bgUrl = bgUrl;
+
+            const slotDiv = document.getElementById(`slot-${i}`);
+            if (slotDiv) {
+              const wrapper = slotDiv.querySelector("div:last-child");
+              renderSlotContent(wrapper, slotsData[i], i);
+            }
+          }
+        }
+      }
+
       async function searchMenu(query) {
         const results = document.getElementById("searchResults");
-
         if (query.length < 1) {
           results.classList.add("hidden");
           return;
         }
+        try {
+          const { data: menus, error } = await dbClient
+            .from("menus")
+            .select("*")
+            .or(`name_th.ilike.%${query}%,name_en.ilike.%${query}%`)
+            .limit(10);
+          if (error) throw error;
 
-        const dummyMenus = [
-          {
-            id: 1,
-            name_th: "ทอดมันกุ้ง",
-            name_en: "Deep-fried Prawn cake",
-            allergens: [{ name: "Crustaceans", icon_url: "" }],
-          },
-          {
-            id: 2,
-            name_th: "ไก่ผัดเม็ดมะม่วง",
-            name_en: "Stir-fried Chicken with Cashew Nuts",
-            allergens: [
-              { name: "Chicken", icon_url: "" },
-              { name: "Nuts", icon_url: "" },
-            ],
-          },
-        ].filter(
-          (m) =>
-            m.name_th.includes(query) ||
-            m.name_en.toLowerCase().includes(query.toLowerCase()),
-        );
-
-        if (dummyMenus.length > 0) {
-          results.innerHTML = dummyMenus
-            .map(
-              (m) =>
-                `<div onclick='selectMenu(${JSON.stringify(m)})' class="p-3 hover:bg-emerald-50 cursor-pointer border-b last:border-0 transition-colors"><div class="font-bold text-sm text-slate-800">${m.name_th}</div><div class="text-xs text-slate-500">${m.name_en}</div></div>`,
-            )
-            .join("");
-          results.classList.remove("hidden");
-        } else {
-          results.innerHTML =
-            '<div class="p-3 text-xs text-slate-400">ไม่พบข้อมูลเมนู</div>';
-          results.classList.remove("hidden");
+          if (menus && menus.length > 0) {
+            const { data: allIngs } = await dbClient
+              .from("ingredients")
+              .select("*");
+            results.innerHTML = menus
+              .map((m) => {
+                const allergens = (m.ingredient_ids || [])
+                  .map((id) =>
+                    allIngs.find((ing) => String(ing.id) === String(id)),
+                  )
+                  .filter(Boolean);
+                const completeMenu = { ...m, allergens: allergens };
+                return `<div onclick='selectMenu(${JSON.stringify(completeMenu).replace(/'/g, "&#39;")})' class="p-3 hover:bg-emerald-50 cursor-pointer border-b last:border-0 transition-colors"><div class="font-bold text-sm text-slate-800">${m.name_th}</div><div class="text-xs text-slate-500">${m.name_en || ""}</div></div>`;
+              })
+              .join("");
+            results.classList.remove("hidden");
+          } else {
+            results.innerHTML =
+              '<div class="p-3 text-xs text-slate-400">ไม่พบข้อมูลเมนู</div>';
+            results.classList.remove("hidden");
+          }
+        } catch (err) {
+          console.error("Search Error:", err);
         }
       }
 
       function selectMenu(menu) {
-        slotsData[activeSlot] = JSON.parse(JSON.stringify(menu));
-        updateInputs(menu);
+        const currentSlotData = slotsData[activeSlot] || {};
+
+        slotsData[activeSlot] = {
+          ...menu,
+          bgUrl: currentSlotData.bgUrl || "",
+          fontTh: currentSlotData.fontTh || DEFAULT_FONT_TH,
+          fontSizeTh: currentSlotData.fontSizeTh || DEFAULT_SIZE_TH,
+          fontEn: currentSlotData.fontEn || DEFAULT_FONT_EN,
+          fontSizeEn: currentSlotData.fontSizeEn || DEFAULT_SIZE_EN,
+        };
+
+        updateInputs(slotsData[activeSlot]);
         document.getElementById("searchResults").classList.add("hidden");
-        const slotDiv = document.getElementById(`slot-${activeSlot}`);
-        const contentWrapper = slotDiv.querySelector("div:last-child");
-        renderSlotContent(contentWrapper, menu, activeSlot);
+        renderActiveSlotOnly();
+      }
+
+      function changeBackgroundForCurrentSlot(bgUrl) {
+        if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
+        slotsData[activeSlot].bgUrl = bgUrl;
+        renderActiveSlotOnly();
+      }
+
+      async function loadBackgrounds(sizeName) {
+        const select = document.getElementById("bgSelect");
+        select.innerHTML = '<option value="">สีขาว</option>';
+
+        try {
+          const { data: bgs, error } = await dbClient
+            .from("backgrounds")
+            .select("*")
+            .eq("template_size", sizeName);
+          if (error) throw error;
+
+          if (bgs && bgs.length > 0) {
+            bgs.forEach((bg) => {
+              select.innerHTML += `<option value="${bg.image_url}">${bg.name}</option>`;
+            });
+          }
+
+          syncBgSelectWithCurrentSlot();
+        } catch (err) {
+          console.error("Error loading backgrounds:", err);
+        }
       }
 
       function showSaveModal() {
@@ -972,6 +1107,7 @@
         const canvas = await html2canvas(paper, {
           scale: 2,
           useCORS: true,
+          allowTaint: false,
           backgroundColor: "#ffffff",
         });
         paper.style.transform = originalTransform;
@@ -1034,58 +1170,33 @@
         }, "image/png");
       }
 
-      function changeFontTh(fontValue) {
-        currentFontTh = fontValue;
-        document.querySelectorAll(".slot-text-th").forEach((el) => {
-          el.style.fontFamily = currentFontTh;
-        });
-      }
-      function changeFontSizeTh(sizeValue) {
-        currentFontSizeTh = sizeValue + "px";
-        document.querySelectorAll(".slot-text-th").forEach((el) => {
-          el.style.fontSize = currentFontSizeTh;
-        });
-      }
-
-      function changeFontEn(fontValue) {
-        currentFontEn = fontValue;
-        document.querySelectorAll(".slot-text-en").forEach((el) => {
-          el.style.fontFamily = currentFontEn;
-        });
-      }
-      function changeFontSizeEn(sizeValue) {
-        currentFontSizeEn = sizeValue + "px";
-        document.querySelectorAll(".slot-text-en").forEach((el) => {
-          el.style.fontSize = currentFontSizeEn;
-        });
-      }
-
-      function changeBackground(bgUrl) {
-        currentBgUrl = bgUrl;
-        for (let i = 1; i <= currentTemplateConfig.slots_count; i++) {
-          const slotDiv = document.getElementById(`slot-${i}`);
-          if (slotDiv) {
-            const wrapper = slotDiv.querySelector("div:last-child");
-            const menu = slotsData[i] || {};
-            renderSlotContent(wrapper, menu, i);
-          }
+      function renderActiveSlotOnly() {
+        const slotDiv = document.getElementById(`slot-${activeSlot}`);
+        if (slotDiv) {
+          const wrapper = slotDiv.querySelector("div:last-child");
+          renderSlotContent(wrapper, slotsData[activeSlot], activeSlot);
         }
       }
 
-      async function loadBackgrounds(sizeName) {
-        const select = document.getElementById("bgSelect");
-        select.innerHTML = '<option value="">-- สีขาว (Default) --</option>';
-        try {
-          const res = await fetch(
-            `https://foodtag-api.onrender.com/api/backgrounds?size=${sizeName}`,
-          );
-          const bgs = await res.json();
-          bgs.forEach((bg) => {
-            select.innerHTML += `<option value="${bg.image_url}">${bg.name}</option>`;
-          });
-        } catch (err) {
-          console.log("Cannot load backgrounds yet or no API", err);
-        }
+      function changeFontTh(val) {
+        if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
+        slotsData[activeSlot].fontTh = val;
+        renderActiveSlotOnly();
+      }
+      function changeFontSizeTh(val) {
+        if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
+        slotsData[activeSlot].fontSizeTh = val + "px";
+        renderActiveSlotOnly();
+      }
+      function changeFontEn(val) {
+        if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
+        slotsData[activeSlot].fontEn = val;
+        renderActiveSlotOnly();
+      }
+      function changeFontSizeEn(val) {
+        if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
+        slotsData[activeSlot].fontSizeEn = val + "px";
+        renderActiveSlotOnly();
       }
     </script>
   </body>

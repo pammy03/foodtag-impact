@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard | IMPACT Food Tag</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=Mali:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link
@@ -28,7 +28,6 @@
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
-      /* 📄 โครงสร้างป้ายจริง */
       .preview-paper {
         background: white;
         box-shadow:
@@ -47,29 +46,19 @@
         flex-grow: 1;
         border-top: 1px dashed #cbd5e1;
         border-left: 1px dashed #cbd5e1;
+        background-color: white;
       }
       .grid-plate {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr;
+        grid-template-columns: repeat(2, 13cm);
+        grid-template-rows: repeat(1, 18cm);
       }
       .grid-western {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr 1fr;
+        grid-template-columns: repeat(2, 10.5cm);
+        grid-template-rows: repeat(2, 14.8cm);
       }
       .grid-buffet {
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(2, 1fr);
-      }
-      .slot {
-        border-right: 1px dashed #cbd5e1;
-        border-bottom: 1px dashed #cbd5e1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        padding: 30px;
-        text-align: center;
+        grid-template-columns: repeat(3, 9.9cm);
+        grid-template-rows: repeat(2, 9.7cm);
       }
 
       .card-preview-container {
@@ -86,7 +75,6 @@
         pointer-events: none;
       }
 
-      /* 🖨️ การสั่ง Print: แก้ไขให้มีหน้าเดียวเป๊ะ */
       @media print {
         body > *:not(#printArea) {
           display: none !important;
@@ -99,7 +87,6 @@
           overflow: hidden !important;
           background: white;
         }
-
         #printArea {
           display: block !important;
           width: 100% !important;
@@ -108,7 +95,6 @@
           top: 0 !important;
           left: 0 !important;
         }
-
         .preview-paper {
           box-shadow: none !important;
           transform: none !important;
@@ -117,7 +103,6 @@
           height: 100% !important;
           border: none !important;
         }
-
         #previewModal {
           display: none !important;
         }
@@ -125,62 +110,7 @@
     </style>
   </head>
   <body class="bg-[#f8fafc] flex h-screen overflow-hidden">
-    <aside
-      class="w-64 bg-white border-r border-slate-200 flex flex-col p-6 shrink-0 z-10"
-    >
-      <div class="mb-10 px-2">
-        <img
-          src="Impact_Logo.png"
-          alt="IMPACT Logo"
-          class="h-10 w-auto object-contain"
-          onerror="this.style.display = 'none'"
-        />
-      </div>
-
-      <div
-        class="bg-slate-50 border border-slate-100 p-4 rounded-xl mb-8 flex items-center gap-3"
-      >
-        <div
-          class="w-10 h-10 bg-[#003B71] rounded-full flex items-center justify-center text-white font-bold shrink-0"
-        >
-          <span class="material-symbols-outlined text-lg">person</span>
-        </div>
-        <div class="overflow-hidden">
-          <p id="profileName" class="font-bold text-sm text-slate-800 truncate">
-            Admin_Siriprapa
-          </p>
-          <p
-            id="profileRole"
-            class="text-[11px] font-medium text-slate-500 uppercase tracking-wider"
-          >
-            ADMIN
-          </p>
-        </div>
-      </div>
-
-      <nav class="space-y-2 flex-1">
-        <a
-          href="#"
-          class="flex items-center gap-3 px-4 py-3 bg-[#006d4b]/10 text-[#006d4b] rounded-lg font-semibold"
-        >
-          <span class="material-symbols-outlined">dashboard</span> Dashboard
-        </a>
-
-        <a
-          href="menu-database.html"
-          class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-medium transition-all"
-        >
-          <span class="material-symbols-outlined">database</span> Menu Database
-        </a>
-      </nav>
-      <button
-        onclick="showLogoutModal()"
-        class="flex items-center gap-3 text-red-500 font-medium px-4 py-3 hover:bg-red-50 rounded-lg transition-all mt-auto border border-transparent hover:border-red-100"
-      >
-        <span class="material-symbols-outlined">logout</span> Logout
-      </button>
-    </aside>
-
+    <div id="sidebar-container" class="shrink-0 h-full z-20"></div>
     <main class="flex-1 p-10 overflow-y-auto z-0 relative">
       <div class="flex justify-between items-end mb-8">
         <div>
@@ -214,16 +144,23 @@
             class="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#006d4b] outline-none text-sm transition-all shadow-sm"
           />
         </div>
-        <select
-          id="sizeFilter"
-          onchange="filterCards()"
-          class="px-4 py-3 bg-white border border-slate-200 rounded-lg text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer"
-        >
-          <option value="all">All Sizes</option>
-          <option value="Plate / Food Stall">Plate Service</option>
-          <option value="Western Set">Western Set</option>
-          <option value="Buffet / Coffee Break">Buffet</option>
-        </select>
+
+        <div class="relative shrink-0">
+          <select
+            id="sizeFilter"
+            onchange="filterCards()"
+            class="appearance-none pl-4 pr-11 py-3 bg-white border border-slate-200 rounded-lg text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer min-w-[160px] font-semibold"
+          >
+            <option value="all">All Sizes</option>
+            <option value="Plate / Food Stall">Plate Service</option>
+            <option value="Western Set">Western Set</option>
+            <option value="Buffet / Coffee Break">Buffet</option>
+          </select>
+          <span
+            class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+            >expand_more</span
+          >
+        </div>
       </div>
 
       <div
@@ -275,7 +212,6 @@
             </button>
           </div>
         </div>
-
         <div
           id="modalBody"
           class="flex-1 overflow-auto flex justify-center items-start pt-8 pb-12 bg-slate-100 relative"
@@ -287,6 +223,8 @@
         </div>
       </div>
     </div>
+
+    <script src="sidebar.js"></script>
 
     <script>
       const TEMPLATE_CONFIGS = {
@@ -316,12 +254,6 @@
         },
       };
 
-      const userData = JSON.parse(localStorage.getItem("userData"));
-      if (userData) {
-        document.getElementById("profileName").innerText = userData.name;
-        document.getElementById("profileRole").innerText = userData.role;
-      }
-
       function getSavedTags() {
         return JSON.parse(localStorage.getItem("savedTags")) || [];
       }
@@ -330,14 +262,26 @@
         const cardGrid = document.getElementById("cardGrid");
         const savedTags = getSavedTags();
         cardGrid.innerHTML = "";
+
+        if (savedTags.length === 0) {
+          cardGrid.innerHTML = `
+            <div class="col-span-full py-20 flex flex-col items-center justify-center text-slate-400 bg-white rounded-2xl border border-dashed border-slate-200">
+              <span class="material-symbols-outlined text-6xl mb-4 opacity-50">note_stack</span>
+              <p class="font-bold text-lg text-slate-600">No Profiles Found</p>
+              <p class="text-sm mt-1 mb-6">เริ่มสร้างป้ายอาหารใหม่ได้เลย</p>
+              <button onclick="window.location.href = 'create.html'" class="px-6 py-2.5 bg-[#006d4b] text-white rounded-xl font-bold shadow-md hover:bg-[#005a3d]">Create New Tag</button>
+            </div>
+          `;
+          return;
+        }
+
         savedTags
           .slice()
           .reverse()
           .forEach((tag) => {
             const config = TEMPLATE_CONFIGS[tag.templateName];
             const cardHTML = `
-                <div class="profile-card bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col" 
-                     data-name="${tag.title}" data-size="${tag.templateName}">
+                <div class="profile-card bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col" data-name="${tag.title}" data-size="${tag.templateName}">
                   <div onclick="openPreviewModal('${tag.id}')" class="card-preview-container cursor-pointer hover:opacity-90 transition-opacity group relative bg-slate-100">
                     <div class="scaled-preview" id="mini-preview-${tag.id}"></div>
                     <div class="absolute inset-0 bg-slate-900/0 group-hover:bg-[#006d4b]/10 flex items-center justify-center transition-all z-20">
@@ -353,7 +297,11 @@
                         <p class="flex items-center gap-2.5"><span class="material-symbols-outlined text-[18px]">aspect_ratio</span> ${tag.templateName}</p>
                     </div>
                     <div class="flex justify-between items-center border-t border-slate-100 pt-5 mt-auto">
-                      <button onclick="window.location.href='create.html?edit=${tag.id}'" class="p-2.5 text-slate-400 hover:text-[#006d4b] hover:bg-emerald-50 rounded-xl transition-all"><span class="material-symbols-outlined text-[22px]">edit_note</span></button>
+                      <div class="flex gap-2">
+                          <button onclick="window.location.href='create.html?edit=${tag.id}'" class="p-2.5 text-slate-400 hover:text-[#006d4b] hover:bg-emerald-50 rounded-xl transition-all" title="Edit Profile"><span class="material-symbols-outlined text-[22px]">edit_note</span></button>
+                          <button onclick="deleteProfile('${tag.id}')" class="p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all" title="Delete Profile"><span class="material-symbols-outlined text-[22px]">delete</span></button>
+                      </div>
+                      
                       <button onclick="executePrint('${tag.id}')" class="text-[#006d4b] font-bold text-sm flex items-center gap-2 hover:bg-emerald-50 px-4 py-2 rounded-xl transition-all border border-transparent hover:border-emerald-100">
                         <span class="material-symbols-outlined text-[20px]">print</span> Print Tag
                       </button>
@@ -375,22 +323,45 @@
         if (!config) return "";
         let slotsHTML = "";
         const slotsData = tagData.slotsData || {};
+
+        const fTh = tagData.fonts?.fontTh || "'Sarabun', sans-serif";
+        const sTh = tagData.fonts?.sizeTh || "22px";
+        const fEn = tagData.fonts?.fontEn || "'Inter', sans-serif";
+        const sEn = tagData.fonts?.sizeEn || "22px";
+
         for (let i = 1; i <= config.slots_count; i++) {
           const menu = slotsData[i] || {};
-          const allergensHtml = menu.allergens
-            ? menu.allergens
-                .map((a) => `<span class="text-3xl mx-1">${a.icon}</span>`)
-                .join("")
+
+          const slotBgUrl = menu.bgUrl || "";
+          const bgHtml = slotBgUrl
+            ? `<img src="${slotBgUrl}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: 0;">`
             : "";
+
+          const allergensHtml =
+            !config.hide_allergies && menu.allergens
+              ? menu.allergens
+                  .map((a) => {
+                    const imgUrl =
+                      a.image_url ||
+                      a.icon_url ||
+                      "https://via.placeholder.com/40/ffffff/cccccc?text=IMG";
+                    return `<img src="${imgUrl}" style="width: 32px; height: 32px; object-fit: contain; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" title="${a.name}">`;
+                  })
+                  .join("<div style='width: 8px'></div>")
+              : "";
+
           slotsHTML += `
-              <div class="slot">
-                  <img src="Impact_Logo.png" class="h-10 opacity-20 mb-4" onerror="this.style.display='none'">
-                  <div class="text-2xl font-black text-slate-800 mb-2 leading-tight uppercase">${menu.name_th || ""}</div>
-                  <div class="text-base italic text-slate-500 font-semibold mb-4 leading-tight">${menu.name_en || ""}</div>
-                  <div class="flex gap-2 justify-center">${allergensHtml}</div>
+              <div class="slot" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: white; overflow: hidden; border-right: 1px dashed #cbd5e1; border-bottom: 1px dashed #cbd5e1; text-align: center;">
+                  ${bgHtml}
+                  <div style="position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; width: 100%; padding: 30px;">
+                      <img src="Impact_Logo.png" style="height: 24px; opacity: 0.3; margin-bottom: 16px;" onerror="this.style.display='none'">
+                      <div style="font-family: ${fTh}; font-size: ${sTh}; font-weight: 900; color: #1e293b; margin-bottom: 8px; line-height: 1.5; text-transform: uppercase; white-space: pre-line;">${menu.name_th || ""}</div>
+                      <div style="font-family: ${fEn}; font-size: ${sEn}; font-weight: 500; color: #64748b; margin-bottom: 16px; line-height: 1.5; white-space: pre-line;">${menu.name_en || ""}</div>
+                      <div style="display: flex; gap: 8px; justify-content: center; margin-top: 8px;">${allergensHtml}</div>
+                  </div>
               </div>`;
         }
-        return `<div class="preview-paper" style="width: ${config.w}px; height: ${config.h}px; padding: 40px;"><div class="inner-grid ${config.grid_class}">${slotsHTML}</div></div>`;
+        return `<div class="preview-paper" style="width: ${config.w}px; height: ${config.h}px; background: white; padding: 0; box-sizing: border-box; display: flex; flex-direction: column;"><div class="inner-grid ${config.grid_class}" style="display: grid; width: 100%; height: 100%; flex-grow: 1; border-top: 1px dashed #cbd5e1; border-left: 1px dashed #cbd5e1;">${slotsHTML}</div></div>`;
       }
 
       function openPreviewModal(tagId) {
@@ -441,14 +412,8 @@
         if (oldStyle) oldStyle.remove();
         const style = document.createElement("style");
         style.id = "printPageOrientation";
-
-        // 🔹 เพิ่ม body { margin: 0 } ในสไตล์สั่งพริ้นต์เพื่อป้องกันการดันขึ้นหน้าใหม่
-        style.innerHTML = `
-          @page { size: A4 ${config.orientation}; margin: 0mm; } 
-          body { margin: 0; }
-        `;
+        style.innerHTML = `@page { size: A4 ${config.orientation}; margin: 0mm; } body { margin: 0; }`;
         document.head.appendChild(style);
-
         printArea.classList.remove("hidden");
         window.print();
         printArea.classList.add("hidden");
@@ -471,30 +436,18 @@
         }
       }
 
-      function showLogoutModal() {
-        document.getElementById("logoutModal").classList.remove("hidden");
-        setTimeout(() => {
-          document.getElementById("logoutModal").classList.add("opacity-100");
-          document
-            .getElementById("logoutModal")
-            .firstElementChild.classList.remove("scale-95");
-        }, 10);
-      }
-
-      function hideLogoutModal() {
-        document.getElementById("logoutModal").classList.remove("opacity-100");
-        document
-          .getElementById("logoutModal")
-          .firstElementChild.classList.add("scale-95");
-        setTimeout(
-          () => document.getElementById("logoutModal").classList.add("hidden"),
-          200,
-        );
-      }
-
-      function confirmLogout() {
-        localStorage.removeItem("userData");
-        window.location.href = "index.html";
+      // 🎯 ฟังก์ชันสำหรับลบ Profile ออกจากระบบ
+      function deleteProfile(tagId) {
+        if (
+          confirm(
+            "ต้องการลบโปรไฟล์ป้ายอาหารนี้ใช่หรือไม่?\n* ข้อมูลจะไม่สามารถกู้คืนได้",
+          )
+        ) {
+          let savedTags = getSavedTags();
+          savedTags = savedTags.filter((tag) => tag.id !== tagId);
+          localStorage.setItem("savedTags", JSON.stringify(savedTags));
+          loadSavedTags(); // รีเฟรชกริดใหม่ทันที
+        }
       }
 
       loadSavedTags();
