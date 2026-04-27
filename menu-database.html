@@ -68,6 +68,12 @@
           >
             Menus
           </h1>
+          <div
+            id="totalMenuCount"
+            class="ml-2 px-3 py-1 bg-emerald-50 text-[#006d4b] font-black text-[13px] rounded-lg tracking-wider hidden"
+          >
+            ...
+          </div>
         </div>
 
         <div class="flex gap-3 items-center">
@@ -319,6 +325,16 @@
             .select("*")
             .order("created_at", { ascending: false });
           dbMenus = menuData || [];
+
+          // 🎯 อัปเดตตัวเลขจำนวนเมนูทั้งหมด
+          const countEl = document.getElementById("totalMenuCount");
+          if (dbMenus.length > 0) {
+            countEl.innerText = `${dbMenus.length} รายการ`;
+            countEl.classList.remove("hidden");
+          } else {
+            countEl.classList.add("hidden");
+          }
+
           renderTable();
         } catch (e) {
           console.error(e);
@@ -347,14 +363,13 @@
           return;
         }
 
-        filtered.forEach((menu) => {
+        filtered.forEach((menu, index) => {
           const menuIngs = (menu.ingredient_ids || [])
             .map((id) => dbIngredients.find((i) => String(i.id) === String(id)))
             .filter(Boolean);
 
           const ingHtml = menuIngs
             .map((ing) => {
-              // 🎯 เอาคำสั่ง uppercase ออกเพื่อให้โชว์ตามชื่อในคลังรูปภาพ
               return `
             <div class="inline-flex items-center gap-2 bg-white shadow-sm border border-slate-200 px-3 py-1.5 rounded-xl mr-2 mb-2 group transition-all hover:border-[#006d4b]/30">
                 <img src="${ing.icon_url || ing.image_url}" class="w-6 h-6 object-cover rounded-md">
@@ -369,7 +384,10 @@
           html += `
           <tr class="menu-row border-b border-slate-100 last:border-0">
             <td class="py-5 px-8">
-                <span class="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-black tracking-widest border border-slate-200 whitespace-nowrap">${displayId}</span>
+                <div class="flex items-center gap-4">
+                    <span class="text-slate-300 font-black text-lg w-6">${index + 1}</span>
+                    <span class="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-black tracking-widest border border-slate-200 whitespace-nowrap">${displayId}</span>
+                </div>
             </td>
             <td class="py-5 px-6">
                 <div class="font-extrabold text-slate-800 text-[16px]">${menu.name_th || "-"}</div>
@@ -537,14 +555,12 @@
                   if (found) ingredientIds.push(found.id);
                 });
             }
-            await dbClient
-              .from("menus")
-              .insert({
-                menu_id: `MENU-${currentMaxId.toString().padStart(3, "0")}`,
-                name_th: nameTh,
-                name_en: nameEn,
-                ingredient_ids: ingredientIds,
-              });
+            await dbClient.from("menus").insert({
+              menu_id: `MENU-${currentMaxId.toString().padStart(3, "0")}`,
+              name_th: nameTh,
+              name_en: nameEn,
+              ingredient_ids: ingredientIds,
+            });
           }
           fetchData();
           event.target.value = "";

@@ -75,6 +75,7 @@
         pointer-events: none;
       }
 
+      /* 🎯 เพิ่ม Style สำหรับ Allergen เพื่อให้ตอน Print จากหน้านี้สวยเหมือนหน้า Create */
       @media print {
         body > *:not(#printArea) {
           display: none !important;
@@ -324,11 +325,6 @@
         let slotsHTML = "";
         const slotsData = tagData.slotsData || {};
 
-        const fTh = tagData.fonts?.fontTh || "'Sarabun', sans-serif";
-        const sTh = tagData.fonts?.sizeTh || "22px";
-        const fEn = tagData.fonts?.fontEn || "'Inter', sans-serif";
-        const sEn = tagData.fonts?.sizeEn || "22px";
-
         for (let i = 1; i <= config.slots_count; i++) {
           const menu = slotsData[i] || {};
 
@@ -337,17 +333,27 @@
             ? `<img src="${slotBgUrl}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: 0;">`
             : "";
 
+          const fTh = menu.fontTh || "'Sarabun', sans-serif";
+          const sTh = menu.fontSizeTh || "22px";
+          const fEn = menu.fontEn || "'Inter', sans-serif";
+          const sEn = menu.fontSizeEn || "22px";
+
+          // 🎯 ปรับ Inline CSS ตรงนี้ให้เหมือนกับหน้า create.html เป๊ะๆ
           const allergensHtml =
-            !config.hide_allergies && menu.allergens
-              ? menu.allergens
+            !config.hide_allergies &&
+            menu.allergens &&
+            menu.allergens.length > 0
+              ? `<div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; margin: 20px auto 0; width: 100%; padding: 0 16px; box-sizing: border-box;">` +
+                menu.allergens
                   .map((a) => {
                     const imgUrl =
-                      a.image_url ||
                       a.icon_url ||
+                      a.image_url ||
                       "https://via.placeholder.com/40/ffffff/cccccc?text=IMG";
-                    return `<img src="${imgUrl}" style="width: 32px; height: 32px; object-fit: contain; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" title="${a.name}">`;
+                    return `<img src="${imgUrl}" style="width: calc((100% - 32px) / 5); max-width: 85px; aspect-ratio: 1/1; object-fit: contain; display: block; background: transparent;" title="${a.name_th || a.name_en || ""}" crossorigin="anonymous">`;
                   })
-                  .join("<div style='width: 8px'></div>")
+                  .join("") +
+                `</div>`
               : "";
 
           slotsHTML += `
@@ -357,7 +363,7 @@
                       <img src="Impact_Logo.png" style="height: 24px; opacity: 0.3; margin-bottom: 16px;" onerror="this.style.display='none'">
                       <div style="font-family: ${fTh}; font-size: ${sTh}; font-weight: 900; color: #1e293b; margin-bottom: 8px; line-height: 1.5; text-transform: uppercase; white-space: pre-line;">${menu.name_th || ""}</div>
                       <div style="font-family: ${fEn}; font-size: ${sEn}; font-weight: 500; color: #64748b; margin-bottom: 16px; line-height: 1.5; white-space: pre-line;">${menu.name_en || ""}</div>
-                      <div style="display: flex; gap: 8px; justify-content: center; margin-top: 8px;">${allergensHtml}</div>
+                      ${allergensHtml}
                   </div>
               </div>`;
         }
@@ -436,7 +442,6 @@
         }
       }
 
-      // 🎯 ฟังก์ชันสำหรับลบ Profile ออกจากระบบ
       function deleteProfile(tagId) {
         if (
           confirm(
@@ -446,7 +451,7 @@
           let savedTags = getSavedTags();
           savedTags = savedTags.filter((tag) => tag.id !== tagId);
           localStorage.setItem("savedTags", JSON.stringify(savedTags));
-          loadSavedTags(); // รีเฟรชกริดใหม่ทันที
+          loadSavedTags();
         }
       }
 

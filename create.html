@@ -25,25 +25,32 @@
         font-family: "Inter", sans-serif;
       }
 
-      /* ===== ALLERGEN STYLES ===== */
-      .allergen-icon {
-        width: 60px;
-        height: 60px;
-        object-fit: contain;
-        border-radius: 6px;
-        display: block;
-      }
+      /* ===== 🎯 ALLERGEN STYLES (บรรทัดละ 5 รูปพอดีเป๊ะ & ไม่มีกรอบ) ===== */
       .allergen-container {
         display: flex;
         flex-wrap: wrap;
-        gap: 4px;
+        gap: 8px;
         justify-content: center;
-        align-items: flex-start;
-        margin: 10px auto 0;
-        padding: 0;
-        width: calc(5 * 60px + 4 * 4px);
+        align-items: center;
+        margin: 20px auto 0;
+        width: 100%;
+        padding: 0 16px;
+        box-sizing: border-box;
       }
-      /* ============================= */
+
+      .allergen-icon {
+        width: calc((100% - 32px) / 5);
+        max-width: 85px;
+        aspect-ratio: 1 / 1;
+        object-fit: contain;
+        display: block;
+        /* 🎯 เอาพื้นหลัง กรอบ และเงาออกทั้งหมด เพื่อความคลีน */
+        background: transparent;
+        padding: 0;
+        border: none;
+        box-shadow: none;
+      }
+      /* ================================================================ */
 
       .slot-bg {
         position: absolute;
@@ -163,14 +170,26 @@
         .print\:hidden {
           display: none !important;
         }
-        .allergen-icon {
-          width: 52px !important;
-          height: 52px !important;
-        }
+
         .allergen-container {
-          grid-template-columns: repeat(5, 52px) !important;
-          gap: 3px !important;
-          margin-top: 8px !important;
+          display: flex !important;
+          flex-wrap: wrap !important;
+          gap: 8px !important;
+          justify-content: center !important;
+          margin-top: 20px !important;
+          width: 100% !important;
+          padding: 0 16px !important;
+          box-sizing: border-box !important;
+        }
+        .allergen-icon {
+          width: calc((100% - 32px) / 5) !important;
+          max-width: 85px !important;
+          aspect-ratio: 1 / 1 !important;
+          height: auto !important;
+          background: transparent !important; /* 🎯 เอาพื้นหลังออกตอนปริ้นท์ */
+          border: none !important;
+          box-shadow: none !important;
+          padding: 0 !important;
         }
       }
       .template-btn.selected {
@@ -270,7 +289,7 @@
                 <div
                   class="text-sm font-bold text-slate-700 group-focus:text-[#006d4b]"
                 >
-                  Western Set (ซ่อนภูมิแพ้)
+                  Western Set
                 </div>
                 <div class="text-xs text-slate-500 mt-1">
                   10.5x14.8 cm | 4 Slots
@@ -758,7 +777,7 @@
         const fEn = menu.fontEn || DEFAULT_FONT_EN;
         const sEn = menu.fontSizeEn || DEFAULT_SIZE_EN;
 
-        // ===== ALLERGEN HTML — แสดงเป็น grid ไอคอน + ชื่อ =====
+        // ===== 🎯 ALLERGEN HTML =====
         const allergensHtml =
           showAllergies && menu.allergens && menu.allergens.length > 0
             ? `<div class="allergen-container">` +
@@ -769,7 +788,7 @@
                     a.image_url ||
                     "https://via.placeholder.com/40/ffffff/cccccc?text=IMG";
                   const nameText = a.name_th || a.name_en || "";
-                  return `<img src="${imgUrl}" class="allergen-icon" title="${nameText}" crossorigin="anonymous">`;
+                  return `<img src="${imgUrl}" class="allergen-icon shadow-sm" title="${nameText}" crossorigin="anonymous">`;
                 })
                 .join("") +
               `</div>`
@@ -778,9 +797,9 @@
         element.innerHTML = `
             ${bgHtml}
             <div class="slot-content">
-              <img src="Impact_Logo.png" class="h-6 opacity-30 mb-4" alt="logo" onerror="this.style.display='none'">
-              <div class="slot-text-th font-black text-slate-800 mb-2 leading-relaxed text-center whitespace-pre-line" style="font-family: ${fTh}; font-size: ${sTh};">${menu.name_th || ""}</div>
-              <div class="slot-text-en font-medium text-slate-500 mb-4 leading-relaxed text-center whitespace-pre-line" style="font-family: ${fEn}; font-size: ${sEn};">${menu.name_en || ""}</div>
+              <img src="Impact_Logo.png" class="h-6 opacity-30 mb-6" alt="logo" onerror="this.style.display='none'">
+              <div class="slot-text-th font-black text-slate-800 mb-2 leading-tight text-center whitespace-pre-line" style="font-family: ${fTh}; font-size: ${sTh};">${menu.name_th || ""}</div>
+              <div class="slot-text-en font-medium text-slate-500 mb-4 leading-tight text-center whitespace-pre-line" style="font-family: ${fEn}; font-size: ${sEn};">${menu.name_en || ""}</div>
               ${allergensHtml}
             </div>
         `;
@@ -1103,13 +1122,29 @@
         }
         const originalTransform = paper.style.transform;
         paper.style.transform = "none";
-        await new Promise((resolve) => setTimeout(resolve, 50));
-        const canvas = await html2canvas(paper, {
-          scale: 2,
-          useCORS: true,
-          allowTaint: false,
-          backgroundColor: "#ffffff",
+
+        // 🎯 รอโหลดรูปภาพ
+        const images = paper.querySelectorAll("img");
+        const imagePromises = Array.from(images).map((img) => {
+          if (img.complete) return Promise.resolve();
+          return new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
         });
+
+        await Promise.all(imagePromises);
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        const canvas = await html2canvas(paper, {
+          scale: 3,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: "#ffffff",
+          logging: false,
+          imageTimeout: 0,
+        });
+
         paper.style.transform = originalTransform;
         document
           .querySelectorAll(".hidden-on-export")
