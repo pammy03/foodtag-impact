@@ -51,17 +51,13 @@
       class="flex-1 flex flex-col h-full overflow-hidden relative bg-[#f1f5f9]"
     >
       <header
-        class="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-center z-20 shrink-0"
+        class="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-end z-20 shrink-0"
       >
         <div>
-          <h1
-            class="text-2xl font-extrabold text-slate-800 tracking-tight leading-none"
-          >
+          <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">
             Backgrounds
-          </h1>
-          <p class="text-sm text-slate-500 font-medium mt-1">
-            จัดการรูปภาพพื้นหลัง
-          </p>
+          </h2>
+          <p class="text-slate-500 font-medium mt-1">จัดการรูปภาพพื้นหลัง</p>
         </div>
 
         <div class="flex gap-3 items-center">
@@ -101,7 +97,7 @@
             onchange="renderBgList()"
             class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10"
             style="
-              background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;);
+              background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;);
               background-repeat: no-repeat;
               background-position: right 1rem center;
               background-size: 1.2em;
@@ -129,12 +125,12 @@
             <thead class="bg-slate-50 sticky top-0 shadow-sm z-10">
               <tr>
                 <th
-                  class="py-4 px-8 text-[11px] font-black text-slate-400 uppercase tracking-widest w-24 border-b text-center"
+                  class="py-4 px-8 text-[11px] font-black text-slate-400 uppercase tracking-widest w-16 border-b text-center"
                 >
-                  Preview
+                  #
                 </th>
                 <th
-                  class="py-4 px-6 text-[11px] font-black text-slate-400 uppercase tracking-widest w-1/3 border-b"
+                  class="py-4 px-6 text-[11px] font-black text-slate-400 uppercase tracking-widest w-1/2 border-b"
                 >
                   Background Name
                 </th>
@@ -469,8 +465,16 @@
     </div>
 
     <script src="sidebar.js"></script>
+    <!-- 🎯 นำเข้าไฟล์ action-logger.js -->
+    <script src="action-logger.js"></script>
 
     <script>
+      // 🛡️ เช็กสิทธิ์: ถ้ายังไม่ Login หรือเป็น Staff ให้เตะกลับไปหน้า Dashboard ทันที
+      const checkUser = JSON.parse(localStorage.getItem("userData"));
+      if (!checkUser || checkUser.role === "Staff") {
+        window.location.href = "dashboard.html";
+      }
+
       const supabaseUrl = "https://nexvompdeubppbkvnwor.supabase.co";
       const supabaseKey = "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI";
       const dbClient = supabase.createClient(supabaseUrl, supabaseKey);
@@ -502,7 +506,7 @@
         const filterValue = document.getElementById("bgFilter").value;
 
         const filteredBgs = dbBackgrounds.filter((bg) => {
-          const matchName = bg.name.toLowerCase().includes(query);
+          const matchName = (bg.name || "").toLowerCase().includes(query);
           const matchSize =
             filterValue === "all" || bg.template_size === filterValue;
           return matchName && matchSize;
@@ -517,18 +521,17 @@
         }
 
         let html = "";
-        filteredBgs.forEach((bg) => {
+        filteredBgs.forEach((bg, index) => {
           const bgDataStr = encodeURIComponent(JSON.stringify(bg));
+          const safeName = (bg.name || "").replace(/'/g, "\\'");
 
           html += `
           <tr class="bg-row border-b border-slate-100 last:border-0">
-            <td class="py-3 px-8 text-center">
-                <div class="w-16 h-12 bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden mx-auto cursor-pointer" onclick="openViewModal('${bgDataStr}')">
-                    <img src="${bg.image_url}" class="w-full h-full object-cover hover:scale-110 transition-transform">
-                </div>
+            <td class="py-4 px-8 text-center">
+                <span class="text-[14px] font-black text-slate-300">${index + 1}</span>
             </td>
             <td class="py-4 px-6">
-                <div class="font-extrabold text-slate-800 text-[15px]">${bg.name}</div>
+                <div class="font-extrabold text-slate-800 text-[15px] cursor-pointer hover:text-[#006d4b]" onclick="openViewModal('${bgDataStr}')">${bg.name}</div>
             </td>
             <td class="py-4 px-6">
                 <div class="inline-flex items-center gap-1.5 text-[10px] font-black text-[#006d4b] bg-[#006d4b]/10 px-2.5 py-1 rounded-lg uppercase tracking-widest">
@@ -544,7 +547,7 @@
                     <button onclick="openEditModal('${bgDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all cursor-pointer" title="Edit Background">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
-                    <button onclick="deleteBackground('${bg.id}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer" title="Delete">
+                    <button onclick="deleteBackground('${bg.id}', '${safeName}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer" title="Delete">
                         <span class="material-symbols-outlined text-[20px]">delete</span>
                     </button>
                 </div>
@@ -622,6 +625,9 @@
           });
 
           if (dbError) throw dbError;
+
+          // 🎯 บันทึก Log การเพิ่มพื้นหลังใหม่
+          await logSystemActivity("CREATE", `อัปโหลดพื้นหลังใหม่: ${name}`);
 
           closeModal("uploadModal");
           fetchBackgrounds();
@@ -701,6 +707,9 @@
 
           if (dbError) throw dbError;
 
+          // 🎯 บันทึก Log การแก้ไขพื้นหลัง
+          await logSystemActivity("EDIT", `แก้ไขพื้นหลัง: ${name}`);
+
           closeModal("editModal");
           fetchBackgrounds();
         } catch (e) {
@@ -711,14 +720,18 @@
         }
       }
 
-      async function deleteBackground(id) {
-        if (confirm("ต้องการลบรูปภาพพื้นหลังนี้ออกจากระบบใช่หรือไม่?")) {
+      async function deleteBackground(id, name) {
+        if (confirm(`ต้องการลบรูปภาพพื้นหลัง "${name}" ใช่หรือไม่?`)) {
           try {
             const { error } = await dbClient
               .from("backgrounds")
               .delete()
               .eq("id", id);
             if (error) throw error;
+
+            // 🎯 บันทึก Log การลบพื้นหลัง
+            await logSystemActivity("DELETE", `ลบรูปภาพพื้นหลัง: ${name}`);
+
             fetchBackgrounds();
           } catch (e) {
             alert("ไม่สามารถลบได้: " + e.message);

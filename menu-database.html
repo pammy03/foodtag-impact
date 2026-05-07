@@ -60,20 +60,23 @@
       class="flex-1 flex flex-col h-full overflow-hidden relative bg-[#f1f5f9]"
     >
       <header
-        class="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-center z-20 shrink-0"
+        class="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-end z-20 shrink-0"
       >
-        <div class="flex items-center gap-2">
-          <h1
-            class="text-[28px] font-black text-slate-800 tracking-tighter leading-none"
-          >
-            Menus
-          </h1>
-          <div
-            id="totalMenuCount"
-            class="ml-2 px-3 py-1 bg-emerald-50 text-[#006d4b] font-black text-[13px] rounded-lg tracking-wider hidden"
-          >
-            ...
+        <div>
+          <div class="flex items-center gap-3">
+            <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">
+              Menus
+            </h2>
+            <div
+              id="totalMenuCount"
+              class="px-3 py-1 bg-emerald-50 text-[#006d4b] font-black text-[13px] rounded-lg tracking-wider border border-emerald-100 hidden"
+            >
+              ...
+            </div>
           </div>
+          <p class="text-slate-500 font-medium mt-1">
+            Manage your food menus and ingredient assignments
+          </p>
         </div>
 
         <div class="flex gap-3 items-center">
@@ -134,10 +137,17 @@
           <table class="w-full text-left border-collapse">
             <thead class="bg-slate-50 sticky top-0 shadow-sm z-10">
               <tr>
-                <th
-                  class="py-4 px-8 text-[11px] font-black text-slate-400 uppercase tracking-widest w-32 border-b"
-                >
-                  Menu ID
+                <th class="py-4 px-8 border-b w-48">
+                  <div class="flex items-center gap-4">
+                    <span
+                      class="w-6 text-center text-[11px] font-black text-slate-400 uppercase tracking-widest"
+                      >#</span
+                    >
+                    <span
+                      class="text-[11px] font-black text-slate-400 uppercase tracking-widest"
+                      >Menu ID</span
+                    >
+                  </div>
                 </th>
                 <th
                   class="py-4 px-6 text-[11px] font-black text-slate-400 uppercase tracking-widest w-1/3 border-b"
@@ -185,7 +195,7 @@
         >
           <div>
             <h2 id="menuModalTitle" class="text-xl font-bold text-slate-800">
-              Add New Menu
+              Edit Menu
             </h2>
             <p
               id="menuModalSubtitle"
@@ -202,7 +212,6 @@
             <span class="material-symbols-outlined">close</span>
           </button>
         </div>
-
         <div class="p-8 overflow-y-auto space-y-6 custom-scroll">
           <div>
             <label
@@ -225,8 +234,7 @@
               <label
                 class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
                 >Thai Name</label
-              >
-              <input
+              ><input
                 type="text"
                 id="inputNameTh"
                 class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all"
@@ -237,8 +245,7 @@
               <label
                 class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
                 >English Name</label
-              >
-              <input
+              ><input
                 type="text"
                 id="inputNameEn"
                 class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all"
@@ -246,7 +253,6 @@
               />
             </div>
           </div>
-
           <div>
             <div class="flex justify-between items-end mb-3">
               <label
@@ -257,8 +263,7 @@
                 <span
                   class="material-symbols-outlined absolute left-3 top-2 text-slate-400 text-[18px] pointer-events-none"
                   >search</span
-                >
-                <input
+                ><input
                   type="text"
                   id="searchIngredientModal"
                   onkeyup="filterModalIngredients()"
@@ -268,30 +273,16 @@
               </div>
             </div>
             <div id="ingredientChecklist"></div>
-            <div
-              id="noIngredientFoundMsg"
-              class="hidden flex-col items-center justify-center py-8 text-slate-400 bg-slate-50 border border-slate-100 border-dashed rounded-2xl"
-            >
-              <span class="material-symbols-outlined text-4xl mb-2 opacity-50"
-                >search_off</span
-              >
-              <p class="text-xs font-bold uppercase tracking-widest">
-                Not Found
-              </p>
-              <p class="text-[10px] mt-1">ไม่พบรูปภาพที่ค้นหา</p>
-            </div>
           </div>
         </div>
-
         <div class="p-6 bg-slate-50 border-t flex justify-end gap-3">
           <button
             type="button"
             onclick="closeModal('menuModal')"
             class="px-6 py-2.5 text-slate-500 font-bold hover:text-slate-700 transition-colors cursor-pointer"
           >
-            Cancel
-          </button>
-          <button
+            Cancel</button
+          ><button
             type="button"
             onclick="saveMenu()"
             id="saveMenuBtn"
@@ -304,8 +295,15 @@
     </div>
 
     <script src="sidebar.js"></script>
+    <!-- 🎯 นำเข้าไฟล์ action-logger.js -->
+    <script src="action-logger.js"></script>
 
     <script>
+      // 🛡️ เช็กสิทธิ์ ถ้าเป็น Staff ให้เตะกลับไปหน้า Dashboard ทันที
+      const checkUser = JSON.parse(localStorage.getItem("userData"));
+      if (!checkUser || checkUser.role === "Staff") {
+        window.location.href = "dashboard.html";
+      }
       const supabaseUrl = "https://nexvompdeubppbkvnwor.supabase.co";
       const supabaseKey = "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI";
       const dbClient = supabase.createClient(supabaseUrl, supabaseKey);
@@ -325,8 +323,6 @@
             .select("*")
             .order("created_at", { ascending: false });
           dbMenus = menuData || [];
-
-          // 🎯 อัปเดตตัวเลขจำนวนเมนูทั้งหมด
           const countEl = document.getElementById("totalMenuCount");
           if (dbMenus.length > 0) {
             countEl.innerText = `${dbMenus.length} รายการ`;
@@ -334,12 +330,9 @@
           } else {
             countEl.classList.add("hidden");
           }
-
           renderTable();
         } catch (e) {
           console.error(e);
-          document.getElementById("menuTableBody").innerHTML =
-            `<tr><td colspan="4" class="py-20 text-center text-red-500 font-bold bg-red-50 rounded-b-2xl">⚠️ CONNECTION ERROR</td></tr>`;
         }
       }
 
@@ -369,35 +362,41 @@
             .filter(Boolean);
 
           const ingHtml = menuIngs
-            .map((ing) => {
-              return `
+            .map(
+              (ing) => `
             <div class="inline-flex items-center gap-2 bg-white shadow-sm border border-slate-200 px-3 py-1.5 rounded-xl mr-2 mb-2 group transition-all hover:border-[#006d4b]/30">
                 <img src="${ing.icon_url || ing.image_url}" class="w-6 h-6 object-cover rounded-md">
                 <span class="text-[11px] font-black text-slate-600 tracking-wider">${ing.name_en || ing.name_th || "IMG"}</span>
-            </div>`;
-            })
+            </div>`,
+            )
             .join("");
 
           const displayId = menu.menu_id || "-";
           const menuDataStr = encodeURIComponent(JSON.stringify(menu));
 
+          // 🎯 ส่งชื่อเมนูไปตอนลบด้วย เพื่อบันทึก Log
+          const safeMenuName = (menu.name_th || menu.name_en || "-").replace(
+            /'/g,
+            "\\'",
+          );
+
           html += `
           <tr class="menu-row border-b border-slate-100 last:border-0">
             <td class="py-5 px-8">
                 <div class="flex items-center gap-4">
-                    <span class="text-slate-300 font-black text-lg w-6">${index + 1}</span>
+                    <span class="text-slate-300 font-black text-lg w-6 text-center">${index + 1}</span>
                     <span class="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-black tracking-widest border border-slate-200 whitespace-nowrap">${displayId}</span>
                 </div>
             </td>
             <td class="py-5 px-6">
                 <div class="font-extrabold text-slate-800 text-[16px]">${menu.name_th || "-"}</div>
-                <div class="text-[13px] text-slate-400 italic font-medium mt-0.5">${menu.name_en || "-"}</div>
+                <div class="text-[13px] text-slate-400 not-italic font-medium mt-0.5">${menu.name_en || "-"}</div>
             </td>
             <td class="py-5 px-6"><div class="flex flex-wrap">${ingHtml || "<span class='text-slate-300 text-sm font-medium italic'>No images assigned</span>"}</div></td>
             <td class="py-5 px-8 text-center">
                 <div class="flex items-center justify-center gap-2">
                     <button onclick="openMenuModal('${menuDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-[#006d4b] hover:bg-emerald-50 rounded-full transition-all cursor-pointer"><span class="material-symbols-outlined text-[20px]">edit_document</span></button>
-                    <button onclick="deleteMenu('${menu.id}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+                    <button onclick="deleteMenu('${menu.id}', '${displayId}', '${safeMenuName}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer"><span class="material-symbols-outlined text-[20px]">delete</span></button>
                 </div>
             </td>
           </tr>`;
@@ -415,12 +414,10 @@
         });
         return maxNum;
       }
-
       function openMenuModal(menuDataStr = null) {
         document.getElementById("searchIngredientModal").value = "";
         const container = document.getElementById("ingredientChecklist");
         let selectedIds = [];
-
         if (menuDataStr) {
           const menu = JSON.parse(decodeURIComponent(menuDataStr));
           editingMenuDbId = menu.id;
@@ -437,32 +434,18 @@
           document.getElementById("inputNameTh").value = "";
           document.getElementById("inputNameEn").value = "";
         }
-
         container.innerHTML = dbIngredients
           .map((ing) => {
             const isChecked = selectedIds.includes(String(ing.id))
               ? "checked"
               : "";
-            return `
-            <label class="cursor-pointer relative block h-full ingredient-item" data-name="${(ing.name_th || "").toLowerCase()} ${(ing.name_en || "").toLowerCase()}">
-              <input type="checkbox" class="ingredient-checkbox hidden" value="${ing.id}" ${isChecked}>
-              <div class="border-2 border-slate-100 rounded-xl p-3 flex flex-col items-center gap-2 hover:bg-slate-50 transition-all select-none text-center bg-white h-full justify-between hover:border-[#006d4b]/30">
-                <div class="w-14 h-14 flex items-center justify-center bg-slate-50 rounded-lg p-1 border border-slate-100 mb-1">
-                    <img src="${ing.icon_url || ing.image_url}" class="w-full h-full object-cover rounded-md">
-                </div>
-                <span class="text-[10px] font-black text-slate-600 tracking-widest w-full truncate">${ing.name_en || ing.name_th || "ไม่มีชื่อ"}</span>
-                <span class="text-[9px] font-bold text-slate-400 w-full truncate">${ing.name_th || ""}</span>
-                <span class="material-symbols-outlined text-[#006d4b] opacity-0 check-icon absolute top-2 right-2 text-[18px]">check_circle</span>
-              </div>
-            </label>`;
+            return `<label class="cursor-pointer relative block h-full ingredient-item" data-name="${(ing.name_th || "").toLowerCase()} ${(ing.name_en || "").toLowerCase()}"><input type="checkbox" class="ingredient-checkbox hidden" value="${ing.id}" ${isChecked}><div class="border-2 border-slate-100 rounded-xl p-3 flex flex-col items-center gap-2 hover:bg-slate-50 transition-all select-none text-center bg-white h-full justify-between hover:border-[#006d4b]/30"><div class="w-14 h-14 flex items-center justify-center bg-slate-50 rounded-lg p-1 border border-slate-100 mb-1"><img src="${ing.icon_url || ing.image_url}" class="w-full h-full object-cover rounded-md"></div><span class="text-[10px] font-black text-slate-600 tracking-widest w-full truncate">${ing.name_en || ing.name_th || "ไม่มีชื่อ"}</span><span class="text-[9px] font-bold text-slate-400 w-full truncate">${ing.name_th || ""}</span><span class="material-symbols-outlined text-[#006d4b] opacity-0 check-icon absolute top-2 right-2 text-[18px]">check_circle</span></div></label>`;
           })
           .join("");
-
         container.className =
           "grid grid-cols-3 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 max-h-64 overflow-y-auto custom-scroll";
         document.getElementById("menuModal").classList.add("active");
       }
-
       function filterModalIngredients() {
         const searchVal = document
           .getElementById("searchIngredientModal")
@@ -475,7 +458,6 @@
             : "none";
         });
       }
-
       function closeModal(id) {
         document.getElementById(id).classList.remove("active");
       }
@@ -487,7 +469,6 @@
         const selected = Array.from(
           document.querySelectorAll(".ingredient-checkbox:checked"),
         ).map((cb) => parseInt(cb.value));
-
         const payload = {
           menu_id: id,
           name_th: th,
@@ -498,12 +479,24 @@
         btn.disabled = true;
 
         try {
-          if (editingMenuDbId)
+          if (editingMenuDbId) {
             await dbClient
               .from("menus")
               .update(payload)
               .eq("id", editingMenuDbId);
-          else await dbClient.from("menus").insert([payload]);
+            // 🎯 บันทึก Log การแก้ไขเมนู
+            await logSystemActivity(
+              "EDIT",
+              `แก้ไขข้อมูลเมนูรหัส: ${id} (${th || en})`,
+            );
+          } else {
+            await dbClient.from("menus").insert([payload]);
+            // 🎯 บันทึก Log การสร้างเมนูใหม่
+            await logSystemActivity(
+              "CREATE",
+              `เพิ่มเมนูใหม่รหัส: ${id} (${th || en})`,
+            );
+          }
           closeModal("menuModal");
           fetchData();
         } catch (e) {
@@ -513,9 +506,14 @@
         }
       }
 
-      async function deleteMenu(dbId) {
-        if (confirm("ต้องการลบเมนูนี้?")) {
+      async function deleteMenu(dbId, menuId, menuName) {
+        if (confirm(`ต้องการลบเมนู "${menuName}" ใช่หรือไม่?`)) {
           await dbClient.from("menus").delete().eq("id", dbId);
+          // 🎯 บันทึก Log การลบเมนู
+          await logSystemActivity(
+            "DELETE",
+            `ลบเมนูรหัส: ${menuId} (${menuName})`,
+          );
           fetchData();
         }
       }
@@ -531,13 +529,11 @@
             workbook.Sheets[workbook.SheetNames[0]],
           );
           let currentMaxId = getLatestMenuNumber();
-
           const ingDict = dbIngredients.map((ing) => ({
             id: ing.id,
             nameTh: (ing.name_th || "").toLowerCase().replace(/\s+/g, ""),
             nameEn: (ing.name_en || "").toLowerCase().replace(/\s+/g, ""),
           }));
-
           for (const row of jsonData) {
             const nameTh = row["Thai Name"] || "";
             const nameEn = row["English Name"] || "";
@@ -562,6 +558,13 @@
               ingredient_ids: ingredientIds,
             });
           }
+
+          // 🎯 บันทึก Log การนำเข้าไฟล์ Excel
+          await logSystemActivity(
+            "CREATE",
+            `นำเข้าเมนูผ่าน Excel/CSV จำนวน ${jsonData.length} รายการ`,
+          );
+
           fetchData();
           event.target.value = "";
         };

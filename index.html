@@ -1,11 +1,11 @@
 <!doctype html>
-<html class="light" lang="en">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Login | IMPACT Food Tag</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link
@@ -13,85 +13,353 @@
       rel="stylesheet"
     />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-      .glass-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(12px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .login-card {
+        background: white;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+      }
+      input:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background-color: #f1f5f9;
       }
     </style>
   </head>
-  <body
-    class="bg-slate-50 font-body text-slate-800 min-h-screen flex flex-col items-center justify-center relative"
-  >
-    <main class="relative z-10 w-full max-w-md px-6">
+  <body class="bg-slate-50 min-h-screen flex items-center justify-center p-6">
+    <main class="w-full max-w-md">
       <div
-        class="glass-card rounded-2xl overflow-hidden border border-slate-100"
+        class="login-card rounded-[2.5rem] border border-slate-100 p-10 relative overflow-hidden"
       >
-        <div class="p-8 pb-6 text-center">
-          <h1
-            class="font-headline font-extrabold text-3xl tracking-tighter text-[#003B71]"
-          >
+        <!-- 🎯 ส่วนของหัวข้อ (Header) -->
+        <div class="text-center mb-10">
+          <h1 class="text-[#003B71] text-4xl font-black tracking-tighter mb-1">
             IMPACT
           </h1>
-          <p class="text-slate-500 font-medium text-sm mt-1">
+          <p
+            id="pageSubtitle"
+            class="text-slate-400 font-bold text-xs uppercase tracking-widest"
+          >
             Food Tag Initiative
           </p>
         </div>
 
-        <form id="loginForm" class="px-8 pb-8 space-y-5">
-          <div class="space-y-2">
-            <label
-              class="block text-xs font-semibold uppercase tracking-widest text-slate-500 ml-1"
-              >Employee ID</label
-            >
-            <input
-              id="emp_id"
-              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#006d4b] outline-none transition-all text-sm"
-              placeholder="Enter your Employee ID"
-              type="text"
-              required
-            />
-          </div>
+        <!-- 🔵 SECTION 1: LOGIN FORM -->
+        <div id="loginSection">
+          <form id="loginForm" class="space-y-6">
+            <div>
+              <label
+                class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2 ml-1"
+                >Employee ID</label
+              >
+              <input
+                id="emp_id"
+                class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-[#006d4b] outline-none text-sm font-semibold"
+                placeholder="Enter ID"
+                type="text"
+                required
+              />
+            </div>
 
-          <div class="space-y-2">
-            <label
-              class="block text-xs font-semibold uppercase tracking-widest text-slate-500 ml-1"
-              >Password</label
-            >
-            <input
-              id="password"
-              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#006d4b] outline-none transition-all text-sm"
-              placeholder="Enter your password"
-              type="password"
-              required
-            />
-          </div>
+            <div>
+              <div class="flex justify-between items-center mb-2 ml-1">
+                <label
+                  class="text-[11px] font-bold uppercase tracking-widest text-slate-400"
+                  >Password</label
+                >
+                <button
+                  type="button"
+                  onclick="switchToForgot()"
+                  class="text-[11px] text-[#006d4b] font-black uppercase tracking-widest hover:underline"
+                >
+                  ลืมรหัสผ่าน?
+                </button>
+              </div>
+              <div class="relative">
+                <input
+                  id="password"
+                  class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-[#006d4b] outline-none text-sm font-semibold pr-14"
+                  placeholder="Enter Password"
+                  type="password"
+                  required
+                />
+                <button
+                  type="button"
+                  onclick="toggleView('password', 'eye_login')"
+                  class="absolute right-4 top-3.5 text-slate-300 hover:text-slate-500"
+                >
+                  <span
+                    id="eye_login"
+                    class="material-symbols-outlined text-2xl"
+                    >visibility_off</span
+                  >
+                </button>
+              </div>
+            </div>
 
-          <p
-            id="errorMessage"
-            class="text-red-500 text-xs text-center font-medium hidden"
-          ></p>
+            <p
+              id="errorMsg"
+              class="text-red-500 text-xs text-center font-bold hidden bg-red-50 py-3 rounded-xl"
+            ></p>
 
-          <div class="pt-2">
             <button
               type="submit"
-              class="w-full bg-[#006d4b] text-white font-headline font-bold py-3.5 rounded-lg shadow-lg hover:bg-[#005a3d] transition-all flex items-center justify-center space-x-2"
+              class="w-full bg-[#006d4b] text-white font-black py-4 rounded-2xl shadow-xl hover:bg-[#005a3d] transition-all flex items-center justify-center gap-2 text-lg"
             >
               <span>Login</span>
-              <span class="material-symbols-outlined text-lg">login</span>
+              <span id="loginIcon" class="material-symbols-outlined text-xl"
+                >login</span
+              >
             </button>
-          </div>
+          </form>
+        </div>
 
-          <div class="pt-4 mt-4 text-center border-t border-slate-100">
-            <p class="text-[11px] font-medium text-slate-400">
-              Access for Admin and Print Staff Only
-            </p>
-          </div>
-        </form>
+        <!-- 🟢 SECTION 2: FORGOT PASSWORD FORM (ซ่อนไว้ตอนแรก) -->
+        <div id="forgotSection" class="hidden">
+          <button
+            type="button"
+            onclick="switchToLogin()"
+            class="flex items-center text-slate-400 hover:text-slate-600 text-xs font-bold mb-6 transition-colors"
+          >
+            <span class="material-symbols-outlined text-lg mr-1"
+              >arrow_back</span
+            >
+            Back to Login
+          </button>
+
+          <form id="forgotForm" class="space-y-5">
+            <!-- ขั้นที่ 1: ตรวจสอบ ID และ PIN -->
+            <div id="verifyStep" class="space-y-4">
+              <div>
+                <label
+                  class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1.5 ml-1"
+                  >Employee ID</label
+                >
+                <input
+                  id="f_emp_id"
+                  class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-semibold"
+                  placeholder="Enter ID"
+                  type="text"
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  class="block text-[10px] font-bold uppercase tracking-widest text-[#006d4b] mb-1.5 ml-1"
+                  >Recovery PIN (4 Digits)</label
+                >
+                <input
+                  id="f_pin"
+                  class="w-full px-5 py-3.5 bg-[#f0fdf4] border border-[#006d4b]/20 rounded-xl outline-none text-xl tracking-[0.5em] font-black text-center"
+                  placeholder="----"
+                  type="password"
+                  maxlength="4"
+                  required
+                />
+              </div>
+              <button
+                type="button"
+                id="btnVerifyPIN"
+                onclick="handlePINVerify()"
+                class="w-full bg-[#003B71] text-white font-black py-3.5 rounded-xl hover:bg-slate-800 transition-all text-sm"
+              >
+                Verify ID & PIN
+              </button>
+            </div>
+
+            <!-- ขั้นที่ 2: ตั้งรหัสผ่านใหม่ (ซ่อนไว้จนกว่าจะ Verify ผ่าน) -->
+            <div
+              id="resetStep"
+              class="hidden space-y-4 pt-4 border-t border-dashed border-slate-200"
+            >
+              <div>
+                <label
+                  class="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 ml-1"
+                  >New Password</label
+                >
+                <div class="relative">
+                  <input
+                    id="f_new_password"
+                    class="w-full px-5 py-3.5 bg-white border-2 border-emerald-500 rounded-xl outline-none text-sm font-bold pr-14"
+                    placeholder="Enter New Password"
+                    type="password"
+                  />
+                  <button
+                    type="button"
+                    onclick="toggleView('f_new_password', 'eye_reset')"
+                    class="absolute right-4 top-3 text-slate-300 hover:text-slate-500"
+                  >
+                    <span
+                      id="eye_reset"
+                      class="material-symbols-outlined text-2xl"
+                      >visibility_off</span
+                    >
+                  </button>
+                </div>
+              </div>
+              <button
+                type="submit"
+                class="w-full bg-[#006d4b] text-white font-black py-4 rounded-xl shadow-lg hover:bg-[#005a3d] transition-all"
+              >
+                Update Password
+              </button>
+            </div>
+
+            <p
+              id="forgotMsg"
+              class="text-xs text-center font-bold hidden py-3 rounded-xl"
+            ></p>
+          </form>
+        </div>
       </div>
     </main>
 
-    <script type="module" src="app.js"></script>
+    <script>
+      const supabaseUrl = "https://nexvompdeubppbkvnwor.supabase.co";
+      const supabaseKey = "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI";
+      const dbClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+      /* --- Navigation Logic --- */
+      function switchToForgot() {
+        document.getElementById("loginSection").classList.add("hidden");
+        document.getElementById("forgotSection").classList.remove("hidden");
+        document.getElementById("pageSubtitle").innerText =
+          "Reset Your Password";
+        resetForgotForm();
+      }
+
+      function switchToLogin() {
+        document.getElementById("forgotSection").classList.add("hidden");
+        document.getElementById("loginSection").classList.remove("hidden");
+        document.getElementById("pageSubtitle").innerText =
+          "Food Tag Initiative";
+      }
+
+      function resetForgotForm() {
+        document.getElementById("verifyStep").classList.remove("hidden");
+        document.getElementById("resetStep").classList.add("hidden");
+        document.getElementById("forgotForm").reset();
+        document.getElementById("forgotMsg").classList.add("hidden");
+      }
+
+      function toggleView(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if (input.type === "password") {
+          input.type = "text";
+          icon.innerText = "visibility";
+          icon.classList.add("text-[#006d4b]");
+        } else {
+          input.type = "password";
+          icon.innerText = "visibility_off";
+          icon.classList.remove("text-[#006d4b]");
+        }
+      }
+
+      /* --- Login Logic --- */
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const empId = document.getElementById("emp_id").value.trim();
+          const pass = document.getElementById("password").value;
+          const msg = document.getElementById("errorMsg");
+          const icon = document.getElementById("loginIcon");
+
+          msg.classList.add("hidden");
+          icon.classList.add("animate-spin");
+          icon.innerText = "progress_activity";
+
+          try {
+            const { data, error } = await dbClient
+              .from("users")
+              .select("*")
+              .eq("emp_id", empId)
+              .eq("password", pass)
+              .single();
+            if (error || !data) throw new Error("ID หรือรหัสผ่านไม่ถูกต้อง");
+            localStorage.setItem("userData", JSON.stringify(data));
+            window.location.href = "dashboard.html";
+          } catch (err) {
+            msg.innerText = err.message;
+            msg.classList.remove("hidden");
+            icon.classList.remove("animate-spin");
+            icon.innerText = "login";
+          }
+        });
+
+      /* --- Forgot Password Logic --- */
+      async function handlePINVerify() {
+        const empId = document.getElementById("f_emp_id").value.trim();
+        const pin = document.getElementById("f_pin").value.trim();
+        const msg = document.getElementById("forgotMsg");
+        const btn = document.getElementById("btnVerifyPIN");
+
+        msg.classList.add("hidden");
+        btn.innerText = "Checking...";
+
+        try {
+          const { data, error } = await dbClient
+            .from("users")
+            .select("id, recovery_pin")
+            .eq("emp_id", empId)
+            .single();
+          if (error || !data) throw new Error("ไม่พบรหัสพนักงานนี้");
+          if (!data.recovery_pin)
+            throw new Error("บัญชีนี้ยังไม่ได้ตั้ง PIN (ติดต่อ Admin)");
+          if (data.recovery_pin !== pin) throw new Error("PIN ไม่ถูกต้อง");
+
+          // ✅ ผ่าน! แสดงช่องเปลี่ยนรหัสผ่าน
+          document.getElementById("verifyStep").classList.add("hidden");
+          document.getElementById("resetStep").classList.remove("hidden");
+          msg.innerText = "Verification Success! กรุณาตั้งรหัสผ่านใหม่";
+          msg.className =
+            "text-xs text-center font-bold bg-emerald-50 text-[#006d4b] py-3 rounded-xl";
+          msg.classList.remove("hidden");
+        } catch (err) {
+          msg.innerText = err.message;
+          msg.className =
+            "text-xs text-center font-bold bg-red-50 text-red-500 py-3 rounded-xl";
+          msg.classList.remove("hidden");
+        } finally {
+          btn.innerText = "Verify ID & PIN";
+        }
+      }
+
+      document
+        .getElementById("forgotForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const empId = document.getElementById("f_emp_id").value.trim();
+          const newPass = document.getElementById("f_new_password").value;
+          const msg = document.getElementById("forgotMsg");
+
+          try {
+            if (!newPass) throw new Error("กรุณากรอกรหัสผ่านใหม่");
+            const { error } = await dbClient
+              .from("users")
+              .update({ password: newPass })
+              .eq("emp_id", empId);
+            if (error) throw new Error("ไม่สามารถเปลี่ยนรหัสผ่านได้");
+
+            msg.innerText = "เปลี่ยนรหัสผ่านสำเร็จ! กำลังพากลับไปหน้า Login...";
+            msg.className =
+              "text-xs text-center font-bold bg-[#003B71] text-white py-3 rounded-xl";
+            setTimeout(() => switchToLogin(), 2000);
+          } catch (err) {
+            msg.innerText = err.message;
+            msg.className =
+              "text-xs text-center font-bold bg-red-50 text-red-500 py-3 rounded-xl";
+          }
+        });
+
+      window.onload = () => {
+        if (localStorage.getItem("userData"))
+          window.location.href = "dashboard.html";
+      };
+    </script>
   </body>
 </html>

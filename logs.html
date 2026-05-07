@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity Logs | IMPACT Food Tag</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .custom-scroll::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scroll::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      tr.log-row:hover {
+        background-color: #f8fafc;
+        transition: background-color 0.2s;
+      }
+      select {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1.1em;
+      }
+    </style>
+  </head>
+  <body class="bg-[#f8fafc] flex h-screen overflow-hidden">
+    <div id="sidebar-container" class="shrink-0 h-full z-20"></div>
+
+    <div
+      class="flex-1 flex flex-col h-full overflow-hidden relative bg-[#f1f5f9]"
+    >
+      <header
+        class="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-end z-20 shrink-0"
+      >
+        <div>
+          <div class="flex items-center gap-3">
+            <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">
+              Activity Logs
+            </h2>
+            <div
+              id="totalLogsCount"
+              class="px-3 py-1 bg-emerald-50 text-[#006d4b] font-black text-[13px] rounded-lg tracking-wider border border-emerald-100 hidden"
+            >
+              ...
+            </div>
+          </div>
+          <p class="text-slate-500 font-medium mt-1">
+            Monitor and track all system activities in real-time
+          </p>
+        </div>
+      </header>
+
+      <main class="flex-1 flex flex-col p-8 overflow-hidden z-10">
+        <div
+          class="bg-white p-5 rounded-t-2xl border border-slate-200 border-b-0 flex gap-3 items-center shrink-0"
+        >
+          <div class="flex-1 max-w-md relative">
+            <span
+              class="material-symbols-outlined absolute left-4 top-3 text-slate-400 pointer-events-none"
+              >search</span
+            >
+            <input
+              type="text"
+              id="searchInput"
+              onkeyup="renderLogsTable()"
+              placeholder="ค้นหาชื่อพนักงาน หรือ รายละเอียด..."
+              class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all shadow-sm text-sm"
+            />
+          </div>
+
+          <select
+            id="roleFilter"
+            onchange="renderLogsTable()"
+            class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] text-sm cursor-pointer font-bold text-slate-600 appearance-none pr-10 min-w-[140px]"
+          >
+            <option value="ALL">All Roles</option>
+            <option value="Super Admin">Super Admin</option>
+            <option value="Admin">Admin</option>
+            <option value="Staff">Staff</option>
+          </select>
+
+          <select
+            id="actionFilter"
+            onchange="renderLogsTable()"
+            class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] text-sm cursor-pointer font-bold text-slate-600 appearance-none pr-10 min-w-[140px]"
+          >
+            <option value="ALL">All Actions</option>
+            <option value="CREATE">Create</option>
+            <option value="EDIT">Edit</option>
+            <option value="PRINT">Print</option>
+            <option value="DELETE">Delete</option>
+          </select>
+
+          <div
+            class="flex items-center gap-2 ml-auto text-xs font-bold text-slate-400 uppercase tracking-widest"
+          >
+            <span class="relative flex h-3 w-3"
+              ><span
+                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#006d4b] opacity-40"
+              ></span
+              ><span
+                class="relative inline-flex rounded-full h-3 w-3 bg-[#006d4b]"
+              ></span
+            ></span>
+            Real-time Audit
+          </div>
+        </div>
+
+        <div
+          class="bg-white border border-slate-200 rounded-b-2xl flex-1 overflow-auto shadow-xl shadow-slate-200/50 custom-scroll"
+        >
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50 sticky top-0 shadow-sm z-10">
+              <tr>
+                <th
+                  class="py-4 px-8 text-[11px] font-black text-slate-400 uppercase tracking-widest w-52 border-b"
+                >
+                  Date & Time
+                </th>
+                <th
+                  class="py-4 px-6 text-[11px] font-black text-slate-400 uppercase tracking-widest w-56 border-b"
+                >
+                  Name / User
+                </th>
+                <th
+                  class="py-4 px-6 text-[11px] font-black text-slate-400 uppercase tracking-widest w-40 border-b text-center"
+                >
+                  Role / Staff
+                </th>
+                <th
+                  class="py-4 px-6 text-[11px] font-black text-slate-400 uppercase tracking-widest w-32 border-b text-center"
+                >
+                  Action
+                </th>
+                <th
+                  class="py-4 px-6 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b"
+                >
+                  Details
+                </th>
+              </tr>
+            </thead>
+            <tbody id="logsTableBody" class="divide-y divide-slate-100">
+              <tr>
+                <td colspan="5" class="py-20 text-center">
+                  <div class="flex flex-col items-center opacity-30">
+                    <span
+                      class="material-symbols-outlined text-5xl animate-spin"
+                      >progress_activity</span
+                    >
+                    <p class="mt-4 font-bold tracking-widest">
+                      LOADING LOGS...
+                    </p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <script src="sidebar.js"></script>
+    <script>
+      const checkUser = JSON.parse(localStorage.getItem("userData"));
+      if (!checkUser || checkUser.role !== "Super Admin") {
+        window.location.href = "dashboard.html";
+      }
+
+      const supabaseUrl = "https://nexvompdeubppbkvnwor.supabase.co";
+      const supabaseKey = "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI";
+      const dbClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+      let dbLogs = [];
+
+      async function fetchLogs() {
+        try {
+          const { data, error } = await dbClient
+            .from("activity_logs")
+            .select("*")
+            .order("created_at", { ascending: false });
+          if (error) throw error;
+          dbLogs = data || [];
+          const countEl = document.getElementById("totalLogsCount");
+          if (dbLogs.length > 0) {
+            countEl.innerText = `${dbLogs.length} Records`;
+            countEl.classList.remove("hidden");
+          } else {
+            countEl.classList.add("hidden");
+          }
+          renderLogsTable();
+        } catch (e) {
+          document.getElementById("logsTableBody").innerHTML =
+            `<tr><td colspan="5" class="py-24 text-center"><p class="text-slate-400 font-bold uppercase">Failed to load logs</p></td></tr>`;
+        }
+      }
+
+      dbClient
+        .channel("logs-realtime")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "activity_logs" },
+          () => fetchLogs(),
+        )
+        .subscribe();
+      window.onload = fetchLogs;
+
+      // 🎯 แก้ไขให้แสดงผลในบรรทัดเดียว
+      function formatDate(isoString) {
+        const date = new Date(isoString);
+        const d = date.getDate().toString().padStart(2, "0");
+        const m = date.toLocaleString("en-GB", { month: "short" });
+        const y = date.getFullYear();
+        const time = date.toLocaleTimeString("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        return `${d} ${m} ${y}, ${time}`;
+      }
+
+      function getActionStyle(action) {
+        switch (action.toUpperCase()) {
+          case "CREATE":
+            return {
+              color: "text-emerald-700",
+              bg: "bg-emerald-100",
+              icon: "add_circle",
+            };
+          case "EDIT":
+            return { color: "text-blue-700", bg: "bg-blue-100", icon: "edit" };
+          case "DELETE":
+            return { color: "text-red-700", bg: "bg-red-100", icon: "delete" };
+          case "PRINT":
+            return {
+              color: "text-purple-700",
+              bg: "bg-purple-100",
+              icon: "print",
+            };
+          default:
+            return {
+              color: "text-slate-700",
+              bg: "bg-slate-100",
+              icon: "info",
+            };
+        }
+      }
+
+      function renderLogsTable() {
+        const tbody = document.getElementById("logsTableBody");
+        const query = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const roleFilter = document.getElementById("roleFilter").value;
+        const actionFilter = document.getElementById("actionFilter").value;
+        let html = "";
+
+        const filtered = dbLogs.filter((log) => {
+          const matchesQuery =
+            (log.user_name || "").toLowerCase().includes(query) ||
+            (log.details || "").toLowerCase().includes(query);
+          const matchesRole = roleFilter === "ALL" || log.role === roleFilter;
+          const matchesAction =
+            actionFilter === "ALL" || log.action.toUpperCase() === actionFilter;
+          return matchesQuery && matchesRole && matchesAction;
+        });
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-24 text-center"><p class="text-slate-400 font-bold uppercase tracking-widest">No matching logs found</p></td></tr>`;
+          return;
+        }
+
+        filtered.forEach((log) => {
+          const style = getActionStyle(log.action);
+          let roleBadge = "";
+
+          // 🎯 แก้ไข Badge แบบไม่มีขอบ และตัวหนังสือเท่ากัน
+          if (log.role === "Super Admin")
+            roleBadge = `<span class="bg-purple-100 text-purple-700 text-[10px] px-2.5 py-1 rounded-lg font-black uppercase tracking-wider">Super Admin</span>`;
+          else if (log.role === "Admin")
+            roleBadge = `<span class="bg-slate-800 text-white text-[10px] px-2.5 py-1 rounded-lg font-black uppercase tracking-wider">Admin</span>`;
+          else
+            roleBadge = `<span class="bg-slate-100 text-slate-500 text-[10px] px-2.5 py-1 rounded-lg font-black uppercase tracking-wider">Staff</span>`;
+
+          html += `
+          <tr class="log-row border-b border-slate-100">
+            <td class="py-5 px-8"><div class="text-[13px] font-semibold text-slate-500 whitespace-nowrap">${formatDate(log.created_at)}</div></td>
+            <td class="py-5 px-6">
+                <div class="font-bold text-slate-800 text-[13px]">${log.user_name}</div>
+            </td>
+            <td class="py-5 px-6 text-center">${roleBadge}</td>
+            <td class="py-5 px-6 text-center">
+                <div class="inline-flex items-center gap-1.5 ${style.bg} ${style.color} px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                    <span class="material-symbols-outlined text-[14px]">${style.icon}</span> ${log.action}
+                </div>
+            </td>
+            <td class="py-5 px-6"><div class="text-[13px] text-slate-600 font-medium leading-relaxed">${log.details}</div></td>
+          </tr>`;
+        });
+        tbody.innerHTML = html;
+      }
+    </script>
+  </body>
+</html>

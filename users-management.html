@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Users | IMPACT Food Tag</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.5);
+        backdrop-filter: blur(4px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+      }
+      .modal-overlay.active {
+        display: flex !important;
+      }
+      .custom-scroll::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scroll::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      tr.user-row:hover {
+        background-color: #f8fafc;
+        transition: background-color 0.2s;
+      }
+    </style>
+  </head>
+  <body class="bg-[#f8fafc] flex h-screen overflow-hidden">
+    <div id="sidebar-container" class="shrink-0 h-full z-20"></div>
+
+    <div
+      class="flex-1 flex flex-col h-full overflow-hidden relative bg-[#f1f5f9]"
+    >
+      <header
+        class="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-center z-20 shrink-0"
+      >
+        <div>
+          <h1
+            class="text-2xl font-extrabold text-slate-800 tracking-tight leading-none flex items-center gap-2"
+          >
+            <span class="material-symbols-outlined text-3xl text-[#006d4b]"
+              >manage_accounts</span
+            >
+            User Management
+          </h1>
+          <p class="text-sm text-slate-500 font-medium mt-1">
+            จัดการบัญชีผู้ใช้งานและกำหนดสิทธิ์ในระบบ (Super Admin Only)
+          </p>
+        </div>
+
+        <div class="flex gap-3 items-center">
+          <button
+            type="button"
+            onclick="openModal('addModal')"
+            class="px-5 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] transition-all flex items-center gap-2 shadow-sm shadow-[#006d4b]/20 cursor-pointer"
+          >
+            <span class="material-symbols-outlined text-[20px]"
+              >person_add</span
+            >
+            Add New User
+          </button>
+        </div>
+      </header>
+
+      <main class="flex-1 flex flex-col p-8 overflow-hidden z-10">
+        <div
+          class="bg-white p-5 rounded-t-2xl border border-slate-200 border-b-0 flex gap-4 items-center shrink-0"
+        >
+          <div class="w-full max-w-lg relative">
+            <span
+              class="material-symbols-outlined absolute left-4 top-3 text-slate-400 pointer-events-none"
+              >search</span
+            >
+            <input
+              type="text"
+              id="searchInput"
+              onkeyup="renderUserList()"
+              placeholder="ค้นหาชื่อ หรือรหัสพนักงาน..."
+              class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all shadow-sm text-sm"
+            />
+          </div>
+
+          <select
+            id="roleFilter"
+            onchange="renderUserList()"
+            class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10"
+            style="
+              background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;);
+              background-repeat: no-repeat;
+              background-position: right 1rem center;
+              background-size: 1.2em;
+            "
+          >
+            <option value="all">All Roles</option>
+            <option value="Super Admin">Super Admin</option>
+            <option value="Admin">Admin</option>
+            <option value="Staff">Staff</option>
+          </select>
+
+          <div
+            class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-auto"
+          >
+            System Security
+          </div>
+        </div>
+
+        <div
+          class="bg-white border border-slate-200 rounded-b-2xl flex-1 overflow-auto shadow-xl shadow-slate-200/50 custom-scroll"
+        >
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50 sticky top-0 shadow-sm z-10">
+              <tr>
+                <th
+                  class="py-4 px-6 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b"
+                >
+                  Emp ID
+                </th>
+                <th
+                  class="py-4 px-6 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b"
+                >
+                  Name
+                </th>
+                <th
+                  class="py-4 px-6 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b"
+                >
+                  Role
+                </th>
+                <th
+                  class="py-4 px-6 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b"
+                >
+                  Password
+                </th>
+                <th
+                  class="py-4 px-8 text-[11px] font-black text-slate-400 uppercase tracking-widest w-40 border-b text-center"
+                >
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody id="userTableBody" class="divide-y divide-slate-100">
+              <tr>
+                <td colspan="5" class="py-20 text-center">
+                  <div class="flex flex-col items-center opacity-30">
+                    <span
+                      class="material-symbols-outlined text-5xl animate-spin"
+                      >progress_activity</span
+                    >
+                    <p class="mt-4 font-bold tracking-widest">
+                      LOADING USERS...
+                    </p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <!-- Modal เพิ่มพนักงาน -->
+    <div id="addModal" class="modal-overlay">
+      <div
+        class="bg-white rounded-3xl shadow-2xl w-[450px] relative z-50 overflow-hidden"
+      >
+        <div
+          class="px-8 py-6 border-b flex justify-between items-center bg-slate-50"
+        >
+          <div>
+            <h2 class="text-xl font-bold text-slate-800">Add New User</h2>
+          </div>
+          <button
+            type="button"
+            onclick="closeModal('addModal')"
+            class="w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-white hover:text-slate-600 rounded-full transition-all cursor-pointer"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <form
+          id="addForm"
+          onsubmit="saveUser(event, 'add')"
+          class="p-8 space-y-4"
+        >
+          <div>
+            <label
+              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+              >Employee ID</label
+            >
+            <input
+              type="text"
+              id="addEmpId"
+              required
+              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] font-bold"
+              placeholder="e.g. ST021"
+            />
+          </div>
+          <div>
+            <label
+              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+              >Name</label
+            >
+            <input
+              type="text"
+              id="addName"
+              required
+              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] font-bold"
+              placeholder="ชื่อ-นามสกุล หรือชื่อเล่น"
+            />
+          </div>
+          <div>
+            <label
+              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+              >Password</label
+            >
+            <input
+              type="text"
+              id="addPassword"
+              required
+              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] font-bold"
+              placeholder="ตั้งรหัสผ่าน"
+            />
+          </div>
+          <div>
+            <label
+              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+              >Role</label
+            >
+            <select
+              id="addRole"
+              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] font-bold cursor-pointer appearance-none pr-10"
+              style="
+                background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;);
+                background-repeat: no-repeat;
+                background-position: right 1rem center;
+                background-size: 1.2em;
+              "
+            >
+              <option value="Staff">Staff</option>
+              <option value="Admin">Admin</option>
+              <option value="Super Admin">Super Admin</option>
+            </select>
+          </div>
+          <div class="pt-4 border-t flex justify-end gap-3">
+            <button
+              type="button"
+              onclick="closeModal('addModal')"
+              class="px-6 py-2.5 text-slate-500 font-bold hover:text-slate-700 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="addBtnSubmit"
+              class="px-8 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-lg shadow-[#006d4b]/20"
+            >
+              Save User
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal แก้ไขพนักงาน -->
+    <div id="editModal" class="modal-overlay">
+      <div
+        class="bg-white rounded-3xl shadow-2xl w-[450px] relative z-50 overflow-hidden"
+      >
+        <div
+          class="px-8 py-6 border-b flex justify-between items-center bg-slate-50"
+        >
+          <div>
+            <h2 class="text-xl font-bold text-slate-800">Edit User</h2>
+          </div>
+          <button
+            type="button"
+            onclick="closeModal('editModal')"
+            class="w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-white hover:text-slate-600 rounded-full transition-all cursor-pointer"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <form
+          id="editForm"
+          onsubmit="saveUser(event, 'edit')"
+          class="p-8 space-y-4"
+        >
+          <input type="hidden" id="editDbId" />
+          <div>
+            <label
+              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+              >Employee ID</label
+            >
+            <input
+              type="text"
+              id="editEmpId"
+              required
+              class="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-xl outline-none font-bold text-slate-500"
+              readonly
+              title="ไม่สามารถแก้รหัสพนักงานได้"
+            />
+          </div>
+          <div>
+            <label
+              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+              >Name</label
+            >
+            <input
+              type="text"
+              id="editName"
+              required
+              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] font-bold"
+            />
+          </div>
+          <div>
+            <label
+              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+              >Password</label
+            >
+            <input
+              type="text"
+              id="editPassword"
+              required
+              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] font-bold text-blue-600"
+            />
+          </div>
+          <div>
+            <label
+              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+              >Role</label
+            >
+            <select
+              id="editRole"
+              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] font-bold cursor-pointer appearance-none pr-10"
+              style="
+                background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;);
+                background-repeat: no-repeat;
+                background-position: right 1rem center;
+                background-size: 1.2em;
+              "
+            >
+              <option value="Staff">Staff</option>
+              <option value="Admin">Admin</option>
+              <option value="Super Admin">Super Admin</option>
+            </select>
+          </div>
+          <div class="pt-4 border-t flex justify-end gap-3">
+            <button
+              type="button"
+              onclick="closeModal('editModal')"
+              class="px-6 py-2.5 text-slate-500 font-bold hover:text-slate-700 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="editBtnSubmit"
+              class="px-8 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-lg shadow-[#006d4b]/20"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="sidebar.js"></script>
+
+    <!-- 🎯 สำคัญมาก: ใส่สคริปต์นี้เพื่อเรียกใช้ไฟล์ปากกาสำหรับจดบันทึก Log -->
+    <script src="action-logger.js"></script>
+
+    <script>
+      // 🛡️ เช็กสิทธิ์: ถ้าไม่ใช่ Super Admin ให้เตะกลับไปหน้า Dashboard ทันที
+      const checkUser = JSON.parse(localStorage.getItem("userData"));
+      if (!checkUser || checkUser.role !== "Super Admin") {
+        window.location.href = "dashboard.html";
+      }
+
+      const supabaseUrl = "https://nexvompdeubppbkvnwor.supabase.co";
+      const supabaseKey = "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI";
+      const dbClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+      let dbUsers = [];
+
+      async function fetchUsers() {
+        try {
+          const { data, error } = await dbClient
+            .from("users")
+            .select("*")
+            .order("role", { ascending: true })
+            .order("emp_id", { ascending: true });
+
+          if (error) throw error;
+          dbUsers = data || [];
+          renderUserList();
+        } catch (err) {
+          console.error("Error", err);
+          document.getElementById("userTableBody").innerHTML =
+            `<tr><td colspan="5" class="py-20 text-center text-red-500 font-bold bg-red-50">⚠️ CONNECTION ERROR: ${err.message}</td></tr>`;
+        }
+      }
+
+      function getRoleBadge(role) {
+        if (role === "Super Admin")
+          return `<span class="bg-purple-100 text-purple-700 px-2.5 py-1 rounded-lg text-[11px] font-black uppercase tracking-wider border border-purple-200">👑 Super Admin</span>`;
+        if (role === "Admin")
+          return `<span class="bg-[#006d4b]/10 text-[#006d4b] px-2.5 py-1 rounded-lg text-[11px] font-black uppercase tracking-wider border border-[#006d4b]/20">🛡️ Admin</span>`;
+        return `<span class="bg-slate-100 text-slate-500 px-2.5 py-1 rounded-lg text-[11px] font-black uppercase tracking-wider border border-slate-200">🧑‍💼 Staff</span>`;
+      }
+
+      function togglePassword(element) {
+        const mask = element.querySelector(".pwd-mask");
+        const text = element.querySelector(".pwd-text");
+        const icon = element.querySelector(".pwd-icon");
+
+        if (mask.classList.contains("hidden")) {
+          mask.classList.remove("hidden");
+          text.classList.add("hidden");
+          icon.innerText = "visibility_off";
+          icon.classList.remove("text-blue-500");
+        } else {
+          mask.classList.add("hidden");
+          text.classList.remove("hidden");
+          icon.innerText = "visibility";
+          icon.classList.add("text-blue-500");
+        }
+      }
+
+      function renderUserList() {
+        const tbody = document.getElementById("userTableBody");
+        const query = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const filterRole = document.getElementById("roleFilter").value;
+
+        const filteredUsers = dbUsers.filter((u) => {
+          const matchText =
+            (u.name || "").toLowerCase().includes(query) ||
+            (u.emp_id || "").toLowerCase().includes(query);
+          const matchRole = filterRole === "all" || u.role === filterRole;
+          return matchText && matchRole;
+        });
+
+        if (filteredUsers.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-24 text-center">
+              <span class="material-symbols-outlined text-6xl mb-4 text-slate-200">person_off</span>
+              <p class="text-slate-400 font-bold tracking-widest uppercase">No Users Found</p>
+          </td></tr>`;
+          return;
+        }
+
+        let html = "";
+        filteredUsers.forEach((u) => {
+          const userDataStr = encodeURIComponent(JSON.stringify(u));
+
+          html += `
+          <tr class="user-row border-b border-slate-100 last:border-0">
+            <td class="py-4 px-6 font-bold text-slate-500">${u.emp_id}</td>
+            <td class="py-4 px-6 font-extrabold text-slate-800">${u.name}</td>
+            <td class="py-4 px-6">${getRoleBadge(u.role)}</td>
+            <td class="py-4 px-6">
+                <div class="flex items-center gap-2 cursor-pointer w-max" onclick="togglePassword(this)">
+                    <span class="pwd-mask text-slate-400 tracking-[0.2em]">••••••••</span>
+                    <span class="pwd-text hidden text-blue-600 font-bold text-sm">${u.password}</span>
+                    <span class="pwd-icon material-symbols-outlined text-[18px] text-slate-400 hover:text-slate-600 transition-colors">visibility_off</span>
+                </div>
+            </td>
+            <td class="py-4 px-8 text-center">
+                <div class="flex items-center justify-center gap-1">
+                    <button onclick="openEditModal('${userDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all cursor-pointer" title="Edit User">
+                        <span class="material-symbols-outlined text-[20px]">edit</span>
+                    </button>
+                    ${
+                      u.emp_id !== checkUser.emp_id
+                        ? `
+                    <button onclick="deleteUser('${u.id}', '${u.name}', '${u.emp_id}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer" title="Delete User">
+                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                    </button>`
+                        : `<div class="w-9 h-9"></div>`
+                    }
+                </div>
+            </td>
+          </tr>`;
+        });
+        tbody.innerHTML = html;
+      }
+
+      function openModal(id) {
+        document.getElementById(id).classList.add("active");
+        if (id === "addModal") document.getElementById("addForm").reset();
+      }
+
+      function closeModal(id) {
+        document.getElementById(id).classList.remove("active");
+      }
+
+      function openEditModal(userDataStr) {
+        const u = JSON.parse(decodeURIComponent(userDataStr));
+        document.getElementById("editDbId").value = u.id;
+        document.getElementById("editEmpId").value = u.emp_id;
+        document.getElementById("editName").value = u.name;
+        document.getElementById("editPassword").value = u.password;
+        document.getElementById("editRole").value = u.role;
+        openModal("editModal");
+      }
+
+      async function saveUser(e, mode) {
+        e.preventDefault();
+
+        const isAdd = mode === "add";
+        const btnId = isAdd ? "addBtnSubmit" : "editBtnSubmit";
+        const modalId = isAdd ? "addModal" : "editModal";
+
+        const payload = {
+          name: document.getElementById(`${mode}Name`).value.trim(),
+          password: document.getElementById(`${mode}Password`).value.trim(),
+          role: document.getElementById(`${mode}Role`).value,
+        };
+
+        if (isAdd)
+          payload.emp_id = document.getElementById("addEmpId").value.trim();
+
+        const btn = document.getElementById(btnId);
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = `<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> Saving...`;
+
+        try {
+          let error;
+          if (isAdd) {
+            const res = await dbClient.from("users").insert([payload]);
+            error = res.error;
+            // 🎯 สั่งบันทึก Log ตอนสร้างผู้ใช้สำเร็จ
+            if (!error)
+              await logSystemActivity(
+                "CREATE",
+                `เพิ่มบัญชีผู้ใช้งานใหม่รหัส: ${payload.emp_id} (${payload.name})`,
+              );
+          } else {
+            const id = document.getElementById("editDbId").value;
+            const empId = document.getElementById("editEmpId").value; // เอาไว้ใส่ใน log
+            const res = await dbClient
+              .from("users")
+              .update(payload)
+              .eq("id", id);
+            error = res.error;
+            // 🎯 สั่งบันทึก Log ตอนแก้ไขข้อมูลสำเร็จ
+            if (!error)
+              await logSystemActivity(
+                "EDIT",
+                `แก้ไขข้อมูลผู้ใช้งานรหัส: ${empId} (${payload.name})`,
+              );
+          }
+
+          if (error) throw error;
+
+          closeModal(modalId);
+          fetchUsers();
+        } catch (err) {
+          alert("Error: " + err.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = originalText;
+        }
+      }
+
+      async function deleteUser(id, name, empId) {
+        if (
+          confirm(
+            `คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้งาน "${name}" ออกจากระบบ?\n*การกระทำนี้ไม่สามารถกู้คืนได้`,
+          )
+        ) {
+          try {
+            const { error } = await dbClient
+              .from("users")
+              .delete()
+              .eq("id", id);
+            if (error) throw error;
+
+            // 🎯 สั่งบันทึก Log ตอนลบผู้ใช้สำเร็จ
+            await logSystemActivity(
+              "DELETE",
+              `ลบบัญชีผู้ใช้งานรหัส: ${empId} (${name})`,
+            );
+
+            fetchUsers();
+          } catch (err) {
+            alert("Error: " + err.message);
+          }
+        }
+      }
+
+      window.onload = fetchUsers;
+    </script>
+  </body>
+</html>
