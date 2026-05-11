@@ -294,12 +294,46 @@
       </div>
     </div>
 
+    <div id="deleteModal" class="modal-overlay">
+      <div
+        class="bg-white rounded-3xl shadow-2xl w-[420px] flex flex-col relative z-50 overflow-hidden text-center p-8"
+      >
+        <div
+          class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-100"
+        >
+          <span class="material-symbols-outlined text-3xl">delete_forever</span>
+        </div>
+        <h2 class="text-xl font-bold text-slate-800 mb-2">ยืนยันการลบเมนู</h2>
+        <p
+          id="deleteModalMessage"
+          class="text-xs text-slate-500 font-medium leading-relaxed mb-6"
+        >
+          คุณต้องการลบเมนูนี้ใช่หรือไม่? ข้อมูลจะไม่สามารถกู้คืนได้
+        </p>
+        <div class="flex gap-3 justify-center">
+          <button
+            type="button"
+            onclick="closeModal('deleteModal')"
+            class="flex-1 py-3 text-slate-500 font-bold bg-slate-100 hover:bg-slate-200 rounded-xl transition-all cursor-pointer text-xs uppercase tracking-wider"
+          >
+            ยกเลิก
+          </button>
+          <button
+            type="button"
+            id="confirmDeleteBtn"
+            onclick="executeDeleteMenu()"
+            class="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 shadow-lg shadow-red-500/20 transition-all cursor-pointer text-xs uppercase tracking-wider"
+          >
+            ลบข้อมูล
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script src="sidebar.js"></script>
-    <!-- 🎯 นำเข้าไฟล์ action-logger.js -->
     <script src="action-logger.js"></script>
 
     <script>
-      // 🛡️ เช็กสิทธิ์ ถ้าเป็น Staff ให้เตะกลับไปหน้า Dashboard ทันที
       const checkUser = JSON.parse(localStorage.getItem("userData"));
       if (!checkUser || checkUser.role === "Staff") {
         window.location.href = "dashboard.html";
@@ -311,6 +345,7 @@
       let dbMenus = [];
       let dbIngredients = [];
       let editingMenuDbId = null;
+      let pendingDeleteData = null; // 🎯 เก็บข้อมูลเมนูที่รอการลบ
 
       async function fetchData() {
         try {
@@ -374,12 +409,12 @@
           const displayId = menu.menu_id || "-";
           const menuDataStr = encodeURIComponent(JSON.stringify(menu));
 
-          // 🎯 ส่งชื่อเมนูไปตอนลบด้วย เพื่อบันทึก Log
           const safeMenuName = (menu.name_th || menu.name_en || "-").replace(
             /'/g,
             "\\'",
           );
 
+          // 🎯 เปลี่ยนไอคอนจาก edit_document เป็น edit (รูปดินสอ) และเปลี่ยนให้เปิด Modal ลบ
           html += `
           <tr class="menu-row border-b border-slate-100 last:border-0">
             <td class="py-5 px-8">
@@ -395,8 +430,8 @@
             <td class="py-5 px-6"><div class="flex flex-wrap">${ingHtml || "<span class='text-slate-300 text-sm font-medium italic'>No images assigned</span>"}</div></td>
             <td class="py-5 px-8 text-center">
                 <div class="flex items-center justify-center gap-2">
-                    <button onclick="openMenuModal('${menuDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-[#006d4b] hover:bg-emerald-50 rounded-full transition-all cursor-pointer"><span class="material-symbols-outlined text-[20px]">edit_document</span></button>
-                    <button onclick="deleteMenu('${menu.id}', '${displayId}', '${safeMenuName}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+                    <button onclick="openMenuModal('${menuDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-[#006d4b] hover:bg-emerald-50 rounded-full transition-all cursor-pointer"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+                    <button onclick="confirmDelete('${menu.id}', '${displayId}', '${safeMenuName}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer"><span class="material-symbols-outlined text-[20px]">delete</span></button>
                 </div>
             </td>
           </tr>`;
@@ -414,6 +449,7 @@
         });
         return maxNum;
       }
+
       function openMenuModal(menuDataStr = null) {
         document.getElementById("searchIngredientModal").value = "";
         const container = document.getElementById("ingredientChecklist");
@@ -446,6 +482,7 @@
           "grid grid-cols-3 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 max-h-64 overflow-y-auto custom-scroll";
         document.getElementById("menuModal").classList.add("active");
       }
+
       function filterModalIngredients() {
         const searchVal = document
           .getElementById("searchIngredientModal")
@@ -458,6 +495,7 @@
             : "none";
         });
       }
+
       function closeModal(id) {
         document.getElementById(id).classList.remove("active");
       }
@@ -484,14 +522,12 @@
               .from("menus")
               .update(payload)
               .eq("id", editingMenuDbId);
-            // 🎯 บันทึก Log การแก้ไขเมนู
             await logSystemActivity(
               "EDIT",
               `แก้ไขข้อมูลเมนูรหัส: ${id} (${th || en})`,
             );
           } else {
             await dbClient.from("menus").insert([payload]);
-            // 🎯 บันทึก Log การสร้างเมนูใหม่
             await logSystemActivity(
               "CREATE",
               `เพิ่มเมนูใหม่รหัส: ${id} (${th || en})`,
@@ -506,15 +542,37 @@
         }
       }
 
-      async function deleteMenu(dbId, menuId, menuName) {
-        if (confirm(`ต้องการลบเมนู "${menuName}" ใช่หรือไม่?`)) {
+      // 🎯 เปิด Modal ลบ และกำหนด wording
+      function confirmDelete(dbId, menuId, menuName) {
+        pendingDeleteData = { dbId, menuId, menuName };
+        const msgEl = document.getElementById("deleteModalMessage");
+        msgEl.innerHTML = `คุณต้องการลบเมนู <strong class="text-slate-800">${menuId}</strong><br><span class="text-red-500 font-bold">${menuName}</span><br>ออกจากระบบใช่หรือไม่? ข้อมูลจะไม่สามารถกู้คืนได้`;
+        document.getElementById("deleteModal").classList.add("active");
+      }
+
+      // 🎯 ฟังก์ชันเรียกทำงานลบจริงเมื่อกดยืนยันใน Modal
+      async function executeDeleteMenu() {
+        if (!pendingDeleteData) return;
+        const { dbId, menuId, menuName } = pendingDeleteData;
+        const btn = document.getElementById("confirmDeleteBtn");
+
+        btn.disabled = true;
+        btn.innerHTML = `<span class="material-symbols-outlined animate-spin align-middle text-sm">progress_activity</span>`;
+
+        try {
           await dbClient.from("menus").delete().eq("id", dbId);
-          // 🎯 บันทึก Log การลบเมนู
           await logSystemActivity(
             "DELETE",
             `ลบเมนูรหัส: ${menuId} (${menuName})`,
           );
+          closeModal("deleteModal");
           fetchData();
+        } catch (e) {
+          alert("Error deleting menu: " + e.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = "ลบข้อมูล";
+          pendingDeleteData = null;
         }
       }
 
@@ -559,7 +617,6 @@
             });
           }
 
-          // 🎯 บันทึก Log การนำเข้าไฟล์ Excel
           await logSystemActivity(
             "CREATE",
             `นำเข้าเมนูผ่าน Excel/CSV จำนวน ${jsonData.length} รายการ`,

@@ -7,10 +7,10 @@ function injectSidebar() {
     return;
   }
 
-  // 1. เมนูพื้นฐาน
+  // 1. เมนูพื้นฐาน (เปลี่ยนชื่อเป็น Saved Tags ตามที่ต้องการครับ)
   let navItems = `
     <a href="dashboard.html" id="nav-dashboard" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
-      <span class="material-symbols-outlined text-[24px]">dashboard</span> Dashboard
+      <span class="material-symbols-outlined text-[24px]">dashboard</span> Saved Tags
     </a>
   `;
 

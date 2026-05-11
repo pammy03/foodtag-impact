@@ -26,7 +26,6 @@
         font-family: "Inter", sans-serif;
       }
 
-      /* ===== 🎯 ALLERGEN STYLES ===== */
       .allergen-container {
         display: flex;
         flex-wrap: wrap;
@@ -50,7 +49,6 @@
         border: none;
         box-shadow: none;
       }
-      /* ================================== */
 
       .slot-bg {
         position: absolute;
@@ -60,6 +58,7 @@
         object-fit: fill;
         z-index: 0;
       }
+
       .slot-content {
         position: relative;
         z-index: 10;
@@ -68,6 +67,7 @@
         align-items: center;
         width: 100%;
       }
+
       .a4-paper {
         background: white;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -79,9 +79,11 @@
         transition: outline 0.3s;
       }
 
-      /* 🎯 ปรับปรุง: เส้น Guide line ตัดขอบให้เป็นสไตล์เดียวกันหมด */
+      /* 🎯 ใช้ 1fr + บังคับขนาด 100% เพื่อให้ทุกกรอบป้ายบีบตัวพอดีกับกระดาษ A4 เสมอ */
       .inner-grid {
         display: grid;
+        width: 100%;
+        height: 100%;
         margin: auto;
         border-top: 1px dashed #94a3b8;
         border-left: 1px dashed #94a3b8;
@@ -89,31 +91,19 @@
         box-sizing: border-box;
       }
       .grid-plate {
-        grid-template-columns: repeat(2, 13cm);
-        grid-template-rows: repeat(1, 18cm);
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(1, 1fr);
       }
       .grid-western {
-        /* 🎯 แก้ไข: สลับกว้างxยาว เป็น (14.8 กว้าง x 10.5 สูง) เพื่อให้ 4 ช่องวางบน A4 แนวนอนพอดีเป๊ะ (29.6 x 21) */
-        grid-template-columns: repeat(2, 14.8cm);
-        grid-template-rows: repeat(2, 10.5cm);
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
       }
       .grid-buffet {
-        /* 🎯 แก้ไข: สลับกว้างxยาว เป็น (9.7 กว้าง x 10.2 สูง) เพื่อให้ 6 ช่องวางบน A4 แนวนอนพอดีเป๊ะ (29.1 x 20.4) */
-        grid-template-columns: repeat(3, 9.7cm);
-        grid-template-rows: repeat(2, 10.2cm);
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 1fr);
       }
 
-      /* 🎯 เพิ่มใหม่: เส้นประสีแดงล้อมรอบพื้นที่ป้ายจริงใน Preview (ux helper) */
-      .preview-slot-outline {
-        position: absolute;
-        inset: 0;
-        border: 2px dashed #f87171; /* red-400 */
-        background-color: rgba(248, 113, 113, 0.05); /* light red tint */
-        pointer-events: none;
-        z-index: 100;
-        display: block;
-      }
-
+      /* 🎯 สไตล์ดั้งเดิม: ขอบเขียวทึบเฉพาะช่องที่ Active ไม่มีพื้นหลังทึบคลุมทับ */
       .slot {
         border-right: 1px dashed #94a3b8;
         border-bottom: 1px dashed #94a3b8;
@@ -127,12 +117,13 @@
         transition: all 0.2s;
         overflow: hidden;
       }
+
       .slot.active {
         outline: 3px solid #006d4b;
         outline-offset: -3px;
-        background-color: #f8fafc;
         z-index: 10;
       }
+
       aside .scroll-area::-webkit-scrollbar {
         width: 4px;
       }
@@ -141,11 +132,10 @@
         border-radius: 10px;
       }
 
-      /* 🎯 ปรับปรุง: ระบบพริ้นต์บังคับแนวนอน และลบ Margin เพื่อให้ 100% Scale */
       @media print {
         @page {
-          size: landscape; /* 🎯 บังคับปริ้นต์เป็นแนวนอนเสมอ */
-          margin: 0mm; /* 🎯 ลบ Margin ทิ้ง เพื่อให้สเกลตรง 100% พอดีเป๊ะ */
+          size: landscape;
+          margin: 0mm;
         }
         body {
           margin: 0;
@@ -177,13 +167,6 @@
           width: max-content !important;
           height: max-content !important;
         }
-
-        /* ซ่อนเส้นประสีแดง ux helper เวลาพรินต์ */
-        .preview-slot-outline {
-          display: none !important;
-        }
-
-        /* บังคับพรินต์ให้แสดงเส้นไกด์ไลน์ (Guide Lines) สีเทา */
         .inner-grid {
           border-top: 1px dashed #94a3b8 !important;
           border-left: 1px dashed #94a3b8 !important;
@@ -199,7 +182,6 @@
         .print\:hidden {
           display: none !important;
         }
-
         .allergen-container {
           display: flex !important;
           flex-wrap: wrap !important;
@@ -221,6 +203,7 @@
           padding: 0 !important;
         }
       }
+
       .template-btn.selected {
         border-color: #006d4b;
         background-color: #f0fdf4;
@@ -328,7 +311,6 @@
                   applyTemplate(
                     {
                       name: 'Western Set',
-                      /* 🎯 บังคับให้ปุ่มนี้เรียกใช้แนวนอน (landscape) */
                       orientation: 'landscape',
                       slots_count: 4,
                       grid_class: 'grid-western',
@@ -353,7 +335,6 @@
                   applyTemplate(
                     {
                       name: 'Buffet / Coffee Break',
-                      /* 🎯 บังคับให้ปุ่มนี้เรียกใช้แนวนอน (landscape) */
                       orientation: 'landscape',
                       slots_count: 6,
                       grid_class: 'grid-buffet',
@@ -401,7 +382,7 @@
               ></select>
 
               <button
-                onclick="applyBackgroundToAllSlots()"
+                onclick="showBgConfirmModal()"
                 class="w-full mt-2 py-2 text-[13px] font-bold text-[#006d4b] bg-white border border-[#006d4b]/30 hover:bg-emerald-50 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
               >
                 <span class="material-symbols-outlined text-[16px]"
@@ -413,7 +394,7 @@
 
             <div class="mt-4 pt-2">
               <button
-                onclick="clearCurrentSlot()"
+                onclick="showClearSlotConfirmModal()"
                 class="w-full py-2.5 text-[14px] font-bold text-[#e15b58] bg-white border border-[#e15b58]/30 hover:bg-red-50 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
               >
                 <span class="material-symbols-outlined text-[18px]"
@@ -551,7 +532,7 @@
             ></div>
             <div class="pt-4 mt-4 flex flex-col gap-2">
               <button
-                onclick="applyToAllSlots()"
+                onclick="showMenuConfirmModal()"
                 class="w-full py-2.5 text-[14px] font-bold text-[#2e7d53] bg-[#eaf4ed] border border-[#2e7d53]/30 hover:bg-[#d1eadd] rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
               >
                 <span class="material-symbols-outlined text-[18px]"
@@ -604,7 +585,7 @@
         </div>
       </aside>
 
-      <main class="flex-1 bg-slate-50 flex flex-col overflow-hidden relative">
+      <main class="flex-1 bg-slate-200 flex flex-col overflow-hidden relative">
         <div class="preview-header p-6 pb-2 flex-shrink-0 z-10">
           <h2
             class="text-2xl font-black text-[#006d4b] uppercase tracking-tight"
@@ -678,11 +659,120 @@
       </div>
     </div>
 
+    <div
+      id="bgConfirmModal"
+      class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300"
+    >
+      <div
+        class="bg-white rounded-2xl shadow-2xl w-[400px] p-8 text-center transform scale-95 transition-transform duration-300"
+      >
+        <div
+          class="w-16 h-16 bg-emerald-50 text-[#006d4b] rounded-full flex items-center justify-center mx-auto mb-5 border-2 border-emerald-100"
+        >
+          <span class="material-symbols-outlined text-3xl">imagesmode</span>
+        </div>
+        <h3 class="text-xl font-bold text-slate-800 mb-2">
+          ยืนยันการตั้งค่าพื้นหลัง
+        </h3>
+        <p class="text-sm text-slate-500 mb-6 leading-relaxed">
+          คุณต้องการใช้ภาพพื้นหลังปัจจุบัน<br />กับป้ายอาหารทุกช่องใช่หรือไม่?
+        </p>
+        <div class="flex gap-3 w-full">
+          <button
+            onclick="closeBgConfirmModal()"
+            class="flex-1 py-3 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors"
+          >
+            ยกเลิก
+          </button>
+          <button
+            onclick="executeApplyBackground()"
+            class="flex-1 py-3 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-md transition-colors flex justify-center items-center gap-2"
+          >
+            ยืนยัน
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="clearSlotConfirmModal"
+      class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300"
+    >
+      <div
+        class="bg-white rounded-2xl shadow-2xl w-[400px] p-8 text-center transform scale-95 transition-transform duration-300"
+      >
+        <div
+          class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-5 border-2 border-red-100"
+        >
+          <span class="material-symbols-outlined text-3xl">delete</span>
+        </div>
+        <h3 class="text-xl font-bold text-slate-800 mb-2">
+          ยืนยันการล้างข้อมูล
+        </h3>
+        <p class="text-sm text-slate-500 mb-6 leading-relaxed">
+          คุณต้องการลบข้อมูลทั้งหมดใน
+          <span id="clearSlotNumber" class="font-bold text-red-500"></span>
+          ใช่หรือไม่?<br />ข้อมูลที่ลบจะไม่สามารถกู้คืนได้
+        </p>
+        <div class="flex gap-3 w-full">
+          <button
+            onclick="closeClearSlotConfirmModal()"
+            class="flex-1 py-3 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors"
+          >
+            ยกเลิก
+          </button>
+          <button
+            onclick="executeClearCurrentSlot()"
+            class="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 shadow-md transition-colors flex justify-center items-center gap-2"
+          >
+            ลบข้อมูล
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="menuConfirmModal"
+      class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300"
+    >
+      <div
+        class="bg-white rounded-2xl shadow-2xl w-[400px] p-8 text-center transform scale-95 transition-transform duration-300"
+      >
+        <div
+          class="w-16 h-16 bg-emerald-50 text-[#006d4b] rounded-full flex items-center justify-center mx-auto mb-5 border-2 border-emerald-100"
+        >
+          <span class="material-symbols-outlined text-3xl">content_copy</span>
+        </div>
+        <h3 class="text-xl font-bold text-slate-800 mb-2">
+          ยืนยันการคัดลอกข้อมูล
+        </h3>
+        <p class="text-sm text-slate-500 mb-6 leading-relaxed">
+          คุณต้องการคัดลอกข้อมูลเมนู การตั้งค่าฟอนต์<br />และพื้นหลังของ
+          <span id="copySlotNumber" class="font-bold text-[#006d4b]"></span
+          ><br />ไปยังป้ายอาหารทุกช่องใช่หรือไม่?
+        </p>
+        <div class="flex gap-3 w-full">
+          <button
+            onclick="closeMenuConfirmModal()"
+            class="flex-1 py-3 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors"
+          >
+            ยกเลิก
+          </button>
+          <button
+            onclick="executeApplyToAllSlots()"
+            class="flex-1 py-3 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-md transition-colors flex justify-center items-center gap-2"
+          >
+            ยืนยัน
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script src="sidebar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="action-logger.js"></script>
 
     <script>
-      // 🛡️ เช็กสิทธิ์ ถ้าเป็น Staff ให้เตะกลับไปหน้า Dashboard ทันที
       const checkUser = JSON.parse(localStorage.getItem("userData"));
       if (!checkUser || checkUser.role === "Staff") {
         window.location.href = "dashboard.html";
@@ -695,23 +785,13 @@
       let activeSlot = 1;
       let slotsData = {};
       let isInitialLoading = false;
-      let selectedPaperSize = "A4"; // 🎯 เพิ่มใหม่: ตัวแปรเก็บขนาดกระดาษ (Paper Size)
+      let selectedPaperSize = "A4";
 
-      const DEFAULT_FONT_TH = "'Sarabun', sans-serif";
-      const DEFAULT_FONT_EN = "'Inter', sans-serif";
-      const DEFAULT_SIZE_TH = "22px";
-      const DEFAULT_SIZE_EN = "22px";
-
-      const urlParams = new URLSearchParams(window.location.search);
-      const editId = urlParams.get("edit");
-
-      // 🎯 ส่วนที่เพิ่มใหม่: ฟังก์ชันสำหรับเปลี่ยนขนาดกระดาษ (A3 / A4)
       function setPaperSize(size) {
         selectedPaperSize = size;
         const btnA4 = document.getElementById("btn-A4");
         const btnA3 = document.getElementById("btn-A3");
 
-        // อัปเดตสไตล์ปุ่ม
         if (size === "A4") {
           btnA4.className =
             "flex-1 py-2.5 border-2 border-[#006d4b] bg-[#f0fdf4] text-[#006d4b] font-bold rounded-lg transition-all shadow-sm";
@@ -724,12 +804,14 @@
             "flex-1 py-2.5 border-2 border-slate-200 bg-white text-slate-500 font-bold rounded-lg hover:border-slate-300 transition-all shadow-sm";
         }
 
-        // อัปเดตข้อความใน Preview
         document.getElementById("previewPaperText").innerText = size + " Paper";
         resizePaper();
       }
 
       window.onload = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get("edit");
+
         if (editId) {
           isInitialLoading = true;
           document.getElementById("pageTitle").innerText = "Edit Tag Profile";
@@ -743,11 +825,10 @@
             document.getElementById("profileName").value = tagToEdit.title;
             slotsData = tagToEdit.slotsData || {};
 
-            // 🎯 เช็กว่ามี paperSize บันทึกไว้ไหม ถ้ามีให้เอามาใช้
             if (tagToEdit.paperSize) {
               setPaperSize(tagToEdit.paperSize);
             } else {
-              setPaperSize("A4"); // Default เป็น A4
+              setPaperSize("A4");
             }
 
             const mockConfigs = {
@@ -760,7 +841,6 @@
               },
               "Western Set": {
                 name: "Western Set",
-                /* 🎯 แก้ไข: บังคับแนวนอน */
                 orientation: "landscape",
                 slots_count: 4,
                 grid_class: "grid-western",
@@ -768,7 +848,6 @@
               },
               "Buffet / Coffee Break": {
                 name: "Buffet / Coffee Break",
-                /* 🎯 แก้ไข: บังคับแนวนอน */
                 orientation: "landscape",
                 slots_count: 6,
                 grid_class: "grid-buffet",
@@ -806,11 +885,10 @@
           }
           isInitialLoading = false;
         } else {
-          setPaperSize("A4"); // Default เมื่อสร้างใหม่
+          setPaperSize("A4");
           applyTemplate(
             {
               name: "Buffet / Coffee Break",
-              /* 🎯 แก้ไข: บังคับแนวนอน */
               orientation: "landscape",
               slots_count: 6,
               grid_class: "grid-buffet",
@@ -821,7 +899,6 @@
         }
       };
 
-      // 🎯 แก้ไขให้ resizePaper ดึงขนาดความกว้างความยาวจาก A3 / A4 ตามที่เลือก
       function resizePaper() {
         const container = document.getElementById("paperContainer");
         const paper = document.getElementById("a4Paper");
@@ -831,13 +908,11 @@
 
         let pWidth, pHeight;
         if (selectedPaperSize === "A3") {
-          // ขนาด A3
           pWidth =
             currentTemplateConfig.orientation === "landscape" ? 1587 : 1123;
           pHeight =
             currentTemplateConfig.orientation === "landscape" ? 1123 : 1587;
         } else {
-          // ขนาด A4
           pWidth =
             currentTemplateConfig.orientation === "landscape" ? 1123 : 794;
           pHeight =
@@ -927,10 +1002,10 @@
           return;
         }
 
-        const fTh = menu.fontTh || DEFAULT_FONT_TH;
-        const sTh = menu.fontSizeTh || DEFAULT_SIZE_TH;
-        const fEn = menu.fontEn || DEFAULT_FONT_EN;
-        const sEn = menu.fontSizeEn || DEFAULT_SIZE_EN;
+        const fTh = menu.fontTh || "'Sarabun', sans-serif";
+        const sTh = menu.fontSizeTh || "22px";
+        const fEn = menu.fontEn || "'Inter', sans-serif";
+        const sEn = menu.fontSizeEn || "22px";
 
         const allergensHtml =
           showAllergies && menu.allergens && menu.allergens.length > 0
@@ -948,10 +1023,8 @@
               `</div>`
             : "";
 
-        // 🎯 ส่วนที่แก้ไข: ใส่ preview-slot-outline ลงไป
         element.innerHTML = `
             ${bgHtml}
-            <div class="preview-slot-outline"></div>
             <div class="slot-content">
               <img src="Impact_Logo.png" class="h-6 opacity-30 mb-6" alt="logo" onerror="this.style.display='none'">
               <div class="slot-text-th font-black text-slate-800 mb-2 leading-tight text-center whitespace-pre-line" style="font-family: ${fTh}; font-size: ${sTh};">${menu.name_th || ""}</div>
@@ -1014,14 +1087,14 @@
           : "";
 
         document.getElementById("fontSelectTh").value =
-          menu.fontTh || DEFAULT_FONT_TH;
+          menu.fontTh || "'Sarabun', sans-serif";
         document.getElementById("fontSizeTh").value = parseInt(
-          menu.fontSizeTh || DEFAULT_SIZE_TH,
+          menu.fontSizeTh || "22px",
         );
         document.getElementById("fontSelectEn").value =
-          menu.fontEn || DEFAULT_FONT_EN;
+          menu.fontEn || "'Inter', sans-serif";
         document.getElementById("fontSizeEn").value = parseInt(
-          menu.fontSizeEn || DEFAULT_SIZE_EN,
+          menu.fontSizeEn || "22px",
         );
 
         const list = document.getElementById("allergenList");
@@ -1050,62 +1123,97 @@
         document.getElementById("menuSearch").value = "";
         document.getElementById("allergenList").innerHTML = "";
 
-        document.getElementById("fontSelectTh").value = DEFAULT_FONT_TH;
-        document.getElementById("fontSizeTh").value = parseInt(DEFAULT_SIZE_TH);
-        document.getElementById("fontSelectEn").value = DEFAULT_FONT_EN;
-        document.getElementById("fontSizeEn").value = parseInt(DEFAULT_SIZE_EN);
+        document.getElementById("fontSelectTh").value = "'Sarabun', sans-serif";
+        document.getElementById("fontSizeTh").value = parseInt("22px");
+        document.getElementById("fontSelectEn").value = "'Inter', sans-serif";
+        document.getElementById("fontSizeEn").value = parseInt("22px");
       }
 
-      function clearCurrentSlot() {
-        if (
-          confirm(`ต้องการลบข้อมูลทั้งหมดของ Slot ${activeSlot} ใช่หรือไม่?`)
-        ) {
-          slotsData[activeSlot] = { bgUrl: "" };
-          clearInputs();
-          syncBgSelectWithCurrentSlot();
-          renderActiveSlotOnly();
+      function showBgConfirmModal() {
+        const modal = document.getElementById("bgConfirmModal");
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+          modal.classList.remove("opacity-0");
+          modal.querySelector("div").classList.remove("scale-95");
+        }, 10);
+      }
+      function closeBgConfirmModal() {
+        const modal = document.getElementById("bgConfirmModal");
+        modal.classList.add("opacity-0");
+        modal.querySelector("div").classList.add("scale-95");
+        setTimeout(() => modal.classList.add("hidden"), 300);
+      }
+      function executeApplyBackground() {
+        closeBgConfirmModal();
+        const select = document.getElementById("bgSelect");
+        const bgUrl = select.value;
+        const count = currentTemplateConfig.slots_count;
+        for (let i = 1; i <= count; i++) {
+          if (!slotsData[i]) slotsData[i] = {};
+          slotsData[i].bgUrl = bgUrl;
+          const slotDiv = document.getElementById(`slot-${i}`);
+          if (slotDiv) {
+            const wrapper = slotDiv.querySelector("div:last-child");
+            renderSlotContent(wrapper, slotsData[i], i);
+          }
         }
       }
 
-      function applyToAllSlots() {
+      function showClearSlotConfirmModal() {
+        document.getElementById("clearSlotNumber").innerText =
+          "Slot " + activeSlot;
+        const modal = document.getElementById("clearSlotConfirmModal");
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+          modal.classList.remove("opacity-0");
+          modal.querySelector("div").classList.remove("scale-95");
+        }, 10);
+      }
+      function closeClearSlotConfirmModal() {
+        const modal = document.getElementById("clearSlotConfirmModal");
+        modal.classList.add("opacity-0");
+        modal.querySelector("div").classList.add("scale-95");
+        setTimeout(() => modal.classList.add("hidden"), 300);
+      }
+      function executeClearCurrentSlot() {
+        closeClearSlotConfirmModal();
+        slotsData[activeSlot] = { bgUrl: "" };
+        clearInputs();
+        syncBgSelectWithCurrentSlot();
+        renderActiveSlotOnly();
+      }
+
+      function showMenuConfirmModal() {
         const currentMenu = slotsData[activeSlot];
         if (!currentMenu || (!currentMenu.name_th && !currentMenu.bgUrl)) {
           alert("⚠️ ไม่มีข้อมูลในช่องนี้ให้คัดลอกครับ");
           return;
         }
-
-        if (
-          confirm(
-            `ต้องการคัดลอกข้อมูล การตั้งค่าฟอนต์ และพื้นหลังของช่องที่ ${activeSlot} ไปยังทุก Slot ใช่หรือไม่?`,
-          )
-        ) {
-          const count = currentTemplateConfig.slots_count;
-          for (let i = 1; i <= count; i++) {
-            slotsData[i] = JSON.parse(JSON.stringify(currentMenu));
-            const slotDiv = document.getElementById(`slot-${i}`);
-            if (slotDiv) {
-              const wrapper = slotDiv.querySelector("div:last-child");
-              renderSlotContent(wrapper, slotsData[i], i);
-            }
-          }
-        }
+        document.getElementById("copySlotNumber").innerText =
+          "Slot " + activeSlot;
+        const modal = document.getElementById("menuConfirmModal");
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+          modal.classList.remove("opacity-0");
+          modal.querySelector("div").classList.remove("scale-95");
+        }, 10);
       }
-
-      function applyBackgroundToAllSlots() {
-        const select = document.getElementById("bgSelect");
-        const bgUrl = select.value;
-
-        if (confirm(`ต้องการใช้ภาพพื้นหลังนี้กับทุก Slot ใช่หรือไม่?`)) {
-          const count = currentTemplateConfig.slots_count;
-          for (let i = 1; i <= count; i++) {
-            if (!slotsData[i]) slotsData[i] = {};
-            slotsData[i].bgUrl = bgUrl;
-
-            const slotDiv = document.getElementById(`slot-${i}`);
-            if (slotDiv) {
-              const wrapper = slotDiv.querySelector("div:last-child");
-              renderSlotContent(wrapper, slotsData[i], i);
-            }
+      function closeMenuConfirmModal() {
+        const modal = document.getElementById("menuConfirmModal");
+        modal.classList.add("opacity-0");
+        modal.querySelector("div").classList.add("scale-95");
+        setTimeout(() => modal.classList.add("hidden"), 300);
+      }
+      function executeApplyToAllSlots() {
+        closeMenuConfirmModal();
+        const currentMenu = slotsData[activeSlot];
+        const count = currentTemplateConfig.slots_count;
+        for (let i = 1; i <= count; i++) {
+          slotsData[i] = JSON.parse(JSON.stringify(currentMenu));
+          const slotDiv = document.getElementById(`slot-${i}`);
+          if (slotDiv) {
+            const wrapper = slotDiv.querySelector("div:last-child");
+            renderSlotContent(wrapper, slotsData[i], i);
           }
         }
       }
@@ -1156,10 +1264,10 @@
         slotsData[activeSlot] = {
           ...menu,
           bgUrl: currentSlotData.bgUrl || "",
-          fontTh: currentSlotData.fontTh || DEFAULT_FONT_TH,
-          fontSizeTh: currentSlotData.fontSizeTh || DEFAULT_SIZE_TH,
-          fontEn: currentSlotData.fontEn || DEFAULT_FONT_EN,
-          fontSizeEn: currentSlotData.fontSizeEn || DEFAULT_SIZE_EN,
+          fontTh: currentSlotData.fontTh || "'Sarabun', sans-serif",
+          fontSizeTh: currentSlotData.fontSizeTh || "22px",
+          fontEn: currentSlotData.fontEn || "'Inter', sans-serif",
+          fontSizeEn: currentSlotData.fontSizeEn || "22px",
         };
 
         updateInputs(slotsData[activeSlot]);
@@ -1235,15 +1343,24 @@
           try {
             let savedTags = JSON.parse(localStorage.getItem("savedTags")) || [];
 
+            // 🎯 ดึง Role จาก Session / LocalStorage อย่างถูกต้องเพื่อบันทึกคนสร้าง
+            const urlParams = new URLSearchParams(window.location.search);
+            const editId = urlParams.get("edit");
+            const userData = JSON.parse(localStorage.getItem("userData"));
+            const creatorRole = userData
+              ? userData.role || "UNKNOWN"
+              : "UNKNOWN";
+
             const newTag = {
               title: profileName,
               templateName: currentTemplateConfig.name,
-              paperSize: selectedPaperSize, // 🎯 บันทึกขนาดกระดาษลงไปในฐานข้อมูลด้วย
+              paperSize: selectedPaperSize,
               createdAt: new Date().toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
                 year: "numeric",
               }),
+              createdBy: creatorRole, // 🎯 บันทึก Role คนสร้าง
               slotsData: slotsData,
             };
 
@@ -1252,6 +1369,7 @@
             if (editId) {
               const idx = savedTags.findIndex((t) => t.id === editId);
               if (idx !== -1) {
+                newTag.createdBy = savedTags[idx].createdBy || creatorRole; // ยึดของเดิม
                 newTag.id = editId;
                 savedTags[idx] = newTag;
                 logAction = "EDIT";
@@ -1266,7 +1384,6 @@
 
             localStorage.setItem("savedTags", JSON.stringify(savedTags));
 
-            // 🎯 เรียกใช้งานฟังก์ชันบันทึก Log (เพิ่มขนาดกระดาษลงใน log)
             await logSystemActivity(
               logAction,
               `บันทึกโปรไฟล์ป้ายชื่อ: ${profileName} (${currentTemplateConfig.name}) ขนาด ${selectedPaperSize}`,
@@ -1285,11 +1402,13 @@
         document
           .querySelectorAll(".hidden-on-export")
           .forEach((el) => (el.style.display = "none"));
+
         const activeSlotEl = document.querySelector(".slot.active");
         if (activeSlotEl) {
-          activeSlotEl.style.outline = "none";
-          activeSlotEl.style.backgroundColor = "white";
+          activeSlotEl.classList.remove("active");
+          activeSlotEl.dataset.wasActive = "true";
         }
+
         const originalTransform = paper.style.transform;
         paper.style.transform = "none";
 
@@ -1318,10 +1437,15 @@
         document
           .querySelectorAll(".hidden-on-export")
           .forEach((el) => (el.style.display = ""));
-        if (activeSlotEl) {
-          activeSlotEl.style.outline = "";
-          activeSlotEl.style.backgroundColor = "";
+
+        const wasActiveEl = document.querySelector(
+          ".slot[data-was-active='true']",
+        );
+        if (wasActiveEl) {
+          wasActiveEl.classList.add("active");
+          delete wasActiveEl.dataset.wasActive;
         }
+
         document.body.style.cursor = "default";
         return canvas;
       }
@@ -1341,7 +1465,6 @@
           const orientation =
             currentTemplateConfig.orientation === "landscape" ? "l" : "p";
 
-          // 🎯 ใช้ขนาดกระดาษที่ผู้ใช้เลือกมาสั่งให้ jsPDF (a4 หรือ a3)
           const pdfFormat = selectedPaperSize.toLowerCase();
 
           const pdf = new jsPDF({
@@ -1396,7 +1519,8 @@
         const slotDiv = document.getElementById(`slot-${activeSlot}`);
         if (slotDiv) {
           const wrapper = slotDiv.querySelector("div:last-child");
-          renderSlotContent(wrapper, slotsData[activeSlot], activeSlot);
+          if (wrapper)
+            renderSlotContent(wrapper, slotsData[activeSlot], activeSlot);
         }
       }
 
@@ -1421,17 +1545,14 @@
         renderActiveSlotOnly();
       }
 
-      // 🎯 ส่วนที่เพิ่มใหม่: ฟังก์ชันสำหรับ Modal แจ้งเตือนก่อนพิมพ์ (Print Warning Modal)
       function showPrintWarningModal() {
         const modal = document.getElementById("printWarningModal");
         const selectedText = document.getElementById("selectedPaperTextModal");
         const requiredText = document.getElementById("requiredPaperTextModal");
 
-        // ใส่ข้อมูลขนาดกระดาษลงใน Modal
         selectedText.innerText = selectedPaperSize;
         requiredText.innerText = selectedPaperSize;
 
-        // แสดง Modal
         modal.classList.remove("hidden");
         setTimeout(() => {
           modal.classList.remove("opacity-0");
@@ -1441,7 +1562,6 @@
 
       function closePrintWarningModal() {
         const modal = document.getElementById("printWarningModal");
-        // ซ่อน Modal
         modal.classList.add("opacity-0");
         modal.querySelector("div").classList.add("scale-95");
         setTimeout(() => {
@@ -1450,7 +1570,6 @@
       }
 
       function proceedToPrint() {
-        // ปิด Modal ก่อนแล้วค่อยสั่งพรินต์
         closePrintWarningModal();
         setTimeout(() => {
           window.print();
