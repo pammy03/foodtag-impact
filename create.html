@@ -1007,21 +1007,36 @@
         const fEn = menu.fontEn || "'Inter', sans-serif";
         const sEn = menu.fontSizeEn || "22px";
 
-        const allergensHtml =
-          showAllergies && menu.allergens && menu.allergens.length > 0
-            ? `<div class="allergen-container">` +
-              menu.allergens
-                .map((a) => {
-                  const imgUrl =
-                    a.icon_url ||
-                    a.image_url ||
-                    "https://via.placeholder.com/40/ffffff/cccccc?text=IMG";
-                  const nameText = a.name_th || a.name_en || "";
-                  return `<img src="${imgUrl}" class="allergen-icon shadow-sm" title="${nameText}" crossorigin="anonymous">`;
-                })
-                .join("") +
-              `</div>`
-            : "";
+        // 🎯 ปรับปรุงการดึงรูปภาพ Allergen ให้ครอบคลุมและมีระบบ Fallback
+        let allergensHtml = "";
+        if (
+          showAllergies &&
+          menu.allergens &&
+          Array.isArray(menu.allergens) &&
+          menu.allergens.length > 0
+        ) {
+          const iconsHtml = menu.allergens
+            .map((a) => {
+              if (!a || typeof a !== "object") return "";
+
+              const imgUrl =
+                a.icon_url ||
+                a.image_url ||
+                a.url ||
+                a.image ||
+                "https://placehold.co/100x100/e2e8f0/94a3b8?text=No+Image";
+
+              const nameText = a.name_th || a.name_en || "";
+
+              // ใส่ onerror เพื่อแสดงรูป Placeholder แจ้ง Error ชัดเจนหาก Path พัง
+              return `<img src="${imgUrl}" class="allergen-icon shadow-sm" title="${nameText}" crossorigin="anonymous" onerror="this.src='https://placehold.co/100x100/fee2e2/ef4444?text=Error'">`;
+            })
+            .join("");
+
+          if (iconsHtml.trim() !== "") {
+            allergensHtml = `<div class="allergen-container">${iconsHtml}</div>`;
+          }
+        }
 
         element.innerHTML = `
             ${bgHtml}
@@ -1343,7 +1358,6 @@
           try {
             let savedTags = JSON.parse(localStorage.getItem("savedTags")) || [];
 
-            // 🎯 ดึง Role จาก Session / LocalStorage อย่างถูกต้องเพื่อบันทึกคนสร้าง
             const urlParams = new URLSearchParams(window.location.search);
             const editId = urlParams.get("edit");
             const userData = JSON.parse(localStorage.getItem("userData"));
@@ -1360,7 +1374,7 @@
                 day: "numeric",
                 year: "numeric",
               }),
-              createdBy: creatorRole, // 🎯 บันทึก Role คนสร้าง
+              createdBy: creatorRole,
               slotsData: slotsData,
             };
 
@@ -1369,7 +1383,7 @@
             if (editId) {
               const idx = savedTags.findIndex((t) => t.id === editId);
               if (idx !== -1) {
-                newTag.createdBy = savedTags[idx].createdBy || creatorRole; // ยึดของเดิม
+                newTag.createdBy = savedTags[idx].createdBy || creatorRole;
                 newTag.id = editId;
                 savedTags[idx] = newTag;
                 logAction = "EDIT";
