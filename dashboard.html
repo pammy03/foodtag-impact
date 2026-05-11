@@ -52,7 +52,7 @@
       }
 
       /* ==========================================
-         GRID VIEW MODE (ออริจินัล 100% ตามต้นฉบับ)
+         GRID VIEW MODE
       ========================================== */
       .card-grid-mode {
         display: grid;
@@ -76,7 +76,7 @@
       }
 
       /* ==========================================
-         LIST VIEW MODE (แบบใหม่ที่คุณชอบ)
+         LIST VIEW MODE
       ========================================== */
       .card-list-mode {
         display: flex;
@@ -1054,7 +1054,6 @@
           const fEn = menu.fontEn || "'Inter', sans-serif";
           const sEn = menu.fontSizeEn || "22px";
 
-          // 🎯 ดึงรูปไอคอนสารก่อภูมิแพ้ให้ปลอดภัยและครอบคลุมทุกชื่อคอลัมน์
           let allergensHtml = "";
           if (
             !config.hide_allergies &&
@@ -1080,15 +1079,15 @@
               .join("");
 
             if (iconsHtml.trim() !== "") {
-              allergensHtml = `<div style="display: flex; flex-wrap: wrap; gap: 8px; justify-center; align-items: center; margin-top: 15px; width: 100%; padding: 0 16px; box-sizing: border-box;">${iconsHtml}</div>`;
+              allergensHtml = `<div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; margin-top: 15px; width: 100%; padding: 0 16px; box-sizing: border-box;">${iconsHtml}</div>`;
             }
           }
 
+          // 🎯 [จุดที่แก้ไข] เอาโลโก้ IMPACT ออกไปจากบนหัวป้ายเรียบร้อยแล้ว
           slotsHTML += `
             <div class="slot" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: white; border-right: 1px dashed #cbd5e1; border-bottom: 1px dashed #cbd5e1; text-align: center; overflow: hidden;">
                 ${bgHtml}
                 <div style="position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 24px;">
-                    <img src="Impact_Logo.png" style="height: 24px; opacity: 0.3; margin-bottom: 24px;" alt="logo" onerror="this.style.display='none'">
                     <div style="font-family: ${fTh}; font-size: ${sTh}; font-weight: 900; color: #1e293b; margin-bottom: 8px; line-height: 1.25; text-align: center; white-space: pre-line;">${menu.name_th || ""}</div>
                     <div style="font-family: ${fEn}; font-size: ${sEn}; font-weight: 500; color: #64748b; margin-bottom: 16px; line-height: 1.25; text-align: center; white-space: pre-line;">${menu.name_en || ""}</div>
                     ${allergensHtml}

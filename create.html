@@ -79,7 +79,6 @@
         transition: outline 0.3s;
       }
 
-      /* 🎯 ใช้ 1fr + บังคับขนาด 100% เพื่อให้ทุกกรอบป้ายบีบตัวพอดีกับกระดาษ A4 เสมอ */
       .inner-grid {
         display: grid;
         width: 100%;
@@ -103,7 +102,6 @@
         grid-template-rows: repeat(2, 1fr);
       }
 
-      /* 🎯 สไตล์ดั้งเดิม: ขอบเขียวทึบเฉพาะช่องที่ Active ไม่มีพื้นหลังทึบคลุมทับ */
       .slot {
         border-right: 1px dashed #94a3b8;
         border-bottom: 1px dashed #94a3b8;
@@ -1007,7 +1005,6 @@
         const fEn = menu.fontEn || "'Inter', sans-serif";
         const sEn = menu.fontSizeEn || "22px";
 
-        // 🎯 ปรับปรุงการดึงรูปภาพ Allergen ให้ครอบคลุมและมีระบบ Fallback
         let allergensHtml = "";
         if (
           showAllergies &&
@@ -1028,7 +1025,6 @@
 
               const nameText = a.name_th || a.name_en || "";
 
-              // ใส่ onerror เพื่อแสดงรูป Placeholder แจ้ง Error ชัดเจนหาก Path พัง
               return `<img src="${imgUrl}" class="allergen-icon shadow-sm" title="${nameText}" crossorigin="anonymous" onerror="this.src='https://placehold.co/100x100/fee2e2/ef4444?text=Error'">`;
             })
             .join("");
@@ -1038,10 +1034,10 @@
           }
         }
 
+        // 🎯 [จุดที่แก้ไข] เอาโลโก้ IMPACT ออกไปจากบนหัวป้ายเรียบร้อยแล้ว
         element.innerHTML = `
             ${bgHtml}
             <div class="slot-content">
-              <img src="Impact_Logo.png" class="h-6 opacity-30 mb-6" alt="logo" onerror="this.style.display='none'">
               <div class="slot-text-th font-black text-slate-800 mb-2 leading-tight text-center whitespace-pre-line" style="font-family: ${fTh}; font-size: ${sTh};">${menu.name_th || ""}</div>
               <div class="slot-text-en font-medium text-slate-500 mb-4 leading-tight text-center whitespace-pre-line" style="font-family: ${fEn}; font-size: ${sEn};">${menu.name_en || ""}</div>
               ${allergensHtml}
