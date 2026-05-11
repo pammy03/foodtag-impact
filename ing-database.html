@@ -25,10 +25,11 @@
         background: #cbd5e1;
         border-radius: 10px;
       }
+      /* ปรับ Overlay ให้มืดและเบลอตามสไตล์ UI จริง */
       .modal-overlay {
         position: fixed;
         inset: 0;
-        background: rgba(15, 23, 42, 0.5);
+        background: rgba(15, 23, 42, 0.6);
         backdrop-filter: blur(4px);
         display: none;
         align-items: center;
@@ -293,12 +294,57 @@
       </div>
     </div>
 
+    <div id="deleteModal" class="modal-overlay">
+      <div
+        class="bg-white rounded-[2.5rem] shadow-2xl w-[480px] p-10 flex flex-col items-center relative z-50 overflow-hidden text-center"
+      >
+        <div
+          class="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center mb-6 border border-red-100 shrink-0"
+        >
+          <span class="material-symbols-outlined text-red-500 text-3xl"
+            >delete</span
+          >
+        </div>
+
+        <h2 class="text-2xl font-bold text-slate-800 mb-3 tracking-tight">
+          ยืนยันการลบส่วนผสม
+        </h2>
+
+        <div class="text-slate-600 text-[15px] leading-relaxed mb-8 w-full">
+          <p>คุณต้องการลบส่วนผสม</p>
+          <p
+            id="deleteItemName"
+            class="text-red-500 font-bold my-1 text-base truncate px-2"
+          ></p>
+          <p>ออกจากระบบใช่หรือไม่? ข้อมูลจะไม่สามารถกู้คืนได้</p>
+        </div>
+
+        <input type="hidden" id="deleteIngId" />
+
+        <div class="flex gap-4 w-full">
+          <button
+            type="button"
+            onclick="closeDeleteModal()"
+            class="flex-1 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all cursor-pointer text-base"
+          >
+            ยกเลิก
+          </button>
+          <button
+            type="button"
+            id="confirmDeleteBtn"
+            onclick="executeDelete()"
+            class="flex-1 py-3.5 bg-[#e14d45] hover:bg-[#cf3c34] text-white font-bold rounded-2xl shadow-lg shadow-red-500/20 transition-all cursor-pointer text-base flex items-center justify-center gap-2"
+          >
+            ลบข้อมูล
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script src="sidebar.js"></script>
-    <!-- 🎯 นำเข้าไฟล์ action-logger.js -->
     <script src="action-logger.js"></script>
 
     <script>
-      // 🛡️ เช็กสิทธิ์ ถ้าเป็น Staff ให้เตะกลับไปหน้า Dashboard ทันที
       const checkUser = JSON.parse(localStorage.getItem("userData"));
       if (!checkUser || checkUser.role === "Staff") {
         window.location.href = "dashboard.html";
@@ -533,7 +579,6 @@
 
           if (error) throw error;
 
-          // 🎯 บันทึก Log การแก้ไขรูปภาพส่วนผสม
           await logSystemActivity(
             "EDIT",
             `แก้ไขข้อมูลรูปภาพส่วนผสม: ${rawName}`,
@@ -641,7 +686,6 @@
             if (dbError) throw dbError;
           }
 
-          // 🎯 บันทึก Log การอัปโหลดรูปรวดเดียว
           await logSystemActivity(
             "CREATE",
             `อัปโหลดรูปภาพส่วนผสมใหม่จำนวน ${files.length} รายการ`,
@@ -657,22 +701,43 @@
         }
       }
 
-      async function deleteIngredient(id, name) {
-        if (confirm(`ต้องการลบรูปภาพส่วนผสม "${name}" ใช่หรือไม่?`)) {
-          try {
-            const { error } = await dbClient
-              .from("ingredients")
-              .delete()
-              .eq("id", id);
-            if (error) throw error;
+      // 🎯 เปิด Delete Modal สไตล์ใหม่
+      function deleteIngredient(id, name) {
+        document.getElementById("deleteIngId").value = id;
+        document.getElementById("deleteItemName").innerText = name;
+        document.getElementById("deleteModal").classList.add("active");
+      }
 
-            // 🎯 บันทึก Log การลบรูปภาพส่วนผสม
-            await logSystemActivity("DELETE", `ลบรูปภาพส่วนผสม: ${name}`);
+      function closeDeleteModal() {
+        document.getElementById("deleteModal").classList.remove("active");
+      }
 
-            fetchIngredients();
-          } catch (e) {
-            alert("Delete failed: " + e.message);
-          }
+      // 🎯 ทำงานเมื่อกดปุ่ม "ลบข้อมูล"
+      async function executeDelete() {
+        const id = document.getElementById("deleteIngId").value;
+        const name = document.getElementById("deleteItemName").innerText;
+        const btn = document.getElementById("confirmDeleteBtn");
+
+        btn.disabled = true;
+        btn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> กำลังลบ...`;
+
+        try {
+          const { error } = await dbClient
+            .from("ingredients")
+            .delete()
+            .eq("id", id);
+
+          if (error) throw error;
+
+          await logSystemActivity("DELETE", `ลบรูปภาพส่วนผสม: ${name}`);
+
+          closeDeleteModal();
+          fetchIngredients();
+        } catch (e) {
+          alert("Delete failed: " + e.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = `ลบข้อมูล`;
         }
       }
 

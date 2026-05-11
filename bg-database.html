@@ -18,10 +18,11 @@
       body {
         font-family: "Inter", sans-serif;
       }
+      /* ปรับ Overlay ให้มืดและเบลอตามสไตล์ UI จริง */
       .modal-overlay {
         position: fixed;
         inset: 0;
-        background: rgba(15, 23, 42, 0.5);
+        background: rgba(15, 23, 42, 0.6);
         backdrop-filter: blur(4px);
         display: none;
         align-items: center;
@@ -464,12 +465,57 @@
       </div>
     </div>
 
+    <div id="deleteModal" class="modal-overlay">
+      <div
+        class="bg-white rounded-[2.5rem] shadow-2xl w-[480px] p-10 flex flex-col items-center relative z-50 overflow-hidden text-center"
+      >
+        <div
+          class="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center mb-6 border border-red-100 shrink-0"
+        >
+          <span class="material-symbols-outlined text-red-500 text-3xl"
+            >delete</span
+          >
+        </div>
+
+        <h2 class="text-2xl font-bold text-slate-800 mb-3 tracking-tight">
+          ยืนยันการลบรูปภาพพื้นหลัง
+        </h2>
+
+        <div class="text-slate-600 text-[15px] leading-relaxed mb-8 w-full">
+          <p>คุณต้องการลบรูปภาพพื้นหลัง</p>
+          <p
+            id="deleteItemName"
+            class="text-red-500 font-bold my-1 text-base truncate px-2"
+          ></p>
+          <p>ออกจากระบบใช่หรือไม่? ข้อมูลจะไม่สามารถกู้คืนได้</p>
+        </div>
+
+        <input type="hidden" id="deleteBgId" />
+
+        <div class="flex gap-4 w-full">
+          <button
+            type="button"
+            onclick="closeDeleteModal()"
+            class="flex-1 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all cursor-pointer text-base"
+          >
+            ยกเลิก
+          </button>
+          <button
+            type="button"
+            id="confirmDeleteBtn"
+            onclick="executeDelete()"
+            class="flex-1 py-3.5 bg-[#e14d45] hover:bg-[#cf3c34] text-white font-bold rounded-2xl shadow-lg shadow-red-500/20 transition-all cursor-pointer text-base flex items-center justify-center gap-2"
+          >
+            ลบข้อมูล
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script src="sidebar.js"></script>
-    <!-- 🎯 นำเข้าไฟล์ action-logger.js -->
     <script src="action-logger.js"></script>
 
     <script>
-      // 🛡️ เช็กสิทธิ์: ถ้ายังไม่ Login หรือเป็น Staff ให้เตะกลับไปหน้า Dashboard ทันที
       const checkUser = JSON.parse(localStorage.getItem("userData"));
       if (!checkUser || checkUser.role === "Staff") {
         window.location.href = "dashboard.html";
@@ -626,7 +672,6 @@
 
           if (dbError) throw dbError;
 
-          // 🎯 บันทึก Log การเพิ่มพื้นหลังใหม่
           await logSystemActivity("CREATE", `อัปโหลดพื้นหลังใหม่: ${name}`);
 
           closeModal("uploadModal");
@@ -707,7 +752,6 @@
 
           if (dbError) throw dbError;
 
-          // 🎯 บันทึก Log การแก้ไขพื้นหลัง
           await logSystemActivity("EDIT", `แก้ไขพื้นหลัง: ${name}`);
 
           closeModal("editModal");
@@ -720,22 +764,43 @@
         }
       }
 
-      async function deleteBackground(id, name) {
-        if (confirm(`ต้องการลบรูปภาพพื้นหลัง "${name}" ใช่หรือไม่?`)) {
-          try {
-            const { error } = await dbClient
-              .from("backgrounds")
-              .delete()
-              .eq("id", id);
-            if (error) throw error;
+      // 🎯 เปิด Delete Modal สไตล์ใหม่
+      function deleteBackground(id, name) {
+        document.getElementById("deleteBgId").value = id;
+        document.getElementById("deleteItemName").innerText = name;
+        document.getElementById("deleteModal").classList.add("active");
+      }
 
-            // 🎯 บันทึก Log การลบพื้นหลัง
-            await logSystemActivity("DELETE", `ลบรูปภาพพื้นหลัง: ${name}`);
+      function closeDeleteModal() {
+        document.getElementById("deleteModal").classList.remove("active");
+      }
 
-            fetchBackgrounds();
-          } catch (e) {
-            alert("ไม่สามารถลบได้: " + e.message);
-          }
+      // 🎯 ทำงานเมื่อกดปุ่ม "ลบข้อมูล"
+      async function executeDelete() {
+        const id = document.getElementById("deleteBgId").value;
+        const name = document.getElementById("deleteItemName").innerText;
+        const btn = document.getElementById("confirmDeleteBtn");
+
+        btn.disabled = true;
+        btn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> กำลังลบ...`;
+
+        try {
+          const { error } = await dbClient
+            .from("backgrounds")
+            .delete()
+            .eq("id", id);
+
+          if (error) throw error;
+
+          await logSystemActivity("DELETE", `ลบรูปภาพพื้นหลัง: ${name}`);
+
+          closeDeleteModal();
+          fetchBackgrounds();
+        } catch (e) {
+          alert("ไม่สามารถลบได้: " + e.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = `ลบข้อมูล`;
         }
       }
 
