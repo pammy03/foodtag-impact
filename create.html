@@ -100,9 +100,10 @@
         grid-template-rows: repeat(2, 1fr);
       }
 
+      /* ปรับเส้นประไกด์ตัดกระดาษให้บางลงและสีอ่อนลงมาก */
       .slot {
-        border-right: 1px dashed #94a3b8;
-        border-bottom: 1px dashed #94a3b8;
+        border-right: 0.5px dashed #cbd5e1;
+        border-bottom: 0.5px dashed #cbd5e1;
         box-sizing: border-box;
         position: relative;
         display: flex;
@@ -182,6 +183,24 @@
           height: 100% !important;
           page-break-after: avoid;
         }
+
+        /* บังคับให้ตอนพิมพ์ ยังคงเห็นเส้นตัดกระดาษบางๆ สีเทาอ่อนพิเศษ */
+        .slot {
+          border-right: 0.5px dashed #e2e8f0 !important;
+          border-bottom: 0.5px dashed #e2e8f0 !important;
+        }
+        /* ลบเส้นขอบขวาสุดและล่างสุดตอนพิมพ์ */
+        .grid-plate .slot:last-child,
+        .grid-western .slot:nth-child(2n),
+        .grid-buffet .slot:nth-child(3n) {
+          border-right: none !important;
+        }
+        .grid-plate .slot,
+        .grid-western .slot:nth-child(n + 3),
+        .grid-buffet .slot:nth-child(n + 4) {
+          border-bottom: none !important;
+        }
+
         .slot.active {
           outline: none !important;
           background-color: white !important;
