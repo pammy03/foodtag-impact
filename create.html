@@ -68,7 +68,7 @@
         width: 100%;
       }
 
-      /* เพิ่มเส้นกรอบให้ตัวกระดาษหลัก เพื่อให้มีกรอบนอกสุดสำหรับตัดขอบทิ้ง */
+      /* ปรับเส้นกรอบนอกสุดให้เข้มขึ้นเพื่อให้ตัดขอบง่าย */
       .a4-paper {
         background: white;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -78,7 +78,7 @@
         flex-direction: column;
         transform-origin: center center;
         transition: outline 0.3s;
-        border: 0.5px dashed #cbd5e1;
+        border: 0.5px dashed #94a3b8;
       }
 
       .inner-grid {
@@ -102,9 +102,10 @@
         grid-template-rows: repeat(2, 1fr);
       }
 
+      /* ปรับสีเส้นตัดภายในให้เข้มขึ้นมองเห็นชัดขึ้น */
       .slot {
-        border-right: 0.5px dashed #cbd5e1;
-        border-bottom: 0.5px dashed #cbd5e1;
+        border-right: 0.5px dashed #94a3b8;
+        border-bottom: 0.5px dashed #94a3b8;
         box-sizing: border-box;
         position: relative;
         display: flex;
@@ -184,23 +185,22 @@
           padding: 0 !important;
         }
 
-        /* สั่งให้กระดาษมีเส้นขอบตอนพิมพ์ และย่อสเกลลงเล็กน้อยเพื่อหลบ Safe Area ของเครื่องพิมพ์ */
+        /* สั่งให้กระดาษมีเส้นขอบชัดๆ ตอนพิมพ์ และย่อสเกลลงเพื่อหลบ Safe Area ของเครื่องพิมพ์ */
         #a4Paper {
           box-shadow: none !important;
           margin: auto !important;
           width: 100% !important;
           height: 100% !important;
           page-break-after: avoid;
-          border: 0.5px dashed #cbd5e1 !important;
-          transform: scale(
-            0.98
-          ) !important; /* ย่อเนื้อหาลง 2% อัตโนมัติ เพื่อไม่ให้โดนขอบขาวกลืนเส้นกรอบ */
+          border: 0.5px dashed #94a3b8 !important;
+          transform: scale(0.98) !important;
           transform-origin: center center !important;
         }
 
+        /* บังคับสีเส้นแบ่งช่องให้เป็นสีเทาเข้มชัดเจนตอนพิมพ์ */
         .slot {
-          border-right: 0.5px dashed #cbd5e1 !important;
-          border-bottom: 0.5px dashed #cbd5e1 !important;
+          border-right: 0.5px dashed #94a3b8 !important;
+          border-bottom: 0.5px dashed #94a3b8 !important;
         }
         .grid-plate .slot:last-child,
         .grid-western .slot:nth-child(2n),
