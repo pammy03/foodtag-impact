@@ -68,6 +68,7 @@
         width: 100%;
       }
 
+      /* เพิ่มเส้นกรอบให้ตัวกระดาษหลัก เพื่อให้มีกรอบนอกสุดสำหรับตัดขอบทิ้ง */
       .a4-paper {
         background: white;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -77,6 +78,7 @@
         flex-direction: column;
         transform-origin: center center;
         transition: outline 0.3s;
+        border: 0.5px dashed #cbd5e1;
       }
 
       .inner-grid {
@@ -100,7 +102,6 @@
         grid-template-rows: repeat(2, 1fr);
       }
 
-      /* ปรับเส้นประไกด์ตัดกระดาษให้บางลงและสีอ่อนลงมาก */
       .slot {
         border-right: 0.5px dashed #cbd5e1;
         border-bottom: 0.5px dashed #cbd5e1;
@@ -155,6 +156,9 @@
           background: white;
           width: 100%;
           height: 100%;
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
         }
         header,
         aside,
@@ -164,32 +168,40 @@
         main {
           padding: 0 !important;
           background: white !important;
-          display: block !important;
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
           width: 100% !important;
           height: 100% !important;
           overflow: hidden !important;
         }
         #paperContainer {
-          display: block !important;
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
           width: 100% !important;
           height: 100% !important;
           padding: 0 !important;
         }
+
+        /* สั่งให้กระดาษมีเส้นขอบตอนพิมพ์ และย่อสเกลลงเล็กน้อยเพื่อหลบ Safe Area ของเครื่องพิมพ์ */
         #a4Paper {
-          transform: none !important;
           box-shadow: none !important;
-          margin: 0 !important;
+          margin: auto !important;
           width: 100% !important;
           height: 100% !important;
           page-break-after: avoid;
+          border: 0.5px dashed #cbd5e1 !important;
+          transform: scale(
+            0.98
+          ) !important; /* ย่อเนื้อหาลง 2% อัตโนมัติ เพื่อไม่ให้โดนขอบขาวกลืนเส้นกรอบ */
+          transform-origin: center center !important;
         }
 
-        /* บังคับให้ตอนพิมพ์ ยังคงเห็นเส้นตัดกระดาษบางๆ สีเทาอ่อนพิเศษ */
         .slot {
-          border-right: 0.5px dashed #e2e8f0 !important;
-          border-bottom: 0.5px dashed #e2e8f0 !important;
+          border-right: 0.5px dashed #cbd5e1 !important;
+          border-bottom: 0.5px dashed #cbd5e1 !important;
         }
-        /* ลบเส้นขอบขวาสุดและล่างสุดตอนพิมพ์ */
         .grid-plate .slot:last-child,
         .grid-western .slot:nth-child(2n),
         .grid-buffet .slot:nth-child(3n) {
