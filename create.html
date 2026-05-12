@@ -68,7 +68,6 @@
         width: 100%;
       }
 
-      /* ปรับเส้นกรอบนอกสุดให้เข้มขึ้นเพื่อให้ตัดขอบง่าย */
       .a4-paper {
         background: white;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -78,9 +77,9 @@
         flex-direction: column;
         transform-origin: center center;
         transition: outline 0.3s;
-        border: 0.5px dashed #94a3b8;
       }
 
+      /* ย้ายเส้นกรอบตัดกระดาษมาไว้ที่ inner-grid แทน เพื่อให้หดเข้ามาอยู่ใน Safe Area */
       .inner-grid {
         display: grid;
         width: 100%;
@@ -88,6 +87,7 @@
         margin: auto;
         background-color: white;
         box-sizing: border-box;
+        border: 0.5px dashed #94a3b8;
       }
       .grid-plate {
         grid-template-columns: repeat(2, 1fr);
@@ -102,7 +102,6 @@
         grid-template-rows: repeat(2, 1fr);
       }
 
-      /* ปรับสีเส้นตัดภายในให้เข้มขึ้นมองเห็นชัดขึ้น */
       .slot {
         border-right: 0.5px dashed #94a3b8;
         border-bottom: 0.5px dashed #94a3b8;
@@ -185,19 +184,29 @@
           padding: 0 !important;
         }
 
-        /* สั่งให้กระดาษมีเส้นขอบชัดๆ ตอนพิมพ์ และย่อสเกลลงเพื่อหลบ Safe Area ของเครื่องพิมพ์ */
+        /* บังคับหดสเกลลง 4% และบีบเนื้อหาเข้ามา 5mm เพื่อหลบระยะหัวพิมพ์ที่ไม่เท่ากันของแต่ละเครื่อง */
         #a4Paper {
           box-shadow: none !important;
           margin: auto !important;
           width: 100% !important;
           height: 100% !important;
+          padding: 5mm !important; /* ระยะหลบภัย (Safe Area) */
           page-break-after: avoid;
-          border: 0.5px dashed #94a3b8 !important;
-          transform: scale(0.98) !important;
+          box-sizing: border-box !important;
+          transform: scale(
+            0.96
+          ) !important; /* หดเนื้อหาลงเล็กน้อยให้พ้นขอบขาว */
           transform-origin: center center !important;
         }
 
-        /* บังคับสีเส้นแบ่งช่องให้เป็นสีเทาเข้มชัดเจนตอนพิมพ์ */
+        /* บังคับให้แสดงเส้นกรอบนอกสุดของ Grid และเส้นแบ่งช่องตอนพิมพ์เสมอ */
+        .inner-grid {
+          border: 0.5px dashed #94a3b8 !important;
+          width: 100% !important;
+          height: 100% !important;
+          box-sizing: border-box !important;
+        }
+
         .slot {
           border-right: 0.5px dashed #94a3b8 !important;
           border-bottom: 0.5px dashed #94a3b8 !important;
