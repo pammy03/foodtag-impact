@@ -29,18 +29,18 @@
       .allergen-container {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 4px;
         justify-content: center;
         align-items: center;
-        margin: 20px auto 0;
-        width: 100%;
-        padding: 0 16px;
+        margin: 8px auto 0;
+        width: 90%;
+        padding: 0;
         box-sizing: border-box;
       }
 
       .allergen-icon {
-        width: calc((100% - 32px) / 5);
-        max-width: 85px;
+        width: calc((100% - 16px) / 5);
+        max-width: 105px;
         aspect-ratio: 1 / 1;
         object-fit: contain;
         display: block;
@@ -84,8 +84,6 @@
         width: 100%;
         height: 100%;
         margin: auto;
-        border-top: 1px dashed #94a3b8;
-        border-left: 1px dashed #94a3b8;
         background-color: white;
         box-sizing: border-box;
       }
@@ -114,6 +112,20 @@
         background-color: white;
         transition: all 0.2s;
         overflow: hidden;
+      }
+
+      /* กฎลบเส้นขอบด้านขวา สำหรับช่องที่ติดขอบกระดาษขวาสุด */
+      .grid-plate .slot:last-child,
+      .grid-western .slot:nth-child(2n),
+      .grid-buffet .slot:nth-child(3n) {
+        border-right: none !important;
+      }
+
+      /* กฎลบเส้นขอบด้านล่าง สำหรับช่องแถวล่างสุดที่ติดขอบกระดาษ */
+      .grid-plate .slot,
+      .grid-western .slot:nth-child(n + 3),
+      .grid-buffet .slot:nth-child(n + 4) {
+        border-bottom: none !important;
       }
 
       .slot.active {
@@ -165,14 +177,6 @@
           width: max-content !important;
           height: max-content !important;
         }
-        .inner-grid {
-          border-top: 1px dashed #94a3b8 !important;
-          border-left: 1px dashed #94a3b8 !important;
-        }
-        .slot {
-          border-right: 1px dashed #94a3b8 !important;
-          border-bottom: 1px dashed #94a3b8 !important;
-        }
         .slot.active {
           outline: none !important;
           background-color: white !important;
@@ -183,16 +187,18 @@
         .allergen-container {
           display: flex !important;
           flex-wrap: wrap !important;
-          gap: 8px !important;
+          gap: 4px !important;
           justify-content: center !important;
-          margin-top: 20px !important;
-          width: 100% !important;
-          padding: 0 16px !important;
+          margin-top: 8px !important;
+          width: 90% !important;
+          margin-left: auto !important;
+          margin-right: auto !important;
+          padding: 0 !important;
           box-sizing: border-box !important;
         }
         .allergen-icon {
-          width: calc((100% - 32px) / 5) !important;
-          max-width: 85px !important;
+          width: calc((100% - 16px) / 5) !important;
+          max-width: 105px !important;
           aspect-ratio: 1 / 1 !important;
           height: auto !important;
           background: transparent !important;
@@ -1025,7 +1031,7 @@
 
               const nameText = a.name_th || a.name_en || "";
 
-              return `<img src="${imgUrl}" class="allergen-icon shadow-sm" title="${nameText}" crossorigin="anonymous" onerror="this.src='https://placehold.co/100x100/fee2e2/ef4444?text=Error'">`;
+              return `<img src="${imgUrl}" class="allergen-icon" title="${nameText}" crossorigin="anonymous" onerror="this.src='https://placehold.co/100x100/fee2e2/ef4444?text=Error'">`;
             })
             .join("");
 
@@ -1034,12 +1040,11 @@
           }
         }
 
-        // 🎯 [จุดที่แก้ไข] เอาโลโก้ IMPACT ออกไปจากบนหัวป้ายเรียบร้อยแล้ว
         element.innerHTML = `
             ${bgHtml}
             <div class="slot-content">
-              <div class="slot-text-th font-black text-slate-800 mb-2 leading-tight text-center whitespace-pre-line" style="font-family: ${fTh}; font-size: ${sTh};">${menu.name_th || ""}</div>
-              <div class="slot-text-en font-medium text-slate-500 mb-4 leading-tight text-center whitespace-pre-line" style="font-family: ${fEn}; font-size: ${sEn};">${menu.name_en || ""}</div>
+              <div class="slot-text-th font-black text-slate-800 mb-1 leading-tight text-center whitespace-pre-line" style="font-family: ${fTh}; font-size: ${sTh};">${menu.name_th || ""}</div>
+              <div class="slot-text-en font-medium text-slate-500 mb-1 leading-tight text-center whitespace-pre-line" style="font-family: ${fEn}; font-size: ${sEn};">${menu.name_en || ""}</div>
               ${allergensHtml}
             </div>
         `;
