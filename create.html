@@ -680,15 +680,9 @@
           ตรวจสอบขนาดกระดาษก่อนพิมพ์
         </h3>
         <p class="text-sm text-slate-500 mb-7 leading-relaxed">
-          การตั้งค่ากระดาษบนหน้าจอคือ
-          <span id="selectedPaperTextModal" class="font-bold text-[#006d4b]"
-            >...</span
-          ><br />กรุณาตรวจสอบว่า **Paper size** ในหน้าต่างการพิมพ์ของคุณ
-          ถูกเลือกเป็น
-          <span id="requiredPaperTextModal" class="font-bold text-[#006d4b]"
-            >...</span
-          >
-          ด้วยเช่นกัน<br />ไม่งั้นการจัดวางบนกระดาษอาจผิดเพี้ยนได้ครับ
+          <span id="selectedPaperTextModal" class="hidden"></span>
+          กรุณาตั้งค่า <strong>Paper Size</strong> ตอนพิมพ์ให้เป็น <span id="requiredPaperTextModal" class="font-black text-[#006d4b] text-base">...</span><br />
+          เพื่อให้สัดส่วนบนกระดาษไม่ผิดเพี้ยน
         </p>
         <div class="flex gap-3 w-full">
           <button
@@ -1252,7 +1246,7 @@
       function showMenuConfirmModal() {
         const currentMenu = slotsData[activeSlot];
         if (!currentMenu || (!currentMenu.name_th && !currentMenu.bgUrl)) {
-          alert("⚠️ ไม่มีข้อมูลในช่องนี้ให้คัดลอกครับ");
+          alert("⚠️ ไม่มีข้อมูลในช่องนี้ให้คัดลอก");
           return;
         }
         document.getElementById("copySlotNumber").innerText =

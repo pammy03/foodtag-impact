@@ -117,7 +117,8 @@
         padding: 0 0 0 1.25rem;
         flex-direction: row;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-start;
+        gap: 2rem;
         flex: 1;
         width: calc(100% - 110px);
       }
@@ -128,7 +129,9 @@
         justify-content: center;
         align-items: flex-start;
         margin: 0;
-        max-width: 60%;
+        flex: 0 0 28%;
+        max-width: 28%;
+        min-width: 200px;
       }
       .card-list-mode .list-info-left h3 {
         font-size: 16px;
@@ -138,10 +141,11 @@
       .card-list-mode .list-meta-center {
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 1.5rem;
         margin: 0;
         padding: 0;
         border: none;
+        flex: 1;
       }
 
       .card-list-mode .list-actions-right {
@@ -919,19 +923,19 @@
                 </div>
                 
                 <div class="p-5 flex flex-col flex-1 justify-center">
-                  <div class="list-info-left flex justify-between items-start gap-3 w-full mb-1">
-                    <div class="flex items-center gap-2.5 w-full">
-                      <h3 class="font-bold text-[17px] text-slate-800 leading-snug line-clamp-1" title="${tag.title}">${tag.title}</h3>
+                  <div class="list-info-left flex justify-between items-center gap-3 w-full mb-1">
+                    <div class="flex items-center justify-between gap-2.5 w-full pr-4">
+                      <h3 class="font-bold text-[17px] text-slate-800 leading-snug line-clamp-1 flex-1" title="${tag.title}">${tag.title}</h3>
                       <span class="shrink-0 bg-blue-50 text-blue-600 text-[11px] font-bold px-2 py-0.5 rounded border border-blue-100">${tag.paperSize || "A4"}</span>
                     </div>
                   </div>
                   
                   <div class="list-meta-center flex items-center gap-4 w-full">
-                    <div class="flex items-center gap-1 text-[12px] font-medium text-slate-400" title="Template Size"><span class="material-symbols-outlined text-[16px]">straighten</span>${tag.templateName}</div>
-                    <span class="w-1 h-1 rounded-full bg-slate-200 hidden sm:block"></span>
-                    <div class="flex items-center gap-1 text-[12px] font-medium text-slate-400" title="Created on"><span class="material-symbols-outlined text-[16px]">calendar_today</span>${formattedDate}</div>
-                    <span class="w-1 h-1 rounded-full bg-slate-200 hidden sm:block"></span>
-                    <div class="flex items-center gap-1 text-[12px] font-semibold text-emerald-600 uppercase" title="Creator"><span class="material-symbols-outlined text-[16px]">person</span>${creatorName}</div>
+                    <div class="flex items-center gap-1.5 text-[12px] font-medium text-slate-400 shrink-0" title="Template Size"><span class="material-symbols-outlined text-[16px]">straighten</span><span class="truncate max-w-[150px]">${tag.templateName}</span></div>
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-300 hidden sm:block shrink-0"></span>
+                    <div class="flex items-center gap-1.5 text-[12px] font-medium text-slate-400 shrink-0" title="Created on"><span class="material-symbols-outlined text-[16px]">calendar_today</span><span class="truncate">${formattedDate}</span></div>
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-300 hidden sm:block shrink-0"></span>
+                    <div class="flex items-center gap-1.5 text-[12px] font-semibold text-emerald-600 uppercase shrink-0" title="Creator"><span class="material-symbols-outlined text-[16px]">person</span><span class="truncate max-w-[120px]">${creatorName}</span></div>
                   </div>
                 </div>
                 

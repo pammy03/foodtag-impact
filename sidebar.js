@@ -7,7 +7,7 @@ function injectSidebar() {
     return;
   }
 
-  // 1. เมนูพื้นฐาน (เปลี่ยนชื่อเป็น Saved Tags ตามที่ต้องการครับ)
+  // 1. เมนูพื้นฐาน (เปลี่ยนชื่อเป็น Saved Tags ตามที่ต้องการ)
   let navItems = `
     <a href="dashboard.html" id="nav-dashboard" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
       <span class="material-symbols-outlined text-[24px]">dashboard</span> Saved Tags
@@ -44,8 +44,8 @@ function injectSidebar() {
 
   const sidebarHTML = `
     <aside class="w-72 bg-white border-r border-slate-200 flex flex-col p-6 shrink-0 z-10 h-full shadow-sm overflow-y-auto overflow-x-hidden">
-      <div class="mb-10 px-2 text-center">
-        <img src="Impact_Logo.png" alt="IMPACT Logo" class="h-12 mx-auto object-contain" onerror="this.style.display = 'none'" />
+      <div class="text-center shrink-0 mb-8 mt-2">
+        <img src="images/Impact_Logo.png" alt="IMPACT Logo" class="h-10 mx-auto object-contain" onerror="this.parentNode.style.display = 'none'" />
       </div>
 
       <div class="bg-slate-50 border border-slate-100 p-5 rounded-2xl mb-8 flex items-center gap-4">
