@@ -208,14 +208,19 @@
         }
       }
 
+      // 📡 อัปเดตช่องสตรีม Real-time ให้จับเป้าหมายที่ตาราง activity_logs อย่างแม่นยำ
       dbClient
-        .channel("logs-realtime")
+        .channel("public:activity_logs")
         .on(
           "postgres_changes",
           { event: "*", schema: "public", table: "activity_logs" },
-          () => fetchLogs(),
+          (payload) => {
+            console.log("Real-time log update captured:", payload);
+            fetchLogs();
+          },
         )
         .subscribe();
+
       window.onload = fetchLogs;
 
       // 🎯 แก้ไขให้แสดงผลในบรรทัดเดียว

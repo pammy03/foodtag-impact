@@ -2,8 +2,9 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 document.addEventListener("DOMContentLoaded", () => {
   // 1. ตั้งค่าการเชื่อมต่อ Supabase
-  const supabaseUrl = "https://nexvompdeubppbkvnwor.supabase.co"; // URL ของโปรเจกต์คุณ
-  const supabaseKey = "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI"; // กุญแจ Public ของโปรเจกต์คุณ
+  const supabaseUrl = "https://nexvompdeubppbkvnwor.supabase.co"; 
+  // นำ Anon Key ข้อความยาวๆ มาใส่แทนที่ Publishable Key เดิม
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5leHZvbXBkZXVicHBia3Zud29yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMTcxMjYsImV4cCI6MjA5MDc5MzEyNn0.2XT5VxRjPy_8h_M-b_vcoI9JYk8-zjzJXxhUq9hPg8U"; 
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   const loginForm = document.getElementById("loginForm");

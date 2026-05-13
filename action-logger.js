@@ -1,52 +1,49 @@
-// ไฟล์: action-logger.js
+// ดึงค่าการเชื่อมต่อ Supabase จากหน้าหลัก (ถ้ามี) หรือประกาศใหม่เพื่อความชัวร์
+const LOG_SUPABASE_URL = "https://nexvompdeubppbkvnwor.supabase.co";
+const LOG_SUPABASE_KEY = "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI";
+const logDbClient = supabase.createClient(LOG_SUPABASE_URL, LOG_SUPABASE_KEY);
 
-const loggerSupabaseUrl = "https://nexvompdeubppbkvnwor.supabase.co";
-const loggerSupabaseKey = "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI";
-
-// ตรวจสอบว่าหน้าเว็บมีการเรียกใช้ Supabase หรือยัง
-if (typeof supabase === "undefined") {
-  console.error(
-    "❌ ขาดไลบรารี Supabase กรุณาใส่ script ของ supabase ก่อนเรียกใช้ไฟล์นี้",
-  );
-}
-
-const loggerDbClient = supabase.createClient(
-  loggerSupabaseUrl,
-  loggerSupabaseKey,
-);
-
-// ฟังก์ชันหลักสำหรับเรียกใช้เพื่อบันทึกประวัติ
-async function logSystemActivity(actionType, detailsText) {
-  // ดึงข้อมูลผู้ใช้งานจาก localStorage (เช็กว่าใครเป็นคนทำรายการ)
-  const userDataStr = localStorage.getItem("userData");
-
-  let userName = "System"; // ค่าเริ่มต้นกรณีหาชื่อไม่เจอ
-  let userRole = "Staff"; // ค่าเริ่มต้นกรณีหา Role ไม่เจอ
-
-  if (userDataStr) {
-    try {
-      const user = JSON.parse(userDataStr);
-      // สมมติว่าใน localStorage คุณเก็บชื่อไว้ใน user.name
-      userName = user.name || "Unknown User";
-      userRole = user.role || "Staff";
-    } catch (e) {
-      console.error("อ่านข้อมูล User ไม่สำเร็จ", e);
-    }
-  }
-
+/**
+ * บันทึกประวัติการทำงานลงระบบ Supabase
+ * @param {string} actionType - หมวดหมู่แอคชัน เช่น 'CREATE', 'EDIT', 'PRINT', 'DELETE'
+ * @param {string} actionDetails - รายละเอียดเพิ่มเติมของสิ่งที่ทำ
+ */
+async function logSystemActivity(actionType, actionDetails) {
   try {
-    const { error } = await loggerDbClient.from("activity_logs").insert([
-      {
-        user_name: userName,
-        role: userRole,
-        action: actionType.toUpperCase(), // เช่น CREATE, EDIT, DELETE
-        details: detailsText,
-      },
-    ]);
+    // 1. ดึงข้อมูลผู้ใช้จริงจาก localStorage
+    const rawUserData = localStorage.getItem("userData");
+    const userData = rawUserData ? JSON.parse(rawUserData) : null;
 
-    if (error) throw error;
-    console.log(`✅ บันทึก Log สำเร็จ: [${actionType}] ${detailsText}`);
-  } catch (error) {
-    console.error("❌ บันทึก Log ไม่สำเร็จ:", error.message);
+    // ถ้าไม่มีข้อมูลในระบบ ให้ใช้ค่า Default เป็น Staff / Anonymous
+    const userName =
+      userData && userData.name ? userData.name : "Anonymous User";
+    const userRole = userData && userData.role ? userData.role : "Staff";
+
+    // 2. เตรียมก้อนข้อมูลส่งเข้า Supabase
+    const logPayload = {
+      user_name: userName,
+      role: userRole,
+      action: actionType.toUpperCase(),
+      details: actionDetails,
+      created_at: new Date().toISOString(),
+    };
+
+    console.log("📤 Sending Log to Supabase...", logPayload);
+
+    // 3. ยิงข้อมูลเข้าตาราง activity_logs
+    const { error } = await logDbClient
+      .from("activity_logs")
+      .insert([logPayload]);
+
+    if (error) {
+      console.error("❌ Supabase Log Insert Error:", error.message);
+      throw error;
+    }
+
+    console.log("✅ Log successfully saved to database.");
+    return true;
+  } catch (err) {
+    console.error("⚠️ Failed to record system log:", err);
+    return false;
   }
 }

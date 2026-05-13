@@ -43,7 +43,7 @@ function injectSidebar() {
   }
 
   const sidebarHTML = `
-    <aside class="w-72 bg-white border-r border-slate-200 flex flex-col p-6 shrink-0 z-10 h-full shadow-sm">
+    <aside class="w-72 bg-white border-r border-slate-200 flex flex-col p-6 shrink-0 z-10 h-full shadow-sm overflow-y-auto overflow-x-hidden">
       <div class="mb-10 px-2 text-center">
         <img src="Impact_Logo.png" alt="IMPACT Logo" class="h-12 mx-auto object-contain" onerror="this.style.display = 'none'" />
       </div>

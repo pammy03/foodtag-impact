@@ -822,10 +822,12 @@
     <script src="action-logger.js"></script>
 
     <script>
+      // 🎯 1. ปลดล็อคระบบ ให้พนักงานทุกระดับ (รวมถึง Staff) เข้าถึงและออกแบบป้ายได้
       const checkUser = JSON.parse(localStorage.getItem("userData"));
-      if (!checkUser || checkUser.role === "Staff") {
+      if (!checkUser) {
         window.location.href = "dashboard.html";
       }
+
       const supabaseUrl = "https://nexvompdeubppbkvnwor.supabase.co";
       const supabaseKey = "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI";
       const dbClient = supabase.createClient(supabaseUrl, supabaseKey);
@@ -835,6 +837,9 @@
       let slotsData = {};
       let isInitialLoading = false;
       let selectedPaperSize = "A4";
+
+      // ⏱️ ตัวแปรช่วยเช็คการกด Print จริง
+      let printWindowOpenedAt = 0;
 
       function setPaperSize(size) {
         selectedPaperSize = size;
@@ -1629,12 +1634,32 @@
         }, 300);
       }
 
-      function proceedToPrint() {
+      // 🎯 2. กดปุ่ม Print จะแค่เปิดหน้าต่างพิมพ์กระดาษหลักของ Chrome เท่านั้น
+      async function proceedToPrint() {
         closePrintWarningModal();
+
+        try {
+          const profileTitle =
+            document.getElementById("profileName").value.trim() ||
+            "ไม่ระบุชื่อ";
+          const templateSize =
+            currentTemplateConfig.name || "Custom Template";
+
+          // ส่ง Log บันทึกลงระบบส่วนกลางของจริง ทันทีที่กดยืนยันจากหน้าเว็บ
+          // (เนื่องจากเบราว์เซอร์ไม่อนุญาตให้ดักจับปุ่ม Print/Cancel ในหน้าต่างของ Chrome ได้)
+          await logSystemActivity(
+            "PRINT",
+            `สั่งพิมพ์ป้ายอาหาร (คลิกยืนยัน): "${profileTitle}" (${templateSize}) ขนาด ${selectedPaperSize}`
+          );
+        } catch (err) {
+          console.error("Audit log dispatch failed:", err);
+        }
+
         setTimeout(() => {
           window.print();
         }, 300);
       }
+
     </script>
   </body>
 </html>
