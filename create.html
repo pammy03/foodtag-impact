@@ -29,18 +29,18 @@
       .allergen-container {
         display: flex;
         flex-wrap: wrap;
-        gap: 4px;
+        gap: 2px;
         justify-content: center;
         align-items: center;
         margin: 8px auto 0;
-        width: 90%;
+        width: 98%;
         padding: 0;
         box-sizing: border-box;
       }
 
       .allergen-icon {
-        width: calc((100% - 16px) / 5);
-        max-width: 105px;
+        width: calc((100% - 8px) / 5);
+        max-width: 120px;
         aspect-ratio: 1 / 1;
         object-fit: contain;
         display: block;
@@ -71,40 +71,43 @@
       .a4-paper {
         background: white;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        padding: 5mm; /* แก้ไขจาก 0 เป็น 5mm เพื่อจำลองขอบกระดาษจริง */
+        padding: 0;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
+        justify-content: center; /* จัดให้อยู่ตรงกลาง */
+        align-items: center;
         transform-origin: center center;
         transition: outline 0.3s;
       }
 
-      /* ย้ายเส้นกรอบตัดกระดาษมาไว้ที่ inner-grid แทน เพื่อให้หดเข้ามาอยู่ใน Safe Area */
+      /* 🎯 กำหนดกรอบตัดกระดาษด้านนอกสุดให้หนาขึ้นเพื่อให้มองเห็นชัดตอนปริ้น */
       .inner-grid {
         display: grid;
-        width: 100%;
-        height: 100%;
+        width: max-content;
+        height: max-content;
         margin: auto;
         background-color: white;
         box-sizing: border-box;
-        border: 0.5px dashed #94a3b8;
+        border: 1px dashed #64748b !important; 
       }
+      
+      /* 🎯 ปรับขนาดและตารางให้พอดี Safe Area ปริ้นเตอร์ */
       .grid-plate {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(1, 1fr);
+        grid-template-columns: repeat(2, 13cm);
+        grid-template-rows: repeat(1, 18cm);
       }
       .grid-western {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 10.5cm);
+        grid-template-rows: repeat(1, 14.8cm);
       }
       .grid-buffet {
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 10.2cm);
+        grid-template-rows: repeat(2, 9.7cm);
       }
 
+      /* 🎯 เส้นตัดระหว่างช่องด้านใน */
       .slot {
-        border-right: 0.5px dashed #94a3b8;
-        border-bottom: 0.5px dashed #94a3b8;
         box-sizing: border-box;
         position: relative;
         display: flex;
@@ -114,21 +117,19 @@
         background-color: white;
         transition: all 0.2s;
         overflow: hidden;
+        border-right: 1px dashed #64748b !important;
+        border-bottom: 1px dashed #64748b !important;
       }
 
-      /* กฎลบเส้นขอบด้านขวา สำหรับช่องที่ติดขอบกระดาษขวาสุด */
-      .grid-plate .slot:last-child,
-      .grid-western .slot:nth-child(2n),
-      .grid-buffet .slot:nth-child(3n) {
-        border-right: none !important;
-      }
-
-      /* กฎลบเส้นขอบด้านล่าง สำหรับช่องแถวล่างสุดที่ติดขอบกระดาษ */
-      .grid-plate .slot,
-      .grid-western .slot:nth-child(n + 3),
-      .grid-buffet .slot:nth-child(n + 4) {
-        border-bottom: none !important;
-      }
+      /* ลบเส้นด้านในไม่ให้ซ้อนกับกรอบนอกสุด */
+      .grid-plate .slot:nth-child(2n) { border-right: none !important; }
+      .grid-plate .slot { border-bottom: none !important; }
+      
+      .grid-western .slot:nth-child(2n) { border-right: none !important; }
+      .grid-western .slot { border-bottom: none !important; }
+      
+      .grid-buffet .slot:nth-child(2n) { border-right: none !important; }
+      .grid-buffet .slot:nth-child(n+3) { border-bottom: none !important; }
 
       .slot.active {
         outline: 3px solid #006d4b;
@@ -147,7 +148,7 @@
       @media print {
         @page {
           size: landscape;
-          margin: 0mm;
+          margin: 0; /* ลบระยะเผื่อขอบของเบราว์เซอร์ เพื่อให้เราจัดการระยะเอง */
         }
         html,
         body {
@@ -184,43 +185,39 @@
           padding: 0 !important;
         }
 
-        /* บังคับหดสเกลลง 4% และบีบเนื้อหาเข้ามา 5mm เพื่อหลบระยะหัวพิมพ์ที่ไม่เท่ากันของแต่ละเครื่อง */
         #a4Paper {
           box-shadow: none !important;
           margin: auto !important;
           width: 100% !important;
           height: 100% !important;
-          padding: 5mm !important; /* ระยะหลบภัย (Safe Area) */
+          padding: 0 !important; 
           page-break-after: avoid;
           box-sizing: border-box !important;
-          transform: scale(
-            0.96
-          ) !important; /* หดเนื้อหาลงเล็กน้อยให้พ้นขอบขาว */
+          transform: none !important; 
           transform-origin: center center !important;
         }
 
-        /* บังคับให้แสดงเส้นกรอบนอกสุดของ Grid และเส้นแบ่งช่องตอนพิมพ์เสมอ */
         .inner-grid {
-          border: 0.5px dashed #94a3b8 !important;
-          width: 100% !important;
-          height: 100% !important;
+          border: 1px dashed #64748b !important;
+          width: max-content !important; 
+          height: max-content !important;
+          margin: auto !important;
           box-sizing: border-box !important;
         }
 
         .slot {
-          border-right: 0.5px dashed #94a3b8 !important;
-          border-bottom: 0.5px dashed #94a3b8 !important;
+          border-right: 1px dashed #64748b !important;
+          border-bottom: 1px dashed #64748b !important;
         }
-        .grid-plate .slot:last-child,
-        .grid-western .slot:nth-child(2n),
-        .grid-buffet .slot:nth-child(3n) {
-          border-right: none !important;
-        }
-        .grid-plate .slot,
-        .grid-western .slot:nth-child(n + 3),
-        .grid-buffet .slot:nth-child(n + 4) {
-          border-bottom: none !important;
-        }
+        
+        .grid-plate .slot:nth-child(2n) { border-right: none !important; }
+        .grid-plate .slot { border-bottom: none !important; }
+        
+        .grid-western .slot:nth-child(2n) { border-right: none !important; }
+        .grid-western .slot { border-bottom: none !important; }
+        
+        .grid-buffet .slot:nth-child(2n) { border-right: none !important; }
+        .grid-buffet .slot:nth-child(n+3) { border-bottom: none !important; }
 
         .slot.active {
           outline: none !important;
@@ -232,18 +229,18 @@
         .allergen-container {
           display: flex !important;
           flex-wrap: wrap !important;
-          gap: 4px !important;
+          gap: 2px !important;
           justify-content: center !important;
           margin-top: 8px !important;
-          width: 90% !important;
+          width: 98% !important;
           margin-left: auto !important;
           margin-right: auto !important;
           padding: 0 !important;
           box-sizing: border-box !important;
         }
         .allergen-icon {
-          width: calc((100% - 16px) / 5) !important;
-          max-width: 105px !important;
+          width: calc((100% - 8px) / 5) !important;
+          max-width: 120px !important;
           aspect-ratio: 1 / 1 !important;
           height: auto !important;
           background: transparent !important;
@@ -361,9 +358,9 @@
                     {
                       name: 'Western Set',
                       orientation: 'landscape',
-                      slots_count: 4,
+                      slots_count: 2,
                       grid_class: 'grid-western',
-                      hide_allergies: false,
+                      hide_allergies: true, /* ไม่มี allergie ตามโจทย์ */
                     },
                     this,
                   )
@@ -376,7 +373,7 @@
                   Western Set
                 </div>
                 <div class="text-xs text-slate-500 mt-1">
-                  10.5x14.8 cm | 4 Slots
+                  10.5x14.8 cm | 2 Slots
                 </div>
               </button>
               <button
@@ -385,7 +382,7 @@
                     {
                       name: 'Buffet / Coffee Break',
                       orientation: 'landscape',
-                      slots_count: 6,
+                      slots_count: 4, /* แก้ไขเป็น 4 เพื่อเว้นขอบปริ้น */
                       grid_class: 'grid-buffet',
                       hide_allergies: false,
                     },
@@ -400,7 +397,7 @@
                   Buffet / Coffee Break
                 </div>
                 <div class="text-xs text-slate-500 mt-1">
-                  10.2x9.7 cm | 6 Slots
+                  10.2x9.7 cm | 4 Slots
                 </div>
               </button>
             </div>
@@ -816,7 +813,6 @@
     <script src="action-logger.js"></script>
 
     <script>
-      // 🎯 1. ปลดล็อคระบบ ให้พนักงานทุกระดับ (รวมถึง Staff) เข้าถึงและออกแบบป้ายได้
       const checkUser = JSON.parse(localStorage.getItem("userData"));
       if (!checkUser) {
         window.location.href = "dashboard.html";
@@ -832,7 +828,6 @@
       let isInitialLoading = false;
       let selectedPaperSize = "A4";
 
-      // ⏱️ ตัวแปรช่วยเช็คการกด Print จริง
       let printWindowOpenedAt = 0;
 
       function setPaperSize(size) {
@@ -890,14 +885,14 @@
               "Western Set": {
                 name: "Western Set",
                 orientation: "landscape",
-                slots_count: 4,
+                slots_count: 2,
                 grid_class: "grid-western",
-                hide_allergies: false,
+                hide_allergies: true,
               },
               "Buffet / Coffee Break": {
                 name: "Buffet / Coffee Break",
                 orientation: "landscape",
-                slots_count: 6,
+                slots_count: 4,
                 grid_class: "grid-buffet",
                 hide_allergies: false,
               },
@@ -938,7 +933,7 @@
             {
               name: "Buffet / Coffee Break",
               orientation: "landscape",
-              slots_count: 6,
+              slots_count: 4, /* ใช้ค่าใหม่ 4 ช่อง */
               grid_class: "grid-buffet",
               hide_allergies: false,
             },
@@ -1021,7 +1016,7 @@
 
           const contentWrapper = document.createElement("div");
           contentWrapper.className =
-            "w-full h-full flex flex-col items-center justify-center relative z-10 p-6";
+            "w-full h-full flex flex-col items-center justify-center relative z-10 p-4";
           div.appendChild(contentWrapper);
           innerGrid.appendChild(div);
 
@@ -1638,7 +1633,6 @@
         }, 300);
       }
 
-      // 🎯 2. กดปุ่ม Print จะแค่เปิดหน้าต่างพิมพ์กระดาษหลักของ Chrome เท่านั้น
       async function proceedToPrint() {
         closePrintWarningModal();
 
@@ -1649,8 +1643,6 @@
           const templateSize =
             currentTemplateConfig.name || "Custom Template";
 
-          // ส่ง Log บันทึกลงระบบส่วนกลางของจริง ทันทีที่กดยืนยันจากหน้าเว็บ
-          // (เนื่องจากเบราว์เซอร์ไม่อนุญาตให้ดักจับปุ่ม Print/Cancel ในหน้าต่างของ Chrome ได้)
           await logSystemActivity(
             "PRINT",
             `สั่งพิมพ์ป้ายอาหาร (คลิกยืนยัน): "${profileTitle}" (${templateSize}) ขนาด ${selectedPaperSize}`
