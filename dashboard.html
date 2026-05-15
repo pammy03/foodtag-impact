@@ -180,29 +180,29 @@
       }
       .inner-grid {
         display: grid;
-        width: 100%;
-        height: 100%;
-        flex-grow: 1;
-        border-top: 1px dashed #cbd5e1;
-        border-left: 1px dashed #cbd5e1;
+        width: max-content;
+        height: max-content;
+        margin: auto;
+        border: 1px dashed #64748b !important;
         background-color: white;
+        box-sizing: border-box;
       }
       .grid-plate {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(1, 1fr);
+        grid-template-columns: repeat(2, 13cm);
+        grid-template-rows: repeat(1, 18cm);
       }
       .grid-western {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 10.5cm);
+        grid-template-rows: repeat(1, 14.8cm);
       }
       .grid-buffet {
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 10.2cm);
+        grid-template-rows: repeat(2, 9.7cm);
       }
 
       .slot {
-        border-right: 1px dashed #cbd5e1;
-        border-bottom: 1px dashed #cbd5e1;
+        border-right: 1px dashed #64748b !important;
+        border-bottom: 1px dashed #64748b !important;
         box-sizing: border-box;
         position: relative;
         display: flex;
@@ -212,6 +212,14 @@
         background-color: white;
         overflow: hidden;
       }
+      .grid-plate .slot:nth-child(2n) { border-right: none !important; }
+      .grid-plate .slot { border-bottom: none !important; }
+      
+      .grid-western .slot:nth-child(2n) { border-right: none !important; }
+      .grid-western .slot { border-bottom: none !important; }
+      
+      .grid-buffet .slot:nth-child(2n) { border-right: none !important; }
+      .grid-buffet .slot:nth-child(n+3) { border-bottom: none !important; }
       .slot-bg {
         position: absolute;
         inset: 0;
@@ -224,15 +232,17 @@
       .allergen-container {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 2px;
         justify-content: center;
         align-items: center;
-        width: 100%;
+        margin: 8px auto 0;
+        width: 98%;
+        padding: 0;
         box-sizing: border-box;
       }
       .allergen-icon {
-        width: calc((100% - 32px) / 5);
-        max-width: 85px;
+        width: calc((100% - 8px) / 5);
+        max-width: 120px;
         aspect-ratio: 1 / 1;
         object-fit: contain;
         display: block;
@@ -291,7 +301,7 @@
       @media print {
         @page {
           size: landscape;
-          margin: 0mm;
+          margin: 0;
         }
         body > *:not(#printArea) {
           display: none !important;
@@ -325,16 +335,54 @@
           margin: auto !important;
           width: 100% !important;
           height: 100% !important;
-          padding: 5mm !important;
+          padding: 0 !important;
           page-break-after: avoid;
           box-sizing: border-box !important;
-          transform: scale(0.96) !important;
+          transform: none !important;
           transform-origin: center center !important;
           border: none !important;
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
+        }
+        .inner-grid {
+          border: 1px dashed #64748b !important;
+          width: max-content !important;
+          height: max-content !important;
+          margin: auto !important;
+          box-sizing: border-box !important;
+          display: grid !important;
+        }
+        .slot {
+          border-right: 1px dashed #64748b !important;
+          border-bottom: 1px dashed #64748b !important;
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: center !important;
+          justify-content: center !important;
+        }
+        .grid-plate .slot:nth-child(2n) { border-right: none !important; }
+        .grid-plate .slot { border-bottom: none !important; }
+        .grid-western .slot:nth-child(2n) { border-right: none !important; }
+        .grid-western .slot { border-bottom: none !important; }
+        .grid-buffet .slot:nth-child(2n) { border-right: none !important; }
+        .grid-buffet .slot:nth-child(n+3) { border-bottom: none !important; }
+
+        .allergen-container {
+          display: flex !important;
+          flex-wrap: wrap !important;
+          gap: 2px !important;
+          justify-content: center !important;
+          margin-top: 8px !important;
+          width: 98% !important;
+          margin-left: auto !important;
+          margin-right: auto !important;
+          padding: 0 !important;
+          box-sizing: border-box !important;
         }
         .allergen-icon {
-          width: calc((100% - 16px) / 5) !important;
-          max-width: 105px !important;
+          width: calc((100% - 8px) / 5) !important;
+          max-width: 120px !important;
           aspect-ratio: 1 / 1 !important;
           height: auto !important;
           background: transparent !important;
@@ -672,15 +720,15 @@
         },
         "Western Set": {
           orientation: "landscape",
-          slots_count: 4,
+          slots_count: 2,
           grid_class: "grid-western",
-          hide_allergies: false,
+          hide_allergies: true,
           w: 1123,
           h: 794,
         },
         "Buffet / Coffee Break": {
           orientation: "landscape",
-          slots_count: 6,
+          slots_count: 4,
           grid_class: "grid-buffet",
           hide_allergies: false,
           w: 1123,
@@ -1071,11 +1119,11 @@
           const menu = slotsData[i] || {};
           const slotBgUrl = menu.bgUrl || "";
           const bgHtml = slotBgUrl
-            ? `<img src="${slotBgUrl}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: 0;">`
+            ? `<img src="${slotBgUrl}" class="slot-bg">`
             : "";
 
           if (!menu.name_th && !menu.name_en) {
-            slotsHTML += `<div class="slot">${bgHtml}<div class="w-full h-full flex flex-col items-center justify-center relative z-10 p-6"><div class="slot-content"></div></div></div>`;
+            slotsHTML += `<div class="slot">${bgHtml}<div class="w-full h-full flex flex-col items-center justify-center relative z-10 p-4"><div class="slot-content"></div></div></div>`;
             continue;
           }
 
@@ -1104,28 +1152,30 @@
 
                 const nameText = a.name_th || a.name_en || "";
 
-                return `<img src="${imgUrl}" style="width: calc((100% - 32px) / 5); max-width: 85px; aspect-ratio: 1/1; object-fit: contain; display: block; background: transparent;" title="${nameText}" crossorigin="anonymous" onerror="this.style.display='none'">`;
+                return `<img src="${imgUrl}" style="width: calc((100% - 8px) / 5); max-width: 120px; aspect-ratio: 1/1; object-fit: contain; display: block; background: transparent;" title="${nameText}" crossorigin="anonymous" onerror="this.style.display='none'">`;
               })
               .join("");
 
             if (iconsHtml.trim() !== "") {
-              allergensHtml = `<div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; margin-top: 15px; width: 100%; padding: 0 16px; box-sizing: border-box;">${iconsHtml}</div>`;
+              allergensHtml = `<div class="allergen-container">${iconsHtml}</div>`;
             }
           }
 
           // 🎯 [จุดที่แก้ไข] เอาโลโก้ IMPACT ออกไปจากบนหัวป้ายเรียบร้อยแล้ว
           slotsHTML += `
-            <div class="slot" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: white; border-right: 1px dashed #cbd5e1; border-bottom: 1px dashed #cbd5e1; text-align: center; overflow: hidden;">
+            <div class="slot">
                 ${bgHtml}
-                <div style="position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 24px;">
-                    <div style="font-family: ${fTh}; font-size: ${sTh}; font-weight: 900; color: #1e293b; margin-bottom: 8px; line-height: 1.25; text-align: center; white-space: pre-line;">${menu.name_th || ""}</div>
-                    <div style="font-family: ${fEn}; font-size: ${sEn}; font-weight: 500; color: #64748b; margin-bottom: 16px; line-height: 1.25; text-align: center; white-space: pre-line;">${menu.name_en || ""}</div>
-                    ${allergensHtml}
+                <div class="w-full h-full flex flex-col items-center justify-center relative z-10 p-4">
+                    <div class="slot-content">
+                        <div style="font-family: ${fTh}; font-size: ${sTh};" class="font-black text-slate-800 mb-1 leading-tight text-center whitespace-pre-line">${menu.name_th || ""}</div>
+                        <div style="font-family: ${fEn}; font-size: ${sEn};" class="font-medium text-slate-500 mb-1 leading-tight text-center whitespace-pre-line">${menu.name_en || ""}</div>
+                        ${allergensHtml}
+                    </div>
                 </div>
             </div>`;
         }
 
-        return `<div class="preview-paper" style="width: ${dims.w}px; height: ${dims.h}px; background: white; padding: 0; box-sizing: border-box; display: flex; flex-direction: column;"><div class="inner-grid ${config.grid_class}" style="display: grid; width: 100%; height: 100%; flex-grow: 1; border-top: 1px dashed #cbd5e1; border-left: 1px dashed #cbd5e1; background-color: white;">${slotsHTML}</div></div>`;
+        return `<div class="preview-paper" style="width: ${dims.w}px; height: ${dims.h}px; background: white; padding: 0; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; align-items: center;"><div class="inner-grid ${config.grid_class}">${slotsHTML}</div></div>`;
       }
 
       function openPreviewModal(tagId) {
