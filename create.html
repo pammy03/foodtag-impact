@@ -71,7 +71,7 @@
       .a4-paper {
         background: white;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        padding: 0;
+        padding: 5mm; /* แก้ไขจาก 0 เป็น 5mm เพื่อจำลองขอบกระดาษจริง */
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
@@ -262,21 +262,21 @@
   </head>
   <body class="bg-[#f1f5f9] h-screen flex flex-col overflow-hidden">
     <header
-      class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center z-20 shrink-0"
+      class="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-center z-20 shrink-0"
     >
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-3">
         <button
           onclick="window.location.href = 'dashboard.html'"
           class="w-10 h-10 flex items-center justify-center hover:bg-slate-100 rounded-full text-slate-500 transition-colors"
         >
           <span class="material-symbols-outlined text-[24px]">arrow_back</span>
         </button>
-        <h1
+        <h2
           id="pageTitle"
-          class="text-xl font-bold text-slate-800 leading-none"
+          class="text-[24px] font-extrabold text-slate-800 tracking-tight"
         >
           Create New Tag
-        </h1>
+        </h2>
       </div>
       <button
         onclick="showSaveModal()"
@@ -1288,15 +1288,25 @@
           const { data: menus, error } = await dbClient
             .from("menus")
             .select("*")
-            .or(`name_th.ilike.%${query}%,name_en.ilike.%${query}%`)
+            .or(`name_th.ilike.${query}%,name_en.ilike.${query}%`)
             .limit(10);
           if (error) throw error;
 
           if (menus && menus.length > 0) {
+            const filtered = menus.filter(m => 
+              (m.name_th || "").toLowerCase().startsWith(query.toLowerCase()) || 
+              (m.name_en || "").toLowerCase().startsWith(query.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+              results.classList.add("hidden");
+              return;
+            }
+
             const { data: allIngs } = await dbClient
               .from("ingredients")
               .select("*");
-            results.innerHTML = menus
+            results.innerHTML = filtered
               .map((m) => {
                 const allergens = (m.ingredient_ids || [])
                   .map((id) =>

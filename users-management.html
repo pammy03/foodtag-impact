@@ -52,17 +52,25 @@
       class="flex-1 flex flex-col h-full overflow-hidden relative bg-[#f1f5f9]"
     >
       <header
-        class="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-center z-20 shrink-0"
+        class="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-end z-20 shrink-0"
       >
         <div>
-          <h1
-            class="text-2xl font-extrabold text-slate-800 tracking-tight leading-none flex items-center gap-2"
-          >
+          <div class="flex items-center gap-3">
             <span class="material-symbols-outlined text-3xl text-[#006d4b]"
               >manage_accounts</span
             >
-            User Management
-          </h1>
+            <h2
+              class="text-3xl font-extrabold text-slate-800 tracking-tight leading-none"
+            >
+              User Management
+            </h2>
+            <div
+              id="totalUserCount"
+              class="px-3 py-1 bg-emerald-50 text-[#006d4b] font-black text-[13px] rounded-lg tracking-wider border border-emerald-100 hidden"
+            >
+              ...
+            </div>
+          </div>
           <p class="text-sm text-slate-500 font-medium mt-1">
             จัดการบัญชีผู้ใช้งานและกำหนดสิทธิ์ในระบบ (Super Admin Only)
           </p>
@@ -131,27 +139,32 @@
             <thead class="bg-slate-50 sticky top-0 shadow-sm z-10">
               <tr>
                 <th
-                  class="py-4 px-6 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b"
+                  class="py-4 px-8 text-[13px] font-black text-slate-500 w-16 border-b text-center"
+                >
+                  No.
+                </th>
+                <th
+                  class="py-4 px-6 text-[13px] font-black text-slate-500 border-b"
                 >
                   Emp ID
                 </th>
                 <th
-                  class="py-4 px-6 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b"
+                  class="py-4 px-6 text-[13px] font-black text-slate-500 border-b"
                 >
                   Name
                 </th>
                 <th
-                  class="py-4 px-6 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b"
+                  class="py-4 px-6 text-[13px] font-black text-slate-500 border-b"
                 >
                   Role
                 </th>
                 <th
-                  class="py-4 px-6 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b"
+                  class="py-4 px-6 text-[13px] font-black text-slate-500 border-b"
                 >
                   Password
                 </th>
                 <th
-                  class="py-4 px-8 text-[11px] font-black text-slate-400 uppercase tracking-widest w-40 border-b text-center"
+                  class="py-4 px-8 text-[13px] font-black text-slate-500 w-40 border-b text-center"
                 >
                   Actions
                 </th>
@@ -159,7 +172,7 @@
             </thead>
             <tbody id="userTableBody" class="divide-y divide-slate-100">
               <tr>
-                <td colspan="5" class="py-20 text-center">
+                <td colspan="6" class="py-20 text-center">
                   <div class="flex flex-col items-center opacity-30">
                     <span
                       class="material-symbols-outlined text-5xl animate-spin"
@@ -185,14 +198,14 @@
           class="px-8 py-6 border-b flex justify-between items-center bg-slate-50"
         >
           <div>
-            <h2 class="text-xl font-bold text-slate-800">Add New User</h2>
+            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Add New User</h2>
           </div>
           <button
             type="button"
             onclick="closeModal('addModal')"
-            class="w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-white hover:text-slate-600 rounded-full transition-all cursor-pointer"
+            class="w-12 h-12 flex items-center justify-center text-slate-400 hover:bg-white hover:text-slate-600 rounded-full transition-all cursor-pointer"
           >
-            <span class="material-symbols-outlined">close</span>
+            <span class="material-symbols-outlined text-2xl">close</span>
           </button>
         </div>
         <form
@@ -228,7 +241,7 @@
           </div>
           <div>
             <label
-              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+              class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
               >Password</label
             >
             <input
@@ -241,7 +254,7 @@
           </div>
           <div>
             <label
-              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+              class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
               >Role</label
             >
             <select
@@ -287,14 +300,14 @@
           class="px-8 py-6 border-b flex justify-between items-center bg-slate-50"
         >
           <div>
-            <h2 class="text-xl font-bold text-slate-800">Edit User</h2>
+            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Edit User</h2>
           </div>
           <button
             type="button"
             onclick="closeModal('editModal')"
-            class="w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-white hover:text-slate-600 rounded-full transition-all cursor-pointer"
+            class="w-12 h-12 flex items-center justify-center text-slate-400 hover:bg-white hover:text-slate-600 rounded-full transition-all cursor-pointer"
           >
-            <span class="material-symbols-outlined">close</span>
+            <span class="material-symbols-outlined text-2xl">close</span>
           </button>
         </div>
         <form
@@ -305,7 +318,7 @@
           <input type="hidden" id="editDbId" />
           <div>
             <label
-              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+              class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
               >Employee ID</label
             >
             <input
@@ -319,7 +332,7 @@
           </div>
           <div>
             <label
-              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+              class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
               >Name</label
             >
             <input
@@ -331,7 +344,7 @@
           </div>
           <div>
             <label
-              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+              class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
               >Password</label
             >
             <input
@@ -343,7 +356,7 @@
           </div>
           <div>
             <label
-              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+              class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
               >Role</label
             >
             <select
@@ -498,14 +511,18 @@
 
         const filteredUsers = dbUsers.filter((u) => {
           const matchText =
-            (u.name || "").toLowerCase().includes(query) ||
-            (u.emp_id || "").toLowerCase().includes(query);
+            (u.name || "").toLowerCase().startsWith(query) ||
+            (u.emp_id || "").toLowerCase().startsWith(query);
           const matchRole = filterRole === "all" || u.role === filterRole;
           return matchText && matchRole;
         });
 
+        const countEl = document.getElementById("totalUserCount");
+        countEl.innerText = `${filteredUsers.length} Items`;
+        countEl.classList.remove("hidden");
+
         if (filteredUsers.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" class="py-24 text-center">
+          tbody.innerHTML = `<tr><td colspan="6" class="py-24 text-center">
               <span class="material-symbols-outlined text-6xl mb-4 text-slate-200">person_off</span>
               <p class="text-slate-400 font-bold tracking-widest uppercase">No Users Found</p>
           </td></tr>`;
@@ -513,12 +530,13 @@
         }
 
         let html = "";
-        filteredUsers.forEach((u) => {
+        filteredUsers.forEach((u, index) => {
           const userDataStr = encodeURIComponent(JSON.stringify(u));
           const safeName = (u.name || "").replace(/'/g, "\\'");
 
           html += `
           <tr class="user-row border-b border-slate-100 last:border-0">
+            <td class="py-4 px-8 text-center"><span class="text-[14px] font-black text-slate-300">${index + 1}</span></td>
             <td class="py-4 px-6 font-bold text-slate-500">${u.emp_id}</td>
             <td class="py-4 px-6 font-extrabold text-slate-800">${u.name}</td>
             <td class="py-4 px-6">${getRoleBadge(u.role)}</td>

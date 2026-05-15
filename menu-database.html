@@ -75,7 +75,7 @@
             </div>
           </div>
           <p class="text-slate-500 font-medium mt-1">
-            Manage your food menus and ingredient assignments
+            จัดการข้อมูลเมนูอาหารและการจับคู่ส่วนผสม
           </p>
         </div>
 
@@ -140,27 +140,27 @@
                 <th class="py-4 px-8 border-b w-48">
                   <div class="flex items-center gap-4">
                     <span
-                      class="w-6 text-center text-[11px] font-black text-slate-400 uppercase tracking-widest"
-                      >#</span
+                      class="w-6 text-center text-[13px] font-black text-slate-500"
+                      >No.</span
                     >
                     <span
-                      class="text-[11px] font-black text-slate-400 uppercase tracking-widest"
+                      class="text-[13px] font-black text-slate-500"
                       >Menu ID</span
                     >
                   </div>
                 </th>
                 <th
-                  class="py-4 px-6 text-[11px] font-black text-slate-400 uppercase tracking-widest w-1/3 border-b"
+                  class="py-4 px-6 text-[13px] font-black text-slate-500 w-1/3 border-b"
                 >
                   Menu Details
                 </th>
                 <th
-                  class="py-4 px-6 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b"
+                  class="py-4 px-6 text-[13px] font-black text-slate-500 border-b"
                 >
                   Images / Ingredients
                 </th>
                 <th
-                  class="py-4 px-8 text-[11px] font-black text-slate-400 uppercase tracking-widest w-32 border-b text-center"
+                  class="py-4 px-8 text-[13px] font-black text-slate-500 w-32 border-b text-center"
                 >
                   Manage
                 </th>
@@ -188,18 +188,18 @@
 
     <div id="menuModal" class="modal-overlay">
       <div
-        class="bg-white rounded-3xl shadow-2xl w-[650px] max-h-[90vh] flex flex-col relative z-50 overflow-hidden"
+        class="bg-white rounded-[40px] shadow-2xl w-[600px] max-h-[90vh] flex flex-col relative z-50 overflow-hidden"
       >
         <div
-          class="px-8 py-6 border-b flex justify-between items-center bg-slate-50"
+          class="px-10 py-8 border-b flex justify-between items-center bg-slate-50"
         >
           <div>
-            <h2 id="menuModalTitle" class="text-xl font-bold text-slate-800">
+            <h2 id="menuModalTitle" class="text-2xl font-black text-slate-800 tracking-tight">
               Edit Menu
             </h2>
             <p
               id="menuModalSubtitle"
-              class="text-xs text-slate-500 font-medium"
+              class="text-sm text-slate-500 font-medium mt-1"
             >
               เพิ่มข้อมูลเมนูใหม่ลงในระบบส่วนกลาง
             </p>
@@ -207,17 +207,17 @@
           <button
             type="button"
             onclick="closeModal('menuModal')"
-            class="w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-white hover:text-slate-600 rounded-full transition-all cursor-pointer"
+            class="w-12 h-12 flex items-center justify-center text-slate-400 hover:bg-white hover:text-slate-600 rounded-full transition-all cursor-pointer"
           >
-            <span class="material-symbols-outlined">close</span>
+            <span class="material-symbols-outlined text-2xl">close</span>
           </button>
         </div>
-        <div class="p-8 overflow-y-auto space-y-6 custom-scroll">
+        <div class="p-10 overflow-y-auto space-y-8 custom-scroll">
           <div>
             <label
-              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+              class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
               >Menu ID
-              <span class="text-[9px] text-slate-400 font-normal lowercase"
+              <span class="text-[10px] text-slate-400 font-normal lowercase ml-1"
                 >(Auto Generated)</span
               ></label
             >
@@ -225,38 +225,38 @@
               type="text"
               id="inputMenuId"
               readonly
-              class="w-full px-4 py-3 bg-slate-100 text-slate-500 border border-slate-200 rounded-xl outline-none font-bold cursor-not-allowed"
+              class="w-full px-5 py-4 bg-slate-100 text-slate-500 border border-slate-200 rounded-2xl outline-none font-bold cursor-not-allowed"
               placeholder="Generating..."
             />
           </div>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-2 gap-6">
             <div>
               <label
-                class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+                class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
                 >Thai Name</label
               ><input
                 type="text"
                 id="inputNameTh"
-                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all"
+                class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all font-semibold"
                 placeholder="ชื่อภาษาไทย"
               />
             </div>
             <div>
               <label
-                class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+                class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
                 >English Name</label
               ><input
                 type="text"
                 id="inputNameEn"
-                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all"
+                class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all font-semibold"
                 placeholder="English Name"
               />
             </div>
           </div>
           <div>
-            <div class="flex justify-between items-end mb-3">
+            <div class="flex justify-between items-end mb-4">
               <label
-                class="block text-xs font-black text-slate-400 uppercase tracking-widest"
+                class="block text-[13px] font-black text-slate-500 uppercase tracking-widest ml-1"
                 >Select Images / Ingredients</label
               >
               <div class="relative w-1/2 max-w-[200px]">
@@ -360,7 +360,7 @@
           dbMenus = menuData || [];
           const countEl = document.getElementById("totalMenuCount");
           if (dbMenus.length > 0) {
-            countEl.innerText = `${dbMenus.length} รายการ`;
+            countEl.innerText = `${dbMenus.length} Items`;
             countEl.classList.remove("hidden");
           } else {
             countEl.classList.add("hidden");
@@ -382,8 +382,8 @@
 
         const filtered = dbMenus.filter(
           (m) =>
-            (m.menu_id || "").toLowerCase().includes(query) ||
-            (m.name_th || "").includes(query),
+            (m.menu_id || "").toLowerCase().startsWith(query) ||
+            (m.name_th || "").toLowerCase().startsWith(query),
         );
 
         if (filtered.length === 0) {
@@ -490,7 +490,7 @@
         document.querySelectorAll(".ingredient-item").forEach((item) => {
           item.style.display = item
             .getAttribute("data-name")
-            .includes(searchVal)
+            .startsWith(searchVal)
             ? "block"
             : "none";
         });

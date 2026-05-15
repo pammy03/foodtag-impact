@@ -105,61 +105,61 @@ function injectSidebar() {
   if (!document.getElementById("myProfileModal")) {
     const profileModalHTML = `
       <div id="myProfileModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[99999] hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-[32px] shadow-2xl w-[500px] p-10 transform scale-95 transition-transform duration-300 flex flex-col relative" id="myProfileModalContent">
-          <button onclick="closeMyProfileModal()" class="absolute top-6 right-6 w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-full transition-all">
-            <span class="material-symbols-outlined text-3xl">close</span>
+        <div class="bg-white rounded-[40px] shadow-2xl w-[380px] p-8 transform scale-95 transition-transform duration-300 flex flex-col relative" id="myProfileModalContent">
+          <button onclick="closeMyProfileModal()" class="absolute top-5 right-5 w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-full transition-all">
+            <span class="material-symbols-outlined text-2xl">close</span>
           </button>
           
-          <div class="flex items-center gap-5 mb-8 pb-6 border-b border-slate-100">
-            <div class="w-16 h-16 bg-[#003B71] rounded-full flex items-center justify-center text-white font-bold text-3xl shadow-lg">
+          <div class="flex items-center gap-5 mb-6 pb-6 border-b border-slate-100">
+            <div class="w-16 h-16 bg-[#003B71] rounded-full flex items-center justify-center text-white font-bold text-3xl shadow-lg shadow-[#003B71]/20">
               <span class="material-symbols-outlined text-4xl">person</span>
             </div>
             <div>
-              <h3 class="text-xl font-black text-slate-800">${userData.name}</h3>
-              <p class="text-sm font-bold text-slate-400 tracking-tight">Employee ID: ${userData.emp_id}</p>
+              <h3 class="text-xl font-black text-slate-800 tracking-tight leading-tight">${userData.name}</h3>
+              <p class="text-[12px] font-bold text-slate-400 mt-0.5">Employee ID: ${userData.emp_id}</p>
             </div>
           </div>
 
           <form id="profileForm" onsubmit="saveMyProfile(event)" class="space-y-6">
-            <div class="bg-[#f8fafc] p-6 rounded-3xl border-2 border-slate-200 transition-all" id="currentPassWrapper">
-              <label class="block text-xs font-black uppercase tracking-[0.1em] text-slate-500 mb-3 ml-1">ยืนยันรหัสผ่านปัจจุบันเพื่อแก้ไข</label>
+            <div class="bg-[#f8fafc] p-5 rounded-3xl border-2 border-slate-200 transition-all" id="currentPassWrapper">
+              <label class="block text-[16px] font-black text-slate-800 mb-3 ml-1">ยืนยันรหัสผ่านปัจจุบันเพื่อแก้ไข</label>
               <div class="flex flex-col gap-3">
                 <div class="relative flex-1">
                   <input id="prof_current_password" 
-                    class="w-full px-5 py-4 bg-white border border-slate-300 rounded-2xl focus:ring-4 focus:ring-[#003B71]/10 outline-none text-lg font-bold shadow-sm placeholder:font-medium placeholder:text-slate-300 pr-14" 
+                    class="w-full px-5 py-3.5 bg-white border border-slate-300 rounded-2xl focus:ring-4 focus:ring-[#003B71]/10 outline-none text-base font-bold shadow-sm placeholder:font-medium placeholder:text-slate-300 pr-14" 
                     placeholder="Current Password..." type="password" />
-                  <button type="button" onclick="togglePasswordVisibility('prof_current_password', 'eye_icon_curr')" class="absolute right-4 top-3.5 text-slate-400">
+                  <button type="button" onclick="togglePasswordVisibility('prof_current_password', 'eye_icon_curr')" class="absolute right-4 top-3 text-slate-400">
                     <span id="eye_icon_curr" class="material-symbols-outlined text-2xl">visibility_off</span>
                   </button>
                 </div>
-                <button type="button" id="btnVerifyPass" onclick="manualVerifyPassword()" class="w-full py-3.5 bg-[#003B71] text-white rounded-2xl font-black hover:bg-slate-800 transition-all text-base shadow-md">
-                  ตรวจสอบรหัสผ่าน (Verify)
+                <button type="button" id="btnVerifyPass" onclick="manualVerifyPassword()" class="w-full py-3.5 bg-[#003B71] text-white rounded-2xl font-black hover:bg-slate-800 transition-all text-sm shadow-md">
+                  Verify Now
                 </button>
               </div>
             </div>
 
-            <div id="lockedSection" class="opacity-30 pointer-events-none transition-all duration-500 space-y-6">
+            <div id="lockedSection" class="opacity-30 pointer-events-none transition-all duration-500 space-y-5">
                 <div>
-                  <label class="block text-xs font-black uppercase tracking-[0.1em] text-slate-500 mb-2 ml-1">เปลี่ยนรหัสผ่านใหม่</label>
+                  <label class="block text-[16px] font-black text-slate-800 mb-2 ml-1">เปลี่ยนรหัสผ่านใหม่</label>
                   <div class="relative">
-                    <input id="prof_password" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-base font-semibold pr-14" placeholder="เว้นว่างไว้ถ้าไม่เปลี่ยน" type="password" />
-                    <button type="button" onclick="togglePasswordVisibility('prof_password', 'eye_icon_new')" class="absolute right-4 top-3.5 text-slate-400">
+                    <input id="prof_password" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-sm font-semibold pr-14" placeholder="เว้นว่างไว้ถ้าไม่เปลี่ยน" type="password" />
+                    <button type="button" onclick="togglePasswordVisibility('prof_password', 'eye_icon_new')" class="absolute right-4 top-3 text-slate-400">
                       <span id="eye_icon_new" class="material-symbols-outlined text-2xl">visibility_off</span>
                     </button>
                   </div>
                 </div>
                 
                 <div>
-                  <label class="block text-xs font-black uppercase tracking-[0.1em] text-[#006d4b] mb-2 ml-1">ตั้งรหัส PIN 4 หลัก (กู้รหัสผ่าน)</label>
-                  <input id="prof_pin" class="w-full px-5 py-4 bg-[#f0fdf4] border border-[#006d4b]/30 rounded-2xl outline-none text-2xl tracking-[0.5em] font-black text-center shadow-inner" placeholder="0000" type="password" maxlength="4" />
+                  <label class="block text-[16px] font-black text-[#006d4b] mb-2 ml-1">ตั้งรหัส PIN 4 หลัก (กู้รหัสผ่าน)</label>
+                  <input id="prof_pin" class="w-full px-5 py-3.5 bg-[#f0fdf4] border border-[#006d4b]/30 rounded-2xl outline-none text-xl tracking-[0.5em] font-black text-center shadow-inner" placeholder="0000" type="password" maxlength="4" />
                 </div>
             </div>
             
             <p id="profMessage" class="text-sm text-center font-black hidden py-3 rounded-2xl mt-2"></p>
             
-            <div class="pt-4">
-              <button type="submit" id="profSaveBtn" disabled class="w-full bg-slate-300 text-white font-black py-4 rounded-2xl transition-all flex items-center justify-center space-x-2 cursor-not-allowed text-lg">
-                <span id="profBtnText">บันทึกข้อมูลส่วนตัว</span>
+            <div class="pt-2">
+              <button type="submit" id="profSaveBtn" disabled class="w-full bg-slate-300 text-white font-black py-4 rounded-2xl transition-all flex items-center justify-center space-x-2 cursor-not-allowed text-base">
+                <span id="profBtnText" class="text-[16px] font-black">บันทึกข้อมูลส่วนตัว</span>
               </button>
             </div>
           </form>
