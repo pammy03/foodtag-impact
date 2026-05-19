@@ -29,7 +29,7 @@
       .allergen-container {
         display: flex;
         flex-wrap: wrap;
-        gap: 2px;
+        gap: 4px; /* เปลี่ยนจาก 6px */
         justify-content: center;
         align-items: center;
         margin: 8px auto 0;
@@ -39,7 +39,9 @@
       }
 
       .allergen-icon {
-        width: calc((100% - 8px) / 5);
+        width: calc(
+          (100% - 16px) / 5
+        ); /* เปลี่ยนจาก 8px → 16px (4px × 4 ช่องว่าง) */
         max-width: 120px;
         aspect-ratio: 1 / 1;
         object-fit: contain;
@@ -89,9 +91,9 @@
         margin: auto;
         background-color: white;
         box-sizing: border-box;
-        border: 1px dashed #64748b !important; 
+        border: 1px dashed #64748b !important;
       }
-      
+
       /* 🎯 ปรับขนาดและตารางให้พอดี Safe Area ปริ้นเตอร์ */
       .grid-plate {
         grid-template-columns: repeat(2, 13cm);
@@ -122,14 +124,26 @@
       }
 
       /* ลบเส้นด้านในไม่ให้ซ้อนกับกรอบนอกสุด */
-      .grid-plate .slot:nth-child(2n) { border-right: none !important; }
-      .grid-plate .slot { border-bottom: none !important; }
-      
-      .grid-western .slot:nth-child(2n) { border-right: none !important; }
-      .grid-western .slot { border-bottom: none !important; }
-      
-      .grid-buffet .slot:nth-child(2n) { border-right: none !important; }
-      .grid-buffet .slot:nth-child(n+3) { border-bottom: none !important; }
+      .grid-plate .slot:nth-child(2n) {
+        border-right: none !important;
+      }
+      .grid-plate .slot {
+        border-bottom: none !important;
+      }
+
+      .grid-western .slot:nth-child(2n) {
+        border-right: none !important;
+      }
+      .grid-western .slot {
+        border-bottom: none !important;
+      }
+
+      .grid-buffet .slot:nth-child(2n) {
+        border-right: none !important;
+      }
+      .grid-buffet .slot:nth-child(n + 3) {
+        border-bottom: none !important;
+      }
 
       .slot.active {
         outline: 3px solid #006d4b;
@@ -190,16 +204,16 @@
           margin: auto !important;
           width: 100% !important;
           height: 100% !important;
-          padding: 0 !important; 
+          padding: 0 !important;
           page-break-after: avoid;
           box-sizing: border-box !important;
-          transform: none !important; 
+          transform: none !important;
           transform-origin: center center !important;
         }
 
         .inner-grid {
           border: 1px dashed #64748b !important;
-          width: max-content !important; 
+          width: max-content !important;
           height: max-content !important;
           margin: auto !important;
           box-sizing: border-box !important;
@@ -209,15 +223,27 @@
           border-right: 1px dashed #64748b !important;
           border-bottom: 1px dashed #64748b !important;
         }
-        
-        .grid-plate .slot:nth-child(2n) { border-right: none !important; }
-        .grid-plate .slot { border-bottom: none !important; }
-        
-        .grid-western .slot:nth-child(2n) { border-right: none !important; }
-        .grid-western .slot { border-bottom: none !important; }
-        
-        .grid-buffet .slot:nth-child(2n) { border-right: none !important; }
-        .grid-buffet .slot:nth-child(n+3) { border-bottom: none !important; }
+
+        .grid-plate .slot:nth-child(2n) {
+          border-right: none !important;
+        }
+        .grid-plate .slot {
+          border-bottom: none !important;
+        }
+
+        .grid-western .slot:nth-child(2n) {
+          border-right: none !important;
+        }
+        .grid-western .slot {
+          border-bottom: none !important;
+        }
+
+        .grid-buffet .slot:nth-child(2n) {
+          border-right: none !important;
+        }
+        .grid-buffet .slot:nth-child(n + 3) {
+          border-bottom: none !important;
+        }
 
         .slot.active {
           outline: none !important;
@@ -229,7 +255,7 @@
         .allergen-container {
           display: flex !important;
           flex-wrap: wrap !important;
-          gap: 2px !important;
+          gap: 4px !important; /* เปลี่ยนจาก 6px */
           justify-content: center !important;
           margin-top: 8px !important;
           width: 98% !important;
@@ -239,7 +265,7 @@
           box-sizing: border-box !important;
         }
         .allergen-icon {
-          width: calc((100% - 8px) / 5) !important;
+          width: calc((100% - 16px) / 5) !important; /* เปลี่ยนจาก 8px → 16px */
           max-width: 120px !important;
           aspect-ratio: 1 / 1 !important;
           height: auto !important;
@@ -360,7 +386,7 @@
                       orientation: 'landscape',
                       slots_count: 2,
                       grid_class: 'grid-western',
-                      hide_allergies: true, /* ไม่มี allergie ตามโจทย์ */
+                      hide_allergies: false,
                     },
                     this,
                   )
@@ -382,7 +408,7 @@
                     {
                       name: 'Buffet / Coffee Break',
                       orientation: 'landscape',
-                      slots_count: 4, /* แก้ไขเป็น 4 เพื่อเว้นขอบปริ้น */
+                      slots_count: 4,
                       grid_class: 'grid-buffet',
                       hide_allergies: false,
                     },
@@ -678,7 +704,12 @@
         </h3>
         <p class="text-sm text-slate-500 mb-7 leading-relaxed">
           <span id="selectedPaperTextModal" class="hidden"></span>
-          กรุณาตั้งค่า <strong>Paper Size</strong> ตอนพิมพ์ให้เป็น <span id="requiredPaperTextModal" class="font-black text-[#006d4b] text-base">...</span><br />
+          กรุณาตั้งค่า <strong>Paper Size</strong> ตอนพิมพ์ให้เป็น
+          <span
+            id="requiredPaperTextModal"
+            class="font-black text-[#006d4b] text-base"
+            >...</span
+          ><br />
           เพื่อให้สัดส่วนบนกระดาษไม่ผิดเพี้ยน
         </p>
         <div class="flex gap-3 w-full">
@@ -887,7 +918,7 @@
                 orientation: "landscape",
                 slots_count: 2,
                 grid_class: "grid-western",
-                hide_allergies: true,
+                hide_allergies: false,
               },
               "Buffet / Coffee Break": {
                 name: "Buffet / Coffee Break",
@@ -933,7 +964,7 @@
             {
               name: "Buffet / Coffee Break",
               orientation: "landscape",
-              slots_count: 4, /* ใช้ค่าใหม่ 4 ช่อง */
+              slots_count: 4 /* ใช้ค่าใหม่ 4 ช่อง */,
               grid_class: "grid-buffet",
               hide_allergies: false,
             },
@@ -1288,9 +1319,12 @@
           if (error) throw error;
 
           if (menus && menus.length > 0) {
-            const filtered = menus.filter(m => 
-              (m.name_th || "").toLowerCase().startsWith(query.toLowerCase()) || 
-              (m.name_en || "").toLowerCase().startsWith(query.toLowerCase())
+            const filtered = menus.filter(
+              (m) =>
+                (m.name_th || "")
+                  .toLowerCase()
+                  .startsWith(query.toLowerCase()) ||
+                (m.name_en || "").toLowerCase().startsWith(query.toLowerCase()),
             );
 
             if (filtered.length === 0) {
@@ -1640,12 +1674,11 @@
           const profileTitle =
             document.getElementById("profileName").value.trim() ||
             "ไม่ระบุชื่อ";
-          const templateSize =
-            currentTemplateConfig.name || "Custom Template";
+          const templateSize = currentTemplateConfig.name || "Custom Template";
 
           await logSystemActivity(
             "PRINT",
-            `สั่งพิมพ์ป้ายอาหาร (คลิกยืนยัน): "${profileTitle}" (${templateSize}) ขนาด ${selectedPaperSize}`
+            `สั่งพิมพ์ป้ายอาหาร (คลิกยืนยัน): "${profileTitle}" (${templateSize}) ขนาด ${selectedPaperSize}`,
           );
         } catch (err) {
           console.error("Audit log dispatch failed:", err);
@@ -1655,7 +1688,6 @@
           window.print();
         }, 300);
       }
-
     </script>
   </body>
 </html>

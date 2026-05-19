@@ -212,14 +212,26 @@
         background-color: white;
         overflow: hidden;
       }
-      .grid-plate .slot:nth-child(2n) { border-right: none !important; }
-      .grid-plate .slot { border-bottom: none !important; }
-      
-      .grid-western .slot:nth-child(2n) { border-right: none !important; }
-      .grid-western .slot { border-bottom: none !important; }
-      
-      .grid-buffet .slot:nth-child(2n) { border-right: none !important; }
-      .grid-buffet .slot:nth-child(n+3) { border-bottom: none !important; }
+      .grid-plate .slot:nth-child(2n) {
+        border-right: none !important;
+      }
+      .grid-plate .slot {
+        border-bottom: none !important;
+      }
+
+      .grid-western .slot:nth-child(2n) {
+        border-right: none !important;
+      }
+      .grid-western .slot {
+        border-bottom: none !important;
+      }
+
+      .grid-buffet .slot:nth-child(2n) {
+        border-right: none !important;
+      }
+      .grid-buffet .slot:nth-child(n + 3) {
+        border-bottom: none !important;
+      }
       .slot-bg {
         position: absolute;
         inset: 0;
@@ -361,17 +373,29 @@
           align-items: center !important;
           justify-content: center !important;
         }
-        .grid-plate .slot:nth-child(2n) { border-right: none !important; }
-        .grid-plate .slot { border-bottom: none !important; }
-        .grid-western .slot:nth-child(2n) { border-right: none !important; }
-        .grid-western .slot { border-bottom: none !important; }
-        .grid-buffet .slot:nth-child(2n) { border-right: none !important; }
-        .grid-buffet .slot:nth-child(n+3) { border-bottom: none !important; }
+        .grid-plate .slot:nth-child(2n) {
+          border-right: none !important;
+        }
+        .grid-plate .slot {
+          border-bottom: none !important;
+        }
+        .grid-western .slot:nth-child(2n) {
+          border-right: none !important;
+        }
+        .grid-western .slot {
+          border-bottom: none !important;
+        }
+        .grid-buffet .slot:nth-child(2n) {
+          border-right: none !important;
+        }
+        .grid-buffet .slot:nth-child(n + 3) {
+          border-bottom: none !important;
+        }
 
         .allergen-container {
           display: flex !important;
           flex-wrap: wrap !important;
-          gap: 2px !important;
+          gap: 6!important;
           justify-content: center !important;
           margin-top: 8px !important;
           width: 98% !important;
@@ -1276,10 +1300,10 @@
       function executePrint(tagId) {
         const tag = getSavedTags().find((t) => t.id === tagId);
         if (!tag) return;
-        
+
         // เก็บข้อมูล Tag ปัจจุบันไว้ แต่ยังไม่ Log จนกว่าหน้าต่าง Print จะปิดลง
         currentPrintTag = tag;
-        
+
         const paperSize = tag.paperSize || "A4";
         const printArea = document.getElementById("printArea");
         printArea.innerHTML = generatePaperHTML(tag);
@@ -1308,7 +1332,10 @@
 
         if (timeSpent > 3000) {
           try {
-            await logSystemActivity("PRINT", `สั่งพิมพ์ป้ายอาหาร Profile: ${currentPrintTag.title}`);
+            await logSystemActivity(
+              "PRINT",
+              `สั่งพิมพ์ป้ายอาหาร Profile: ${currentPrintTag.title}`,
+            );
           } catch (err) {
             console.error("Audit log dispatch failed:", err);
           }

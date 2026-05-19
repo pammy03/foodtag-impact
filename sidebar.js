@@ -105,7 +105,7 @@ function injectSidebar() {
   if (!document.getElementById("myProfileModal")) {
     const profileModalHTML = `
       <div id="myProfileModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[99999] hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-[40px] shadow-2xl w-[380px] p-8 transform scale-95 transition-transform duration-300 flex flex-col relative" id="myProfileModalContent">
+        <div class="bg-white rounded-[40px] shadow-2xl w-[90%] max-w-[460px] p-8 transform scale-95 transition-transform duration-300 flex flex-col relative" id="myProfileModalContent">
           <button onclick="closeMyProfileModal()" class="absolute top-5 right-5 w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-full transition-all">
             <span class="material-symbols-outlined text-2xl">close</span>
           </button>
@@ -178,7 +178,7 @@ function injectSidebar() {
             <span class="material-symbols-outlined text-4xl font-bold">logout</span>
           </div>
           <h3 class="text-2xl font-black text-slate-800 mb-3">ออกจากระบบ?</h3>
-          <p class="text-base text-slate-500 mb-10 font-medium px-4">คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบในขณะนี้?</p>
+          <p class="text-base text-slate-500 mb-10 font-medium px-4 whitespace-nowrap">คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบในขณะนี้</p>
           <div class="flex gap-4 w-full">
             <button onclick="closeLogoutModal()" class="flex-1 py-4 border-2 border-slate-100 text-slate-500 font-black rounded-2xl hover:bg-slate-50 transition-colors text-base">ยกเลิก</button>
             <button onclick="confirmLogout()" class="flex-1 py-4 bg-red-500 text-white font-black rounded-2xl hover:bg-red-600 shadow-xl shadow-red-200 transition-all text-base">ยืนยัน</button>
