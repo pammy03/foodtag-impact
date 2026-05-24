@@ -14,14 +14,14 @@ function injectSidebar() {
     </a>
   `;
 
-  // 2. เมนูสำหรับ Admin และ Super Admin
+  // 2. เมนูสำหรับ Admin และ Super Admin (สลับ Ingredients ขึ้นก่อน Menus)
   if (userData.role === "Admin" || userData.role === "Super Admin") {
     navItems += `
-      <a href="menu-database.html" id="nav-menu-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
-        <span class="material-symbols-outlined text-[24px]">database</span> Menus
-      </a>
       <a href="ing-database.html" id="nav-ing-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
         <span class="material-symbols-outlined text-[24px]">category</span> Ingredients
+      </a>
+      <a href="menu-database.html" id="nav-menu-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
+        <span class="material-symbols-outlined text-[24px]">database</span> Menus
       </a>
       <a href="bg-database.html" id="nav-bg-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
         <span class="material-symbols-outlined text-[24px]">wallpaper</span> Backgrounds
@@ -38,6 +38,9 @@ function injectSidebar() {
       </a>
       <a href="users-management.html" id="nav-users" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
         <span class="material-symbols-outlined text-[24px]">manage_accounts</span> Manage Users
+      </a>
+      <a href="analytics.html" id="nav-analytics" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
+        <span class="material-symbols-outlined text-[24px]">insights</span> Analytics & Insights
       </a>
     `;
   }
@@ -82,8 +85,9 @@ function injectSidebar() {
     const currentPage = window.location.pathname.split("/").pop();
     const menuMapping = {
       "dashboard.html": "nav-dashboard",
-      "menu-database.html": "nav-menu-db",
+      "analytics.html": "nav-analytics",
       "ing-database.html": "nav-ing-db",
+      "menu-database.html": "nav-menu-db",
       "bg-database.html": "nav-bg-db",
       "logs.html": "nav-logs",
       "users-management.html": "nav-users",

@@ -44,7 +44,7 @@
       class="flex-1 flex flex-col h-full overflow-hidden relative bg-[#f1f5f9]"
     >
       <header
-        class="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-end z-20 shrink-0"
+        class="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-center z-20 shrink-0"
       >
         <div>
           <div class="flex items-center gap-3">
@@ -64,6 +64,10 @@
           <p class="text-slate-500 font-medium mt-1">
             ตรวจสอบและติดตามความเคลื่อนไหวของระบบแบบเรียลไทม์
           </p>
+        </div>
+        <div class="flex items-center gap-1.5 text-sm text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 shadow-sm">
+          <span class="material-symbols-outlined text-[18px]">info</span>
+          <span class="font-medium">ระบบจะลบประวัติที่มีอายุเกิน 30 วันโดยอัตโนมัติ</span>
         </div>
       </header>
 
@@ -130,32 +134,32 @@
             <thead class="bg-slate-50 sticky top-0 shadow-sm z-10">
               <tr>
                 <th
-                  class="py-4 px-8 text-[13px] font-black text-slate-500 w-16 border-b text-center"
+                  class="py-5 px-8 text-[14px] font-extrabold text-slate-500 w-24 border-b text-center"
                 >
                   No.
                 </th>
                 <th
-                  class="py-4 px-6 text-[13px] font-black text-slate-500 w-52 border-b"
+                  class="py-5 px-6 text-[14px] font-extrabold text-slate-500 w-52 border-b"
                 >
                   Date & Time
                 </th>
                 <th
-                  class="py-4 px-6 text-[13px] font-black text-slate-500 w-56 border-b"
+                  class="py-5 px-6 text-[14px] font-extrabold text-slate-500 w-56 border-b"
                 >
                   Name / User
                 </th>
                 <th
-                  class="py-4 px-6 text-[13px] font-black text-slate-500 w-40 border-b text-center"
+                  class="py-5 px-6 text-[14px] font-extrabold text-slate-500 w-40 border-b text-center"
                 >
                   Role / Staff
                 </th>
                 <th
-                  class="py-4 px-6 text-[13px] font-black text-slate-500 w-32 border-b text-center"
+                  class="py-5 px-6 text-[14px] font-extrabold text-slate-500 w-32 border-b text-center"
                 >
                   Action
                 </th>
                 <th
-                  class="py-4 px-6 text-[13px] font-black text-slate-500 border-b"
+                  class="py-5 px-6 text-[14px] font-extrabold text-slate-500 border-b"
                 >
                   Details
                 </th>
@@ -313,18 +317,18 @@
 
           html += `
           <tr class="log-row border-b border-slate-100">
-            <td class="py-5 px-8 text-center"><span class="text-[14px] font-black text-slate-300">${index + 1}</span></td>
+            <td class="py-5 px-8 text-center"><span class="text-[15px] font-black text-slate-400">${index + 1}</span></td>
             <td class="py-5 px-6"><div class="text-[13px] font-semibold text-slate-500 whitespace-nowrap">${formatDate(log.created_at)}</div></td>
             <td class="py-5 px-6">
-                <div class="font-bold text-slate-800 text-[13px]">${log.user_name}</div>
+                <div class="font-extrabold text-slate-800 text-[15px]">${log.user_name}</div>
             </td>
             <td class="py-5 px-6 text-center">${roleBadge}</td>
             <td class="py-5 px-6 text-center">
-                <div class="inline-flex items-center gap-1.5 ${style.bg} ${style.color} px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">
-                    <span class="material-symbols-outlined text-[14px]">${style.icon}</span> ${log.action}
+                <div class="inline-flex items-center gap-1.5 ${style.bg} ${style.color} px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-widest">
+                    <span class="material-symbols-outlined text-[15px]">${style.icon}</span> ${log.action}
                 </div>
             </td>
-            <td class="py-5 px-6"><div class="text-[13px] text-slate-600 font-medium leading-relaxed">${log.details}</div></td>
+            <td class="py-5 px-6"><div class="text-[14px] text-slate-600 font-medium leading-relaxed">${log.details}</div></td>
           </tr>`;
         });
         tbody.innerHTML = html;

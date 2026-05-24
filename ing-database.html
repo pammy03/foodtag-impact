@@ -188,7 +188,7 @@
           <button
             type="button"
             id="saveIngBtn"
-            onclick="saveIngredient()"
+            onclick="confirmSaveIngredient('upload')"
             class="px-8 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-lg shadow-[#006d4b]/20 transition-all cursor-pointer flex items-center gap-2"
           >
             <span class="material-symbols-outlined text-[20px]">upload</span>
@@ -286,7 +286,7 @@
           <button
             type="button"
             id="saveEditBtn"
-            onclick="saveEditIngredient()"
+            onclick="confirmSaveIngredient('edit')"
             class="px-8 py-3 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-lg shadow-[#006d4b]/20 transition-all cursor-pointer flex items-center gap-2"
           >
             <span class="material-symbols-outlined text-[18px]">save</span> Save
@@ -343,6 +343,41 @@
       </div>
     </div>
 
+    <div id="confirmSaveModal" class="modal-overlay">
+      <div
+        class="bg-white rounded-[2.5rem] shadow-2xl w-[480px] p-10 flex flex-col items-center relative z-50 overflow-hidden text-center"
+      >
+        <div
+          class="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mb-6 border border-blue-100 shrink-0"
+        >
+          <span class="material-symbols-outlined text-blue-500 text-3xl">save</span>
+        </div>
+        <h2 class="text-2xl font-bold text-slate-800 mb-3 tracking-tight">
+          ยืนยันการบันทึกข้อมูล
+        </h2>
+        <div class="text-slate-600 text-[15px] leading-relaxed mb-8 w-full">
+          <p id="confirmSaveMessage">คุณต้องการบันทึกข้อมูลส่วนผสมนี้ใช่หรือไม่?</p>
+        </div>
+        <div class="flex gap-4 w-full">
+          <button
+            type="button"
+            onclick="closeModal('confirmSaveModal')"
+            class="flex-1 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all cursor-pointer text-base"
+          >
+            ยกเลิก
+          </button>
+          <button
+            type="button"
+            id="confirmSaveExecuteBtn"
+            onclick="executePendingSave()"
+            class="flex-1 py-3.5 bg-[#006d4b] hover:bg-[#005a3d] text-white font-bold rounded-2xl shadow-lg shadow-[#006d4b]/20 transition-all cursor-pointer text-base flex items-center justify-center gap-2"
+          >
+            ยืนยัน
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script src="sidebar.js"></script>
     <script src="action-logger.js"></script>
 
@@ -358,6 +393,31 @@
       let dbIngredients = [];
       let currentViewType = "list";
       let editImageFile = null;
+      let pendingSaveType = null;
+
+      function confirmSaveIngredient(type) {
+        pendingSaveType = type;
+        const msgEl = document.getElementById("confirmSaveMessage");
+        if (type === "upload") {
+          msgEl.innerText = "คุณต้องการยืนยันการเพิ่มรูปภาพส่วนผสมเข้าสู่ระบบใช่หรือไม่?";
+        } else {
+          msgEl.innerText = "คุณต้องการยืนยันการแก้ไขข้อมูลส่วนผสมนี้ใช่หรือไม่?";
+        }
+        document.getElementById("confirmSaveModal").classList.add("active");
+      }
+
+      function closeModal(id) {
+        document.getElementById(id).classList.remove("active");
+      }
+
+      function executePendingSave() {
+        closeModal("confirmSaveModal");
+        if (pendingSaveType === "upload") {
+          saveIngredient();
+        } else if (pendingSaveType === "edit") {
+          saveEditIngredient();
+        }
+      }
 
       async function fetchIngredients() {
         try {
@@ -472,7 +532,7 @@
               <div class="ing-item flex items-center justify-between bg-white border border-slate-200 rounded-[1.25rem] p-4 hover:shadow-md transition-all group" data-name="${(ing.name_th || "").toLowerCase()} ${(ing.name_en || "").toLowerCase()}">
                  <div class="flex items-center w-full overflow-hidden pr-4">
                     
-                    <div class="text-[15px] font-black text-slate-300 w-14 text-center shrink-0">
+                    <div class="text-[15px] font-black text-slate-400 w-14 text-center shrink-0">
                         ${index + 1}
                     </div>
 

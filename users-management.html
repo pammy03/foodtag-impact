@@ -139,32 +139,32 @@
             <thead class="bg-slate-50 sticky top-0 shadow-sm z-10">
               <tr>
                 <th
-                  class="py-4 px-8 text-[13px] font-black text-slate-500 w-16 border-b text-center"
+                  class="py-5 px-8 text-[14px] font-extrabold text-slate-500 w-24 border-b text-center"
                 >
                   No.
                 </th>
                 <th
-                  class="py-4 px-6 text-[13px] font-black text-slate-500 border-b"
+                  class="py-5 px-6 text-[14px] font-extrabold text-slate-500 border-b"
                 >
                   Emp ID
                 </th>
                 <th
-                  class="py-4 px-6 text-[13px] font-black text-slate-500 border-b"
+                  class="py-5 px-6 text-[14px] font-extrabold text-slate-500 border-b"
                 >
                   Name
                 </th>
                 <th
-                  class="py-4 px-6 text-[13px] font-black text-slate-500 border-b"
+                  class="py-5 px-6 text-[14px] font-extrabold text-slate-500 border-b"
                 >
                   Role
                 </th>
                 <th
-                  class="py-4 px-6 text-[13px] font-black text-slate-500 border-b"
+                  class="py-5 px-6 text-[14px] font-extrabold text-slate-500 border-b"
                 >
                   Password
                 </th>
                 <th
-                  class="py-4 px-8 text-[13px] font-black text-slate-500 w-40 border-b text-center"
+                  class="py-5 px-8 text-[14px] font-extrabold text-slate-500 w-32 border-b text-center"
                 >
                   Actions
                 </th>
@@ -210,7 +210,7 @@
         </div>
         <form
           id="addForm"
-          onsubmit="saveUser(event, 'add')"
+          onsubmit="confirmSaveUser(event, 'add')"
           class="p-8 space-y-4"
         >
           <div>
@@ -312,7 +312,7 @@
         </div>
         <form
           id="editForm"
-          onsubmit="saveUser(event, 'edit')"
+          onsubmit="confirmSaveUser(event, 'edit')"
           class="p-8 space-y-4"
         >
           <input type="hidden" id="editDbId" />
@@ -443,6 +443,41 @@
       </div>
     </div>
 
+    <div id="confirmSaveModal" class="modal-overlay">
+      <div
+        class="bg-white rounded-[2.5rem] shadow-2xl w-[480px] p-10 flex flex-col items-center relative z-50 overflow-hidden text-center"
+      >
+        <div
+          class="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mb-6 border border-blue-100 shrink-0"
+        >
+          <span class="material-symbols-outlined text-blue-500 text-3xl">save</span>
+        </div>
+        <h2 class="text-2xl font-bold text-slate-800 mb-3 tracking-tight">
+          ยืนยันการบันทึกข้อมูล
+        </h2>
+        <div class="text-slate-600 text-[15px] leading-relaxed mb-8 w-full">
+          <p id="confirmSaveMessage">คุณต้องการบันทึกข้อมูลบัญชีผู้ใช้งานนี้ใช่หรือไม่?</p>
+        </div>
+        <div class="flex gap-4 w-full">
+          <button
+            type="button"
+            onclick="closeModal('confirmSaveModal')"
+            class="flex-1 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all cursor-pointer text-base"
+          >
+            ยกเลิก
+          </button>
+          <button
+            type="button"
+            id="confirmSaveExecuteBtn"
+            onclick="executeSaveUser()"
+            class="flex-1 py-3.5 bg-[#006d4b] hover:bg-[#005a3d] text-white font-bold rounded-2xl shadow-lg shadow-[#006d4b]/20 transition-all cursor-pointer text-base flex items-center justify-center gap-2"
+          >
+            ยืนยัน
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script src="sidebar.js"></script>
     <script src="action-logger.js"></script>
 
@@ -536,18 +571,18 @@
 
           html += `
           <tr class="user-row border-b border-slate-100 last:border-0">
-            <td class="py-4 px-8 text-center"><span class="text-[14px] font-black text-slate-300">${index + 1}</span></td>
-            <td class="py-4 px-6 font-bold text-slate-500">${u.emp_id}</td>
-            <td class="py-4 px-6 font-extrabold text-slate-800">${u.name}</td>
-            <td class="py-4 px-6">${getRoleBadge(u.role)}</td>
-            <td class="py-4 px-6">
+            <td class="py-5 px-8 text-center"><span class="text-[15px] font-black text-slate-400">${index + 1}</span></td>
+            <td class="py-5 px-6 font-bold text-slate-500 text-[14px]">${u.emp_id}</td>
+            <td class="py-5 px-6 font-extrabold text-slate-800 text-[15px]">${u.name}</td>
+            <td class="py-5 px-6">${getRoleBadge(u.role)}</td>
+            <td class="py-5 px-6">
                 <div class="flex items-center gap-2 cursor-pointer w-max" onclick="togglePassword(this)">
                     <span class="pwd-mask text-slate-400 tracking-[0.2em]">••••••••</span>
-                    <span class="pwd-text hidden text-blue-600 font-bold text-sm">${u.password}</span>
+                    <span class="pwd-text hidden text-blue-600 font-bold text-[14px]">${u.password}</span>
                     <span class="pwd-icon material-symbols-outlined text-[18px] text-slate-400 hover:text-slate-600 transition-colors">visibility_off</span>
                 </div>
             </td>
-            <td class="py-4 px-8 text-center">
+            <td class="py-5 px-8 text-center">
                 <div class="flex items-center justify-center gap-1">
                     <button onclick="openEditModal('${userDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all cursor-pointer" title="Edit User">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
@@ -586,8 +621,23 @@
         openModal("editModal");
       }
 
-      async function saveUser(e, mode) {
+      let pendingSaveMode = null;
+
+      function confirmSaveUser(e, mode) {
         e.preventDefault();
+        pendingSaveMode = mode;
+        const msgEl = document.getElementById("confirmSaveMessage");
+        if (mode === "add") {
+          msgEl.innerText = "คุณต้องการยืนยันการเพิ่มข้อมูลผู้ใช้งานใหม่ใช่หรือไม่?";
+        } else {
+          msgEl.innerText = "คุณต้องการยืนยันการแก้ไขข้อมูลผู้ใช้งานใช่หรือไม่?";
+        }
+        document.getElementById("confirmSaveModal").classList.add("active");
+      }
+
+      async function executeSaveUser() {
+        if (!pendingSaveMode) return;
+        const mode = pendingSaveMode;
 
         const isAdd = mode === "add";
         const btnId = isAdd ? "addBtnSubmit" : "editBtnSubmit";
@@ -634,6 +684,7 @@
 
           if (error) throw error;
 
+          closeModal("confirmSaveModal");
           closeModal(modalId);
           fetchUsers();
         } catch (err) {
@@ -641,6 +692,7 @@
         } finally {
           btn.disabled = false;
           btn.innerHTML = originalText;
+          pendingSaveMode = null;
         }
       }
 

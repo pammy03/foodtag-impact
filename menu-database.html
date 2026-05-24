@@ -32,14 +32,6 @@
       .modal-overlay.active {
         display: flex !important;
       }
-      .ingredient-checkbox:checked + div {
-        border-color: #006d4b;
-        background-color: #f0fdf4;
-        box-shadow: 0 4px 6px -1px rgba(0, 109, 75, 0.1);
-      }
-      .ingredient-checkbox:checked + div .check-icon {
-        opacity: 1;
-      }
       .custom-scroll::-webkit-scrollbar {
         width: 6px;
       }
@@ -134,33 +126,37 @@
         <div
           class="bg-white border border-slate-200 rounded-b-2xl flex-1 overflow-auto shadow-xl shadow-slate-200/50 custom-scroll"
         >
-          <table class="w-full text-left border-collapse">
+          <table class="w-full text-left border-collapse table-fixed">
             <thead class="bg-slate-50 sticky top-0 shadow-sm z-10">
               <tr>
-                <th class="py-4 px-8 border-b w-48">
+                <th class="py-5 px-8 border-b w-36">
                   <div class="flex items-center gap-4">
                     <span
-                      class="w-6 text-center text-[13px] font-black text-slate-500"
+                      class="w-6 text-center text-[14px] font-extrabold text-slate-500"
                       >No.</span
                     >
-                    <span
-                      class="text-[13px] font-black text-slate-500"
+                    <span class="text-[14px] font-extrabold text-slate-500"
                       >Menu ID</span
                     >
                   </div>
                 </th>
                 <th
-                  class="py-4 px-6 text-[13px] font-black text-slate-500 w-1/3 border-b"
+                  class="py-5 px-6 text-[14px] font-extrabold text-slate-500 w-[28%] border-b"
                 >
                   Menu Details
                 </th>
                 <th
-                  class="py-4 px-6 text-[13px] font-black text-slate-500 border-b"
+                  class="py-5 px-6 text-[14px] font-extrabold text-slate-500 w-[22%] border-b"
                 >
-                  Images / Ingredients
+                  Contain
                 </th>
                 <th
-                  class="py-4 px-8 text-[13px] font-black text-slate-500 w-32 border-b text-center"
+                  class="py-5 px-6 text-[14px] font-extrabold text-slate-500 w-[22%] border-b"
+                >
+                  May Contain
+                </th>
+                <th
+                  class="py-5 px-8 text-[14px] font-extrabold text-slate-500 w-28 border-b text-center"
                 >
                   Manage
                 </th>
@@ -168,7 +164,7 @@
             </thead>
             <tbody id="menuTableBody" class="divide-y divide-slate-100">
               <tr>
-                <td colspan="4" class="py-20 text-center">
+                <td colspan="5" class="py-20 text-center">
                   <div class="flex flex-col items-center opacity-30">
                     <span
                       class="material-symbols-outlined text-5xl animate-spin"
@@ -188,112 +184,137 @@
 
     <div id="menuModal" class="modal-overlay">
       <div
-        class="bg-white rounded-[40px] shadow-2xl w-[600px] max-h-[90vh] flex flex-col relative z-50 overflow-hidden"
+        class="bg-white rounded-3xl shadow-2xl w-[700px] max-h-[90vh] flex flex-col relative z-50 overflow-hidden"
       >
         <div
-          class="px-10 py-8 border-b flex justify-between items-center bg-slate-50"
+          class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/80 backdrop-blur-sm"
         >
           <div>
-            <h2 id="menuModalTitle" class="text-2xl font-black text-slate-800 tracking-tight">
+            <h2
+              id="menuModalTitle"
+              class="text-2xl font-black text-slate-800 tracking-tight"
+            >
               Edit Menu
             </h2>
             <p
               id="menuModalSubtitle"
-              class="text-sm text-slate-500 font-medium mt-1"
+              class="text-xs text-slate-500 font-medium mt-1"
             >
-              เพิ่มข้อมูลเมนูใหม่ลงในระบบส่วนกลาง
+              เพิ่มหรือแก้ไขข้อมูลเมนูในระบบส่วนกลาง
             </p>
           </div>
           <button
             type="button"
             onclick="closeModal('menuModal')"
-            class="w-12 h-12 flex items-center justify-center text-slate-400 hover:bg-white hover:text-slate-600 rounded-full transition-all cursor-pointer"
+            class="w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-slate-200 hover:text-slate-700 rounded-full transition-all cursor-pointer bg-white border border-slate-200 shadow-sm"
           >
-            <span class="material-symbols-outlined text-2xl">close</span>
+            <span class="material-symbols-outlined text-[20px]">close</span>
           </button>
         </div>
-        <div class="p-10 overflow-y-auto space-y-8 custom-scroll">
+
+        <div
+          class="p-8 overflow-y-auto space-y-6 custom-scroll bg-white flex-1"
+        >
           <div>
             <label
-              class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
-              >Menu ID
-              <span class="text-[10px] text-slate-400 font-normal lowercase ml-1"
-                >(Auto Generated)</span
-              ></label
+              class="flex items-center text-[12px] font-black text-slate-500 uppercase tracking-widest mb-2 ml-1"
             >
+              Menu ID
+              <span
+                class="text-[10px] text-[#006d4b] font-black lowercase ml-2 bg-[#eaf4ed] px-2 py-0.5 rounded-full border border-[#006d4b]/20"
+                >Auto Generated</span
+              >
+            </label>
             <input
               type="text"
               id="inputMenuId"
               readonly
-              class="w-full px-5 py-4 bg-slate-100 text-slate-500 border border-slate-200 rounded-2xl outline-none font-bold cursor-not-allowed"
+              class="w-full px-4 py-3 bg-slate-50 text-slate-500 border border-slate-200 rounded-xl outline-none font-bold cursor-not-allowed text-sm"
               placeholder="Generating..."
             />
           </div>
-          <div class="grid grid-cols-2 gap-6">
+
+          <div class="grid grid-cols-2 gap-5">
             <div>
               <label
-                class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
+                class="block text-[12px] font-black text-slate-500 uppercase tracking-widest mb-2 ml-1"
                 >Thai Name</label
-              ><input
+              >
+              <input
                 type="text"
                 id="inputNameTh"
-                class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all font-semibold"
+                class="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:border-[#006d4b] transition-all font-semibold text-sm placeholder-slate-300 shadow-sm"
                 placeholder="ชื่อภาษาไทย"
               />
             </div>
             <div>
               <label
-                class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
+                class="block text-[12px] font-black text-slate-500 uppercase tracking-widest mb-2 ml-1"
                 >English Name</label
-              ><input
+              >
+              <input
                 type="text"
                 id="inputNameEn"
-                class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all font-semibold"
+                class="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:border-[#006d4b] transition-all font-semibold text-sm placeholder-slate-300 shadow-sm"
                 placeholder="English Name"
               />
             </div>
           </div>
-          <div>
-            <div class="flex justify-between items-end mb-4">
+
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+            <div class="flex justify-between items-center mb-4">
               <label
-                class="block text-[13px] font-black text-slate-500 uppercase tracking-widest ml-1"
-                >Select Images / Ingredients</label
+                class="flex items-center gap-1.5 text-[13px] font-black text-slate-700 uppercase tracking-widest"
               >
-              <div class="relative w-1/2 max-w-[200px]">
                 <span
-                  class="material-symbols-outlined absolute left-3 top-2 text-slate-400 text-[18px] pointer-events-none"
+                  class="material-symbols-outlined text-[18px] text-[#006d4b]"
+                  >shopping_basket</span
+                >
+                Select Ingredients
+              </label>
+              <div class="relative w-[280px]">
+                <span
+                  class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[18px] pointer-events-none"
                   >search</span
-                ><input
+                >
+                <input
                   type="text"
                   id="searchIngredientModal"
                   onkeyup="filterModalIngredients()"
-                  placeholder="ค้นหารูปภาพ..."
-                  class="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs transition-all shadow-sm"
+                  placeholder="ค้นหาส่วนผสม..."
+                  class="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-sm transition-all shadow-sm"
                 />
               </div>
             </div>
-            <div id="ingredientChecklist"></div>
+            <div
+              id="ingredientChecklist"
+              class="grid grid-cols-2 gap-3 max-h-[360px] overflow-y-auto custom-scroll pr-1"
+            ></div>
           </div>
         </div>
-        <div class="p-6 bg-slate-50 border-t flex justify-end gap-3">
+
+        <div
+          class="p-5 bg-white border-t border-slate-100 flex justify-end gap-3 shrink-0"
+        >
           <button
             type="button"
             onclick="closeModal('menuModal')"
-            class="px-6 py-2.5 text-slate-500 font-bold hover:text-slate-700 transition-colors cursor-pointer"
+            class="px-6 py-2.5 bg-slate-100 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors cursor-pointer text-sm"
           >
-            Cancel</button
-          ><button
+            Cancel
+          </button>
+          <button
             type="button"
             onclick="saveMenu()"
             id="saveMenuBtn"
-            class="px-8 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-lg shadow-[#006d4b]/20 transition-all cursor-pointer"
+            class="px-8 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-md shadow-[#006d4b]/20 transition-all cursor-pointer text-sm flex items-center gap-2"
           >
+            <span class="material-symbols-outlined text-[18px]">save</span>
             Save Menu
           </button>
         </div>
       </div>
     </div>
-
     <div id="deleteModal" class="modal-overlay">
       <div
         class="bg-white rounded-3xl shadow-2xl w-[420px] flex flex-col relative z-50 overflow-hidden text-center p-8"
@@ -330,6 +351,44 @@
       </div>
     </div>
 
+    <div id="confirmSaveModal" class="modal-overlay">
+      <div
+        class="bg-white rounded-3xl shadow-2xl w-[420px] flex flex-col relative z-50 overflow-hidden text-center p-8"
+      >
+        <div
+          class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-100"
+        >
+          <span class="material-symbols-outlined text-3xl">save</span>
+        </div>
+        <h2 class="text-xl font-bold text-slate-800 mb-2">
+          ยืนยันการบันทึกข้อมูล
+        </h2>
+        <p
+          id="confirmSaveMessage"
+          class="text-xs text-slate-500 font-medium leading-relaxed mb-6"
+        >
+          คุณต้องการยืนยันการบันทึกข้อมูลใช่หรือไม่?
+        </p>
+        <div class="flex gap-3 justify-center">
+          <button
+            type="button"
+            onclick="closeModal('confirmSaveModal')"
+            class="flex-1 py-3 text-slate-500 font-bold bg-slate-100 hover:bg-slate-200 rounded-xl transition-all cursor-pointer text-xs uppercase tracking-wider"
+          >
+            ยกเลิก
+          </button>
+          <button
+            type="button"
+            id="confirmSaveExecuteBtn"
+            onclick="executeSaveMenu()"
+            class="flex-1 py-3 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-lg shadow-[#006d4b]/20 transition-all cursor-pointer text-xs uppercase tracking-wider"
+          >
+            ยืนยัน
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script src="sidebar.js"></script>
     <script src="action-logger.js"></script>
 
@@ -345,7 +404,7 @@
       let dbMenus = [];
       let dbIngredients = [];
       let editingMenuDbId = null;
-      let pendingDeleteData = null; // 🎯 เก็บข้อมูลเมนูที่รอการลบ
+      let pendingDeleteData = null;
 
       async function fetchData() {
         try {
@@ -358,6 +417,7 @@
             .select("*")
             .order("created_at", { ascending: false });
           dbMenus = menuData || [];
+
           const countEl = document.getElementById("totalMenuCount");
           if (dbMenus.length > 0) {
             countEl.innerText = `${dbMenus.length} Items`;
@@ -387,49 +447,58 @@
         );
 
         if (filtered.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" class="py-24 text-center"><span class="material-symbols-outlined text-6xl mb-4 text-slate-200">search_off</span><p class="text-slate-400 font-bold tracking-widest uppercase">No menus found</p></td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="5" class="py-24 text-center"><span class="material-symbols-outlined text-6xl mb-4 text-slate-200">search_off</span><p class="text-slate-400 font-bold tracking-widest uppercase">No menus found</p></td></tr>`;
           return;
         }
 
         filtered.forEach((menu, index) => {
-          const menuIngs = (menu.ingredient_ids || [])
+          const mainIngs = (menu.main_ingredient_ids || [])
             .map((id) => dbIngredients.find((i) => String(i.id) === String(id)))
             .filter(Boolean);
 
-          const ingHtml = menuIngs
-            .map(
-              (ing) => `
-            <div class="inline-flex items-center gap-2 bg-white shadow-sm border border-slate-200 px-3 py-1.5 rounded-xl mr-2 mb-2 group transition-all hover:border-[#006d4b]/30">
-                <img src="${ing.icon_url || ing.image_url}" class="w-6 h-6 object-cover rounded-md">
-                <span class="text-[11px] font-black text-slate-600 tracking-wider">${ing.name_en || ing.name_th || "IMG"}</span>
+          const containIngs = (menu.ingredient_ids || [])
+            .map((id) => dbIngredients.find((i) => String(i.id) === String(id)))
+            .filter(Boolean);
+
+          // ปรับสีชิปตรงนี้ให้เป็นสีเทา (Slate) ดูสะอาดตา และเพิ่มระยะห่างภายใน (px, py)
+          const buildIngHtml = (ings) =>
+            ings
+              .map(
+                (ing) => `
+            <div class="inline-flex items-center gap-2 bg-white shadow-sm border border-slate-200 px-2.5 py-1.5 rounded-lg mr-1.5 mb-1.5 group transition-all hover:border-slate-300 max-w-[180px]">
+                <img src="${ing.icon_url || ing.image_url}" class="w-5 h-5 object-cover rounded flex-shrink-0">
+                <span class="text-[11px] font-bold text-slate-600 tracking-wide line-clamp-2 leading-tight">${ing.name_en || ing.name_th || "IMG"}</span>
             </div>`,
-            )
-            .join("");
+              )
+              .join("");
+
+          const mainIngHtml = buildIngHtml(mainIngs);
+          const containIngHtml = buildIngHtml(containIngs);
 
           const displayId = menu.menu_id || "-";
           const menuDataStr = encodeURIComponent(JSON.stringify(menu));
-
           const safeMenuName = (menu.name_th || menu.name_en || "-").replace(
             /'/g,
             "\\'",
           );
 
-          // 🎯 เปลี่ยนไอคอนจาก edit_document เป็น edit (รูปดินสอ) และเปลี่ยนให้เปิด Modal ลบ
+          // เพิ่มระยะ py-6 เพื่อให้บรรทัดกว้างขึ้น โปร่งขึ้น
           html += `
-          <tr class="menu-row border-b border-slate-100 last:border-0">
+          <tr class="menu-row border-b border-slate-100 last:border-0 align-top">
             <td class="py-5 px-8">
-                <div class="flex items-center gap-4">
-                    <span class="text-slate-300 font-black text-lg w-6 text-center">${index + 1}</span>
+                <div class="flex items-center gap-4 mt-1">
+                    <span class="text-slate-400 font-black text-[15px] w-6 text-center">${index + 1}</span>
                     <span class="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-black tracking-widest border border-slate-200 whitespace-nowrap">${displayId}</span>
                 </div>
             </td>
             <td class="py-5 px-6">
-                <div class="font-extrabold text-slate-800 text-[16px]">${menu.name_th || "-"}</div>
-                <div class="text-[13px] text-slate-400 not-italic font-medium mt-0.5">${menu.name_en || "-"}</div>
+                <div class="font-extrabold text-slate-800 text-[15px] mt-1">${menu.name_th || "-"}</div>
+                <div class="text-[13px] text-slate-500 not-italic font-medium mt-0.5">${menu.name_en || "-"}</div>
             </td>
-            <td class="py-5 px-6"><div class="flex flex-wrap">${ingHtml || "<span class='text-slate-300 text-sm font-medium italic'>No images assigned</span>"}</div></td>
+            <td class="py-5 px-6"><div class="flex flex-wrap">${mainIngHtml || "<span class='text-slate-300 text-xs italic mt-2'>- ไม่มีข้อมูล -</span>"}</div></td>
+            <td class="py-5 px-6"><div class="flex flex-wrap">${containIngHtml || "<span class='text-slate-300 text-xs italic mt-2'>- ไม่มีข้อมูล -</span>"}</div></td>
             <td class="py-5 px-8 text-center">
-                <div class="flex items-center justify-center gap-2">
+                <div class="flex items-center justify-center gap-2 mt-1">
                     <button onclick="openMenuModal('${menuDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-[#006d4b] hover:bg-emerald-50 rounded-full transition-all cursor-pointer"><span class="material-symbols-outlined text-[20px]">edit</span></button>
                     <button onclick="confirmDelete('${menu.id}', '${displayId}', '${safeMenuName}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer"><span class="material-symbols-outlined text-[20px]">delete</span></button>
                 </div>
@@ -453,7 +522,9 @@
       function openMenuModal(menuDataStr = null) {
         document.getElementById("searchIngredientModal").value = "";
         const container = document.getElementById("ingredientChecklist");
-        let selectedIds = [];
+        let selectedMainIds = [];
+        let selectedContainIds = [];
+
         if (menuDataStr) {
           const menu = JSON.parse(decodeURIComponent(menuDataStr));
           editingMenuDbId = menu.id;
@@ -461,7 +532,8 @@
           document.getElementById("inputMenuId").value = menu.menu_id || "-";
           document.getElementById("inputNameTh").value = menu.name_th || "";
           document.getElementById("inputNameEn").value = menu.name_en || "";
-          selectedIds = (menu.ingredient_ids || []).map(String);
+          selectedMainIds = (menu.main_ingredient_ids || []).map(String);
+          selectedContainIds = (menu.ingredient_ids || []).map(String);
         } else {
           editingMenuDbId = null;
           document.getElementById("menuModalTitle").innerText = "Add New Menu";
@@ -470,16 +542,55 @@
           document.getElementById("inputNameTh").value = "";
           document.getElementById("inputNameEn").value = "";
         }
-        container.innerHTML = dbIngredients
+
+        // จัดเรียงข้อมูล: ให้นำวัตถุดิบที่ถูกเลือกมาไว้ด้านบนสุด
+        const sortedIngredients = [...dbIngredients].sort((a, b) => {
+          const aSelected =
+            selectedMainIds.includes(String(a.id)) ||
+            selectedContainIds.includes(String(a.id));
+          const bSelected =
+            selectedMainIds.includes(String(b.id)) ||
+            selectedContainIds.includes(String(b.id));
+
+          if (aSelected && !bSelected) return -1;
+          if (!aSelected && bSelected) return 1;
+          return 0;
+        });
+
+        // สร้างการ์ด Ingredient ในรูปแบบใหม่ที่กระชับขึ้น
+        container.innerHTML = sortedIngredients
           .map((ing) => {
-            const isChecked = selectedIds.includes(String(ing.id))
-              ? "checked"
-              : "";
-            return `<label class="cursor-pointer relative block h-full ingredient-item" data-name="${(ing.name_th || "").toLowerCase()} ${(ing.name_en || "").toLowerCase()}"><input type="checkbox" class="ingredient-checkbox hidden" value="${ing.id}" ${isChecked}><div class="border-2 border-slate-100 rounded-xl p-3 flex flex-col items-center gap-2 hover:bg-slate-50 transition-all select-none text-center bg-white h-full justify-between hover:border-[#006d4b]/30"><div class="w-14 h-14 flex items-center justify-center bg-slate-50 rounded-lg p-1 border border-slate-100 mb-1"><img src="${ing.icon_url || ing.image_url}" class="w-full h-full object-cover rounded-md"></div><span class="text-[10px] font-black text-slate-600 tracking-widest w-full truncate">${ing.name_en || ing.name_th || "ไม่มีชื่อ"}</span><span class="text-[9px] font-bold text-slate-400 w-full truncate">${ing.name_th || ""}</span><span class="material-symbols-outlined text-[#006d4b] opacity-0 check-icon absolute top-2 right-2 text-[18px]">check_circle</span></div></label>`;
+            const isMain = selectedMainIds.includes(String(ing.id));
+            const isContain = selectedContainIds.includes(String(ing.id));
+
+            return `
+            <div class="border border-slate-200 rounded-xl p-3 flex flex-col items-center gap-2.5 bg-white relative ingredient-item shadow-sm hover:border-[#006d4b]/30 hover:shadow-md transition-all group" data-name="${(ing.name_th || "").toLowerCase()} ${(ing.name_en || "").toLowerCase()}">
+              <div class="flex items-center gap-3 w-full">
+                  <div class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-lg p-1 border border-slate-100 flex-shrink-0">
+                    <img src="${ing.icon_url || ing.image_url}" class="w-full h-full object-cover rounded-md">
+                  </div>
+                  <div class="flex-1 min-w-0 text-left">
+                      <div class="text-[13px] font-black text-slate-800 truncate w-full">${ing.name_en || ing.name_th || "ไม่มีชื่อ"}</div>
+                      <div class="text-[11px] font-medium text-slate-500 truncate w-full">${ing.name_th || ""}</div>
+                  </div>
+              </div>
+              <div class="flex w-full gap-1.5 mt-0.5">
+                <label class="flex-1 text-center cursor-pointer">
+                  <input type="checkbox" id="chk_main_${ing.id}" value="main" class="peer hidden" ${isMain ? "checked" : ""}>
+                  <div class="text-[11px] font-bold py-1.5 rounded-md bg-slate-50 border border-slate-200 text-slate-400 peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600 transition-all hover:bg-slate-100 select-none">Contain</div>
+                </label>
+                <label class="flex-1 text-center cursor-pointer">
+                  <input type="checkbox" id="chk_contain_${ing.id}" value="contain" class="peer hidden" ${isContain ? "checked" : ""}>
+                  <div class="text-[11px] font-bold py-1.5 rounded-md bg-slate-50 border border-slate-200 text-slate-400 peer-checked:bg-emerald-50 peer-checked:border-emerald-200 peer-checked:text-emerald-600 transition-all hover:bg-slate-100 select-none">May Contain</div>
+                </label>
+                <button type="button" onclick="document.getElementById('chk_main_${ing.id}').checked = false; document.getElementById('chk_contain_${ing.id}').checked = false;" class="flex-none w-8 flex items-center justify-center rounded-md bg-slate-50 border border-slate-200 text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition-all cursor-pointer" title="Clear Selection">
+                    <span class="material-symbols-outlined text-[16px]">close</span>
+                </button>
+              </div>
+            </div>`;
           })
           .join("");
-        container.className =
-          "grid grid-cols-3 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 max-h-64 overflow-y-auto custom-scroll";
+
         document.getElementById("menuModal").classList.add("active");
       }
 
@@ -490,8 +601,8 @@
         document.querySelectorAll(".ingredient-item").forEach((item) => {
           item.style.display = item
             .getAttribute("data-name")
-            .startsWith(searchVal)
-            ? "block"
+            .includes(searchVal)
+            ? "flex"
             : "none";
         });
       }
@@ -500,21 +611,46 @@
         document.getElementById(id).classList.remove("active");
       }
 
-      async function saveMenu() {
+      function saveMenu() {
+        const msgEl = document.getElementById("confirmSaveMessage");
+        if (editingMenuDbId) {
+          msgEl.innerText = "คุณต้องการยืนยันการแก้ไขข้อมูลเมนูนี้ใช่หรือไม่?";
+        } else {
+          msgEl.innerText = "คุณต้องการยืนยันการเพิ่มข้อมูลเมนูใหม่ใช่หรือไม่?";
+        }
+        document.getElementById("confirmSaveModal").classList.add("active");
+      }
+
+      async function executeSaveMenu() {
         const id = document.getElementById("inputMenuId").value.trim();
         const th = document.getElementById("inputNameTh").value.trim();
         const en = document.getElementById("inputNameEn").value.trim();
-        const selected = Array.from(
-          document.querySelectorAll(".ingredient-checkbox:checked"),
-        ).map((cb) => parseInt(cb.value));
+
+        const mainIds = [];
+        const containIds = [];
+        dbIngredients.forEach((ing) => {
+          const isMainChecked = document.getElementById(
+            `chk_main_${ing.id}`,
+          )?.checked;
+          const isContainChecked = document.getElementById(
+            `chk_contain_${ing.id}`,
+          )?.checked;
+
+          if (isMainChecked) mainIds.push(ing.id);
+          if (isContainChecked) containIds.push(ing.id);
+        });
+
         const payload = {
           menu_id: id,
           name_th: th,
           name_en: en,
-          ingredient_ids: selected,
+          main_ingredient_ids: mainIds,
+          ingredient_ids: containIds,
         };
-        const btn = document.getElementById("saveMenuBtn");
+
+        const btn = document.getElementById("confirmSaveExecuteBtn");
         btn.disabled = true;
+        btn.innerHTML = `<span class="material-symbols-outlined animate-spin align-middle text-sm">progress_activity</span>`;
 
         try {
           if (editingMenuDbId) {
@@ -533,16 +669,17 @@
               `เพิ่มเมนูใหม่รหัส: ${id} (${th || en})`,
             );
           }
+          closeModal("confirmSaveModal");
           closeModal("menuModal");
           fetchData();
         } catch (e) {
           alert(e.message);
         } finally {
           btn.disabled = false;
+          btn.innerHTML = "ยืนยัน";
         }
       }
 
-      // 🎯 เปิด Modal ลบ และกำหนด wording
       function confirmDelete(dbId, menuId, menuName) {
         pendingDeleteData = { dbId, menuId, menuName };
         const msgEl = document.getElementById("deleteModalMessage");
@@ -550,7 +687,6 @@
         document.getElementById("deleteModal").classList.add("active");
       }
 
-      // 🎯 ฟังก์ชันเรียกทำงานลบจริงเมื่อกดยืนยันใน Modal
       async function executeDeleteMenu() {
         if (!pendingDeleteData) return;
         const { dbId, menuId, menuName } = pendingDeleteData;
@@ -586,34 +722,66 @@
           const jsonData = XLSX.utils.sheet_to_json(
             workbook.Sheets[workbook.SheetNames[0]],
           );
+
           let currentMaxId = getLatestMenuNumber();
+
           const ingDict = dbIngredients.map((ing) => ({
             id: ing.id,
-            nameTh: (ing.name_th || "").toLowerCase().replace(/\s+/g, ""),
-            nameEn: (ing.name_en || "").toLowerCase().replace(/\s+/g, ""),
+            nameThClean: (ing.name_th || "").toLowerCase().replace(/\s+/g, ""),
+            nameEnClean: (ing.name_en || "").toLowerCase().replace(/\s+/g, ""),
           }));
+
           for (const row of jsonData) {
-            const nameTh = row["Thai Name"] || "";
-            const nameEn = row["English Name"] || "";
-            const rawIngs = row["Ingredients"] || "";
+            const nameTh = row["Menu Name (TH)"] || "";
+            const nameEn = row["Menu Name (EN)"] || "";
+
+            if (!nameTh && !nameEn) continue;
+
             currentMaxId++;
-            let ingredientIds = [];
-            if (rawIngs) {
-              String(rawIngs)
-                .split(",")
-                .map((n) => n.trim().toLowerCase().replace(/\s+/g, ""))
-                .forEach((name) => {
-                  const found = ingDict.find(
-                    (i) => i.nameTh === name || i.nameEn === name,
-                  );
-                  if (found) ingredientIds.push(found.id);
-                });
-            }
+            let mainIngredientIds = [];
+            let containIngredientIds = [];
+
+            Object.keys(row).forEach((key) => {
+              if (
+                row[key] === true ||
+                String(row[key]).toUpperCase() === "TRUE" ||
+                row[key] === "✔"
+              ) {
+                let isMain = key.includes("(Main Contain)");
+                let baseName = key
+                  .replace("(Main Contain)", "")
+                  .replace("(Contain)", "")
+                  .trim();
+                let cleanName = baseName.toLowerCase().replace(/\s+/g, "");
+                let strippedName = cleanName.replace("allergies2026_", "");
+
+                const found = ingDict.find(
+                  (i) =>
+                    i.nameThClean === cleanName ||
+                    i.nameEnClean === cleanName ||
+                    i.nameThClean === strippedName ||
+                    i.nameEnClean === strippedName,
+                );
+
+                if (found) {
+                  if (isMain && !mainIngredientIds.includes(found.id)) {
+                    mainIngredientIds.push(found.id);
+                  } else if (
+                    !isMain &&
+                    !containIngredientIds.includes(found.id)
+                  ) {
+                    containIngredientIds.push(found.id);
+                  }
+                }
+              }
+            });
+
             await dbClient.from("menus").insert({
               menu_id: `MENU-${currentMaxId.toString().padStart(3, "0")}`,
               name_th: nameTh,
               name_en: nameEn,
-              ingredient_ids: ingredientIds,
+              main_ingredient_ids: mainIngredientIds,
+              ingredient_ids: containIngredientIds,
             });
           }
 
@@ -621,7 +789,6 @@
             "CREATE",
             `นำเข้าเมนูผ่าน Excel/CSV จำนวน ${jsonData.length} รายการ`,
           );
-
           fetchData();
           event.target.value = "";
         };
