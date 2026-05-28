@@ -445,7 +445,7 @@
         </div>
         <div class="flex gap-3 items-center">
           <button
-            onclick="window.location.href = 'create.html'"
+            onclick="localStorage.removeItem('currentEditId'); window.location.href = 'create.html'"
             class="px-5 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] transition-all flex items-center justify-center gap-2 shadow-sm shadow-[#006d4b]/20 cursor-pointer active:scale-95"
           >
             <span class="material-symbols-outlined text-[20px]"
@@ -687,7 +687,7 @@
               class="bg-[#006d4b] text-white px-5 py-2 rounded-xl font-semibold hover:bg-[#005a3d] transition-all flex items-center gap-2 active:scale-95 shadow-sm"
             >
               <span class="material-symbols-outlined text-[20px]">print</span>
-              Print Preview
+              Print
             </button>
             <button
               onclick="closePreviewModal()"
@@ -962,7 +962,7 @@
           const tStatus = (tag.status || "Ready").toLowerCase();
 
           let match =
-            name.startsWith(q) &&
+            name.includes(q) &&
             (status === "all" || tStatus === status) &&
             (size === "all" || tag.templateName === size) &&
             (pSize === "all" || (tag.paperSize || "A4") === pSize) &&
@@ -973,6 +973,15 @@
         });
 
         filteredTags.sort((a, b) => {
+          if (q) {
+            const nameA = a.title.toLowerCase();
+            const nameB = b.title.toLowerCase();
+            const aStarts = nameA.startsWith(q);
+            const bStarts = nameB.startsWith(q);
+            if (aStarts && !bStarts) return -1;
+            if (!aStarts && bStarts) return 1;
+          }
+
           const da = a.createdAt ? new Date(a.createdAt).getTime() : NaN;
           const db = b.createdAt ? new Date(b.createdAt).getTime() : NaN;
 
@@ -1183,6 +1192,7 @@
             timestamp: new Date().toISOString()
         };
         localStorage.setItem('lockedTags', JSON.stringify(lockedTags));
+        localStorage.setItem('currentEditId', tagId);
         window.location.href = `create.html?edit=${tagId}&id=${tagId}`;
       }
 
@@ -1519,7 +1529,7 @@
           try {
             await logSystemActivity(
               "PRINT",
-              `สั่งพิมพ์ป้ายอาหาร Profile: ${currentPrintTag.title}`,
+              `สั่งพิมพ์ป้ายอาหาร Profile: ${currentPrintTag.title} (Size: ${currentPrintTag.paperSize || "A4"})`,
             );
           } catch (err) {
             console.error("Audit log dispatch failed:", err);

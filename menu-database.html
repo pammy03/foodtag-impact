@@ -112,15 +112,14 @@
               type="text"
               id="searchInput"
               onkeyup="renderTable()"
-              placeholder="ค้นหาชื่อเมนู หรือ Menu ID..."
+              placeholder="Search menu name or Menu ID..."
               class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all shadow-sm text-sm"
             />
           </div>
-          <div
-            class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-auto"
-          >
-            Database Management
-          </div>
+          <button id="bulkDeleteBtn" onclick="confirmBulkDelete()" class="hidden ml-auto px-5 py-2.5 bg-red-50 text-red-500 font-bold rounded-xl border border-red-200 hover:bg-red-100 hover:text-red-600 transition-all items-center gap-2 text-sm shadow-sm cursor-pointer whitespace-nowrap">
+             <span class="material-symbols-outlined text-[20px]">delete_sweep</span>
+             Delete Selected (<span id="selectedCount">0</span>)
+          </button>
         </div>
 
         <div
@@ -129,34 +128,35 @@
           <table class="w-full text-left border-collapse table-fixed">
             <thead class="bg-slate-50 sticky top-0 shadow-sm z-10">
               <tr>
-                <th class="py-5 px-8 border-b w-36">
+                <th class="py-5 px-6 border-b w-52">
                   <div class="flex items-center gap-4">
+                    <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll()" class="w-5 h-5 flex-shrink-0 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all">
                     <span
-                      class="w-6 text-center text-[14px] font-extrabold text-slate-500"
+                      class="w-6 flex-shrink-0 text-center text-[16px] font-extrabold text-slate-600"
                       >No.</span
                     >
-                    <span class="text-[14px] font-extrabold text-slate-500"
+                    <span class="text-[16px] font-extrabold text-slate-600 whitespace-nowrap"
                       >Menu ID</span
                     >
                   </div>
                 </th>
                 <th
-                  class="py-5 px-6 text-[14px] font-extrabold text-slate-500 w-[28%] border-b"
+                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 w-[28%] border-b"
                 >
                   Menu Details
                 </th>
                 <th
-                  class="py-5 px-6 text-[14px] font-extrabold text-slate-500 w-[22%] border-b"
+                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 w-[22%] border-b"
                 >
                   Contain
                 </th>
                 <th
-                  class="py-5 px-6 text-[14px] font-extrabold text-slate-500 w-[22%] border-b"
+                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 w-[22%] border-b"
                 >
                   May Contain
                 </th>
                 <th
-                  class="py-5 px-8 text-[14px] font-extrabold text-slate-500 w-28 border-b text-center"
+                  class="py-5 px-8 text-[16px] font-extrabold text-slate-600 w-28 border-b text-center"
                 >
                   Manage
                 </th>
@@ -281,14 +281,14 @@
                   type="text"
                   id="searchIngredientModal"
                   onkeyup="filterModalIngredients()"
-                  placeholder="ค้นหาส่วนผสม..."
+                  placeholder="Search ingredients..."
                   class="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-sm transition-all shadow-sm"
                 />
               </div>
             </div>
             <div
               id="ingredientChecklist"
-              class="grid grid-cols-2 gap-3 max-h-[360px] overflow-y-auto custom-scroll pr-1"
+              class="flex flex-col gap-2 max-h-[400px] overflow-y-auto custom-scroll pr-2"
             ></div>
           </div>
         </div>
@@ -346,6 +346,41 @@
             class="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 shadow-lg shadow-red-500/20 transition-all cursor-pointer text-xs uppercase tracking-wider"
           >
             ลบข้อมูล
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="bulkDeleteModal" class="modal-overlay">
+      <div
+        class="bg-white rounded-3xl shadow-2xl w-[420px] flex flex-col relative z-50 overflow-hidden text-center p-8"
+      >
+        <div
+          class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-100"
+        >
+          <span class="material-symbols-outlined text-3xl">delete_sweep</span>
+        </div>
+        <h2 class="text-xl font-bold text-slate-800 mb-2">ยืนยันการลบหลายรายการ</h2>
+        <p
+          class="text-xs text-slate-500 font-medium leading-relaxed mb-6"
+        >
+          คุณต้องการลบเมนูที่เลือกจำนวน <strong id="bulkDeleteCountDisplay" class="text-red-500 font-bold">0</strong> รายการใช่หรือไม่?
+        </p>
+        <div class="flex gap-3 justify-center">
+          <button
+            type="button"
+            onclick="closeModal('bulkDeleteModal')"
+            class="flex-1 py-3 text-slate-500 font-bold bg-slate-100 hover:bg-slate-200 rounded-xl transition-all cursor-pointer text-xs uppercase tracking-wider"
+          >
+            ยกเลิก
+          </button>
+          <button
+            type="button"
+            id="confirmBulkDeleteBtn"
+            onclick="executeBulkDeleteMenu()"
+            class="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 shadow-lg shadow-red-500/20 transition-all cursor-pointer text-xs uppercase tracking-wider"
+          >
+            ลบข้อมูลทั้งหมด
           </button>
         </div>
       </div>
@@ -440,11 +475,42 @@
           .value.toLowerCase();
         let html = "";
 
-        const filtered = dbMenus.filter(
-          (m) =>
-            (m.menu_id || "").toLowerCase().startsWith(query) ||
-            (m.name_th || "").toLowerCase().startsWith(query),
-        );
+        let filtered = dbMenus.filter((m) => {
+          const mainIngs = (m.main_ingredient_ids || [])
+            .map((id) => dbIngredients.find((i) => String(i.id) === String(id)))
+            .filter(Boolean);
+          const containIngs = (m.ingredient_ids || [])
+            .map((id) => dbIngredients.find((i) => String(i.id) === String(id)))
+            .filter(Boolean);
+            
+          const ingText = mainIngs.map(i => (i.name_th || "") + " " + (i.name_en || "")).join(" ").toLowerCase();
+          const containText = containIngs.map(i => (i.name_th || "") + " " + (i.name_en || "")).join(" ").toLowerCase();
+          
+          return (
+            (m.menu_id || "").toLowerCase().includes(query) ||
+            (m.name_th || "").toLowerCase().includes(query) ||
+            (m.name_en || "").toLowerCase().includes(query) ||
+            ingText.includes(query) ||
+            containText.includes(query)
+          );
+        });
+
+        if (query) {
+          filtered.sort((a, b) => {
+            const aId = (a.menu_id || "").toLowerCase();
+            const aTh = (a.name_th || "").toLowerCase();
+            const aEn = (a.name_en || "").toLowerCase();
+            const bId = (b.menu_id || "").toLowerCase();
+            const bTh = (b.name_th || "").toLowerCase();
+            const bEn = (b.name_en || "").toLowerCase();
+            
+            const aStarts = aId.startsWith(query) || aTh.startsWith(query) || aEn.startsWith(query);
+            const bStarts = bId.startsWith(query) || bTh.startsWith(query) || bEn.startsWith(query);
+            if (aStarts && !bStarts) return -1;
+            if (!aStarts && bStarts) return 1;
+            return 0;
+          });
+        }
 
         if (filtered.length === 0) {
           tbody.innerHTML = `<tr><td colspan="5" class="py-24 text-center"><span class="material-symbols-outlined text-6xl mb-4 text-slate-200">search_off</span><p class="text-slate-400 font-bold tracking-widest uppercase">No menus found</p></td></tr>`;
@@ -465,9 +531,9 @@
             ings
               .map(
                 (ing) => `
-            <div class="inline-flex items-center gap-2 bg-white shadow-sm border border-slate-200 px-2.5 py-1.5 rounded-lg mr-1.5 mb-1.5 group transition-all hover:border-slate-300 max-w-[180px]">
-                <img src="${ing.icon_url || ing.image_url}" class="w-5 h-5 object-cover rounded flex-shrink-0">
-                <span class="text-[11px] font-bold text-slate-600 tracking-wide line-clamp-2 leading-tight">${ing.name_en || ing.name_th || "IMG"}</span>
+            <div class="flex items-start gap-3 bg-white shadow-sm border border-slate-200 px-3 py-2.5 rounded-xl mb-2 w-full max-w-[220px] group transition-all hover:border-slate-300">
+                <img src="${ing.icon_url || ing.image_url}" class="w-9 h-9 object-contain rounded-md flex-shrink-0 bg-slate-50 border border-slate-100 p-1">
+                <span class="text-[14px] font-bold text-slate-700 tracking-wide line-clamp-3 leading-snug pt-0.5" title="${ing.name_en || ing.name_th || "IMG"}">${ing.name_en || ing.name_th || "IMG"}</span>
             </div>`,
               )
               .join("");
@@ -485,27 +551,31 @@
           // เพิ่มระยะ py-6 เพื่อให้บรรทัดกว้างขึ้น โปร่งขึ้น
           html += `
           <tr class="menu-row border-b border-slate-100 last:border-0 align-top">
-            <td class="py-5 px-8">
-                <div class="flex items-center gap-4 mt-1">
-                    <span class="text-slate-400 font-black text-[15px] w-6 text-center">${index + 1}</span>
-                    <span class="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-black tracking-widest border border-slate-200 whitespace-nowrap">${displayId}</span>
+            <td class="py-5 px-6">
+                <div class="flex items-start gap-4">
+                    <input type="checkbox" value="${menu.id}" class="row-checkbox w-5 h-5 flex-shrink-0 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all mt-0.5" onclick="updateBulkDeleteButton()">
+                    <span class="text-[14px] font-extrabold text-slate-500 w-6 flex-shrink-0 text-center leading-6">${index + 1}</span>
+                    <span class="text-[14px] font-extrabold text-slate-600 whitespace-nowrap leading-6">${displayId}</span>
                 </div>
             </td>
             <td class="py-5 px-6">
-                <div class="font-extrabold text-slate-800 text-[15px] mt-1">${menu.name_th || "-"}</div>
-                <div class="text-[13px] text-slate-500 not-italic font-medium mt-0.5">${menu.name_en || "-"}</div>
+                <div class="text-[16px] font-extrabold text-slate-700 leading-tight">${menu.name_th || "-"}</div>
+                <div class="text-[14px] font-bold text-slate-500 leading-tight mt-1.5">${menu.name_en || "-"}</div>
             </td>
             <td class="py-5 px-6"><div class="flex flex-wrap">${mainIngHtml || "<span class='text-slate-300 text-xs italic mt-2'>- ไม่มีข้อมูล -</span>"}</div></td>
             <td class="py-5 px-6"><div class="flex flex-wrap">${containIngHtml || "<span class='text-slate-300 text-xs italic mt-2'>- ไม่มีข้อมูล -</span>"}</div></td>
             <td class="py-5 px-8 text-center">
-                <div class="flex items-center justify-center gap-2 mt-1">
-                    <button onclick="openMenuModal('${menuDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-[#006d4b] hover:bg-emerald-50 rounded-full transition-all cursor-pointer"><span class="material-symbols-outlined text-[20px]">edit</span></button>
-                    <button onclick="confirmDelete('${menu.id}', '${displayId}', '${safeMenuName}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+                <div class="flex items-center justify-center gap-2">
+                    <button onclick="openMenuModal('${menuDataStr}')" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-[#006d4b] hover:bg-emerald-50 rounded-full transition-all cursor-pointer"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                    <button onclick="confirmDelete('${menu.id}', '${displayId}', '${safeMenuName}')" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer"><span class="material-symbols-outlined text-[18px]">delete</span></button>
                 </div>
             </td>
           </tr>`;
         });
         tbody.innerHTML = html;
+        const selectAll = document.getElementById("selectAllCheckbox");
+        if(selectAll) selectAll.checked = false;
+        if(typeof updateBulkDeleteButton === 'function') updateBulkDeleteButton();
       }
 
       function getLatestMenuNumber() {
@@ -557,34 +627,34 @@
           return 0;
         });
 
-        // สร้างการ์ด Ingredient ในรูปแบบใหม่ที่กระชับขึ้น
+        // สร้างการ์ด Ingredient ในรูปแบบ List View
         container.innerHTML = sortedIngredients
           .map((ing) => {
             const isMain = selectedMainIds.includes(String(ing.id));
             const isContain = selectedContainIds.includes(String(ing.id));
 
             return `
-            <div class="border border-slate-200 rounded-xl p-3 flex flex-col items-center gap-2.5 bg-white relative ingredient-item shadow-sm hover:border-[#006d4b]/30 hover:shadow-md transition-all group" data-name="${(ing.name_th || "").toLowerCase()} ${(ing.name_en || "").toLowerCase()}">
-              <div class="flex items-center gap-3 w-full">
+            <div class="border border-slate-200 rounded-xl p-3 flex items-center justify-between bg-white relative ingredient-item shadow-sm hover:border-slate-300 transition-all group gap-4" data-name="${(ing.name_th || "").toLowerCase()} ${(ing.name_en || "").toLowerCase()}">
+              <div class="flex items-center gap-4 flex-1 min-w-0">
                   <div class="w-12 h-12 flex items-center justify-center bg-slate-50 rounded-lg p-1 border border-slate-100 flex-shrink-0">
                     <img src="${ing.icon_url || ing.image_url}" class="w-full h-full object-cover rounded-md">
                   </div>
-                  <div class="flex-1 min-w-0 text-left">
-                      <div class="text-[13px] font-black text-slate-800 truncate w-full">${ing.name_en || ing.name_th || "ไม่มีชื่อ"}</div>
-                      <div class="text-[11px] font-medium text-slate-500 truncate w-full">${ing.name_th || ""}</div>
+                  <div class="flex flex-col min-w-0 text-left flex-1">
+                      <div class="text-[14px] font-black text-slate-800 truncate w-full">${ing.name_en || ing.name_th || "ไม่มีชื่อ"}</div>
+                      <div class="text-[12px] font-medium text-slate-500 truncate w-full mt-0.5">${ing.name_th || "-"}</div>
                   </div>
               </div>
-              <div class="flex w-full gap-1.5 mt-0.5">
-                <label class="flex-1 text-center cursor-pointer">
+              <div class="flex items-center gap-2 flex-shrink-0">
+                <label class="w-[88px] text-center cursor-pointer">
                   <input type="checkbox" id="chk_main_${ing.id}" value="main" class="peer hidden" ${isMain ? "checked" : ""}>
-                  <div class="text-[11px] font-bold py-1.5 rounded-md bg-slate-50 border border-slate-200 text-slate-400 peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600 transition-all hover:bg-slate-100 select-none">Contain</div>
+                  <div class="text-[11px] font-bold py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-400 peer-checked:bg-red-50 peer-checked:border-red-200 peer-checked:text-red-600 transition-all hover:bg-slate-100 select-none shadow-sm">Contain</div>
                 </label>
-                <label class="flex-1 text-center cursor-pointer">
+                <label class="w-[88px] text-center cursor-pointer">
                   <input type="checkbox" id="chk_contain_${ing.id}" value="contain" class="peer hidden" ${isContain ? "checked" : ""}>
-                  <div class="text-[11px] font-bold py-1.5 rounded-md bg-slate-50 border border-slate-200 text-slate-400 peer-checked:bg-emerald-50 peer-checked:border-emerald-200 peer-checked:text-emerald-600 transition-all hover:bg-slate-100 select-none">May Contain</div>
+                  <div class="text-[11px] font-bold py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-400 peer-checked:bg-emerald-50 peer-checked:border-emerald-200 peer-checked:text-emerald-600 transition-all hover:bg-slate-100 select-none shadow-sm">May Contain</div>
                 </label>
-                <button type="button" onclick="document.getElementById('chk_main_${ing.id}').checked = false; document.getElementById('chk_contain_${ing.id}').checked = false;" class="flex-none w-8 flex items-center justify-center rounded-md bg-slate-50 border border-slate-200 text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition-all cursor-pointer" title="Clear Selection">
-                    <span class="material-symbols-outlined text-[16px]">close</span>
+                <button type="button" onclick="document.getElementById('chk_main_${ing.id}').checked = false; document.getElementById('chk_contain_${ing.id}').checked = false;" class="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-50 border border-slate-200 text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition-all cursor-pointer ml-1 shadow-sm" title="Clear Selection">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
                 </button>
               </div>
             </div>`;
@@ -599,11 +669,19 @@
           .getElementById("searchIngredientModal")
           .value.toLowerCase();
         document.querySelectorAll(".ingredient-item").forEach((item) => {
-          item.style.display = item
-            .getAttribute("data-name")
-            .includes(searchVal)
-            ? "flex"
-            : "none";
+          const name = item.getAttribute("data-name");
+          if (name.includes(searchVal)) {
+            item.style.display = "flex";
+            if (searchVal && name.startsWith(searchVal)) {
+              item.style.order = "1";
+            } else if (searchVal) {
+              item.style.order = "2";
+            } else {
+              item.style.order = "0";
+            }
+          } else {
+            item.style.display = "none";
+          }
         });
       }
 
@@ -677,6 +755,73 @@
         } finally {
           btn.disabled = false;
           btn.innerHTML = "ยืนยัน";
+        }
+      }
+
+      function toggleSelectAll() {
+        const selectAll = document.getElementById("selectAllCheckbox");
+        const checkboxes = document.querySelectorAll(".row-checkbox");
+        checkboxes.forEach(cb => cb.checked = selectAll.checked);
+        updateBulkDeleteButton();
+      }
+
+      function updateBulkDeleteButton() {
+        const checkboxes = document.querySelectorAll(".row-checkbox:checked");
+        const btn = document.getElementById("bulkDeleteBtn");
+        const countSpan = document.getElementById("selectedCount");
+        const selectAll = document.getElementById("selectAllCheckbox");
+        const allCheckboxes = document.querySelectorAll(".row-checkbox");
+        
+        countSpan.innerText = checkboxes.length;
+        
+        if (checkboxes.length > 0) {
+          btn.classList.remove("hidden");
+          btn.classList.add("flex");
+        } else {
+          btn.classList.add("hidden");
+          btn.classList.remove("flex");
+        }
+
+        if (allCheckboxes.length > 0 && checkboxes.length === allCheckboxes.length) {
+            selectAll.checked = true;
+        } else {
+            selectAll.checked = false;
+        }
+      }
+
+      function confirmBulkDelete() {
+        const checkboxes = document.querySelectorAll(".row-checkbox:checked");
+        if (checkboxes.length === 0) return;
+        
+        document.getElementById("bulkDeleteCountDisplay").innerText = checkboxes.length;
+        document.getElementById("bulkDeleteModal").classList.add("active");
+      }
+
+      async function executeBulkDeleteMenu() {
+        const checkboxes = document.querySelectorAll(".row-checkbox:checked");
+        const idsToDelete = Array.from(checkboxes).map(cb => cb.value);
+        if (idsToDelete.length === 0) return;
+
+        const btn = document.getElementById("confirmBulkDeleteBtn");
+        btn.disabled = true;
+        btn.innerHTML = `<span class="material-symbols-outlined animate-spin align-middle text-sm">progress_activity</span>`;
+
+        try {
+          // Send bulk delete request
+          await dbClient.from("menus").delete().in("id", idsToDelete);
+          await logSystemActivity(
+            "DELETE",
+            `ลบเมนูจำนวน: ${idsToDelete.length} รายการ`
+          );
+          closeModal("bulkDeleteModal");
+          document.getElementById("selectAllCheckbox").checked = false;
+          updateBulkDeleteButton();
+          fetchData();
+        } catch (e) {
+          alert("Error deleting menus: " + e.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = "ลบข้อมูลทั้งหมด";
         }
       }
 

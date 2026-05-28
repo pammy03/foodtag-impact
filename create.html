@@ -339,7 +339,7 @@
       >
         <div class="flex-1 overflow-y-auto p-6 space-y-6 scroll-area">
           <div>
-            <label class="block text-[18px] font-bold text-slate-500 mb-2"
+            <label class="block text-[18px] font-bold text-slate-700 mb-2"
               >Title</label
             >
             <input
@@ -351,7 +351,7 @@
           </div>
 
           <div>
-            <label class="block text-[18px] font-bold text-slate-500 mb-2"
+            <label class="block text-[18px] font-bold text-slate-700 mb-2"
               >Paper Size</label
             >
             <div class="flex gap-2">
@@ -373,7 +373,7 @@
           </div>
 
           <div>
-            <label class="block text-[18px] font-bold text-slate-500 mb-2"
+            <label class="block text-[18px] font-bold text-slate-700 mb-2"
               >Select Template Size</label
             >
             <div id="templateRadioGroup" class="flex flex-col gap-2">
@@ -465,13 +465,13 @@
           </div>
 
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-            <label class="block text-[18px] font-bold text-slate-500 mb-3"
+            <label class="block text-[18px] font-bold text-slate-700 mb-3"
               >Editing Position</label
             >
             <div id="slotControls" class="grid grid-cols-3 gap-2 mb-4"></div>
             <div class="border-t border-slate-200 pt-4 mt-2">
               <label
-                class="block text-[16px] font-bold text-slate-500 mb-2 flex items-center gap-1"
+                class="block text-[16px] font-bold text-slate-700 mb-2 flex items-center gap-1"
               >
                 Background (For Current Slot)
               </label>
@@ -511,7 +511,7 @@
             </div>
           </div>
           <div class="relative mt-2">
-            <label class="block text-[18px] font-bold text-slate-500 mb-2"
+            <label class="block text-[18px] font-bold text-slate-700 mb-2"
               >Menu Search</label
             >
             <div class="relative">
@@ -523,7 +523,7 @@
                 type="text"
                 id="menuSearch"
                 onkeyup="searchMenu(this.value)"
-                placeholder="ค้นหาเมนู..."
+                placeholder="Search menu..."
                 class="w-full pl-10 pr-4 py-2 bg-slate-50 border rounded-lg outline-none transition-all focus:ring-2 focus:ring-[#006d4b]"
               />
             </div>
@@ -534,7 +534,7 @@
           </div>
 
           <div class="space-y-4">
-            <label class="block text-[18px] font-bold text-slate-500 mb-2"
+            <label class="block text-[18px] font-bold text-slate-700 mb-2"
               >Descriptions</label
             >
             <div
@@ -668,7 +668,7 @@
                   <span
                     id="sizeMainDisplay"
                     class="text-[11px] font-bold w-9 text-center text-slate-700"
-                    >Auto</span
+                    >65px</span
                   >
                   <button
                     onclick="changeAllergenIconSize('main', 2)"
@@ -682,7 +682,7 @@
                   <button
                     onclick="resetAllergenIconSize('main')"
                     class="w-6 h-6 rounded bg-slate-100 border border-slate-200 hover:bg-slate-200 text-slate-500 flex items-center justify-center font-bold transition-colors shadow-sm"
-                    title="คืนค่า Auto (5 รูปต่อบรรทัด)"
+                    title="คืนค่าเริ่มต้น (5 รูปต่อบรรทัด)"
                   >
                     <span class="material-symbols-outlined text-[13px]"
                       >refresh</span
@@ -708,7 +708,7 @@
                   <span
                     id="sizeContainDisplay"
                     class="text-[11px] font-bold w-9 text-center text-slate-700"
-                    >Auto</span
+                    >65px</span
                   >
                   <button
                     onclick="changeAllergenIconSize('contain', 2)"
@@ -722,7 +722,7 @@
                   <button
                     onclick="resetAllergenIconSize('contain')"
                     class="w-6 h-6 rounded bg-slate-100 border border-slate-200 hover:bg-slate-200 text-slate-500 flex items-center justify-center font-bold transition-colors shadow-sm"
-                    title="คืนค่า Auto (5 รูปต่อบรรทัด)"
+                    title="คืนค่าเริ่มต้น (5 รูปต่อบรรทัด)"
                   >
                     <span class="material-symbols-outlined text-[13px]"
                       >refresh</span
@@ -1111,7 +1111,7 @@
               type="text"
               id="ingredientSearchInput"
               oninput="searchIngredients(this.value)"
-              placeholder="ค้นหาวัตถุดิบ..."
+              placeholder="Search ingredients..."
               class="w-full pl-9 pr-4 py-2 bg-slate-50 border rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-sm"
             />
           </div>
@@ -1130,6 +1130,40 @@
       class="hidden"
       onchange="handleAllergenImageChange(event)"
     />
+
+    <div
+      id="genericConfirmModal"
+      class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[80] hidden flex items-center justify-center opacity-0 transition-opacity duration-300"
+    >
+      <div
+        class="bg-white rounded-2xl shadow-2xl w-[400px] transform scale-95 transition-transform duration-300 flex flex-col p-6 text-center"
+      >
+        <div id="genericConfirmIconContainer" class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-blue-100">
+          <span class="material-symbols-outlined text-3xl" id="genericConfirmIcon">help</span>
+        </div>
+        <h3 class="text-xl font-bold text-slate-800 mb-2" id="genericConfirmTitle">
+          ยืนยันการดำเนินการ
+        </h3>
+        <p class="text-sm text-slate-500 mb-6 leading-relaxed" id="genericConfirmText">
+          คุณต้องการดำเนินการนี้ใช่หรือไม่?
+        </p>
+        <div class="flex gap-3 w-full">
+          <button
+            onclick="closeGenericConfirmModal()"
+            class="flex-1 py-2.5 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors"
+          >
+            ยกเลิก
+          </button>
+          <button
+            id="genericConfirmBtn"
+            onclick="if(genericConfirmCallback) genericConfirmCallback(); closeGenericConfirmModal();"
+            class="flex-1 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-md transition-colors"
+          >
+            ยืนยัน
+          </button>
+        </div>
+      </div>
+    </div>
 
     <script src="sidebar.js"></script>
     <script src="action-logger.js"></script>
@@ -1261,15 +1295,18 @@
         resizePaper();
       }
 
-      window.onload = () => {
+      window.onload = async () => {
         const urlParams = new URLSearchParams(window.location.search);
-        const editId = urlParams.get("edit");
+        let editId = urlParams.get("edit");
+        
+        if (!editId) {
+          editId = localStorage.getItem("currentEditId");
+        }
 
         if (editId) {
           isInitialLoading = true;
-          document.getElementById("pageTitle").innerText = "Edit Tag Profile";
-          document.getElementById("saveButtonText").innerText =
-            "Update Profile";
+          document.getElementById("pageTitle").innerText = "Edit Profile";
+          document.getElementById("saveButtonText").innerText = "Update Profile";
 
           const savedTags = JSON.parse(localStorage.getItem("savedTags")) || [];
           const tagToEdit = savedTags.find((t) => t.id === editId);
@@ -1293,22 +1330,28 @@
 
             const config =
               TEMPLATE_CONFIGS[TEMPLATE_NAME_TO_KEY[tagToEdit.templateName]];
+            console.log("Loading edit config:", config, tagToEdit);
             if (config) {
-              applyTemplate(config, null);
+              await applyTemplate(config, null);
               syncTemplateDropdown(tagToEdit.templateName);
 
-              setTimeout(() => {
-                for (let i = 1; i <= config.slots_count; i++) {
-                  const slotDiv = document.getElementById(`slot-${i}`);
-                  if (slotDiv) {
-                    const wrapper = slotDiv.querySelector("div:last-child");
-                    const menu = slotsData[i] || {};
-                    renderSlotContent(wrapper, menu, i);
-                  }
+              console.log("Slots data after applyTemplate:", slotsData);
+
+              for (let i = 1; i <= config.slots_count; i++) {
+                const slotDiv = document.getElementById(`slot-${i}`);
+                if (slotDiv) {
+                  const wrapper = slotDiv.querySelector("div:last-child");
+                  const menu = slotsData[i] || {};
+                  renderSlotContent(wrapper, menu, i);
                 }
-                if (slotsData[1]) updateInputs(slotsData[1]);
-                resizePaper();
-              }, 300);
+              }
+              if (slotsData[1]) {
+                 console.log("Updating inputs with slotsData[1]:", slotsData[1]);
+                 updateInputs(slotsData[1]);
+              } else {
+                 console.log("No slotsData[1] found!");
+              }
+              resizePaper();
             }
           }
           isInitialLoading = false;
@@ -1363,10 +1406,10 @@
         if (!isInitialLoading) slotsData = {};
         activeSlot = 1;
 
-        loadBackgrounds(temp.name).then(() => {
+        return loadBackgrounds(temp.name).then(() => {
           setupGridStructure();
           renderSlotControls(temp.slots_count);
-          clearInputs();
+          if (!isInitialLoading) clearInputs();
           setTimeout(resizePaper, 50);
         });
       }
@@ -1620,7 +1663,7 @@
         if (sizeMainDisplay) {
           sizeMainDisplay.innerText = menu.allergenIconSizeMain
             ? menu.allergenIconSizeMain + "px"
-            : "Auto";
+            : getBaseIconSize() + "px";
         }
 
         const sizeContainDisplay =
@@ -1628,7 +1671,7 @@
         if (sizeContainDisplay) {
           sizeContainDisplay.innerText = menu.allergenIconSizeContain
             ? menu.allergenIconSizeContain + "px"
-            : "Auto";
+            : getBaseIconSize() + "px";
         }
 
         const list = document.getElementById("allergenList");
@@ -1687,11 +1730,11 @@
         document.getElementById("fontSizeEn").value = parseInt("22px");
 
         const sizeMainDisplay = document.getElementById("sizeMainDisplay");
-        if (sizeMainDisplay) sizeMainDisplay.innerText = "Auto";
+        if (sizeMainDisplay) sizeMainDisplay.innerText = "65px";
 
         const sizeContainDisplay =
           document.getElementById("sizeContainDisplay");
-        if (sizeContainDisplay) sizeContainDisplay.innerText = "Auto";
+        if (sizeContainDisplay) sizeContainDisplay.innerText = "65px";
       }
 
       function showBgConfirmModal() {
@@ -1769,6 +1812,49 @@
         modal.querySelector("div").classList.add("scale-95");
         setTimeout(() => modal.classList.add("hidden"), 300);
       }
+
+      let genericConfirmCallback = null;
+
+      function showGenericConfirmModal(title, text, type, callback) {
+        document.getElementById("genericConfirmTitle").innerText = title;
+        document.getElementById("genericConfirmText").innerText = text;
+        genericConfirmCallback = callback;
+        
+        const iconContainer = document.getElementById("genericConfirmIconContainer");
+        const icon = document.getElementById("genericConfirmIcon");
+        const btn = document.getElementById("genericConfirmBtn");
+
+        if (type === 'delete') {
+          iconContainer.className = "w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-red-100";
+          icon.innerText = "delete";
+          btn.className = "flex-1 py-2.5 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 shadow-md transition-colors";
+        } else if (type === 'add') {
+          iconContainer.className = "w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-emerald-100";
+          icon.innerText = "add_circle";
+          btn.className = "flex-1 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-md transition-colors";
+        } else {
+          iconContainer.className = "w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-blue-100";
+          icon.innerText = "help";
+          btn.className = "flex-1 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-md transition-colors";
+        }
+
+        const modal = document.getElementById("genericConfirmModal");
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+          modal.classList.remove("opacity-0");
+          modal.querySelector("div").classList.remove("scale-95");
+        }, 10);
+      }
+
+      function closeGenericConfirmModal() {
+        const modal = document.getElementById("genericConfirmModal");
+        modal.classList.add("opacity-0");
+        modal.querySelector("div").classList.add("scale-95");
+        setTimeout(() => {
+          modal.classList.add("hidden");
+          genericConfirmCallback = null;
+        }, 300);
+      }
       function executeApplyToAllSlots() {
         closeMenuConfirmModal();
         const currentMenu = slotsData[activeSlot];
@@ -1801,18 +1887,25 @@
           const { data: menus, error } = await dbClient
             .from("menus")
             .select("*")
-            .or(`name_th.ilike.${query}%,name_en.ilike.${query}%`)
+            .or(`name_th.ilike.%${query}%,name_en.ilike.%${query}%`)
             .limit(10);
           if (error) throw error;
 
           if (menus && menus.length > 0) {
-            const filtered = menus.filter(
-              (m) =>
-                (m.name_th || "")
-                  .toLowerCase()
-                  .startsWith(query.toLowerCase()) ||
-                (m.name_en || "").toLowerCase().startsWith(query.toLowerCase()),
-            );
+            let filtered = menus;
+            filtered.sort((a, b) => {
+              const nameATh = (a.name_th || "").toLowerCase();
+              const nameAEn = (a.name_en || "").toLowerCase();
+              const nameBTh = (b.name_th || "").toLowerCase();
+              const nameBEn = (b.name_en || "").toLowerCase();
+              const q = query.toLowerCase();
+              
+              const aStarts = nameATh.startsWith(q) || nameAEn.startsWith(q);
+              const bStarts = nameBTh.startsWith(q) || nameBEn.startsWith(q);
+              if (aStarts && !bStarts) return -1;
+              if (!aStarts && bStarts) return 1;
+              return 0;
+            });
 
             if (filtered.length === 0) {
               results.classList.add("hidden");
@@ -1920,7 +2013,13 @@
           ? `<span class="text-amber-500 bg-amber-50 px-2 py-0.5 rounded">Draft</span>`
           : `<span class="text-[#006d4b] bg-emerald-50 px-2 py-0.5 rounded">Ready to Print</span>`;
 
-        content.innerHTML = `<div class="text-center"><div class="w-16 h-16 bg-emerald-50 text-[#006d4b] rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-emerald-100"><span class="material-symbols-outlined text-3xl">save</span></div><h3 class="text-xl font-bold text-slate-800 mb-2">ยืนยันการบันทึกโปรไฟล์</h3><p class="text-sm text-slate-500 mb-4 leading-relaxed">คุณต้องการบันทึกโปรไฟล์นี้<br>ในชื่อ <span class="font-black text-[#006d4b] text-base">"${profileNameInput}"</span> ใช่หรือไม่?</p><p class="text-xs text-slate-400 mb-6 border-t border-slate-100 pt-3">สถานะที่จะบันทึก: ${statusText}</p><div class="flex gap-3 w-full"><button onclick="closeSaveModal()" class="flex-1 py-2.5 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors">ยกเลิก</button><button onclick="confirmSave()" class="flex-1 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-md transition-colors flex justify-center items-center gap-2"><span class="material-symbols-outlined text-[18px]">check</span> ยืนยัน</button></div></div>`;
+        const urlParams = new URLSearchParams(window.location.search);
+        const isEditing = urlParams.get("edit") !== null;
+        
+        const modalTitle = isEditing ? "ยืนยันการอัปเดตโปรไฟล์" : "ยืนยันการบันทึกโปรไฟล์";
+        const modalDesc = isEditing ? "คุณต้องการอัปเดตโปรไฟล์นี้" : "คุณต้องการบันทึกโปรไฟล์นี้";
+
+        content.innerHTML = `<div class="text-center"><div class="w-16 h-16 bg-emerald-50 text-[#006d4b] rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-emerald-100"><span class="material-symbols-outlined text-3xl">save</span></div><h3 class="text-xl font-bold text-slate-800 mb-2">${modalTitle}</h3><p class="text-sm text-slate-500 mb-4 leading-relaxed">${modalDesc}<br>ในชื่อ <span class="font-black text-[#006d4b] text-base">"${profileNameInput}"</span> ใช่หรือไม่?</p><p class="text-xs text-slate-400 mb-6 border-t border-slate-100 pt-3">สถานะ: ${statusText}</p><div class="flex gap-3 w-full"><button onclick="closeSaveModal()" class="flex-1 py-2.5 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors">ยกเลิก</button><button onclick="confirmSave()" class="flex-1 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-md transition-colors flex justify-center items-center gap-2"><span class="material-symbols-outlined text-[18px]">check</span> ยืนยัน</button></div></div>`;
         modal.classList.remove("hidden");
         setTimeout(() => {
           modal.classList.remove("opacity-0");
@@ -1949,7 +2048,10 @@
             let savedTags = JSON.parse(localStorage.getItem("savedTags")) || [];
 
             const urlParams = new URLSearchParams(window.location.search);
-            const editId = urlParams.get("edit");
+            let editId = urlParams.get("edit");
+            if (!editId) {
+              editId = localStorage.getItem("currentEditId");
+            }
             const userData = JSON.parse(localStorage.getItem("userData"));
             const creatorRole = userData
               ? userData.role || "UNKNOWN"
@@ -1984,6 +2086,7 @@
                 newTag.id = Date.now().toString();
                 savedTags.push(newTag);
               }
+              localStorage.removeItem("currentEditId");
             } else {
               newTag.id = Date.now().toString();
               savedTags.push(newTag);
@@ -2062,7 +2165,7 @@
 
         await logSystemActivity(
           "PRINT",
-          `ดาวน์โหลดไฟล์ป้ายชื่อเป็นนามสกุล .${type.toUpperCase()} (ชื่อไฟล์: ${fileName})`,
+          `ดาวน์โหลดไฟล์ป้ายชื่อเป็นนามสกุล .${type.toUpperCase()} (ชื่อไฟล์: ${fileName}) (Size: ${selectedPaperSize})`,
         );
 
         const canvas = await capturePaper();
@@ -2098,7 +2201,7 @@
 
         await logSystemActivity(
           "PRINT",
-          `แชร์ไฟล์ป้ายชื่อ (ชื่อไฟล์: ${fileName})`,
+          `แชร์ไฟล์ป้ายชื่อ (ชื่อไฟล์: ${fileName}) (Size: ${selectedPaperSize})`,
         );
 
         const canvas = await capturePaper();
@@ -2160,7 +2263,7 @@
 
           await logSystemActivity(
             "PRINT",
-            `สั่งพิมพ์ป้ายอาหาร (คลิกยืนยัน): "${profileTitle}" (${templateSize}) ขนาด ${selectedPaperSize}`,
+            `สั่งพิมพ์ป้ายอาหาร (คลิกยืนยัน) Profile: ${profileTitle} (${templateSize}) (Size: ${selectedPaperSize})`,
           );
         } catch (err) {
           console.error("Audit log dispatch failed:", err);
@@ -2258,12 +2361,24 @@
       }
 
       function removeAllergenItem(section, idx) {
-        if (section === "main") {
-          tempMainAllergens.splice(idx, 1);
-        } else {
-          tempContainAllergens.splice(idx, 1);
-        }
-        renderAdjustLists();
+        const list = section === "main" ? tempMainAllergens : tempContainAllergens;
+        const item = list[idx];
+        const name = item.name_th || item.name_en || "ไม่ระบุชื่อ";
+        const sectionName = section === "main" ? "Contain" : "May Contain";
+
+        showGenericConfirmModal(
+          "ยืนยันการลบวัตถุดิบ",
+          `คุณต้องการลบ "${name}" ออกจาก ${sectionName} ใช่หรือไม่?`,
+          "delete",
+          () => {
+            if (section === "main") {
+              tempMainAllergens.splice(idx, 1);
+            } else {
+              tempContainAllergens.splice(idx, 1);
+            }
+            renderAdjustLists();
+          }
+        );
       }
 
       function triggerAllergenImagePicker(section, idx) {
@@ -2292,17 +2407,24 @@
       }
 
       function confirmAdjustIngredients() {
-        if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
-        slotsData[activeSlot].main_allergens = JSON.parse(
-          JSON.stringify(tempMainAllergens),
-        );
-        slotsData[activeSlot].allergens = JSON.parse(
-          JSON.stringify(tempContainAllergens),
-        );
+        showGenericConfirmModal(
+          "ยืนยันการใช้งาน",
+          "คุณต้องการบันทึกและใช้งาน Ingredients ที่ปรับแต่งแล้วกับ Slot นี้ใช่หรือไม่?",
+          "info",
+          () => {
+            if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
+            slotsData[activeSlot].main_allergens = JSON.parse(
+              JSON.stringify(tempMainAllergens),
+            );
+            slotsData[activeSlot].allergens = JSON.parse(
+              JSON.stringify(tempContainAllergens),
+            );
 
-        closeAdjustIngredientsModal();
-        updateInputs(slotsData[activeSlot]);
-        renderActiveSlotOnly();
+            closeAdjustIngredientsModal();
+            updateInputs(slotsData[activeSlot]);
+            renderActiveSlotOnly();
+          }
+        );
       }
 
       function openAddIngredientPicker(section) {
@@ -2312,7 +2434,7 @@
         document.getElementById("addIngredientModalTitle").innerText = title;
         document.getElementById("ingredientSearchInput").value = "";
         document.getElementById("ingredientSearchResults").innerHTML =
-          `<p class="text-xs text-slate-400 text-center py-4">พิมพ์เพื่อค้นหาวัตถุดิบ</p>`;
+          `<p class="text-xs text-slate-400 text-center py-4">Type to search ingredients</p>`;
 
         const modal = document.getElementById("addIngredientModal");
         modal.classList.remove("hidden");
@@ -2333,10 +2455,10 @@
       async function searchIngredients(query) {
         const container = document.getElementById("ingredientSearchResults");
         if (query.length < 1) {
-          container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">พิมพ์เพื่อค้นหาวัตถุดิบ</p>`;
+          container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Type to search ingredients</p>`;
           return;
         }
-        container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">กำลังค้นหา...</p>`;
+        container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Searching...</p>`;
 
         try {
           const { data, error } = await dbClient
@@ -2347,7 +2469,7 @@
           if (error) throw error;
 
           if (!data || data.length === 0) {
-            container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">ไม่พบวัตถุดิบ</p>`;
+            container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No ingredients found</p>`;
             return;
           }
 
@@ -2386,14 +2508,24 @@
           return;
         }
 
-        if (addingToSection === "main") {
-          tempMainAllergens.push({ ...ingredient });
-        } else {
-          tempContainAllergens.push({ ...ingredient });
-        }
+        const name = ingredient.name_th || ingredient.name_en || "ไม่ระบุชื่อ";
+        const sectionName = addingToSection === "main" ? "Contain" : "May Contain";
 
-        closeAddIngredientModal();
-        renderAdjustLists();
+        showGenericConfirmModal(
+          "ยืนยันการเพิ่มวัตถุดิบ",
+          `คุณต้องการเพิ่ม "${name}" ลงใน ${sectionName} ใช่หรือไม่?`,
+          "add",
+          () => {
+            if (addingToSection === "main") {
+              tempMainAllergens.push({ ...ingredient });
+            } else {
+              tempContainAllergens.push({ ...ingredient });
+            }
+
+            closeAddIngredientModal();
+            renderAdjustLists();
+          }
+        );
       }
 
       const _originalUpdateInputs = updateInputs;

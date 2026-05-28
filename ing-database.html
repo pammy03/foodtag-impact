@@ -82,7 +82,7 @@
                 type="text"
                 id="searchInput"
                 onkeyup="filterIngredients()"
-                placeholder="ค้นหาส่วนผสม..."
+                placeholder="Search ingredients..."
                 class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all shadow-sm text-sm"
               />
             </div>
@@ -108,6 +108,16 @@
           </div>
 
           <div class="flex items-center gap-4 shrink-0">
+            <div class="flex items-center gap-3 shrink-0">
+              <label class="flex items-center gap-3 text-[13px] font-bold text-slate-600 cursor-pointer px-4 py-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all shadow-sm">
+                  <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll()" class="w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all">
+                  Select All
+              </label>
+              <button id="bulkDeleteBtn" onclick="confirmBulkDelete()" class="hidden px-5 py-2.5 bg-red-50 text-red-500 font-bold rounded-xl border border-red-200 hover:bg-red-100 hover:text-red-600 transition-all items-center gap-2 text-sm shadow-sm cursor-pointer">
+                 <span class="material-symbols-outlined text-[20px]">delete_sweep</span>
+                 Delete (<span id="selectedCount">0</span>)
+              </button>
+            </div>
 
             <label
               class="px-6 py-3 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] transition-all flex items-center gap-2 shadow-sm shadow-[#006d4b]/20 cursor-pointer active:scale-95"
@@ -115,7 +125,7 @@
               <span class="material-symbols-outlined text-[20px]"
                 >add_photo_alternate</span
               >
-              เพิ่มรูปภาพ
+              Add Image
               <input
                 type="file"
                 id="inputIngImage"
@@ -343,6 +353,41 @@
       </div>
     </div>
 
+    <div id="bulkDeleteModal" class="modal-overlay">
+      <div
+        class="bg-white rounded-3xl shadow-2xl w-[420px] flex flex-col relative z-50 overflow-hidden text-center p-8"
+      >
+        <div
+          class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-100"
+        >
+          <span class="material-symbols-outlined text-3xl">delete_sweep</span>
+        </div>
+        <h2 class="text-xl font-bold text-slate-800 mb-2">ยืนยันการลบหลายรายการ</h2>
+        <p
+          class="text-xs text-slate-500 font-medium leading-relaxed mb-6"
+        >
+          คุณต้องการลบส่วนผสมที่เลือกจำนวน <strong id="bulkDeleteCountDisplay" class="text-red-500 font-bold">0</strong> รายการใช่หรือไม่? ข้อมูลจะไม่สามารถกู้คืนได้
+        </p>
+        <div class="flex gap-3 justify-center">
+          <button
+            type="button"
+            onclick="closeModal('bulkDeleteModal')"
+            class="flex-1 py-3 text-slate-500 font-bold bg-slate-100 hover:bg-slate-200 rounded-xl transition-all cursor-pointer text-xs uppercase tracking-wider"
+          >
+            ยกเลิก
+          </button>
+          <button
+            type="button"
+            id="confirmBulkDeleteBtn"
+            onclick="executeBulkDeleteIng()"
+            class="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 shadow-lg shadow-red-500/20 transition-all cursor-pointer text-xs uppercase tracking-wider"
+          >
+            ลบข้อมูลทั้งหมด
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div id="confirmSaveModal" class="modal-overlay">
       <div
         class="bg-white rounded-[2.5rem] shadow-2xl w-[480px] p-10 flex flex-col items-center relative z-50 overflow-hidden text-center"
@@ -471,7 +516,7 @@
             <div class="flex flex-col items-center justify-center text-slate-400 bg-white rounded-3xl border border-slate-200 border-dashed w-full max-w-2xl py-24 mx-auto">
                 <span class="material-symbols-outlined text-6xl mb-3 opacity-40">imagesmode</span>
                 <p class="font-bold text-lg text-slate-500 uppercase tracking-widest">No Images Found</p>
-                <p class="text-sm mt-1">กดปุ่มเพิ่มรูปภาพด้านบนเพื่อเริ่มต้น</p>
+                <p class="text-sm mt-1">Click the Add Image button above to start</p>
             </div>`;
           return;
         }
@@ -492,8 +537,9 @@
               return `
               <div class="ing-item bg-white border border-slate-200 rounded-2xl p-5 flex flex-col items-center justify-center hover:shadow-lg transition-all group relative overflow-hidden" data-name="${(ing.name_th || "").toLowerCase()} ${(ing.name_en || "").toLowerCase()}">
                 
-                <div class="absolute top-3 left-3 bg-slate-100 text-slate-400 text-[10px] font-black px-2 py-0.5 rounded-lg z-10 border border-slate-200">
-                    ${index + 1}
+                <div class="absolute top-3 left-3 flex items-center gap-2 z-30">
+                    <input type="checkbox" value="${ing.id}" class="row-checkbox w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all shadow-sm" onclick="updateBulkDeleteButton()">
+                    <span class="bg-white text-slate-400 text-[10px] font-black px-2 py-0.5 rounded-lg border border-slate-200 pointer-events-none shadow-sm opacity-80">${index + 1}</span>
                 </div>
 
                 <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-[2px] transition-all flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 z-20">
@@ -530,9 +576,11 @@
 
               return `
               <div class="ing-item flex items-center justify-between bg-white border border-slate-200 rounded-[1.25rem] p-4 hover:shadow-md transition-all group" data-name="${(ing.name_th || "").toLowerCase()} ${(ing.name_en || "").toLowerCase()}">
-                 <div class="flex items-center w-full overflow-hidden pr-4">
-                    
-                    <div class="text-[15px] font-black text-slate-400 w-14 text-center shrink-0">
+                 <div class="flex items-center w-full overflow-hidden pr-4 gap-4">
+                    <div class="pl-2 flex items-center justify-center shrink-0">
+                       <input type="checkbox" value="${ing.id}" class="row-checkbox w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all" onclick="updateBulkDeleteButton()">
+                    </div>
+                    <div class="text-[14px] font-extrabold text-slate-500 w-8 text-center shrink-0">
                         ${index + 1}
                     </div>
 
@@ -540,7 +588,7 @@
                         <img src="${ing.icon_url}" class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'">
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h4 class="font-bold text-slate-800 text-[15px] tracking-wide truncate" title="${displayName}">${displayName || "-"}</h4>
+                        <h4 class="text-[14px] font-extrabold text-slate-700 tracking-wide truncate" title="${displayName}">${displayName || "-"}</h4>
                     </div>
                  </div>
                  
@@ -557,6 +605,10 @@
             })
             .join("");
         }
+
+        const selectAll = document.getElementById("selectAllCheckbox");
+        if(selectAll) selectAll.checked = false;
+        if(typeof updateBulkDeleteButton === 'function') updateBulkDeleteButton();
       }
 
       function openEditModal(id) {
@@ -667,8 +719,15 @@
 
         items.forEach((item) => {
           const name = item.getAttribute("data-name");
-          if (name.startsWith(query)) {
+          if (name.includes(query)) {
             item.style.display = "flex";
+            if (query && name.startsWith(query)) {
+              item.style.order = "1";
+            } else if (query) {
+              item.style.order = "2";
+            } else {
+              item.style.order = "0";
+            }
             visibleCount++;
           } else {
             item.style.display = "none";
@@ -764,6 +823,86 @@
         } finally {
           btn.disabled = false;
           btn.innerHTML = `<span class="material-symbols-outlined text-[20px]">upload</span> Upload to Database`;
+        }
+      }
+
+      function toggleSelectAll() {
+        const selectAll = document.getElementById("selectAllCheckbox");
+        const checkboxes = document.querySelectorAll(".row-checkbox");
+        checkboxes.forEach(cb => cb.checked = selectAll.checked);
+        updateBulkDeleteButton();
+      }
+
+      function updateBulkDeleteButton() {
+        const checkboxes = document.querySelectorAll(".row-checkbox:checked");
+        const btn = document.getElementById("bulkDeleteBtn");
+        const countSpan = document.getElementById("selectedCount");
+        const selectAll = document.getElementById("selectAllCheckbox");
+        const allCheckboxes = document.querySelectorAll(".row-checkbox");
+        
+        countSpan.innerText = checkboxes.length;
+        
+        if (checkboxes.length > 0) {
+          btn.classList.remove("hidden");
+          btn.classList.add("flex");
+        } else {
+          btn.classList.add("hidden");
+          btn.classList.remove("flex");
+        }
+
+        if (allCheckboxes.length > 0 && checkboxes.length === allCheckboxes.length) {
+            selectAll.checked = true;
+        } else {
+            selectAll.checked = false;
+        }
+      }
+
+      function confirmBulkDelete() {
+        const checkboxes = document.querySelectorAll(".row-checkbox:checked");
+        if (checkboxes.length === 0) return;
+        
+        document.getElementById("bulkDeleteCountDisplay").innerText = checkboxes.length;
+        document.getElementById("bulkDeleteModal").classList.add("active");
+      }
+
+      async function executeBulkDeleteIng() {
+        const checkboxes = document.querySelectorAll(".row-checkbox:checked");
+        const idsToDelete = Array.from(checkboxes).map(cb => cb.value);
+        if (idsToDelete.length === 0) return;
+
+        const btn = document.getElementById("confirmBulkDeleteBtn");
+        btn.disabled = true;
+        btn.innerHTML = `<span class="material-symbols-outlined animate-spin align-middle text-sm">progress_activity</span>`;
+
+        try {
+          // get the ingredient records to delete images from storage
+          const toDelete = dbIngredients.filter(ing => idsToDelete.includes(ing.id.toString()));
+          
+          for(const ing of toDelete) {
+            if (ing.icon_url) {
+                try {
+                    const urlParts = ing.icon_url.split("/");
+                    const fileName = urlParts[urlParts.length - 1];
+                    await dbClient.storage.from("ingredients").remove([fileName]);
+                } catch(e) {}
+            }
+          }
+
+          // Send bulk delete request
+          await dbClient.from("ingredients").delete().in("id", idsToDelete);
+          await logSystemActivity(
+            "DELETE",
+            `ลบส่วนผสมจำนวน: ${idsToDelete.length} รายการ`
+          );
+          closeModal("bulkDeleteModal");
+          document.getElementById("selectAllCheckbox").checked = false;
+          updateBulkDeleteButton();
+          fetchIngredients();
+        } catch (e) {
+          alert("Error deleting ingredients: " + e.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = "ลบข้อมูลทั้งหมด";
         }
       }
 

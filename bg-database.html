@@ -96,7 +96,7 @@
               type="text"
               id="searchInput"
               onkeyup="renderBgList()"
-              placeholder="ค้นหาชื่อพื้นหลัง..."
+              placeholder="Search backgrounds..."
               class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all shadow-sm text-sm"
             />
           </div>
@@ -113,18 +113,15 @@
             "
           >
             <option value="all">All Template Sizes</option>
-            <option value="Plate / Food Stall">
-              Plate Service / Food Stall
-            </option>
-            <option value="Western Set">Western Set</option>
-            <option value="Buffet / Coffee Break">Buffet / Coffee Break</option>
+            <option value="Plate / Food Stall">Plate Service / Food Stall (13 × 18 cm)</option>
+            <option value="Western Set">Western Set (10.5 × 14.8 cm)</option>
+            <option value="Buffet / Coffee Break">Buffet / Coffee Break (10.2 × 9.7 cm)</option>
+            <option value="Mini Tag / Cocktail">Mini Tag / Cocktail (9 × 9 cm)</option>
           </select>
-
-          <div
-            class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-auto"
-          >
-            Database Management
-          </div>
+          <button id="bulkDeleteBtn" onclick="confirmBulkDelete()" class="hidden ml-auto px-5 py-2.5 bg-red-50 text-red-500 font-bold rounded-xl border border-red-200 hover:bg-red-100 hover:text-red-600 transition-all items-center gap-2 text-sm shadow-sm cursor-pointer whitespace-nowrap">
+             <span class="material-symbols-outlined text-[20px]">delete_sweep</span>
+             Delete Selected (<span id="selectedCount">0</span>)
+          </button>
         </div>
 
         <div
@@ -134,22 +131,25 @@
             <thead class="bg-slate-50 sticky top-0 shadow-sm z-10">
               <tr>
                 <th
-                  class="py-5 px-8 text-[14px] font-extrabold text-slate-500 w-24 border-b text-center"
+                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 w-32 border-b"
                 >
-                  No.
+                  <div class="flex items-center gap-4">
+                    <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll()" class="w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all">
+                    <span class="w-6 text-center">No.</span>
+                  </div>
                 </th>
                 <th
-                  class="py-5 px-6 text-[14px] font-extrabold text-slate-500 w-[40%] border-b"
+                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 w-[40%] border-b"
                 >
                   Background Name
                 </th>
                 <th
-                  class="py-5 px-6 text-[14px] font-extrabold text-slate-500 border-b"
+                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 border-b"
                 >
                   Template Size
                 </th>
                 <th
-                  class="py-5 px-8 text-[14px] font-extrabold text-slate-500 w-32 border-b text-center"
+                  class="py-5 px-8 text-[16px] font-extrabold text-slate-600 w-32 border-b text-center"
                 >
                   Actions
                 </th>
@@ -185,7 +185,7 @@
           <div>
             <h2 class="text-2xl font-black text-slate-800 tracking-tight">Upload Background</h2>
             <p class="text-sm text-slate-500 font-medium mt-1">
-              เพิ่มรูปภาพพื้นหลังใหม่ลงในระบบ
+              Upload a new background image to the system
             </p>
           </div>
           <button
@@ -224,13 +224,10 @@
                 background-size: 1.2em;
               "
             >
-              <option value="Plate / Food Stall">
-                Plate Service / Food Stall
-              </option>
-              <option value="Western Set">Western Set</option>
-              <option value="Buffet / Coffee Break">
-                Buffet / Coffee Break
-              </option>
+              <option value="Plate / Food Stall">Plate Service / Food Stall (13 × 18 cm)</option>
+              <option value="Western Set">Western Set (10.5 × 14.8 cm)</option>
+              <option value="Buffet / Coffee Break">Buffet / Coffee Break (10.2 × 9.7 cm)</option>
+              <option value="Mini Tag / Cocktail">Mini Tag / Cocktail (9 × 9 cm)</option>
             </select>
           </div>
           <div>
@@ -389,13 +386,10 @@
                 background-size: 1.2em;
               "
             >
-              <option value="Plate / Food Stall">
-                Plate Service / Food Stall
-              </option>
-              <option value="Western Set">Western Set</option>
-              <option value="Buffet / Coffee Break">
-                Buffet / Coffee Break
-              </option>
+              <option value="Plate / Food Stall">Plate Service / Food Stall (13 × 18 cm)</option>
+              <option value="Western Set">Western Set (10.5 × 14.8 cm)</option>
+              <option value="Buffet / Coffee Break">Buffet / Coffee Break (10.2 × 9.7 cm)</option>
+              <option value="Mini Tag / Cocktail">Mini Tag / Cocktail (9 × 9 cm)</option>
             </select>
           </div>
         </div>
@@ -520,6 +514,41 @@
       </div>
     </div>
 
+    <div id="bulkDeleteModal" class="modal-overlay">
+      <div
+        class="bg-white rounded-3xl shadow-2xl w-[420px] flex flex-col relative z-50 overflow-hidden text-center p-8"
+      >
+        <div
+          class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-100"
+        >
+          <span class="material-symbols-outlined text-3xl">delete_sweep</span>
+        </div>
+        <h2 class="text-xl font-bold text-slate-800 mb-2">ยืนยันการลบหลายรายการ</h2>
+        <p
+          class="text-xs text-slate-500 font-medium leading-relaxed mb-6"
+        >
+          คุณต้องการลบรูปภาพพื้นหลังที่เลือกจำนวน <strong id="bulkDeleteCountDisplay" class="text-red-500 font-bold">0</strong> รายการใช่หรือไม่? ข้อมูลจะไม่สามารถกู้คืนได้
+        </p>
+        <div class="flex gap-3 justify-center">
+          <button
+            type="button"
+            onclick="closeModal('bulkDeleteModal')"
+            class="flex-1 py-3 text-slate-500 font-bold bg-slate-100 hover:bg-slate-200 rounded-xl transition-all cursor-pointer text-xs uppercase tracking-wider"
+          >
+            ยกเลิก
+          </button>
+          <button
+            type="button"
+            id="confirmBulkDeleteBtn"
+            onclick="executeBulkDeleteBg()"
+            class="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 shadow-lg shadow-red-500/20 transition-all cursor-pointer text-xs uppercase tracking-wider"
+          >
+            ลบข้อมูลทั้งหมด
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div id="confirmSaveModal" class="modal-overlay">
       <div
         class="bg-white rounded-[2.5rem] shadow-2xl w-[480px] p-10 flex flex-col items-center relative z-50 overflow-hidden text-center"
@@ -568,6 +597,16 @@
       const supabaseKey = "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI";
       const dbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+      function getTemplateSizeLabel(sizeVal) {
+        const map = {
+            "Plate / Food Stall": "Plate Service / Food Stall (13 × 18 cm)",
+            "Western Set": "Western Set (10.5 × 14.8 cm)",
+            "Buffet / Coffee Break": "Buffet / Coffee Break (10.2 × 9.7 cm)",
+            "Mini Tag / Cocktail": "Mini Tag / Cocktail (9 × 9 cm)"
+        };
+        return map[sizeVal] || sizeVal;
+      }
+
       let dbBackgrounds = [];
       let editBgImageFile = null;
 
@@ -595,11 +634,23 @@
         const filterValue = document.getElementById("bgFilter").value;
 
         const filteredBgs = dbBackgrounds.filter((bg) => {
-          const matchName = (bg.name || "").toLowerCase().startsWith(query);
+          const matchName = (bg.name || "").toLowerCase().includes(query);
           const matchSize =
             filterValue === "all" || bg.template_size === filterValue;
           return matchName && matchSize;
         });
+
+        if (query) {
+          filteredBgs.sort((a, b) => {
+            const aName = (a.name || "").toLowerCase();
+            const bName = (b.name || "").toLowerCase();
+            const aStarts = aName.startsWith(query);
+            const bStarts = bName.startsWith(query);
+            if (aStarts && !bStarts) return -1;
+            if (!aStarts && bStarts) return 1;
+            return 0;
+          });
+        }
 
         const countEl = document.getElementById("totalBgCount");
         countEl.innerText = `${filteredBgs.length} Items`;
@@ -620,16 +671,18 @@
 
           html += `
           <tr class="bg-row border-b border-slate-100 last:border-0">
-            <td class="py-5 px-8 text-center">
-                <span class="text-[15px] font-black text-slate-400">${index + 1}</span>
+            <td class="py-5 px-6">
+                <div class="flex items-center gap-4">
+                    <input type="checkbox" value="${bg.id}" class="row-checkbox w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all" onclick="updateBulkDeleteButton()">
+                    <span class="w-6 text-center text-[14px] font-extrabold text-slate-500">${index + 1}</span>
+                </div>
             </td>
             <td class="py-5 px-6">
-                <div class="font-extrabold text-slate-800 text-[15px] cursor-pointer hover:text-[#006d4b]" onclick="openViewModal('${bgDataStr}')">${bg.name}</div>
+                <div class="text-[14px] font-extrabold text-slate-700 cursor-pointer hover:text-[#006d4b]" onclick="openViewModal('${bgDataStr}')">${bg.name}</div>
             </td>
             <td class="py-5 px-6">
-                <div class="inline-flex items-center gap-1.5 text-[11px] font-black text-[#006d4b] bg-[#006d4b]/10 px-3 py-1.5 rounded-lg uppercase tracking-widest">
-                 <span class="material-symbols-outlined text-[15px]">aspect_ratio</span>
-                 ${bg.template_size}
+                <div class="inline-block text-[11px] font-black text-[#006d4b] bg-[#006d4b]/10 px-3 py-1.5 rounded-lg uppercase tracking-widest leading-relaxed">
+                 ${getTemplateSizeLabel(bg.template_size)}
                 </div>
             </td>
             <td class="py-5 px-8 text-center">
@@ -648,6 +701,9 @@
           </tr>`;
         });
         tbody.innerHTML = html;
+        const selectAll = document.getElementById("selectAllCheckbox");
+        if(selectAll) selectAll.checked = false;
+        if(typeof updateBulkDeleteButton === 'function') updateBulkDeleteButton();
       }
 
       function closeModal(id) {
@@ -676,12 +732,92 @@
         }
       }
 
+      function toggleSelectAll() {
+        const selectAll = document.getElementById("selectAllCheckbox");
+        const checkboxes = document.querySelectorAll(".row-checkbox");
+        checkboxes.forEach(cb => cb.checked = selectAll.checked);
+        updateBulkDeleteButton();
+      }
+
+      function updateBulkDeleteButton() {
+        const checkboxes = document.querySelectorAll(".row-checkbox:checked");
+        const btn = document.getElementById("bulkDeleteBtn");
+        const countSpan = document.getElementById("selectedCount");
+        const selectAll = document.getElementById("selectAllCheckbox");
+        const allCheckboxes = document.querySelectorAll(".row-checkbox");
+        
+        countSpan.innerText = checkboxes.length;
+        
+        if (checkboxes.length > 0) {
+          btn.classList.remove("hidden");
+          btn.classList.add("flex");
+        } else {
+          btn.classList.add("hidden");
+          btn.classList.remove("flex");
+        }
+
+        if (allCheckboxes.length > 0 && checkboxes.length === allCheckboxes.length) {
+            selectAll.checked = true;
+        } else {
+            selectAll.checked = false;
+        }
+      }
+
+      function confirmBulkDelete() {
+        const checkboxes = document.querySelectorAll(".row-checkbox:checked");
+        if (checkboxes.length === 0) return;
+        
+        document.getElementById("bulkDeleteCountDisplay").innerText = checkboxes.length;
+        document.getElementById("bulkDeleteModal").classList.add("active");
+      }
+
+      async function executeBulkDeleteBg() {
+        const checkboxes = document.querySelectorAll(".row-checkbox:checked");
+        const idsToDelete = Array.from(checkboxes).map(cb => cb.value);
+        if (idsToDelete.length === 0) return;
+
+        const btn = document.getElementById("confirmBulkDeleteBtn");
+        btn.disabled = true;
+        btn.innerHTML = `<span class="material-symbols-outlined animate-spin align-middle text-sm">progress_activity</span>`;
+
+        try {
+          // get the background records to delete images from storage
+          const toDelete = dbBackgrounds.filter(bg => idsToDelete.includes(bg.id.toString()));
+          
+          for(const bg of toDelete) {
+            if (bg.image_url) {
+                try {
+                    const urlParts = bg.image_url.split("/");
+                    const fileName = urlParts[urlParts.length - 1];
+                    await dbClient.storage.from("backgrounds").remove([fileName]);
+                } catch(e) {}
+            }
+          }
+
+          // Send bulk delete request
+          await dbClient.from("backgrounds").delete().in("id", idsToDelete);
+          await logSystemActivity(
+            "DELETE",
+            `ลบรูปภาพพื้นหลังจำนวน: ${idsToDelete.length} รายการ`
+          );
+          closeModal("bulkDeleteModal");
+          document.getElementById("selectAllCheckbox").checked = false;
+          updateBulkDeleteButton();
+          fetchBackgrounds();
+        } catch (e) {
+          alert("Error deleting backgrounds: " + e.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = "ลบข้อมูลทั้งหมด";
+        }
+      }
+
       function openViewModal(bgDataEncoded) {
         const bg = JSON.parse(decodeURIComponent(bgDataEncoded));
         document.getElementById("viewImage").src = bg.image_url;
         document.getElementById("viewName").innerText = bg.name;
         document.getElementById("viewSize").innerHTML =
-          `<span class="material-symbols-outlined text-[16px]">aspect_ratio</span> ${bg.template_size}`;
+          `${getTemplateSizeLabel(bg.template_size)}`;
         document.getElementById("viewModal").classList.add("active");
       }
 
