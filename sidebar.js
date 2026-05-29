@@ -9,7 +9,7 @@ function injectSidebar() {
 
   // 1. เมนูพื้นฐาน (เปลี่ยนชื่อเป็น Saved Tags ตามที่ต้องการ)
   let navItems = `
-    <a href="dashboard.html" id="nav-dashboard" class="flex items-center gap-3 px-4 py-3.5 text-slate-700 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
+    <a href="dashboard.html" id="nav-dashboard" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
       <span class="material-symbols-outlined text-[24px]">dashboard</span> Saved Tags
     </a>
   `;
@@ -17,13 +17,13 @@ function injectSidebar() {
   // 2. เมนูสำหรับ Admin และ Super Admin (สลับ Ingredients ขึ้นก่อน Menus)
   if (userData.role === "Admin" || userData.role === "Super Admin") {
     navItems += `
-      <a href="ing-database.html" id="nav-ing-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-700 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
+      <a href="ing-database.html" id="nav-ing-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
         <span class="material-symbols-outlined text-[24px]">category</span> Ingredients Gallery
       </a>
-      <a href="menu-database.html" id="nav-menu-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-700 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
+      <a href="menu-database.html" id="nav-menu-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
         <span class="material-symbols-outlined text-[24px]">database</span> Menus
       </a>
-      <a href="bg-database.html" id="nav-bg-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-700 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
+      <a href="bg-database.html" id="nav-bg-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
         <span class="material-symbols-outlined text-[24px]">wallpaper</span> Backgrounds
       </a>
     `;
@@ -33,13 +33,13 @@ function injectSidebar() {
   if (userData.role === "Super Admin") {
     navItems += `
       <hr class="my-3 border-slate-200">
-      <a href="logs.html" id="nav-logs" class="flex items-center gap-3 px-4 py-3.5 text-slate-700 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
+      <a href="logs.html" id="nav-logs" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
         <span class="material-symbols-outlined text-[24px]">history</span> Activity Logs
       </a>
-      <a href="users-management.html" id="nav-users" class="flex items-center gap-3 px-4 py-3.5 text-slate-700 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
+      <a href="users-management.html" id="nav-users" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
         <span class="material-symbols-outlined text-[24px]">manage_accounts</span> User Management
       </a>
-      <a href="analytics.html" id="nav-analytics" class="flex items-center gap-3 px-4 py-3.5 text-slate-700 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
+      <a href="analytics.html" id="nav-analytics" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
         <span class="material-symbols-outlined text-[24px]">insights</span> Analytics & Insights
       </a>
     `;
@@ -66,7 +66,7 @@ function injectSidebar() {
       </nav>
       
       <div class="mt-auto flex flex-col gap-2 border-t border-slate-100 pt-6">
-        <button onclick="showMyProfileModal()" class="flex items-center gap-3 text-slate-700 font-bold px-4 py-4 hover:bg-slate-50 rounded-xl transition-all w-full text-left text-base">
+        <button onclick="showMyProfileModal()" class="flex items-center gap-3 text-slate-500 font-bold px-4 py-4 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all w-full text-left text-base">
           <span class="material-symbols-outlined text-[#006d4b] text-[24px]">manage_accounts</span> My Account
         </button>
 
@@ -99,7 +99,7 @@ function injectSidebar() {
     if (activeId) {
       const activeEl = document.getElementById(activeId);
       if (activeEl) {
-        activeEl.classList.remove("text-slate-700");
+        activeEl.classList.remove("text-slate-500");
         activeEl.classList.add("bg-emerald-50", "text-[#006d4b]");
       }
     }
