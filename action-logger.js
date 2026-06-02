@@ -10,6 +10,12 @@ const logDbClient = supabase.createClient(LOG_SUPABASE_URL, LOG_SUPABASE_KEY);
  */
 async function logSystemActivity(actionType, actionDetails) {
   try {
+    const actionUpper = actionType.toUpperCase();
+    // ยกเลิกการเก็บ Log สำหรับการแก้ไขและการลบตามที่ต้องการ
+    if (actionUpper === 'EDIT' || actionUpper === 'DELETE') {
+      return true;
+    }
+
     // 1. ดึงข้อมูลผู้ใช้จริงจาก localStorage
     const rawUserData = localStorage.getItem("userData");
     const userData = rawUserData ? JSON.parse(rawUserData) : null;

@@ -263,7 +263,7 @@
                 System Actions Overview
               </h3>
             </div>
-            <p class="text-sm text-slate-500 mb-6">สัดส่วนการสร้าง แก้ไข พิมพ์ และลบ</p>
+            <p class="text-sm text-slate-500 mb-6">สัดส่วนการสร้าง และสั่งพิมพ์</p>
             <div class="chart-container">
               <canvas id="actionPieChart"></canvas>
             </div>
@@ -453,51 +453,159 @@
       }
 
       // ─── Main data load ──────────────────────────────────────────
+      async function fetchAndAggregateLogs(start, end) {
+        const agg = {
+          actionCounts: { CREATE: 0, EDIT: 0, PRINT: 0, DELETE: 0 },
+          paperSizes: { A4: 0, A3: 0, Other: 0 },
+          topUsers: {}, 
+          printRanking: {},
+          trendData: {}
+        };
+
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const endOfToday = new Date();
+        endOfToday.setHours(23,59,59,999);
+
+        // Fetch Summaries
+        let summaryQuery = dbClient.from("analytics_daily_summary").select("*");
+        if (start) summaryQuery = summaryQuery.gte('summary_date', start.toISOString().split('T')[0]);
+        if (end) summaryQuery = summaryQuery.lte('summary_date', end.toISOString().split('T')[0]);
+        const { data: summaries, error: sumErr } = await summaryQuery;
+        
+        if (!sumErr && summaries) {
+          summaries.forEach(s => {
+            if (s.action_counts) {
+              for (let a in s.action_counts) agg.actionCounts[a] = (agg.actionCounts[a] || 0) + s.action_counts[a];
+            }
+            if (s.paper_sizes) {
+              for (let p in s.paper_sizes) agg.paperSizes[p] = (agg.paperSizes[p] || 0) + s.paper_sizes[p];
+            }
+            if (s.top_users) {
+              s.top_users.forEach(u => agg.topUsers[u.name] = (agg.topUsers[u.name] || 0) + u.count);
+            }
+            if (s.menu_print_ranking) {
+              s.menu_print_ranking.forEach(r => {
+                const key = `${r.name}|${r.paper_size}`;
+                if (!agg.printRanking[key]) agg.printRanking[key] = { name: r.name, paperSize: r.paper_size, count: 0 };
+                agg.printRanking[key].count += r.count;
+              });
+            }
+            agg.trendData[s.summary_date] = { 
+              prints: (s.action_counts && s.action_counts.PRINT) ? s.action_counts.PRINT : 0,
+              creates: (s.action_counts && s.action_counts.CREATE) ? s.action_counts.CREATE : 0
+            };
+          });
+        }
+
+        // Fetch Live logs for "today"
+        let liveStart = new Date(today);
+        if (start && start > today) liveStart = start;
+        let liveEnd = end ? end : endOfToday;
+
+        if (liveStart <= liveEnd) {
+          let logsQuery = dbClient.from("activity_logs").select("*")
+            .gte('created_at', liveStart.toISOString())
+            .lte('created_at', liveEnd.toISOString());
+            
+          const { data: liveLogs, error: logErr } = await logsQuery;
+          if (!logErr && liveLogs) {
+            liveLogs.forEach(l => {
+              if (l.action === 'EDIT' || l.action === 'DELETE') return;
+              agg.actionCounts[l.action] = (agg.actionCounts[l.action] || 0) + 1;
+              
+              if (l.action === 'PRINT' || l.action === 'CREATE') {
+                let paperSize = "A4";
+                const m1 = l.details.match(/\(Size:\s*([^)]+)\)/i);
+                const m2 = l.details.match(/ขนาด\s*([A-Za-z0-9]+)/i);
+                if (m1) paperSize = m1[1].toUpperCase();
+                else if (m2) paperSize = m2[1].toUpperCase();
+                
+                if (paperSize !== 'A3' && paperSize !== 'A4') paperSize = 'Other';
+                agg.paperSizes[paperSize] = (agg.paperSizes[paperSize] || 0) + 1;
+              }
+
+              const userName = l.user_name || 'Anonymous';
+              agg.topUsers[userName] = (agg.topUsers[userName] || 0) + 1;
+
+              if (l.action === 'PRINT') {
+                const name = extractTagNameFromDetails(l.details);
+                let paperSize = "A4";
+                const m1 = l.details.match(/\(Size:\s*([^)]+)\)/i);
+                const m2 = l.details.match(/ขนาด\s*([A-Za-z0-9]+)/i);
+                if (m1) paperSize = m1[1].toUpperCase();
+                else if (m2) paperSize = m2[1].toUpperCase();
+
+                const key = `${name}|${paperSize}`;
+                if (!agg.printRanking[key]) agg.printRanking[key] = { name: name, paperSize: paperSize, count: 0 };
+                agg.printRanking[key].count += 1;
+              }
+
+              const logDate = new Date(l.created_at);
+              const dateStr = `${logDate.getFullYear()}-${String(logDate.getMonth() + 1).padStart(2, '0')}-${String(logDate.getDate()).padStart(2, '0')}`;
+              if (!agg.trendData[dateStr]) agg.trendData[dateStr] = { prints: 0, creates: 0 };
+              if (l.action === 'PRINT') agg.trendData[dateStr].prints += 1;
+              if (l.action === 'CREATE') agg.trendData[dateStr].creates += 1;
+            });
+          }
+        }
+        return agg;
+      }
+
       async function loadAnalyticsData() {
         const refreshBadge = document.getElementById('refreshStatus');
         refreshBadge.classList.remove('hidden');
         refreshBadge.classList.add('flex');
 
         try {
-          let logsQuery = dbClient.from("activity_logs").select("*").order("created_at", { ascending: false });
-          let tagsQuery = dbClient.from("profiles").select("id", { count: "exact" });
           let menusQuery = dbClient.from("menus").select("id", { count: "exact" });
           let usersQuery = dbClient.from("users").select("id", { count: "exact" });
 
           const { start, end } = getDateRange();
           if (start) {
-            logsQuery = logsQuery.gte('created_at', start.toISOString());
-            tagsQuery = tagsQuery.gte('created_at', start.toISOString());
             menusQuery = menusQuery.gte('created_at', start.toISOString());
             usersQuery = usersQuery.gte('created_at', start.toISOString());
           }
           if (end) {
-            logsQuery = logsQuery.lte('created_at', end.toISOString());
-            tagsQuery = tagsQuery.lte('created_at', end.toISOString());
             menusQuery = menusQuery.lte('created_at', end.toISOString());
             usersQuery = usersQuery.lte('created_at', end.toISOString());
           }
 
-          const [logsRes, tagsRes, menusRes, usersRes] = await Promise.all([
-            logsQuery, tagsQuery, menusQuery, usersQuery
+          const [menusRes, usersRes] = await Promise.all([
+            menusQuery, usersQuery
           ]);
 
-          cachedLogs = logsRes.data || [];
-          const totalTags = tagsRes.count || 0;
+          // Calculate total tags from localStorage based on date filter
+          const allSavedTags = JSON.parse(localStorage.getItem("savedTags") || "[]");
+          let filteredTagsCount = 0;
+          allSavedTags.forEach(tag => {
+            const tDate = tag.createdAt ? new Date(tag.createdAt).getTime() : 0;
+            let inRange = true;
+            if (start && tDate < start.getTime()) inRange = false;
+            if (end && tDate > end.getTime()) inRange = false;
+            if (inRange) filteredTagsCount++;
+          });
+
+          const totalTags = filteredTagsCount;
           const totalMenus = menusRes.count || 0;
           const totalUsers = usersRes.count || 0;
-          const totalPrints = cachedLogs.filter(l => l.action === 'PRINT').length;
+
+          const aggregatedData = await fetchAndAggregateLogs(start, end);
+          
+          // Override the CREATE action count with the actual remaining tags count
+          // This ensures the summary pie chart reflects what is currently in the system
+          aggregatedData.actionCounts.CREATE = totalTags;
 
           animateValue("statTotalTags", 0, totalTags, 800);
-          animateValue("statTotalPrints", 0, totalPrints, 800);
+          animateValue("statTotalPrints", 0, aggregatedData.actionCounts.PRINT || 0, 800);
           animateValue("statTotalMenus", 0, totalMenus, 800);
           animateValue("statTotalUsers", 0, totalUsers, 800);
 
-          renderActionPieChart(cachedLogs);
-          renderTrendsLineChart(cachedLogs);
-          renderTopUsersBarChart(cachedLogs);
-          renderPaperSizeChart(cachedLogs);
-          processRankingData(cachedLogs);
+          renderActionPieChart(aggregatedData.actionCounts);
+          renderTrendsLineChart(aggregatedData.trendData);
+          renderTopUsersBarChart(aggregatedData.topUsers);
+          renderPaperSizeChart(aggregatedData.paperSizes);
+          processRankingData(aggregatedData.printRanking);
 
         } catch(err) {
           console.error("Error fetching analytics data:", err);
@@ -522,19 +630,16 @@
       }
 
       // ─── Action Pie Chart ────────────────────────────────────────
-      function renderActionPieChart(logs) {
-        const counts = { CREATE: 0, EDIT: 0, PRINT: 0, DELETE: 0 };
-        logs.forEach(l => { if (counts[l.action] !== undefined) counts[l.action]++; });
-
+      function renderActionPieChart(counts) {
         const ctx = document.getElementById('actionPieChart').getContext('2d');
         if (pieChart) pieChart.destroy();
         pieChart = new Chart(ctx, {
           type: 'doughnut',
           data: {
-            labels: ['CREATE', 'EDIT', 'PRINT', 'DELETE'],
+            labels: ['CREATE', 'PRINT'],
             datasets: [{
-              data: [counts.CREATE, counts.EDIT, counts.PRINT, counts.DELETE],
-              backgroundColor: [CHART_COLORS.create, CHART_COLORS.edit, CHART_COLORS.print, CHART_COLORS.delete],
+              data: [counts.CREATE||0, counts.PRINT||0],
+              backgroundColor: [CHART_COLORS.create, CHART_COLORS.print],
               borderWidth: 0, hoverOffset: 6
             }]
           },
@@ -553,7 +658,7 @@
       }
 
       // ─── Trends Line Chart ───────────────────────────────────────
-      function renderTrendsLineChart(logs) {
+      function renderTrendsLineChart(trendDataObj) {
         const days = 7;
         const dayArr = [];
         const today = new Date(); today.setHours(0,0,0,0);
@@ -565,14 +670,15 @@
         const createData = Array(days).fill(0);
         const printData = Array(days).fill(0);
 
-        logs.forEach(log => {
-          if (log.action !== 'CREATE' && log.action !== 'PRINT') return;
-          const ld = new Date(log.created_at); ld.setHours(0,0,0,0);
-          const idx = dayArr.findIndex(d => d.getTime() === ld.getTime());
-          if (idx !== -1) {
-            if (log.action === 'CREATE') createData[idx]++;
-            if (log.action === 'PRINT') printData[idx]++;
-          }
+        dayArr.forEach((d, idx) => {
+           const year = d.getFullYear();
+           const month = String(d.getMonth() + 1).padStart(2, '0');
+           const day = String(d.getDate()).padStart(2, '0');
+           const dateStr = `${year}-${month}-${day}`;
+           if (trendDataObj[dateStr]) {
+             createData[idx] = trendDataObj[dateStr].creates || 0;
+             printData[idx] = trendDataObj[dateStr].prints || 0;
+           }
         });
 
         const ctx = document.getElementById('trendsLineChart').getContext('2d');
@@ -603,12 +709,7 @@
       }
 
       // ─── Top Users Bar Chart ─────────────────────────────────────
-      function renderTopUsersBarChart(logs) {
-        const userCounts = {};
-        logs.forEach(l => {
-          const n = l.user_name || 'Unknown';
-          userCounts[n] = (userCounts[n]||0) + 1;
-        });
+      function renderTopUsersBarChart(userCounts) {
         const sorted = Object.entries(userCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
         const labels = sorted.map(u => u[0]);
         const data = sorted.map(u => u[1]);
@@ -642,21 +743,10 @@
       }
 
       // ─── Paper Size Doughnut Chart ───────────────────────────────
-      function renderPaperSizeChart(logs) {
-        const usageLogs = logs.filter(log => log.action === 'PRINT' || log.action === 'CREATE');
-        let a4Count = 0, a3Count = 0, otherCount = 0;
-        
-        usageLogs.forEach(log => {
-          let paperSize = "A4";
-          const m1 = log.details.match(/\(Size:\s*([^)]+)\)/i);
-          const m2 = log.details.match(/ขนาด\s*([A-Za-z0-9]+)/i);
-          if (m1) paperSize = m1[1].toUpperCase();
-          else if (m2) paperSize = m2[1].toUpperCase();
-
-          if (paperSize === "A3") a3Count++;
-          else if (paperSize === "A4") a4Count++;
-          else otherCount++;
-        });
+      function renderPaperSizeChart(paperSizes) {
+        let a4Count = paperSizes.A4 || 0;
+        let a3Count = paperSizes.A3 || 0;
+        let otherCount = paperSizes.Other || 0;
 
         const ctx = document.getElementById('paperSizePieChart').getContext('2d');
         if (paperChart) paperChart.destroy();
@@ -696,24 +786,8 @@
         return clean;
       }
 
-      function processRankingData(logs) {
-        const printLogs = logs.filter(log => log.action === 'PRINT');
-        const counts = {};
-        
-        printLogs.forEach(log => {
-          const name = extractTagNameFromDetails(log.details);
-          let paperSize = "A4";
-          const m1 = log.details.match(/\(Size:\s*([^)]+)\)/i);
-          const m2 = log.details.match(/ขนาด\s*([A-Za-z0-9]+)/i);
-          if (m1) paperSize = m1[1].toUpperCase();
-          else if (m2) paperSize = m2[1].toUpperCase();
-          
-          const key = `${name}|${paperSize}`;
-          if (!counts[key]) counts[key] = { count: 0, name, paperSize };
-          counts[key].count++;
-        });
-        
-        allRankingData = Object.values(counts).map(i => ({ name: i.name, type: i.paperSize, count: i.count }));
+      function processRankingData(printRankingObj) {
+        allRankingData = Object.values(printRankingObj).map(i => ({ name: i.name, type: i.paperSize, count: i.count }));
         updateRankingDisplay();
       }
 

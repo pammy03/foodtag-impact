@@ -82,15 +82,17 @@ function injectSidebar() {
     container.innerHTML = sidebarHTML;
 
     // --- 🎯 Logic สำหรับปุ่มเขียว (Active Menu) ---
-    const currentPage = window.location.pathname.split("/").pop();
+    let currentPage = window.location.pathname.split("/").pop();
+    currentPage = currentPage.replace('.html', '');
+
     const menuMapping = {
-      "dashboard.html": "nav-dashboard",
-      "analytics.html": "nav-analytics",
-      "ing-database.html": "nav-ing-db",
-      "menu-database.html": "nav-menu-db",
-      "bg-database.html": "nav-bg-db",
-      "logs.html": "nav-logs",
-      "users-management.html": "nav-users",
+      "dashboard": "nav-dashboard",
+      "analytics": "nav-analytics",
+      "ing-database": "nav-ing-db",
+      "menu-database": "nav-menu-db",
+      "bg-database": "nav-bg-db",
+      "logs": "nav-logs",
+      "users-management": "nav-users",
     };
 
     const activeId =
