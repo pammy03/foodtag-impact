@@ -1062,6 +1062,7 @@
           const displayOrder = startIndex + idx + 1;
           const dims = getPaperDimensions(tag.templateName, tag.paperSize);
           const creatorName = tag.createdBy || "UNKNOWN";
+          const displayTemplateName = tag.templateName === "Mini Tag / Cocktail" ? "Mini Tag" : tag.templateName;
 
           // 🎯 จัดการสถานะ Draft/Ready
           const isDraft = tag.status === "Draft";
@@ -1118,7 +1119,7 @@
                   </div>
                   
                   <div class="list-meta-center flex items-center gap-4 w-full">
-                    <div class="flex items-center gap-1.5 text-[12px] font-medium text-slate-400 shrink-0" title="Template Size"><span class="material-symbols-outlined text-[16px]">straighten</span><span class="truncate max-w-[150px]">${tag.templateName}</span></div>
+                    <div class="flex items-center gap-1.5 text-[12px] font-medium text-slate-400 shrink-0" title="Template Size"><span class="material-symbols-outlined text-[16px]">straighten</span><span class="truncate max-w-[150px]">${displayTemplateName}</span></div>
                     <span class="w-1.5 h-1.5 rounded-full bg-slate-300 hidden sm:block shrink-0"></span>
                     <div class="flex items-center gap-1.5 text-[12px] font-medium text-slate-400 shrink-0" title="Created on"><span class="material-symbols-outlined text-[16px]">calendar_today</span><span class="truncate">${formattedDate}</span></div>
                     <span class="w-1.5 h-1.5 rounded-full bg-slate-300 hidden sm:block shrink-0"></span>
@@ -1172,7 +1173,7 @@
                     </div>
                   </div>
                   
-                  <div class="flex items-center gap-1.5 text-slate-500 text-sm mb-4 mt-2 font-medium"><span class="material-symbols-outlined text-[18px]">straighten</span><span>${tag.templateName}</span></div>
+                  <div class="flex items-center gap-1.5 text-slate-500 text-sm mb-4 mt-2 font-medium"><span class="material-symbols-outlined text-[18px]">straighten</span><span>${displayTemplateName}</span></div>
                   
                   <div class="flex items-center justify-between mt-auto pt-4 border-t border-slate-100">
                     <div class="flex items-center gap-1 text-[12px] font-medium text-slate-400" title="Created on"><span class="material-symbols-outlined text-[16px]">calendar_today</span>${formattedDate}</div>
@@ -1390,7 +1391,8 @@
         const modal = document.getElementById("previewModal");
         modal.classList.remove("hidden");
         document.getElementById("modalTitle").innerText = tag.title;
-        document.getElementById("modalSubtitle").innerText = tag.templateName;
+        const displayTemplateName = tag.templateName === "Mini Tag / Cocktail" ? "Mini Tag" : tag.templateName;
+        document.getElementById("modalSubtitle").innerText = displayTemplateName;
         document.getElementById("modalPaperSizeBadge").innerText =
           tag.paperSize || "A4";
 
