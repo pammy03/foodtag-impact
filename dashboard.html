@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Saved Tags | IMPACT Food Tag</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=Mali:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link
@@ -199,6 +199,10 @@
         grid-template-columns: repeat(2, 10.2cm);
         grid-template-rows: repeat(2, 9.7cm);
       }
+      .grid-mini {
+        grid-template-columns: repeat(3, 9cm);
+        grid-template-rows: repeat(2, 9cm);
+      }
 
       .slot {
         border-right: 1px dashed #64748b !important;
@@ -232,6 +236,12 @@
       .grid-buffet .slot:nth-child(n + 3) {
         border-bottom: none !important;
       }
+      .grid-mini .slot:nth-child(3n) {
+        border-right: none !important;
+      }
+      .grid-mini .slot:nth-child(n + 4) {
+        border-bottom: none !important;
+      }
       .slot-bg {
         position: absolute;
         inset: 0;
@@ -240,25 +250,35 @@
         object-fit: fill;
         z-index: 0;
       }
+      .slot-content {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      }
 
       .allergen-container {
         display: flex;
         flex-wrap: wrap;
-        gap: 2px;
+        gap: 4px;
         justify-content: center;
         align-items: center;
-        margin: 8px auto 0;
-        width: 98%;
+        width: 100%;
         padding: 0;
         box-sizing: border-box;
       }
       .allergen-icon {
-        width: calc((100% - 8px) / 5);
+        width: calc((100% - 16px) / 5);
         max-width: 120px;
         aspect-ratio: 1 / 1;
         object-fit: contain;
         display: block;
         background: transparent;
+        padding: 0;
+        border: none;
+        box-shadow: none;
       }
 
       .card-preview-container {
@@ -391,21 +411,26 @@
         .grid-buffet .slot:nth-child(n + 3) {
           border-bottom: none !important;
         }
+        .grid-mini .slot:nth-child(3n) {
+          border-right: none !important;
+        }
+        .grid-mini .slot:nth-child(n + 4) {
+          border-bottom: none !important;
+        }
 
         .allergen-container {
           display: flex !important;
           flex-wrap: wrap !important;
-          gap: 6 !important;
+          gap: 4px !important;
           justify-content: center !important;
-          margin-top: 8px !important;
-          width: 98% !important;
+          width: 100% !important;
           margin-left: auto !important;
           margin-right: auto !important;
           padding: 0 !important;
           box-sizing: border-box !important;
         }
         .allergen-icon {
-          width: calc((100% - 8px) / 5) !important;
+          width: calc((100% - 16px) / 5) !important;
           max-width: 120px !important;
           aspect-ratio: 1 / 1 !important;
           height: auto !important;
@@ -799,7 +824,7 @@
           orientation: "landscape",
           slots_count: 2,
           grid_class: "grid-western",
-          hide_allergies: true,
+          hide_allergies: false,
           w: 1123,
           h: 794,
         },
@@ -807,6 +832,14 @@
           orientation: "landscape",
           slots_count: 4,
           grid_class: "grid-buffet",
+          hide_allergies: false,
+          w: 1123,
+          h: 794,
+        },
+        "Mini Tag / Cocktail": {
+          orientation: "landscape",
+          slots_count: 6,
+          grid_class: "grid-mini",
           hide_allergies: false,
           w: 1123,
           h: 794,
@@ -1272,6 +1305,13 @@
           const fEn = menu.fontEn || "'Inter', sans-serif";
           const sEn = menu.fontSizeEn || "22px";
 
+          const sizeMainStyle = menu.allergenIconSizeMain
+            ? `width: ${menu.allergenIconSizeMain}px !important; height: ${menu.allergenIconSizeMain}px !important;`
+            : "";
+          const sizeContainStyle = menu.allergenIconSizeContain
+            ? `width: ${menu.allergenIconSizeContain}px !important; height: ${menu.allergenIconSizeContain}px !important;`
+            : "";
+
           let fullAllergensHtml = "";
 
           if (!config.hide_allergies) {
@@ -1288,13 +1328,13 @@
                     a.image_url ||
                     "https://placehold.co/100x100/e2e8f0/94a3b8?text=No+Image";
                   const nameText = a.name_th || a.name_en || "";
-                  return `<img src="${imgUrl}" class="allergen-icon" title="${nameText}" crossorigin="anonymous" onerror="this.src='https://placehold.co/100x100/fee2e2/ef4444?text=Error'">`;
+                  return `<img src="${imgUrl}" class="allergen-icon" style="${sizeMainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.src='https://placehold.co/100x100/fee2e2/ef4444?text=Error'">`;
                 })
                 .join("");
 
               mainHtml = `
-                <div class="w-full mt-2" style="display: flex; flex-direction: column; align-items: center;">
-                  <div style="font-family: 'Inter', sans-serif; font-size: 8px; font-weight: 900; color: #dc2626; letter-spacing: 0.1em; text-align: center; margin-bottom: 2px; width: 100%;">MAIN CONTAIN</div>
+                <div class="w-full mt-2">
+                  <div class="text-[9px] sm:text-[10px] font-black text-red-600 tracking-widest text-center mb-1 w-full uppercase" style="font-family: 'Inter', sans-serif;">CONTAIN</div>
                   <div class="allergen-container">${icons}</div>
                 </div>`;
             }
@@ -1312,13 +1352,13 @@
                     a.image_url ||
                     "https://placehold.co/100x100/e2e8f0/94a3b8?text=No+Image";
                   const nameText = a.name_th || a.name_en || "";
-                  return `<img src="${imgUrl}" class="allergen-icon" title="${nameText}" crossorigin="anonymous" onerror="this.src='https://placehold.co/100x100/fee2e2/ef4444?text=Error'">`;
+                  return `<img src="${imgUrl}" class="allergen-icon" style="${sizeContainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.src='https://placehold.co/100x100/fee2e2/ef4444?text=Error'">`;
                 })
                 .join("");
 
               containHtml = `
-                <div class="w-full mt-2" style="display: flex; flex-direction: column; align-items: center;">
-                  <div style="font-family: 'Inter', sans-serif; font-size: 8px; font-weight: 900; color: #047857; letter-spacing: 0.1em; text-align: center; margin-bottom: 2px; width: 100%;">ALLERGIES</div>
+                <div class="w-full mt-2">
+                  <div class="text-[9px] sm:text-[10px] font-black text-emerald-700 tracking-widest text-center mb-1 w-full uppercase" style="font-family: 'Inter', sans-serif;">MAY CONTAIN</div>
                   <div class="allergen-container">${icons}</div>
                 </div>`;
             }
@@ -1333,8 +1373,8 @@
                 ${bgHtml}
                 <div class="w-full h-full flex flex-col items-center justify-center relative z-10 p-4">
                     <div class="slot-content">
-                        <div style="font-family: ${fTh}; font-size: ${sTh};" class="font-black text-slate-800 mb-1 leading-tight text-center whitespace-pre-line">${menu.name_th || ""}</div>
-                        <div style="font-family: ${fEn}; font-size: ${sEn};" class="font-medium text-slate-500 mb-1 leading-tight text-center whitespace-pre-line">${menu.name_en || ""}</div>
+                        <div class="slot-text-th font-black text-slate-800 mb-1 leading-tight text-center whitespace-pre-line" style="font-family: ${fTh}; font-size: ${sTh};">${menu.name_th || ""}</div>
+                        <div class="slot-text-en font-medium text-slate-500 mb-1 leading-tight text-center whitespace-pre-line" style="font-family: ${fEn}; font-size: ${sEn};">${menu.name_en || ""}</div>
                         ${fullAllergensHtml}
                     </div>
                 </div>

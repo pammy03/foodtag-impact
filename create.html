@@ -150,9 +150,15 @@
       }
 
       .slot.active {
-        outline: 3px solid #006d4b;
-        outline-offset: -3px;
         z-index: 10;
+      }
+      .slot.active::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border: 3px solid #006d4b;
+        pointer-events: none;
+        z-index: 50;
       }
 
       aside .scroll-area::-webkit-scrollbar {
@@ -1986,8 +1992,12 @@
           if (error) throw error;
 
           if (bgs && bgs.length > 0) {
+            const seen = new Set();
             bgs.forEach((bg) => {
-              select.innerHTML += `<option value="${bg.image_url}">${bg.name}</option>`;
+              if (!seen.has(bg.image_url)) {
+                seen.add(bg.image_url);
+                select.innerHTML += `<option value="${bg.image_url}">${bg.name}</option>`;
+              }
             });
           }
 
