@@ -188,20 +188,28 @@
         box-sizing: border-box;
       }
       .grid-plate {
-        grid-template-columns: repeat(2, 13cm);
-        grid-template-rows: repeat(1, 18cm);
+        width: 26cm;
+        height: 18cm;
+        grid-template-columns: repeat(2, 50%);
+        grid-template-rows: repeat(1, 100%);
       }
       .grid-western {
-        grid-template-columns: repeat(2, 10.5cm);
-        grid-template-rows: repeat(1, 14.8cm);
+        width: 21cm;
+        height: 14.8cm;
+        grid-template-columns: repeat(2, 50%);
+        grid-template-rows: repeat(1, 100%);
       }
       .grid-buffet {
-        grid-template-columns: repeat(2, 10.2cm);
-        grid-template-rows: repeat(2, 9.7cm);
+        width: 20.4cm;
+        height: 19.4cm;
+        grid-template-columns: repeat(2, 50%);
+        grid-template-rows: repeat(2, 50%);
       }
       .grid-mini {
-        grid-template-columns: repeat(3, 9cm);
-        grid-template-rows: repeat(2, 9cm);
+        width: 27cm;
+        height: 18cm;
+        grid-template-columns: repeat(3, 33.3333%);
+        grid-template-rows: repeat(2, 50%);
       }
 
       .slot {
@@ -363,27 +371,24 @@
           background: white !important;
         }
         .preview-paper {
+          position: relative !important;
           box-shadow: none !important;
           margin: auto !important;
-          width: 100% !important;
-          height: 100% !important;
           padding: 0 !important;
           page-break-after: avoid;
           box-sizing: border-box !important;
           transform: none !important;
           transform-origin: center center !important;
           border: none !important;
-          display: flex !important;
-          justify-content: center !important;
-          align-items: center !important;
         }
         .inner-grid {
           border: 1px dashed #64748b !important;
-          width: max-content !important;
-          height: max-content !important;
-          margin: auto !important;
+          margin: 0 !important;
+          position: absolute !important;
+          top: 50% !important;
+          left: 50% !important;
+          transform: translate(-50%, -50%) !important;
           box-sizing: border-box !important;
-          display: grid !important;
         }
         .slot {
           border-right: 1px dashed #64748b !important;
