@@ -60,45 +60,7 @@
       }
 
 
-      /* ==========================================
-         PDF AND PRINT STYLES
-      ========================================== */
-      .generating-pdf .no-print,
-      .generating-pdf #sidebar-container {
-        display: none !important;
-      }
-      .generating-pdf {
-        width: 1122px !important;
-        height: auto !important;
-        overflow: visible !important;
-      }
-      .generating-pdf .flex-1,
-      .generating-pdf main {
-        overflow: visible !important;
-        height: auto !important;
-      }
 
-      @media print {
-        @page { size: A4 landscape; margin: 10mm; }
-        body, html {
-          background: white !important;
-          -webkit-print-color-adjust: exact !important;
-          print-color-adjust: exact !important;
-          height: auto !important;
-          overflow: visible !important;
-          display: block !important;
-        }
-        #sidebar-container, .no-print { display: none !important; }
-        .flex-1 { display: block !important; overflow: visible !important; height: auto !important; background: white !important; }
-        main { overflow: visible !important; padding: 0 !important; display: block !important; height: auto !important; }
-        header { padding: 0 0 10px 0 !important; margin-bottom: 15px !important; border: none !important; box-shadow: none !important; background: white !important; position: static !important; }
-        .max-w-\[1600px\] { max-width: none !important; padding: 0 !important; }
-        .grid { display: grid !important; }
-        .chart-container { height: 250px !important; page-break-inside: avoid; break-inside: avoid; }
-        .bg-white { box-shadow: none !important; border: 1px solid #e2e8f0 !important; break-inside: avoid; }
-        .overflow-x-auto { overflow: visible !important; }
-        .print-break-inside-avoid { page-break-inside: avoid; break-inside: avoid; }
-      }
     </style>
   </head>
 
@@ -107,7 +69,7 @@
 
     <main class="flex-1 overflow-y-auto z-0 relative flex flex-col custom-scroll" id="main-content-area">
       <!-- Header -->
-      <header class="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-end sticky top-0 z-30 shrink-0 no-print">
+      <header class="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-center sticky top-0 z-30 shrink-0 no-print">
         <div>
           <div class="flex items-center gap-3">
             <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">
@@ -121,12 +83,12 @@
               Refreshing...
             </div>
           </div>
-          <p class="text-slate-500 font-medium mt-1">
+          <p class="text-slate-500 font-medium mt-1 whitespace-nowrap">
             ภาพรวมการใช้งานระบบ สร้าง แก้ไข สั่งพิมพ์ และจัดการข้อมูล
           </p>
         </div>
 
-        <div class="flex gap-3 items-center flex-wrap">
+        <div class="flex gap-3 items-center flex-wrap justify-end">
           <div class="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 h-[42px] shrink-0 hover:bg-white focus-within:bg-white focus-within:ring-2 focus-within:ring-[#006d4b]/20 focus-within:border-[#006d4b] transition-all">
             <span class="material-symbols-outlined text-[18px] text-slate-400 mr-2">calendar_month</span>
             <select
@@ -149,6 +111,8 @@
             <input type="date" id="dateEnd" class="text-sm font-medium text-slate-600 outline-none bg-transparent cursor-pointer" onchange="loadAnalyticsData()">
           </div>
 
+          <div id="customRangeBreak" class="hidden w-full h-0"></div>
+
           <button
             type="button"
             onclick="loadAnalyticsData()"
@@ -158,14 +122,6 @@
             Refresh
           </button>
           
-          <button
-            type="button"
-            onclick="window.print()"
-            class="px-4 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm cursor-pointer active:scale-95"
-          >
-            <span class="material-symbols-outlined text-[20px]">print</span>
-            Print
-          </button>
 
           <button
             type="button"
@@ -185,7 +141,7 @@
       <div class="p-8 max-w-[1600px] w-full mx-auto flex flex-col flex-1 pb-16">
         
         <!-- ━━━━ KPI Cards ━━━━ -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8 print-break-inside-avoid">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[calc((100%_-_3rem)_/_3)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-6 mb-8 print-break-inside-avoid">
           
           <!-- Total Tags -->
           <div class="kpi-card bg-white rounded-2xl p-6 border border-slate-200 shadow-sm relative overflow-hidden group">
@@ -196,8 +152,8 @@
               <div class="w-14 h-14 bg-emerald-50 text-[#006d4b] rounded-2xl flex items-center justify-center shrink-0 border border-emerald-100">
                 <span class="material-symbols-outlined text-[28px]">sell</span>
               </div>
-              <div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Tags Created</p>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 truncate">Total Tags Created</p>
                 <h3 class="text-3xl font-black text-slate-800 tracking-tight leading-none" id="statTotalTags">0</h3>
               </div>
             </div>
@@ -212,8 +168,8 @@
               <div class="w-14 h-14 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center shrink-0 border border-blue-100">
                 <span class="material-symbols-outlined text-[28px]">print</span>
               </div>
-              <div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Print Actions</p>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 truncate">Print Actions</p>
                 <h3 class="text-3xl font-black text-slate-800 tracking-tight leading-none" id="statTotalPrints">0</h3>
               </div>
             </div>
@@ -228,8 +184,8 @@
               <div class="w-14 h-14 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center shrink-0 border border-purple-100">
                 <span class="material-symbols-outlined text-[28px]">restaurant_menu</span>
               </div>
-              <div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Menus</p>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 truncate">Total Menus</p>
                 <h3 class="text-3xl font-black text-slate-800 tracking-tight leading-none" id="statTotalMenus">0</h3>
               </div>
             </div>
@@ -244,8 +200,8 @@
               <div class="w-14 h-14 bg-orange-50 text-orange-500 rounded-2xl flex items-center justify-center shrink-0 border border-orange-100">
                 <span class="material-symbols-outlined text-[28px]">group</span>
               </div>
-              <div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Active Staff</p>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 truncate">Active Staff</p>
                 <h3 class="text-3xl font-black text-slate-800 tracking-tight leading-none" id="statTotalUsers">0</h3>
               </div>
             </div>
@@ -418,12 +374,15 @@
       function handleDateFilterChange() {
         const val = document.getElementById("dateFilter").value;
         const customContainer = document.getElementById("customDateContainer");
+        const customBreak = document.getElementById("customRangeBreak");
         if (val === "custom") {
           customContainer.classList.remove("hidden");
           customContainer.classList.add("flex");
+          if (customBreak) customBreak.classList.remove("hidden");
         } else {
           customContainer.classList.add("hidden");
           customContainer.classList.remove("flex");
+          if (customBreak) customBreak.classList.add("hidden");
           loadAnalyticsData();
         }
       }
@@ -462,93 +421,66 @@
           trendData: {}
         };
 
-        const today = new Date();
-        today.setHours(0,0,0,0);
-        const endOfToday = new Date();
-        endOfToday.setHours(23,59,59,999);
-
-        // Fetch Summaries
-        let summaryQuery = dbClient.from("analytics_daily_summary").select("*");
-        if (start) summaryQuery = summaryQuery.gte('summary_date', start.toISOString().split('T')[0]);
-        if (end) summaryQuery = summaryQuery.lte('summary_date', end.toISOString().split('T')[0]);
-        const { data: summaries, error: sumErr } = await summaryQuery;
+        let logsQuery = dbClient.from("activity_logs").select("*");
+        if (start) {
+          logsQuery = logsQuery.gte('created_at', start.toISOString());
+        }
+        if (end) {
+          logsQuery = logsQuery.lte('created_at', end.toISOString());
+        }
         
-        if (!sumErr && summaries) {
-          summaries.forEach(s => {
-            if (s.action_counts) {
-              for (let a in s.action_counts) agg.actionCounts[a] = (agg.actionCounts[a] || 0) + s.action_counts[a];
+        const { data: liveLogs, error: logErr } = await logsQuery;
+        if (!logErr && liveLogs) {
+          liveLogs.forEach(l => {
+            if (l.action === 'EDIT' || l.action === 'DELETE') return;
+            agg.actionCounts[l.action] = (agg.actionCounts[l.action] || 0) + 1;
+            
+            if (l.action === 'PRINT' || l.action === 'CREATE') {
+              let paperSize = "A4";
+              if (l.metadata && l.metadata.paper_size) {
+                paperSize = l.metadata.paper_size.toUpperCase();
+              } else {
+                const m1 = l.details.match(/\(Size:\s*([^)]+)\)/i);
+                const m2 = l.details.match(/ขนาด\s*([A-Za-z0-9]+)/i);
+                if (m1) paperSize = m1[1].toUpperCase();
+                else if (m2) paperSize = m2[1].toUpperCase();
+              }
+              
+              if (paperSize !== 'A3' && paperSize !== 'A4') paperSize = 'Other';
+              agg.paperSizes[paperSize] = (agg.paperSizes[paperSize] || 0) + 1;
             }
-            if (s.paper_sizes) {
-              for (let p in s.paper_sizes) agg.paperSizes[p] = (agg.paperSizes[p] || 0) + s.paper_sizes[p];
+
+            const userName = l.user_name || 'Anonymous';
+            agg.topUsers[userName] = (agg.topUsers[userName] || 0) + 1;
+
+            if (l.action === 'PRINT') {
+              let name = "Unknown";
+              let paperSize = "A4";
+
+              if (l.metadata) {
+                name = l.metadata.menu_name || extractTagNameFromDetails(l.details);
+                paperSize = l.metadata.paper_size ? l.metadata.paper_size.toUpperCase() : "A4";
+              } else {
+                name = extractTagNameFromDetails(l.details);
+                const m1 = l.details.match(/\(Size:\s*([^)]+)\)/i);
+                const m2 = l.details.match(/ขนาด\s*([A-Za-z0-9]+)/i);
+                if (m1) paperSize = m1[1].toUpperCase();
+                else if (m2) paperSize = m2[1].toUpperCase();
+              }
+
+              const key = `${name}|${paperSize}`;
+              if (!agg.printRanking[key]) agg.printRanking[key] = { name: name, paperSize: paperSize, count: 0 };
+              agg.printRanking[key].count += 1;
             }
-            if (s.top_users) {
-              s.top_users.forEach(u => agg.topUsers[u.name] = (agg.topUsers[u.name] || 0) + u.count);
-            }
-            if (s.menu_print_ranking) {
-              s.menu_print_ranking.forEach(r => {
-                const key = `${r.name}|${r.paper_size}`;
-                if (!agg.printRanking[key]) agg.printRanking[key] = { name: r.name, paperSize: r.paper_size, count: 0 };
-                agg.printRanking[key].count += r.count;
-              });
-            }
-            agg.trendData[s.summary_date] = { 
-              prints: (s.action_counts && s.action_counts.PRINT) ? s.action_counts.PRINT : 0,
-              creates: (s.action_counts && s.action_counts.CREATE) ? s.action_counts.CREATE : 0
-            };
+
+            const logDate = new Date(l.created_at);
+            const dateStr = `${logDate.getFullYear()}-${String(logDate.getMonth() + 1).padStart(2, '0')}-${String(logDate.getDate()).padStart(2, '0')}`;
+            if (!agg.trendData[dateStr]) agg.trendData[dateStr] = { prints: 0, creates: 0 };
+            if (l.action === 'PRINT') agg.trendData[dateStr].prints += 1;
+            if (l.action === 'CREATE') agg.trendData[dateStr].creates += 1;
           });
         }
-
-        // Fetch Live logs for "today"
-        let liveStart = new Date(today);
-        if (start && start > today) liveStart = start;
-        let liveEnd = end ? end : endOfToday;
-
-        if (liveStart <= liveEnd) {
-          let logsQuery = dbClient.from("activity_logs").select("*")
-            .gte('created_at', liveStart.toISOString())
-            .lte('created_at', liveEnd.toISOString());
-            
-          const { data: liveLogs, error: logErr } = await logsQuery;
-          if (!logErr && liveLogs) {
-            liveLogs.forEach(l => {
-              if (l.action === 'EDIT' || l.action === 'DELETE') return;
-              agg.actionCounts[l.action] = (agg.actionCounts[l.action] || 0) + 1;
-              
-              if (l.action === 'PRINT' || l.action === 'CREATE') {
-                let paperSize = "A4";
-                const m1 = l.details.match(/\(Size:\s*([^)]+)\)/i);
-                const m2 = l.details.match(/ขนาด\s*([A-Za-z0-9]+)/i);
-                if (m1) paperSize = m1[1].toUpperCase();
-                else if (m2) paperSize = m2[1].toUpperCase();
-                
-                if (paperSize !== 'A3' && paperSize !== 'A4') paperSize = 'Other';
-                agg.paperSizes[paperSize] = (agg.paperSizes[paperSize] || 0) + 1;
-              }
-
-              const userName = l.user_name || 'Anonymous';
-              agg.topUsers[userName] = (agg.topUsers[userName] || 0) + 1;
-
-              if (l.action === 'PRINT') {
-                const name = extractTagNameFromDetails(l.details);
-                let paperSize = "A4";
-                const m1 = l.details.match(/\(Size:\s*([^)]+)\)/i);
-                const m2 = l.details.match(/ขนาด\s*([A-Za-z0-9]+)/i);
-                if (m1) paperSize = m1[1].toUpperCase();
-                else if (m2) paperSize = m2[1].toUpperCase();
-
-                const key = `${name}|${paperSize}`;
-                if (!agg.printRanking[key]) agg.printRanking[key] = { name: name, paperSize: paperSize, count: 0 };
-                agg.printRanking[key].count += 1;
-              }
-
-              const logDate = new Date(l.created_at);
-              const dateStr = `${logDate.getFullYear()}-${String(logDate.getMonth() + 1).padStart(2, '0')}-${String(logDate.getDate()).padStart(2, '0')}`;
-              if (!agg.trendData[dateStr]) agg.trendData[dateStr] = { prints: 0, creates: 0 };
-              if (l.action === 'PRINT') agg.trendData[dateStr].prints += 1;
-              if (l.action === 'CREATE') agg.trendData[dateStr].creates += 1;
-            });
-          }
-        }
+        
         return agg;
       }
 
@@ -575,26 +507,11 @@
             menusQuery, usersQuery
           ]);
 
-          // Calculate total tags from localStorage based on date filter
-          const allSavedTags = JSON.parse(localStorage.getItem("savedTags") || "[]");
-          let filteredTagsCount = 0;
-          allSavedTags.forEach(tag => {
-            const tDate = tag.createdAt ? new Date(tag.createdAt).getTime() : 0;
-            let inRange = true;
-            if (start && tDate < start.getTime()) inRange = false;
-            if (end && tDate > end.getTime()) inRange = false;
-            if (inRange) filteredTagsCount++;
-          });
-
-          const totalTags = filteredTagsCount;
           const totalMenus = menusRes.count || 0;
           const totalUsers = usersRes.count || 0;
 
           const aggregatedData = await fetchAndAggregateLogs(start, end);
-          
-          // Override the CREATE action count with the actual remaining tags count
-          // This ensures the summary pie chart reflects what is currently in the system
-          aggregatedData.actionCounts.CREATE = totalTags;
+          const totalTags = aggregatedData.actionCounts.CREATE || 0;
 
           animateValue("statTotalTags", 0, totalTags, 800);
           animateValue("statTotalPrints", 0, aggregatedData.actionCounts.PRINT || 0, 800);
@@ -742,7 +659,7 @@
         });
       }
 
-      // ─── Paper Size Doughnut Chart ───────────────────────────────
+      // ─── Paper Size Bar Chart ───────────────────────────────
       function renderPaperSizeChart(paperSizes) {
         let a4Count = paperSizes.A4 || 0;
         let a3Count = paperSizes.A3 || 0;
@@ -751,23 +668,56 @@
         const ctx = document.getElementById('paperSizePieChart').getContext('2d');
         if (paperChart) paperChart.destroy();
 
-        const labels = [], data = [], bgColors = [];
-        if (a4Count > 0) { labels.push('A4'); data.push(a4Count); bgColors.push(CHART_COLORS.edit); }
-        if (a3Count > 0) { labels.push('A3'); data.push(a3Count); bgColors.push(CHART_COLORS.print); }
-        if (otherCount > 0) { labels.push('Other'); data.push(otherCount); bgColors.push(CHART_COLORS.other); }
+        // Always show A4 and A3 so the user sees all available standard sizes
+        const labels = ['A4', 'A3'];
+        const data = [a4Count, a3Count];
+        const bgColors = [CHART_COLORS.edit, CHART_COLORS.print];
         
-        if (data.length === 0) { labels.push('No Data'); data.push(1); bgColors.push('#e2e8f0'); }
+        if (otherCount > 0) {
+          labels.push('Other');
+          data.push(otherCount);
+          bgColors.push(CHART_COLORS.other);
+        }
 
         paperChart = new Chart(ctx, {
-          type: 'doughnut',
-          data: { labels, datasets: [{ data, backgroundColor: bgColors, borderWidth: 0, hoverOffset: 6 }] },
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              data,
+              backgroundColor: bgColors,
+              borderRadius: 6,
+              barThickness: 24
+            }]
+          },
           options: {
-            responsive: true, maintainAspectRatio: false, cutout: '65%',
+            responsive: true, maintainAspectRatio: false,
+            indexAxis: 'y',
             plugins: {
-              datalabels: { display: true, color: ctx => ctx.dataset.data[ctx.dataIndex] === 1 && labels[0] === 'No Data' ? 'transparent' : '#ffffff', font: { weight: 'bold', size: 14 }, formatter: (v, ctx) => labels[0] === 'No Data' ? '' : v },
-              legend: { position: 'bottom', labels: { font: { weight: '600', size: 12 }, usePointStyle: true, padding: 20 } },
-              tooltip: { enabled: labels[0] !== 'No Data', backgroundColor: 'rgba(15, 23, 42, 0.95)', padding: 12, cornerRadius: 8 }
-            }
+              datalabels: {
+                display: true, anchor: 'end', align: 'end',
+                color: '#475569', font: { weight: '800', size: 12 },
+                formatter: v => v > 0 ? v : '0'
+              },
+              legend: { display: false },
+              tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.95)', padding: 12, cornerRadius: 8 }
+            },
+            scales: {
+              x: { 
+                display: true, 
+                beginAtZero: true, 
+                grace: '10%',
+                grid: { color: '#f8fafc' },
+                ticks: { stepSize: 1, color: '#94a3b8', font: { size: 10 } },
+                border: { display: false }
+              },
+              y: { 
+                grid: { display: false }, 
+                border: { display: false }, 
+                ticks: { font: { weight: '700', size: 12 }, color: '#334155' } 
+              }
+            },
+            layout: { padding: { right: 30 } }
           }
         });
       }
@@ -887,42 +837,525 @@
       }
 
       // ─── PDF Export ──────────────────────────────────────────────
-      async function downloadPDF() {
-        const indicator = document.getElementById('pdfLoading');
-        indicator.classList.remove('hidden');
-        
-        try {
-          document.body.classList.add('generating-pdf');
-          const { jsPDF } = window.jspdf;
-          const pdf = new jsPDF('l', 'mm', 'a4'); 
-          
-          const mainContent = document.getElementById('main-content-area');
-          const canvas = await html2canvas(mainContent, {
-            scale: 2, useCORS: true, logging: false, windowWidth: 1122
-          });
+/* ==========================================================================
+   IMPACT Food Tag — Analytics PDF Export
+   ไฟล์นี้มีฟังก์ชันเดียว: downloadPDF()
+   เรียกใช้: onclick="downloadPDF()"
+   ต้องการ library: jsPDF (jspdf.umd.min.js), html2canvas
+   ========================================================================== */
 
-          const imgData = canvas.toDataURL('image/png');
-          const pdfWidth = 297;
-          const margin = 10;
-          const contentWidth = pdfWidth - (margin * 2);
-          
-          const imgProps = pdf.getImageProperties(imgData);
-          const imgHeight = (imgProps.height * contentWidth) / imgProps.width;
+async function downloadPDF() {
 
-          pdf.addImage(imgData, 'PNG', margin, margin, contentWidth, imgHeight);
-          
-          const sel = document.getElementById('dateFilter');
-          const dfText = sel.options[sel.selectedIndex].text;
-          pdf.save(`Analytics_FoodTag_${dfText.replace(/\\s+/g, '_')}.pdf`);
-          
-        } catch (err) {
-          console.error("PDF generation error:", err);
-          alert("Failed to generate PDF. Please try again.");
-        } finally {
-          document.body.classList.remove('generating-pdf');
-          indicator.classList.add('hidden');
-        }
+  /* ─────────────────────────────────────────────
+     0. UI FEEDBACK — แสดง loading indicator
+  ───────────────────────────────────────────── */
+  const loadingEl = document.getElementById("pdfLoading");
+  const btnEl     = document.getElementById("btnDownloadPdf");
+  if (loadingEl) loadingEl.classList.remove("hidden");
+  if (btnEl)     btnEl.disabled = true;
+
+
+  /* ─────────────────────────────────────────────
+     1. COLLECT DATA — รวบรวมข้อมูลจากหน้าจอ
+  ───────────────────────────────────────────── */
+
+  // ช่วงวันที่ที่ filter อยู่
+  const dateFilterEl  = document.getElementById("dateFilter");
+  const dateFilterText = dateFilterEl
+    ? dateFilterEl.options[dateFilterEl.selectedIndex].text
+    : "All Time";
+
+  // วันที่ generate report
+  const generatedAt = new Date().toLocaleString("th-TH", {
+    dateStyle: "long",
+    timeStyle: "short",
+  });
+
+  // ผู้ export
+  const userData   = JSON.parse(localStorage.getItem("userData") || "{}");
+  const exportedBy = userData.name || userData.role || "Unknown";
+
+  // KPI Cards
+  const kpi = {
+    tags:   document.getElementById("statTotalTags")?.innerText   || "0",
+    prints: document.getElementById("statTotalPrints")?.innerText || "0",
+    menus:  document.getElementById("statTotalMenus")?.innerText  || "0",
+    staff:  document.getElementById("statTotalUsers")?.innerText  || "0",
+  };
+
+  // Chart images (แปลง canvas → base64)
+  const chartImages = {
+    trend:  safeChartImage("trendsLineChart"),
+    action: safeChartImage("actionPieChart"),
+    paper:  safeChartImage("paperSizePieChart"),
+    users:  safeChartImage("topUsersBarChart"),
+  };
+
+  // Print Ranking (top 10)
+  const top10 = allRankingData
+    .slice()
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10);
+
+
+  /* ─────────────────────────────────────────────
+     2. BUILD REPORT HTML — สร้าง DOM สำหรับ render
+  ───────────────────────────────────────────── */
+  const reportEl = document.createElement("div");
+  Object.assign(reportEl.style, {
+    position:   "absolute",
+    top:        "-9999px",
+    left:       "-9999px",
+    width:      "794px",          // A4 portrait px
+    background: "#ffffff",
+    fontFamily: "'Inter', 'Sarabun', sans-serif",
+    color:      "#1e293b",
+    padding:    "0",
+    boxSizing:  "border-box",
+  });
+
+  reportEl.innerHTML = buildReportHTML({
+    dateFilterText,
+    generatedAt,
+    exportedBy,
+    kpi,
+    chartImages,
+    top10,
+  });
+
+  document.body.appendChild(reportEl);
+
+  // รอให้ DOM + รูปภาพโหลดครบ
+  await waitMs(300);
+
+
+  /* ─────────────────────────────────────────────
+     3. RENDER TO PDF — html2canvas + jsPDF
+  ───────────────────────────────────────────── */
+  try {
+    const { jsPDF } = window.jspdf;
+    const pdf       = new jsPDF("p", "mm", "a4");
+    const pageW     = 210;       // mm
+    const pageH     = 297;       // mm
+
+    // Render each page separately for perfect A4 alignment
+    const pages = reportEl.querySelectorAll('.page');
+    for (let i = 0; i < pages.length; i++) {
+      const pageEl = pages[i];
+      const canvas = await html2canvas(pageEl, {
+        scale:           2,         // ความละเอียดสูง
+        useCORS:         true,
+        backgroundColor: "#ffffff",
+        logging:         false,
+      });
+
+      const imgData    = canvas.toDataURL("image/png");
+      const imgProps   = pdf.getImageProperties(imgData);
+      
+      // คำนวณความสูงให้พอดีกับความกว้าง A4
+      const printWidth = pageW;
+      const printHeight = (imgProps.height * printWidth) / imgProps.width;
+
+      if (i > 0) pdf.addPage();
+      pdf.addImage(imgData, "PNG", 0, 0, printWidth, printHeight);
+    }
+
+    // บันทึกไฟล์
+    const fileName = `Analytics_FoodTag_${dateFilterText.replace(/\\s+/g, "_")}.pdf`;
+    pdf.save(fileName);
+
+  } catch (err) {
+    console.error("[downloadPDF] Render error:", err);
+    alert("ไม่สามารถสร้าง PDF ได้ กรุณาลองใหม่อีกครั้ง");
+
+  } finally {
+    // ล้าง DOM ชั่วคราว
+    document.body.removeChild(reportEl);
+
+    // คืนสถานะปุ่ม
+    if (loadingEl) loadingEl.classList.add("hidden");
+    if (btnEl)     btnEl.disabled = false;
+  }
+}
+
+
+/* ==========================================================================
+   HELPER FUNCTIONS
+   ========================================================================== */
+
+/** ดึง base64 จาก Chart.js canvas — คืน "" ถ้าไม่มี */
+function safeChartImage(canvasId) {
+  const el = document.getElementById(canvasId);
+  return el ? el.toDataURL("image/png") : "";
+}
+
+/** รอ ms ก่อน resolve */
+function waitMs(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+
+/* ==========================================================================
+   HTML TEMPLATE — สร้าง markup ของ Report ทั้งหมด
+   แบ่งเป็น 3 ส่วนชัดเจน: Page 1 / Page 2 / Page 3
+   ========================================================================== */
+
+function buildReportHTML({ dateFilterText, generatedAt, exportedBy, kpi, chartImages, top10 }) {
+
+  return `
+    <style>
+      /* ── Base ─────────────────────────────────── */
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body { font-family: 'Inter', 'Sarabun', sans-serif; }
+
+      /* ── Page wrapper ─────────────────────────── */
+      .page {
+        width: 794px;
+        height: 1123px;       /* Fixed A4 height px */
+        padding: 56px 64px;
+        background: #fff;
+        page-break-after: always;
+        overflow: hidden;
       }
+
+      /* ── Section header ───────────────────────── */
+      .section-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border-left: 3px solid #006d4b;
+        padding-left: 10px;
+      }
+
+      /* ── Divider ──────────────────────────────── */
+      .divider {
+        border: none;
+        border-top: 1px solid #f1f5f9;
+        margin: 32px 0;
+      }
+
+      /* ── Cards ────────────────────────────────── */
+      .card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px 24px;
+      }
+      .card-label {
+        font-size: 10px;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 6px;
+      }
+      .card-value {
+        font-size: 28px;
+        font-weight: 800;
+        line-height: 1;
+      }
+      .card-desc {
+        font-size: 11px;
+        color: #94a3b8;
+        margin-top: 6px;
+        line-height: 1.5;
+      }
+
+      /* ── Insight box ──────────────────────────── */
+      .insight { border-radius: 8px; padding: 10px 14px; margin-top: 10px; font-size: 12px; line-height: 1.6; }
+      .insight-green  { background: #f0fdf4; border: 1px solid #bbf7d0; color: #065f46; }
+      .insight-red    { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+      .insight-gray   { background: #f8fafc; border: 1px solid #e2e8f0; color: #334155; }
+      .insight-title  { font-weight: 700; margin-bottom: 3px; }
+
+      /* ── Table ────────────────────────────────── */
+      table       { width: 100%; border-collapse: collapse; }
+      th          { background: #f8fafc; padding: 9px 14px; text-align: left; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
+      td          { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid #f1f5f9; }
+      tr:last-child td { border-bottom: none; }
+
+      /* ── Footer ───────────────────────────────── */
+      .page-footer {
+        margin-top: auto;
+        padding-top: 20px;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 11px;
+        color: #94a3b8;
+      }
+
+      /* ── Grid helpers ─────────────────────────── */
+      .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+      .grid-2 > div { display: flex; flex-direction: column; }
+      .grid-2 > div > .card { flex: 1; }
+      .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+    </style>
+
+    ${buildPage1({ dateFilterText, generatedAt, exportedBy, kpi })}
+    ${buildPage2({ chartImages })}
+    ${buildPage3({ top10, chartImages })}
+  `;
+}
+
+
+/* ─────────────────────────────────────────────────────
+   PAGE 1 · Cover + KPI Summary
+───────────────────────────────────────────────────── */
+function buildPage1({ dateFilterText, generatedAt, exportedBy, kpi }) {
+  return `
+    <div class="page" style="display:flex; flex-direction:column;">
+
+      <!-- ══ Report Header ══ -->
+      <div style="background:#006d4b; border-radius:12px; padding:28px 32px; margin-bottom:32px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <p style="font-size:10px; color:#6ee7b7; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:8px;">
+              IMPACT Food Tag System
+            </p>
+            <h1 style="font-size:22px; font-weight:800; color:#ffffff; line-height:1.2;">
+              Analytics &amp; Insights Report
+            </h1>
+            <p style="font-size:12px; color:#a7f3d0; margin-top:8px;">
+              Data Range: <strong style="color:#ffffff;">${dateFilterText}</strong>
+              &nbsp;·&nbsp; Generated: ${generatedAt}
+            </p>
+          </div>
+          <div style="text-align:right;">
+            <p style="font-size:10px; color:#6ee7b7; text-transform:uppercase; letter-spacing:0.06em;">Exported by</p>
+            <p style="font-size:14px; font-weight:700; color:#ffffff; margin-top:4px;">${exportedBy}</p>
+            <p style="font-size:11px; color:#a7f3d0; margin-top:3px;">AIA Convention Centre BKK</p>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ══ Section A · KPI Cards ══ -->
+      <p class="section-title">Section A &nbsp;·&nbsp; Key Performance Indicators</p>
+
+      <div class="grid-2" style="gap:20px;">
+
+        <!-- Tags Created -->
+        <div class="card" style="padding:24px;">
+          <p class="card-label">Tags Created</p>
+          <p class="card-value" style="color:#006d4b; font-size:36px; margin:8px 0;">${kpi.tags}</p>
+          <p class="card-desc">จำนวนป้ายอาหารทั้งหมดที่ถูกสร้างในช่วงเวลานี้</p>
+        </div>
+
+        <!-- Print Actions -->
+        <div class="card" style="padding:24px;">
+          <p class="card-label">Print Actions</p>
+          <p class="card-value" style="color:#3b82f6; font-size:36px; margin:8px 0;">${kpi.prints}</p>
+          <p class="card-desc">ครั้งที่สั่งพิมพ์หรือ Export (Print / JPG / PNG / PDF / Share)</p>
+        </div>
+
+        <!-- Total Menus -->
+        <div class="card" style="padding:24px;">
+          <p class="card-label">Total Menus</p>
+          <p class="card-value" style="color:#7c3aed; font-size:36px; margin:8px 0;">${kpi.menus}</p>
+          <p class="card-desc">จำนวนเมนูทั้งหมดในฐานข้อมูล ณ วันที่ออก Report นี้</p>
+        </div>
+
+        <!-- Active Staff -->
+        <div class="card" style="padding:24px;">
+          <p class="card-label">Active Staff</p>
+          <p class="card-value" style="color:#f59e0b; font-size:36px; margin:8px 0;">${kpi.staff}</p>
+          <p class="card-desc">จำนวน User ที่มีการใช้งานระบบในช่วงเวลาที่เลือก</p>
+        </div>
+
+      </div>
+
+
+      <!-- ══ Footer ══ -->
+      <div class="page-footer">
+        <span>IMPACT Food Tag · Analytics Report · Confidential · Internal Use Only</span>
+        <span>Page 1 of 3</span>
+      </div>
+
+    </div>
+  `;
+}
+
+
+/* ─────────────────────────────────────────────────────
+   PAGE 2 · Charts & Breakdowns
+───────────────────────────────────────────────────── */
+function buildPage2({ chartImages }) {
+
+  // สร้าง <img> tag หรือ placeholder ถ้าไม่มีรูป (ปรับให้ไม่ยืดเสียทรง)
+  function chartImg(src, alt, h = 200) {
+    if (!src) {
+      return `<div style="height:${h}px; background:#f1f5f9; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:13px;">ไม่มีข้อมูล Chart</div>`;
+    }
+    return `<div style="width:100%; text-align:center;">
+              <img src="${src}" alt="${alt}" style="max-width:100%; height:auto; max-height:${h}px; object-fit:contain; border-radius:8px; display:inline-block;">
+            </div>`;
+  }
+
+  return `
+    <div class="page" style="display:flex; flex-direction:column;">
+
+      <!-- ══ Section B · Activity Trends ══ -->
+      <p class="section-title">Section B &nbsp;·&nbsp; Activity Trends (Last 7 Days)</p>
+      <div class="card" style="padding:16px;">
+        ${chartImg(chartImages.trend, "Activity Trends Chart", 320)}
+        <div class="insight insight-green" style="margin-top:20px;">
+          <p class="insight-title">วิธีอ่านกราฟนี้</p>
+          <p>เส้นกราฟแสดงจำนวน CREATE (เส้นประ) และ PRINT (พื้นทึบ) รายวัน
+          วันไหนที่ CREATE สูงกว่า PRINT มาก แสดงว่ามี Draft ค้างในระบบ
+          ควรติดตาม Tag ที่ยังไม่ถูกพิมพ์</p>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- ══ Section C & D · Action + Paper Size ══ -->
+      <div class="grid-2">
+        <div>
+          <p class="section-title">Section C &nbsp;·&nbsp; System Actions</p>
+          <div class="card" style="padding:16px; display:flex; flex-direction:column;">
+            ${chartImg(chartImages.action, "System Actions Chart", 260)}
+            <div class="insight insight-green" style="margin-top:auto;">
+              <p class="insight-title">สัดส่วน Create vs Print</p>
+              <p>อัตราส่วน Create:Print ควรอยู่ที่ 1:1 ถึง 2:1
+              ถ้า Create สูงกว่ามาก แสดงว่ามี Tag ที่สร้างแต่ไม่ได้ใช้งาน</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <p class="section-title">Section D &nbsp;·&nbsp; Paper Size Usage</p>
+          <div class="card" style="padding:16px; display:flex; flex-direction:column;">
+            ${chartImg(chartImages.paper, "Paper Size Chart", 260)}
+            <div class="insight insight-gray" style="margin-top:auto;">
+              <p class="insight-title">วางแผนการสั่ง Stock กระดาษ</p>
+              <p>สัดส่วน A4 vs A3 ช่วยให้ฝ่ายจัดซื้อกำหนดปริมาณการสั่งซื้อ
+              กระดาษแต่ละขนาดได้อย่างเหมาะสม</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ══ Footer ══ -->
+      <div class="page-footer">
+        <span>IMPACT Food Tag · Analytics Report · Confidential · Internal Use Only</span>
+        <span>Page 2 of 3</span>
+      </div>
+
+    </div>
+  `;
+}
+
+
+/* ─────────────────────────────────────────────────────
+   PAGE 3 · Print Ranking + Key Insights
+───────────────────────────────────────────────────── */
+function buildPage3({ top10, chartImages }) {
+
+  // สร้าง rank badge
+  function rankBadge(rank) {
+    if (rank === 1) return `<span style="background:#fef3c7; color:#b45309; font-weight:800; padding:2px 8px; border-radius:20px; font-size:12px;">1</span>`;
+    if (rank === 2) return `<span style="background:#f1f5f9; color:#475569; font-weight:800; padding:2px 8px; border-radius:20px; font-size:12px;">2</span>`;
+    if (rank === 3) return `<span style="background:#fff7ed; color:#c2410c; font-weight:800; padding:2px 8px; border-radius:20px; font-size:12px;">3</span>`;
+    return `<span style="color:#94a3b8; font-weight:600; font-size:12px;">${rank}</span>`;
+  }
+
+  // สร้างแถว ranking
+  const rows = top10.length > 0
+    ? top10.map((item, i) => `
+        <tr>
+          <td style="text-align:center;">${rankBadge(i + 1)}</td>
+          <td style="font-weight:600; color:#1e293b;">${item.name}</td>
+          <td style="text-align:center;">
+            <span style="background:#e2e8f0; color:#475569; padding:2px 9px; border-radius:4px; font-size:11px; font-weight:600;">
+              ${item.type || "A4"}
+            </span>
+          </td>
+          <td style="text-align:right; font-weight:800; color:#006d4b; font-size:15px;">${item.count}</td>
+        </tr>
+      `).join("")
+    : `<tr><td colspan="4" style="text-align:center; color:#94a3b8; padding:24px;">ไม่มีข้อมูล</td></tr>`;
+
+  function chartImg(src, alt, h = 200) {
+    if (!src) {
+      return `<div style="height:${h}px; background:#f1f5f9; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:13px;">ไม่มีข้อมูล Chart</div>`;
+    }
+    return `<div style="width:100%; text-align:center;">
+              <img src="${src}" alt="${alt}" style="max-width:100%; height:auto; max-height:${h}px; object-fit:contain; border-radius:8px; display:inline-block;">
+            </div>`;
+  }
+
+  return `
+    <div class="page" style="display:flex; flex-direction:column;">
+
+      <!-- ══ Section E · Top Active Staff ══ -->
+      <p class="section-title">Section E &nbsp;·&nbsp; Top Active Staff</p>
+      <div class="card" style="padding:16px;">
+        ${chartImg(chartImages.users, "Top Users Chart", 320)}
+        <div class="insight insight-gray" style="margin-top:20px;">
+          <p class="insight-title">ข้อควรระวัง</p>
+          <p>หาก User คนเดียวมีสัดส่วน Action สูงกว่า 50% ของทั้งหมด
+          ควรตรวจสอบว่าเป็นการทำงานปกติ หรืออาจต้องกระจาย workload</p>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- ══ Section F · Print Ranking ══ -->
+      <p class="section-title">Section F &nbsp;·&nbsp; Top 10 Most Printed Tags</p>
+      <div style="border:1px solid #e2e8f0; border-radius:10px; overflow:hidden;">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:60px; text-align:center;">#</th>
+              <th>Tag / Menu Name</th>
+              <th style="width:80px; text-align:center;">Size</th>
+              <th style="width:80px; text-align:right;">Prints</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <p style="font-size:11px; color:#94a3b8; margin-top:6px;">
+        * แสดง ${top10.length} รายการสูงสุด จากทั้งหมดที่มีประวัติการพิมพ์
+      </p>
+
+      <hr class="divider">
+
+      <!-- ══ Section G · Key Insights ══ -->
+      <p class="section-title">Section G &nbsp;·&nbsp; Key Insights &amp; Recommendations</p>
+
+      <div style="display:flex; flex-direction:column; gap:10px;">
+
+        <div class="insight insight-green">
+          <p class="insight-title">📈 Tags ที่ถูกพิมพ์บ่อยที่สุด</p>
+          <p>
+            Tag อันดับ 1 ที่ถูกพิมพ์มากที่สุดคือ
+            <strong>${top10[0]?.name || "–"}</strong>
+            (${top10[0]?.count || 0} ครั้ง)
+            ควรให้ความสำคัญในการตรวจสอบความถูกต้องของ Allergen ใน Tag นี้เป็นพิเศษ
+            เนื่องจากมีการแจกจ่ายให้ลูกค้าในปริมาณมาก
+          </p>
+        </div>
+
+      </div>
+
+      <!-- ══ Footer ══ -->
+      <div class="page-footer">
+        <span>IMPACT Food Tag · Analytics Report · Confidential · Internal Use Only</span>
+        <span>Page 3 of 3</span>
+      </div>
+
+    </div>
+  `;
+}
 
       window.onload = loadAnalyticsData;
     </script>

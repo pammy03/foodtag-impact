@@ -7,8 +7,9 @@ const logDbClient = supabase.createClient(LOG_SUPABASE_URL, LOG_SUPABASE_KEY);
  * บันทึกประวัติการทำงานลงระบบ Supabase
  * @param {string} actionType - หมวดหมู่แอคชัน เช่น 'CREATE', 'EDIT', 'PRINT', 'DELETE'
  * @param {string} actionDetails - รายละเอียดเพิ่มเติมของสิ่งที่ทำ
+ * @param {object} metadata - ข้อมูลเชิงโครงสร้างเพิ่มเติม เช่น { paper_size: 'A4', menu_name: 'Steak' }
  */
-async function logSystemActivity(actionType, actionDetails) {
+async function logSystemActivity(actionType, actionDetails, metadata = null) {
   try {
     const actionUpper = actionType.toUpperCase();
     // ยกเลิกการเก็บ Log สำหรับการแก้ไขและการลบตามที่ต้องการ
@@ -31,6 +32,7 @@ async function logSystemActivity(actionType, actionDetails) {
       role: userRole,
       action: actionType.toUpperCase(),
       details: actionDetails,
+      metadata: metadata,
       created_at: new Date().toISOString(),
     };
 

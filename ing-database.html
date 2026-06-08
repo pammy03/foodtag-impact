@@ -143,7 +143,7 @@
         >
           <div
             id="ingGallery"
-            class="flex flex-col gap-4 w-full max-w-5xl mx-auto"
+            class="flex flex-col gap-4 w-full"
           >
             <div
               class="col-span-full py-20 text-center text-slate-400 font-medium"
@@ -563,7 +563,7 @@
             })
             .join("");
         } else {
-          gallery.className = "flex flex-col gap-4 w-full max-w-5xl mx-auto";
+          gallery.className = "flex flex-col gap-4 w-full";
           gallery.innerHTML = dbIngredients
             .map((ing, index) => {
               let displayName = ing.name_th || "";

@@ -87,7 +87,7 @@
         margin: auto;
         background-color: white;
         box-sizing: border-box;
-        border: 1px dashed #64748b !important;
+        border: 1px solid #64748b !important;
       }
 
       .grid-plate {
@@ -97,10 +97,10 @@
         grid-template-rows: repeat(1, 100%);
       }
       .grid-western {
-        width: 21cm;
-        height: 14.8cm;
+        width: 20cm;
+        height: 28cm;
         grid-template-columns: repeat(2, 50%);
-        grid-template-rows: repeat(1, 100%);
+        grid-template-rows: repeat(2, 50%);
       }
       .grid-buffet {
         width: 20.4cm;
@@ -125,8 +125,8 @@
         background-color: white;
         transition: all 0.2s;
         overflow: hidden;
-        border-right: 1px dashed #64748b !important;
-        border-bottom: 1px dashed #64748b !important;
+        border-right: 1px solid #64748b !important;
+        border-bottom: 1px solid #64748b !important;
       }
 
       .grid-plate .slot:nth-child(2n) {
@@ -139,7 +139,7 @@
       .grid-western .slot:nth-child(2n) {
         border-right: none !important;
       }
-      .grid-western .slot {
+      .grid-western .slot:nth-child(n + 3) {
         border-bottom: none !important;
       }
 
@@ -178,10 +178,6 @@
       }
 
       @media print {
-        @page {
-          size: A4 landscape;
-          margin: 0;
-        }
         html,
         body {
           margin: 0;
@@ -219,17 +215,24 @@
 
         #a4Paper {
           position: relative !important;
+          width: 100% !important;
+          height: 100% !important;
+          max-width: 100vw !important;
+          max-height: 100vh !important;
+          overflow: hidden !important;
           box-shadow: none !important;
           margin: auto !important;
           padding: 0 !important;
-          page-break-after: avoid;
+          page-break-after: avoid !important;
+          page-break-before: avoid !important;
+          page-break-inside: avoid !important;
           box-sizing: border-box !important;
           transform: none !important;
           transform-origin: center center !important;
         }
 
         .inner-grid {
-          border: 1px dashed #64748b !important;
+          border: 1px solid #64748b !important;
           margin: 0 !important;
           position: absolute !important;
           top: 50% !important;
@@ -239,8 +242,8 @@
         }
 
         .slot {
-          border-right: 1px dashed #64748b !important;
-          border-bottom: 1px dashed #64748b !important;
+          border-right: 1px solid #64748b !important;
+          border-bottom: 1px solid #64748b !important;
         }
 
         .grid-plate .slot:nth-child(2n) {
@@ -252,7 +255,7 @@
         .grid-western .slot:nth-child(2n) {
           border-right: none !important;
         }
-        .grid-western .slot {
+        .grid-western .slot:nth-child(n + 3) {
           border-bottom: none !important;
         }
         .grid-buffet .slot:nth-child(2n) {
@@ -433,7 +436,7 @@
                     Western Set
                   </div>
                   <div class="text-xs text-slate-400 mt-0.5">
-                    10.5 × 14.8 cm &nbsp;·&nbsp; 2 slots
+                    10 × 14 cm &nbsp;·&nbsp; 4 slots
                   </div>
                 </div>
               </label>
@@ -578,7 +581,8 @@
                   <select
                     id="fontSelectTh"
                     onchange="changeFontTh(this.value)"
-                    class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600 cursor-pointer"
+                    class="w-full pl-3 pr-8 py-1.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600 cursor-pointer appearance-none"
+                    style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.6rem center; background-size: 1em;"
                   >
                     <option value="'Sarabun', sans-serif">Sarabun</option>
                     <option value="'Inter', sans-serif">Inter</option>
@@ -623,7 +627,8 @@
                   <select
                     id="fontSelectEn"
                     onchange="changeFontEn(this.value)"
-                    class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600 cursor-pointer"
+                    class="w-full pl-3 pr-8 py-1.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600 cursor-pointer appearance-none"
+                    style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.6rem center; background-size: 1em;"
                   >
                     <option value="'Inter', sans-serif">Inter</option>
                     <option value="'Sarabun', sans-serif">Sarabun</option>
@@ -686,7 +691,7 @@
                   <span
                     id="sizeMainDisplay"
                     class="text-[11px] font-bold w-9 text-center text-slate-700"
-                    >65px</span
+                    >61px</span
                   >
                   <button
                     onclick="changeAllergenIconSize('main', 2)"
@@ -726,7 +731,7 @@
                   <span
                     id="sizeContainDisplay"
                     class="text-[11px] font-bold w-9 text-center text-slate-700"
-                    >65px</span
+                    >61px</span
                   >
                   <button
                     onclick="changeAllergenIconSize('contain', 2)"
@@ -1213,8 +1218,8 @@
         },
         western: {
           name: "Western Set",
-          orientation: "landscape",
-          slots_count: 2,
+          orientation: "portrait",
+          slots_count: 4,
           grid_class: "grid-western",
           hide_allergies: false,
         },
@@ -1239,7 +1244,6 @@
         "Western Set": "western",
         "Buffet / Coffee Break": "buffet",
         "Mini Tag": "mini",
-        "Mini Tag / Cocktail": "mini",
       };
 
       function handleTemplateSelect(value) {
@@ -1327,8 +1331,24 @@
           document.getElementById("pageTitle").innerText = "Edit Profile";
           document.getElementById("saveButtonText").innerText = "Update Profile";
 
-          const savedTags = JSON.parse(localStorage.getItem("savedTags")) || [];
-          const tagToEdit = savedTags.find((t) => t.id === editId);
+          let tagToEdit = null;
+          try {
+            const { data, error } = await dbClient.from('saved_tags').select('*').eq('id', editId).single();
+            if (!error && data) {
+              tagToEdit = {
+                id: data.id,
+                title: data.title,
+                templateName: data.template_name,
+                paperSize: data.paper_size,
+                createdAt: data.created_at,
+                createdBy: data.created_by,
+                status: data.status,
+                slotsData: data.slots_data || {}
+              };
+            }
+          } catch (err) {
+            console.error("Error fetching tag:", err);
+          }
 
           if (tagToEdit) {
             document.getElementById("profileName").value = tagToEdit.title;
@@ -1413,6 +1433,14 @@
           paper.classList.remove("landscape");
         }
 
+        let style = document.getElementById("dynamicPrintStyle");
+        if (!style) {
+          style = document.createElement("style");
+          style.id = "dynamicPrintStyle";
+          document.head.appendChild(style);
+        }
+        style.innerHTML = `@media print { @page { size: ${selectedPaperSize} ${currentTemplateConfig.orientation}; margin: 0; } }`;
+
         const scale = Math.min(cWidth / pWidth, cHeight / pHeight);
         paper.style.transform = `scale(${scale})`;
       }
@@ -1475,7 +1503,7 @@
         if (icon && icon.clientWidth > 0) {
           return Math.round(icon.clientWidth);
         }
-        return 65;
+        return 61;
       }
 
       function changeAllergenIconSize(type, delta) {
@@ -1749,11 +1777,11 @@
         document.getElementById("fontSizeEn").value = parseInt("22px");
 
         const sizeMainDisplay = document.getElementById("sizeMainDisplay");
-        if (sizeMainDisplay) sizeMainDisplay.innerText = "65px";
+        if (sizeMainDisplay) sizeMainDisplay.innerText = "61px";
 
         const sizeContainDisplay =
           document.getElementById("sizeContainDisplay");
-        if (sizeContainDisplay) sizeContainDisplay.innerText = "65px";
+        if (sizeContainDisplay) sizeContainDisplay.innerText = "61px";
       }
 
       function showBgConfirmModal() {
@@ -1995,12 +2023,9 @@
 
       async function loadBackgrounds(sizeName) {
         const select = document.getElementById("bgSelect");
-        select.innerHTML = '<option value="">สีขาว</option>';
+        select.innerHTML = '';
 
         let dbSizeName = sizeName;
-        if (sizeName === "Mini Tag") {
-          dbSizeName = "Mini Tag / Cocktail";
-        }
 
         try {
           const { data: bgs, error } = await dbClient
@@ -2009,14 +2034,28 @@
             .eq("template_size", dbSizeName);
           if (error) throw error;
 
+          let firstBgUrl = null;
+
           if (bgs && bgs.length > 0) {
-            const seen = new Set();
+            const seenNames = new Set();
             bgs.forEach((bg) => {
-              if (!seen.has(bg.image_url)) {
-                seen.add(bg.image_url);
+              if (!seenNames.has(bg.name)) {
+                seenNames.add(bg.name);
                 select.innerHTML += `<option value="${bg.image_url}">${bg.name}</option>`;
+                if (!firstBgUrl) firstBgUrl = bg.image_url;
               }
             });
+          }
+
+          if (firstBgUrl && typeof isInitialLoading !== "undefined" && !isInitialLoading) {
+            const count = currentTemplateConfig.slots_count;
+            for (let i = 1; i <= count; i++) {
+              if (!slotsData[i]) {
+                slotsData[i] = { bgUrl: firstBgUrl };
+              } else if (!slotsData[i].bgUrl) {
+                slotsData[i].bgUrl = firstBgUrl;
+              }
+            }
           }
 
           syncBgSelectWithCurrentSlot();
@@ -2073,58 +2112,45 @@
 
         setTimeout(async () => {
           try {
-            let savedTags = JSON.parse(localStorage.getItem("savedTags")) || [];
-
             const urlParams = new URLSearchParams(window.location.search);
             let editId = urlParams.get("edit");
             if (!editId) {
               editId = localStorage.getItem("currentEditId");
             }
             const userData = JSON.parse(localStorage.getItem("userData"));
-            const creatorRole = userData
-              ? userData.role || "UNKNOWN"
+            const creatorName = userData
+              ? userData.name || userData.role || "UNKNOWN"
               : "UNKNOWN";
 
             const statusToSave = isDraftStatus ? "Draft" : "Ready";
 
+            let logAction = "CREATE";
+            const tagId = editId || Date.now().toString();
+
             const newTag = {
+              id: tagId,
               title: profileName,
-              templateName: currentTemplateConfig.name,
-              paperSize: selectedPaperSize,
-              createdAt: new Date().toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              }),
-              createdBy: creatorRole,
+              template_name: currentTemplateConfig.name,
+              paper_size: selectedPaperSize,
+              created_by: creatorName,
               status: statusToSave,
-              slotsData: slotsData,
+              slots_data: slotsData,
             };
 
-            let logAction = "CREATE";
-
             if (editId) {
-              const idx = savedTags.findIndex((t) => t.id === editId);
-              if (idx !== -1) {
-                newTag.createdBy = savedTags[idx].createdBy || creatorRole;
-                newTag.id = editId;
-                savedTags[idx] = newTag;
-                logAction = "EDIT";
-              } else {
-                newTag.id = Date.now().toString();
-                savedTags.push(newTag);
-              }
+              logAction = "EDIT";
+              const { error } = await dbClient.from('saved_tags').update(newTag).eq('id', editId);
+              if (error) throw error;
               localStorage.removeItem("currentEditId");
             } else {
-              newTag.id = Date.now().toString();
-              savedTags.push(newTag);
+              const { error } = await dbClient.from('saved_tags').insert([newTag]);
+              if (error) throw error;
             }
-
-            localStorage.setItem("savedTags", JSON.stringify(savedTags));
 
             await logSystemActivity(
               logAction,
               `บันทึกโปรไฟล์ป้ายชื่อ: ${profileName} (${currentTemplateConfig.name}) ขนาด ${selectedPaperSize} สถานะ [${statusToSave}]`,
+              { menu_name: profileName, paper_size: selectedPaperSize, template: currentTemplateConfig.name }
             );
           } catch (error) {
             console.error("Error saving:", error);
@@ -2194,6 +2220,7 @@
         await logSystemActivity(
           "PRINT",
           `ดาวน์โหลดไฟล์ป้ายชื่อเป็นนามสกุล .${type.toUpperCase()} (ชื่อไฟล์: ${fileName}) (Size: ${selectedPaperSize})`,
+          { menu_name: document.getElementById("profileName").value || "Export", paper_size: selectedPaperSize }
         );
 
         const canvas = await capturePaper();
@@ -2230,6 +2257,7 @@
         await logSystemActivity(
           "PRINT",
           `แชร์ไฟล์ป้ายชื่อ (ชื่อไฟล์: ${fileName}) (Size: ${selectedPaperSize})`,
+          { menu_name: document.getElementById("profileName").value || "Export", paper_size: selectedPaperSize }
         );
 
         const canvas = await capturePaper();
@@ -2292,6 +2320,7 @@
           await logSystemActivity(
             "PRINT",
             `สั่งพิมพ์ป้ายอาหาร (คลิกยืนยัน) Profile: ${profileTitle} (${templateSize}) (Size: ${selectedPaperSize})`,
+            { menu_name: profileTitle, paper_size: selectedPaperSize, template: templateSize }
           );
         } catch (err) {
           console.error("Audit log dispatch failed:", err);

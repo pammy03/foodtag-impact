@@ -183,7 +183,7 @@
         width: max-content;
         height: max-content;
         margin: auto;
-        border: 1px dashed #64748b !important;
+        border: 1px solid #64748b !important;
         background-color: white;
         box-sizing: border-box;
       }
@@ -194,10 +194,10 @@
         grid-template-rows: repeat(1, 100%);
       }
       .grid-western {
-        width: 21cm;
-        height: 14.8cm;
+        width: 20cm;
+        height: 28cm;
         grid-template-columns: repeat(2, 50%);
-        grid-template-rows: repeat(1, 100%);
+        grid-template-rows: repeat(2, 50%);
       }
       .grid-buffet {
         width: 20.4cm;
@@ -213,8 +213,8 @@
       }
 
       .slot {
-        border-right: 1px dashed #64748b !important;
-        border-bottom: 1px dashed #64748b !important;
+        border-right: 1px solid #64748b !important;
+        border-bottom: 1px solid #64748b !important;
         box-sizing: border-box;
         position: relative;
         display: flex;
@@ -234,7 +234,7 @@
       .grid-western .slot:nth-child(2n) {
         border-right: none !important;
       }
-      .grid-western .slot {
+      .grid-western .slot:nth-child(n + 3) {
         border-bottom: none !important;
       }
 
@@ -339,10 +339,6 @@
       }
 
       @media print {
-        @page {
-          size: landscape;
-          margin: 0;
-        }
         body > *:not(#printArea) {
           display: none !important;
         }
@@ -372,17 +368,24 @@
         }
         .preview-paper {
           position: relative !important;
+          width: 100% !important;
+          height: 100% !important;
+          max-width: 100vw !important;
+          max-height: 100vh !important;
+          overflow: hidden !important;
           box-shadow: none !important;
           margin: auto !important;
           padding: 0 !important;
-          page-break-after: avoid;
+          page-break-after: avoid !important;
+          page-break-before: avoid !important;
+          page-break-inside: avoid !important;
           box-sizing: border-box !important;
           transform: none !important;
           transform-origin: center center !important;
           border: none !important;
         }
         .inner-grid {
-          border: 1px dashed #64748b !important;
+          border: 1px solid #64748b !important;
           margin: 0 !important;
           position: absolute !important;
           top: 50% !important;
@@ -391,8 +394,8 @@
           box-sizing: border-box !important;
         }
         .slot {
-          border-right: 1px dashed #64748b !important;
-          border-bottom: 1px dashed #64748b !important;
+          border-right: 1px solid #64748b !important;
+          border-bottom: 1px solid #64748b !important;
           display: flex !important;
           flex-direction: column !important;
           align-items: center !important;
@@ -407,7 +410,7 @@
         .grid-western .slot:nth-child(2n) {
           border-right: none !important;
         }
-        .grid-western .slot {
+        .grid-western .slot:nth-child(n + 3) {
           border-bottom: none !important;
         }
         .grid-buffet .slot:nth-child(2n) {
@@ -528,9 +531,10 @@
                 class="w-full appearance-none pl-4 pr-10 h-11 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:bg-white focus:ring-2 focus:ring-[#006d4b]/20 focus:border-[#006d4b] text-sm font-medium cursor-pointer transition-all"
               >
                 <option value="all">All Template Sizes</option>
-                <option value="Plate / Food Stall">Plate Service</option>
+                <option value="Plate / Food Stall">Plate / Food Stall</option>
                 <option value="Western Set">Western Set</option>
-                <option value="Buffet / Coffee Break">Buffet</option>
+                <option value="Buffet / Coffee Break">Buffet / Coffee Break</option>
+                <option value="Mini Tag">Mini Tag</option>
               </select>
               <span
                 class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
@@ -816,6 +820,10 @@
     <script src="action-logger.js"></script>
 
     <script>
+      const supabaseUrl = "https://nexvompdeubppbkvnwor.supabase.co";
+      const supabaseKey = "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI";
+      const dbClient = supabase.createClient(supabaseUrl, supabaseKey);
+
       const TEMPLATE_CONFIGS = {
         "Plate / Food Stall": {
           orientation: "landscape",
@@ -826,12 +834,12 @@
           h: 794,
         },
         "Western Set": {
-          orientation: "landscape",
-          slots_count: 2,
+          orientation: "portrait",
+          slots_count: 4,
           grid_class: "grid-western",
           hide_allergies: false,
-          w: 1123,
-          h: 794,
+          w: 794,
+          h: 1123,
         },
         "Buffet / Coffee Break": {
           orientation: "landscape",
@@ -841,7 +849,7 @@
           w: 1123,
           h: 794,
         },
-        "Mini Tag / Cocktail": {
+        "Mini Tag": {
           orientation: "landscape",
           slots_count: 6,
           grid_class: "grid-mini",
@@ -863,13 +871,13 @@
       function getPaperDimensions(templateName, paperSize) {
         const config = TEMPLATE_CONFIGS[templateName];
         if (!config) return { w: 1123, h: 794 };
-        if (paperSize === "A3") return { w: 1587, h: 1123 };
-        return { w: 1123, h: 794 };
+        if (paperSize === "A3") {
+           return config.orientation === "landscape" ? { w: 1587, h: 1123 } : { w: 1123, h: 1587 };
+        }
+        return config.orientation === "landscape" ? { w: 1123, h: 794 } : { w: 794, h: 1123 };
       }
 
-      function getSavedTags() {
-        return JSON.parse(localStorage.getItem("savedTags")) || [];
-      }
+
 
       function changeView(mode) {
         currentViewMode = mode;
@@ -942,19 +950,43 @@
         rangeEl.innerHTML = `Showing <span class="font-bold text-slate-800">${start}-${end}</span> of <span class="font-bold text-slate-800">${visibleCount}</span> profiles`;
       }
 
-      function loadSavedTags() {
-        const saved = getSavedTags();
-        allTags = saved.map((tag, index) => {
-          return {
-            ...tag,
-            originalOrder: index + 1,
-            createdAt: tag.createdAt || new Date(0).toISOString(),
-          };
-        });
-        const profileCountEl = document.getElementById("profileCount");
-        profileCountEl.innerText = `${allTags.length} Items`;
-        profileCountEl.classList.remove("hidden");
-        applyFiltersAndRender(true);
+      async function loadSavedTags() {
+        try {
+          const { data, error } = await dbClient.from('saved_tags').select('*').order('created_at', { ascending: false });
+          if (error) throw error;
+          
+          const userData = JSON.parse(localStorage.getItem("userData"));
+          const currentUserName = userData && userData.name ? userData.name : null;
+          const currentUserRole = userData && userData.role ? userData.role : null;
+
+          allTags = (data || []).map((t, index) => {
+            let displayCreator = t.created_by;
+            if (currentUserName && currentUserRole && (displayCreator === "Admin" || displayCreator === "Super Admin" || displayCreator === "Staff")) {
+               if (displayCreator === currentUserRole) {
+                  displayCreator = currentUserName;
+               }
+            }
+
+            return {
+              id: t.id,
+              title: t.title,
+              templateName: t.template_name,
+              paperSize: t.paper_size,
+              createdAt: t.created_at || new Date(0).toISOString(),
+              createdBy: displayCreator,
+              status: t.status,
+              slotsData: t.slots_data,
+              originalOrder: index + 1
+            };
+          });
+          
+          const profileCountEl = document.getElementById("profileCount");
+          profileCountEl.innerText = `${allTags.length} Items`;
+          profileCountEl.classList.remove("hidden");
+          applyFiltersAndRender(true);
+        } catch (err) {
+          console.error("Error loading tags:", err);
+        }
       }
 
       function clearFilters() {
@@ -1067,7 +1099,7 @@
           const displayOrder = startIndex + idx + 1;
           const dims = getPaperDimensions(tag.templateName, tag.paperSize);
           const creatorName = tag.createdBy || "UNKNOWN";
-          const displayTemplateName = tag.templateName === "Mini Tag / Cocktail" ? "Mini Tag" : tag.templateName;
+          const displayTemplateName = tag.templateName;
 
           // 🎯 จัดการสถานะ Draft/Ready
           const isDraft = tag.status === "Draft";
@@ -1391,12 +1423,12 @@
       }
 
       function openPreviewModal(tagId) {
-        const tag = getSavedTags().find((t) => t.id === tagId);
+        const tag = allTags.find((t) => t.id === tagId);
         if (!tag) return;
         const modal = document.getElementById("previewModal");
         modal.classList.remove("hidden");
         document.getElementById("modalTitle").innerText = tag.title;
-        const displayTemplateName = tag.templateName === "Mini Tag / Cocktail" ? "Mini Tag" : tag.templateName;
+        const displayTemplateName = tag.templateName;
         document.getElementById("modalSubtitle").innerText = displayTemplateName;
         document.getElementById("modalPaperSizeBadge").innerText =
           tag.paperSize || "A4";
@@ -1459,26 +1491,40 @@
         }, 300);
       }
 
-      function executeDuplicate() {
+      async function executeDuplicate() {
         if (!profileToDuplicateId) return;
-        let savedTags = getSavedTags();
-        const tagToCopy = savedTags.find((t) => t.id === profileToDuplicateId);
+        const tagToCopy = allTags.find((t) => t.id === profileToDuplicateId);
         
         if (tagToCopy) {
-          const newTag = JSON.parse(JSON.stringify(tagToCopy));
-          newTag.id = 'tag_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
-          newTag.title = newTag.title + " (copy)";
-          newTag.createdAt = new Date().toISOString();
-          
-          savedTags.unshift(newTag);
-          localStorage.setItem("savedTags", JSON.stringify(savedTags));
-          
-          if (typeof logSystemActivity === "function") {
-            logSystemActivity("DUPLICATE", `ทำสำเนาโปรไฟล์: ${newTag.title}`);
-          }
+          try {
+            const userData = JSON.parse(localStorage.getItem("userData"));
+            const creatorName = userData
+              ? userData.name || userData.role || "UNKNOWN"
+              : "UNKNOWN";
 
-          closeDuplicateModal();
-          loadSavedTags();
+            const newTag = {
+              id: 'tag_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+              title: tagToCopy.title + " (copy)",
+              template_name: tagToCopy.templateName,
+              paper_size: tagToCopy.paperSize,
+              created_by: creatorName,
+              status: tagToCopy.status,
+              slots_data: tagToCopy.slotsData,
+              created_at: new Date().toISOString()
+            };
+            
+            const { error } = await dbClient.from('saved_tags').insert([newTag]);
+            if (error) throw error;
+            
+            if (typeof logSystemActivity === "function") {
+              logSystemActivity("DUPLICATE", `ทำสำเนาโปรไฟล์: ${newTag.title}`, { menu_name: newTag.title });
+            }
+
+            closeDuplicateModal();
+            loadSavedTags();
+          } catch (err) {
+            console.error("Error duplicating tag:", err);
+          }
         }
       }
 
@@ -1504,35 +1550,30 @@
         }, 300);
       }
 
-      function executeDelete() {
+      async function executeDelete() {
         if (!profileToDeleteId) return;
-        let savedTags = getSavedTags();
-        const tag = savedTags.find((t) => t.id === profileToDeleteId);
-        if (tag)
-          logSystemActivity("DELETE", `ลบโปรไฟล์ป้ายอาหาร: ${tag.title}`);
-
-        savedTags = savedTags.filter((tag) => tag.id !== profileToDeleteId);
-        localStorage.setItem("savedTags", JSON.stringify(savedTags));
-        closeDeleteModal();
-
-        allTags = savedTags.map((t, index) => {
-          return {
-            ...t,
-            originalOrder: index + 1,
-            createdAt: t.createdAt || new Date(0).toISOString(),
-          };
-        });
-        const profileCountEl = document.getElementById("profileCount");
-        profileCountEl.innerText = `${allTags.length} Items`;
-        profileCountEl.classList.remove("hidden");
-        applyFiltersAndRender(false);
+        const tag = allTags.find((t) => t.id === profileToDeleteId);
+        
+        try {
+          const { error } = await dbClient.from('saved_tags').delete().eq('id', profileToDeleteId);
+          if (error) throw error;
+          
+          if (tag) {
+            logSystemActivity("DELETE", `ลบโปรไฟล์ป้ายอาหาร: ${tag.title}`, { menu_name: tag.title });
+          }
+          
+          closeDeleteModal();
+          loadSavedTags();
+        } catch (err) {
+          console.error("Error deleting tag:", err);
+        }
       }
 
       let printWindowOpenedAt = 0;
       let currentPrintTag = null;
 
       function executePrint(tagId) {
-        const tag = getSavedTags().find((t) => t.id === tagId);
+        const tag = allTags.find((t) => t.id === tagId);
         if (!tag) return;
 
         // เช็คว่า Draft ห้ามปริ้น (ดักไว้เผื่อถูกเรียกผ่านทางอื่น)
@@ -1550,13 +1591,16 @@
         const printArea = document.getElementById("printArea");
         printArea.innerHTML = generatePaperHTML(tag);
 
+        const config = TEMPLATE_CONFIGS[tag.templateName];
+        const orientation = config ? config.orientation : "landscape";
+
         let style = document.getElementById("printPageOrientation");
         if (!style) {
           style = document.createElement("style");
           style.id = "printPageOrientation";
           document.head.appendChild(style);
         }
-        style.innerHTML = `@page { size: ${paperSize} landscape; margin: 0mm; } body { margin: 0; }`;
+        style.innerHTML = `@page { size: ${paperSize} ${orientation}; margin: 0mm; } body { margin: 0; }`;
 
         printArea.classList.remove("hidden");
         setTimeout(() => {
@@ -1572,11 +1616,12 @@
         const timeSpent = Date.now() - printWindowOpenedAt;
         printWindowOpenedAt = 0;
 
-        if (timeSpent > 3000) {
+        if (timeSpent > 15000) {
           try {
             await logSystemActivity(
               "PRINT",
               `สั่งพิมพ์ป้ายอาหาร Profile: ${currentPrintTag.title} (Size: ${currentPrintTag.paperSize || "A4"})`,
+              { menu_name: currentPrintTag.title, paper_size: currentPrintTag.paperSize || "A4", template: currentPrintTag.templateName }
             );
           } catch (err) {
             console.error("Audit log dispatch failed:", err);

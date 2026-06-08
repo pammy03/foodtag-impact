@@ -55,9 +55,16 @@ function injectSidebar() {
         <div class="w-12 h-12 bg-[#003B71] rounded-full flex items-center justify-center text-white font-bold shrink-0 shadow-sm">
           <span class="material-symbols-outlined text-2xl">person</span>
         </div>
-        <div class="overflow-hidden">
+        <div class="overflow-hidden flex flex-col justify-center">
           <p id="sidebarProfileName" class="font-bold text-base text-slate-800 truncate text-left">${userData.name}</p>
-          <p id="sidebarProfileRole" class="text-[12px] font-bold text-[#006d4b] uppercase tracking-widest text-left bg-emerald-50 inline-block px-3 py-1 rounded-full mt-1 border border-emerald-100">${userData.role}</p>
+          <div class="mt-1.5 flex">
+            ${userData.role === 'Super Admin' 
+              ? `<span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200 shadow-sm">SUPER ADMIN</span>`
+              : userData.role === 'Admin'
+              ? `<span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 shadow-sm">ADMIN</span>`
+              : `<span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200 shadow-sm">STAFF</span>`
+            }
+          </div>
         </div>
       </div>
 
