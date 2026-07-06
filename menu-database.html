@@ -15,6 +15,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
     <style>
       body {
         font-family: "Inter", sans-serif;
@@ -116,9 +117,29 @@
               class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all shadow-sm text-sm"
             />
           </div>
-          <button id="bulkDeleteBtn" onclick="confirmBulkDelete()" class="hidden ml-auto px-5 py-2.5 bg-red-50 text-red-500 font-bold rounded-xl border border-red-200 hover:bg-red-100 hover:text-red-600 transition-all items-center gap-2 text-sm shadow-sm cursor-pointer whitespace-nowrap">
-             <span class="material-symbols-outlined text-[20px]">delete_sweep</span>
-             Delete Selected (<span id="selectedCount">0</span>)
+          <select
+            id="sortFilter"
+            onchange="renderTable()"
+            class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10 ml-2"
+            style="
+              background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;);
+              background-repeat: no-repeat;
+              background-position: right 1rem center;
+              background-size: 1.2em;
+            "
+          >
+            <option value="desc">Newest First</option>
+            <option value="asc">Oldest First</option>
+          </select>
+          <button
+            id="bulkDeleteBtn"
+            onclick="confirmBulkDelete()"
+            class="hidden ml-auto px-5 py-2.5 bg-red-50 text-red-500 font-bold rounded-xl border border-red-200 hover:bg-red-100 hover:text-red-600 transition-all items-center gap-2 text-sm shadow-sm cursor-pointer whitespace-nowrap"
+          >
+            <span class="material-symbols-outlined text-[20px]"
+              >delete_sweep</span
+            >
+            Delete Selected (<span id="selectedCount">0</span>)
           </button>
         </div>
 
@@ -130,12 +151,18 @@
               <tr>
                 <th class="py-5 px-6 border-b w-52">
                   <div class="flex items-center gap-4">
-                    <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll()" class="w-5 h-5 flex-shrink-0 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all">
+                    <input
+                      type="checkbox"
+                      id="selectAllCheckbox"
+                      onclick="toggleSelectAll()"
+                      class="w-5 h-5 flex-shrink-0 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all"
+                    />
                     <span
                       class="w-6 flex-shrink-0 text-center text-[16px] font-extrabold text-slate-600"
                       >No.</span
                     >
-                    <span class="text-[16px] font-extrabold text-slate-600 whitespace-nowrap"
+                    <span
+                      class="text-[16px] font-extrabold text-slate-600 whitespace-nowrap"
                       >Menu ID</span
                     >
                   </div>
@@ -360,11 +387,15 @@
         >
           <span class="material-symbols-outlined text-3xl">delete_sweep</span>
         </div>
-        <h2 class="text-xl font-bold text-slate-800 mb-2">ยืนยันการลบหลายรายการ</h2>
-        <p
-          class="text-xs text-slate-500 font-medium leading-relaxed mb-6"
-        >
-          คุณต้องการลบเมนูที่เลือกจำนวน <strong id="bulkDeleteCountDisplay" class="text-red-500 font-bold">0</strong> รายการใช่หรือไม่?
+        <h2 class="text-xl font-bold text-slate-800 mb-2">
+          ยืนยันการลบหลายรายการ
+        </h2>
+        <p class="text-xs text-slate-500 font-medium leading-relaxed mb-6">
+          คุณต้องการลบเมนูที่เลือกจำนวน
+          <strong id="bulkDeleteCountDisplay" class="text-red-500 font-bold"
+            >0</strong
+          >
+          รายการใช่หรือไม่?
         </p>
         <div class="flex gap-3 justify-center">
           <button
@@ -473,6 +504,7 @@
         const query = document
           .getElementById("searchInput")
           .value.toLowerCase();
+        const sortOrder = document.getElementById("sortFilter") ? document.getElementById("sortFilter").value : "desc";
         let html = "";
 
         let filtered = dbMenus.filter((m) => {
@@ -482,10 +514,16 @@
           const containIngs = (m.ingredient_ids || [])
             .map((id) => dbIngredients.find((i) => String(i.id) === String(id)))
             .filter(Boolean);
-            
-          const ingText = mainIngs.map(i => (i.name_th || "") + " " + (i.name_en || "")).join(" ").toLowerCase();
-          const containText = containIngs.map(i => (i.name_th || "") + " " + (i.name_en || "")).join(" ").toLowerCase();
-          
+
+          const ingText = mainIngs
+            .map((i) => (i.name_th || "") + " " + (i.name_en || ""))
+            .join(" ")
+            .toLowerCase();
+          const containText = containIngs
+            .map((i) => (i.name_th || "") + " " + (i.name_en || ""))
+            .join(" ")
+            .toLowerCase();
+
           return (
             (m.menu_id || "").toLowerCase().includes(query) ||
             (m.name_th || "").toLowerCase().includes(query) ||
@@ -503,12 +541,25 @@
             const bId = (b.menu_id || "").toLowerCase();
             const bTh = (b.name_th || "").toLowerCase();
             const bEn = (b.name_en || "").toLowerCase();
-            
-            const aStarts = aId.startsWith(query) || aTh.startsWith(query) || aEn.startsWith(query);
-            const bStarts = bId.startsWith(query) || bTh.startsWith(query) || bEn.startsWith(query);
+
+            const aStarts =
+              aId.startsWith(query) ||
+              aTh.startsWith(query) ||
+              aEn.startsWith(query);
+            const bStarts =
+              bId.startsWith(query) ||
+              bTh.startsWith(query) ||
+              bEn.startsWith(query);
             if (aStarts && !bStarts) return -1;
             if (!aStarts && bStarts) return 1;
             return 0;
+          });
+        } else {
+          // Default sorting if no search query
+          filtered.sort((a, b) => {
+            const numA = parseInt((a.menu_id || "0").replace("MENU-", "")) || 0;
+            const numB = parseInt((b.menu_id || "0").replace("MENU-", "")) || 0;
+            return sortOrder === "asc" ? numA - numB : numB - numA;
           });
         }
 
@@ -526,7 +577,6 @@
             .map((id) => dbIngredients.find((i) => String(i.id) === String(id)))
             .filter(Boolean);
 
-          // ปรับสีชิปตรงนี้ให้เป็นสีเทา (Slate) ดูสะอาดตา และเพิ่มระยะห่างภายใน (px, py)
           const buildIngHtml = (ings) =>
             ings
               .map(
@@ -548,7 +598,6 @@
             "\\'",
           );
 
-          // เพิ่มระยะ py-6 เพื่อให้บรรทัดกว้างขึ้น โปร่งขึ้น
           html += `
           <tr class="menu-row border-b border-slate-100 last:border-0 align-top">
             <td class="py-5 px-6">
@@ -574,8 +623,9 @@
         });
         tbody.innerHTML = html;
         const selectAll = document.getElementById("selectAllCheckbox");
-        if(selectAll) selectAll.checked = false;
-        if(typeof updateBulkDeleteButton === 'function') updateBulkDeleteButton();
+        if (selectAll) selectAll.checked = false;
+        if (typeof updateBulkDeleteButton === "function")
+          updateBulkDeleteButton();
       }
 
       function getLatestMenuNumber() {
@@ -613,7 +663,6 @@
           document.getElementById("inputNameEn").value = "";
         }
 
-        // จัดเรียงข้อมูล: ให้นำวัตถุดิบที่ถูกเลือกมาไว้ด้านบนสุด
         const sortedIngredients = [...dbIngredients].sort((a, b) => {
           const aSelected =
             selectedMainIds.includes(String(a.id)) ||
@@ -627,7 +676,6 @@
           return 0;
         });
 
-        // สร้างการ์ด Ingredient ในรูปแบบ List View
         container.innerHTML = sortedIngredients
           .map((ing) => {
             const isMain = selectedMainIds.includes(String(ing.id));
@@ -761,7 +809,7 @@
       function toggleSelectAll() {
         const selectAll = document.getElementById("selectAllCheckbox");
         const checkboxes = document.querySelectorAll(".row-checkbox");
-        checkboxes.forEach(cb => cb.checked = selectAll.checked);
+        checkboxes.forEach((cb) => (cb.checked = selectAll.checked));
         updateBulkDeleteButton();
       }
 
@@ -771,9 +819,9 @@
         const countSpan = document.getElementById("selectedCount");
         const selectAll = document.getElementById("selectAllCheckbox");
         const allCheckboxes = document.querySelectorAll(".row-checkbox");
-        
+
         countSpan.innerText = checkboxes.length;
-        
+
         if (checkboxes.length > 0) {
           btn.classList.remove("hidden");
           btn.classList.add("flex");
@@ -782,24 +830,28 @@
           btn.classList.remove("flex");
         }
 
-        if (allCheckboxes.length > 0 && checkboxes.length === allCheckboxes.length) {
-            selectAll.checked = true;
+        if (
+          allCheckboxes.length > 0 &&
+          checkboxes.length === allCheckboxes.length
+        ) {
+          selectAll.checked = true;
         } else {
-            selectAll.checked = false;
+          selectAll.checked = false;
         }
       }
 
       function confirmBulkDelete() {
         const checkboxes = document.querySelectorAll(".row-checkbox:checked");
         if (checkboxes.length === 0) return;
-        
-        document.getElementById("bulkDeleteCountDisplay").innerText = checkboxes.length;
+
+        document.getElementById("bulkDeleteCountDisplay").innerText =
+          checkboxes.length;
         document.getElementById("bulkDeleteModal").classList.add("active");
       }
 
       async function executeBulkDeleteMenu() {
         const checkboxes = document.querySelectorAll(".row-checkbox:checked");
-        const idsToDelete = Array.from(checkboxes).map(cb => cb.value);
+        const idsToDelete = Array.from(checkboxes).map((cb) => cb.value);
         if (idsToDelete.length === 0) return;
 
         const btn = document.getElementById("confirmBulkDeleteBtn");
@@ -807,11 +859,10 @@
         btn.innerHTML = `<span class="material-symbols-outlined animate-spin align-middle text-sm">progress_activity</span>`;
 
         try {
-          // Send bulk delete request
           await dbClient.from("menus").delete().in("id", idsToDelete);
           await logSystemActivity(
             "DELETE",
-            `ลบเมนูจำนวน: ${idsToDelete.length} รายการ`
+            `ลบเมนูจำนวน: ${idsToDelete.length} รายการ`,
           );
           closeModal("bulkDeleteModal");
           document.getElementById("selectAllCheckbox").checked = false;
@@ -857,16 +908,136 @@
         }
       }
 
+      async function parseExcelFormControls(fileBuffer) {
+        if (typeof JSZip === 'undefined') return [];
+        try {
+          const jszip = new JSZip();
+          const zip = await jszip.loadAsync(fileBuffer);
+          
+          const sheet1File = zip.file("xl/worksheets/sheet1.xml");
+          if (!sheet1File) return [];
+          const sheet1Text = await sheet1File.async("string");
+          
+          const shapeToRId = {};
+          const controlRegex = /<control[^>]+shapeId="(\d+)"[^>]+r:id="([^"]+)"/g;
+          let match;
+          while ((match = controlRegex.exec(sheet1Text)) !== null) {
+            shapeToRId[match[1]] = match[2];
+          }
+          
+          const relsFile = zip.file("xl/worksheets/_rels/sheet1.xml.rels");
+          if (!relsFile) return [];
+          const relsText = await relsFile.async("string");
+          
+          const rIdToTarget = {};
+          const relRegex = /<Relationship[^>]+Id="([^"]+)"[^>]+Target="([^"]+)"/g;
+          while ((match = relRegex.exec(relsText)) !== null) {
+            rIdToTarget[match[1]] = match[2].replace("../", "xl/");
+          }
+          
+          const checkedShapes = new Set();
+          for (const shapeId in shapeToRId) {
+            const rId = shapeToRId[shapeId];
+            const target = rIdToTarget[rId];
+            if (target) {
+              const propFile = zip.file(target);
+              if (propFile) {
+                const propText = await propFile.async("string");
+                if (propText.includes('checked="Checked"') || propText.includes('checked="1"') || propText.includes('checked="true"')) {
+                  checkedShapes.add(shapeId);
+                }
+              }
+            }
+          }
+          
+          const drawingFile = zip.file("xl/drawings/drawing1.xml");
+          if (!drawingFile) return [];
+          const drawingText = await drawingFile.async("string");
+          
+          const checkedCells = [];
+          const anchorRegex = /<xdr:twoCellAnchor>([\s\S]*?)<\/xdr:twoCellAnchor>/g;
+          
+          while ((match = anchorRegex.exec(drawingText)) !== null) {
+            const anchorContent = match[1];
+            const shapeIdMatch = anchorContent.match(/<xdr:cNvPr[^>]+id="(\d+)"/);
+            if (!shapeIdMatch) continue;
+            
+            const shapeId = shapeIdMatch[1];
+            if (checkedShapes.has(shapeId)) {
+              const colMatch = anchorContent.match(/<xdr:col>(\d+)<\/xdr:col>/);
+              const rowMatch = anchorContent.match(/<xdr:row>(\d+)<\/xdr:row>/);
+              if (colMatch && rowMatch) {
+                checkedCells.push({
+                  row: parseInt(rowMatch[1], 10),
+                  col: parseInt(colMatch[1], 10)
+                });
+              }
+            }
+          }
+          return checkedCells;
+        } catch (e) {
+          console.error("parseExcelFormControls error:", e);
+          return [];
+        }
+      }
+
       async function importExcel(event) {
         const file = event.target.files[0];
         if (!file) return;
+        
+        const tbody = document.getElementById("menuTableBody");
+        if (tbody) {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-20 text-center">
+            <div class="flex flex-col items-center opacity-40">
+              <span class="material-symbols-outlined text-5xl animate-spin text-[#006d4b]">progress_activity</span>
+              <p class="mt-4 font-bold tracking-widest uppercase text-slate-500">IMPORTING EXCEL DATA...</p>
+              <p class="text-xs text-slate-400 mt-1">Please do not close this window</p>
+            </div>
+          </td></tr>`;
+        }
+
         const reader = new FileReader();
         reader.onload = async (e) => {
           const data = new Uint8Array(e.target.result);
           const workbook = XLSX.read(data, { type: "array" });
-          const jsonData = XLSX.utils.sheet_to_json(
-            workbook.Sheets[workbook.SheetNames[0]],
-          );
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          
+          // Map column indices to exact header keys used by XLSX
+          const rawData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+          const headersRow = rawData[0] || [];
+          const colToKey = {};
+          const keyCounts = {};
+          for (let c = 0; c < headersRow.length; c++) {
+            let key = headersRow[c];
+            if (!key || String(key).trim() === "") key = "__EMPTY";
+            if (keyCounts[key]) {
+              colToKey[c] = key + "_" + keyCounts[key];
+              keyCounts[key]++;
+            } else {
+              colToKey[c] = key;
+              keyCounts[key] = 1;
+            }
+          }
+
+          const jsonData = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+          
+          if (typeof JSZip !== 'undefined') {
+            try {
+              const checkedCells = await parseExcelFormControls(data);
+              for (const cell of checkedCells) {
+                const rowIndex = cell.row - 1; 
+                const colIndex = cell.col;
+                if (rowIndex >= 0 && rowIndex < jsonData.length) {
+                  const key = colToKey[colIndex];
+                  if (key) {
+                    jsonData[rowIndex][key] = true;
+                  }
+                }
+              }
+            } catch (err) {
+              console.error("Error parsing form controls:", err);
+            }
+          }
 
           let currentMaxId = getLatestMenuNumber();
 
@@ -887,35 +1058,55 @@
             let containIngredientIds = [];
 
             Object.keys(row).forEach((key) => {
+              let val = row[key];
+              let valStr = String(val).trim().toUpperCase();
               if (
-                row[key] === true ||
-                String(row[key]).toUpperCase() === "TRUE" ||
-                row[key] === "✔"
+                val === true ||
+                val === 1 ||
+                valStr === "TRUE" ||
+                valStr === "Y" ||
+                valStr === "YES" ||
+                valStr === "X" ||
+                valStr === "/" ||
+                valStr === "✔" ||
+                valStr === "☑" ||
+                valStr === "✓" ||
+                valStr === "✅"
               ) {
-                let isMain = key.includes("(Main Contain)");
+                let keyLower = key.toLowerCase();
+                let isMayContain = keyLower.includes("may contain") || keyLower.includes("(may)") || key.endsWith("_1");
+                let isMain = !isMayContain; 
+
                 let baseName = key
-                  .replace("(Main Contain)", "")
-                  .replace("(Contain)", "")
+                  .replace(/\(Main Contain\)/gi, "")
+                  .replace(/\(May Contain\)/gi, "")
+                  .replace(/\(Contain\)/gi, "")
+                  .replace(/\(Main\)/gi, "")
+                  .replace(/\(May\)/gi, "")
+                  .replace(/\_1$/g, "")
+                  .replace(/\_2$/g, "")
                   .trim();
+                  
                 let cleanName = baseName.toLowerCase().replace(/\s+/g, "");
-                let strippedName = cleanName.replace("allergies2026_", "");
+                let strippedName = cleanName
+                  .replace("allergies2026_", "")
+                  .replace("allergica2026_", "");
 
                 const found = ingDict.find(
-                  (i) =>
-                    i.nameThClean === cleanName ||
-                    i.nameEnClean === cleanName ||
-                    i.nameThClean === strippedName ||
-                    i.nameEnClean === strippedName,
+                  (i) => {
+                    let th = i.nameThClean;
+                    let en = i.nameEnClean;
+                    if (th && (th === cleanName || th === strippedName || th.startsWith(strippedName) || strippedName.startsWith(th))) return true;
+                    if (en && (en === cleanName || en === strippedName || en.startsWith(strippedName) || strippedName.startsWith(en))) return true;
+                    return false;
+                  }
                 );
 
                 if (found) {
                   if (isMain && !mainIngredientIds.includes(found.id)) {
-                    mainIngredientIds.push(found.id);
-                  } else if (
-                    !isMain &&
-                    !containIngredientIds.includes(found.id)
-                  ) {
-                    containIngredientIds.push(found.id);
+                    mainIngredientIds.push(found.id); 
+                  } else if (isMayContain && !containIngredientIds.includes(found.id)) {
+                    containIngredientIds.push(found.id); 
                   }
                 }
               }

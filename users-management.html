@@ -689,11 +689,19 @@
               .update(payload)
               .eq("id", id);
             error = res.error;
-            if (!error)
+            if (!error) {
               await logSystemActivity(
                 "EDIT",
                 `แก้ไขข้อมูลผู้ใช้งานรหัส: ${empId} (${payload.name})`,
               );
+              
+              // อัปเดต localStorage ทันทีถ้าแก้ไขบัญชีของตัวเอง
+              if (checkUser && checkUser.id === id) {
+                const updatedUser = { ...checkUser, ...payload };
+                localStorage.setItem("userData", JSON.stringify(updatedUser));
+                setTimeout(() => window.location.reload(), 1500); // รีโหลดหน้าเพื่ออัปเดต Sidebar
+              }
+            }
           }
 
           if (error) throw error;

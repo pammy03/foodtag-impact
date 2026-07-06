@@ -215,13 +215,16 @@
 
         #a4Paper {
           position: relative !important;
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
           width: 100% !important;
           height: 100% !important;
-          max-width: 100vw !important;
-          max-height: 100vh !important;
+          max-width: none !important;
+          max-height: none !important;
           overflow: hidden !important;
           box-shadow: none !important;
-          margin: auto !important;
+          margin: 0 !important;
           padding: 0 !important;
           page-break-after: avoid !important;
           page-break-before: avoid !important;
@@ -234,10 +237,10 @@
         .inner-grid {
           border: 1px solid #64748b !important;
           margin: 0 !important;
-          position: absolute !important;
-          top: 50% !important;
-          left: 50% !important;
-          transform: translate(-50%, -50%) !important;
+          position: relative !important;
+          top: auto !important;
+          left: auto !important;
+          transform: none !important;
           box-sizing: border-box !important;
         }
 
