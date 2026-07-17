@@ -914,66 +914,91 @@
           const jszip = new JSZip();
           const zip = await jszip.loadAsync(fileBuffer);
           
+          const checkedCells = [];
+
+          // 1. Parse drawing1.xml for ActiveX/newer controls
           const sheet1File = zip.file("xl/worksheets/sheet1.xml");
-          if (!sheet1File) return [];
-          const sheet1Text = await sheet1File.async("string");
-          
-          const shapeToRId = {};
-          const controlRegex = /<control[^>]+shapeId="(\d+)"[^>]+r:id="([^"]+)"/g;
-          let match;
-          while ((match = controlRegex.exec(sheet1Text)) !== null) {
-            shapeToRId[match[1]] = match[2];
-          }
-          
-          const relsFile = zip.file("xl/worksheets/_rels/sheet1.xml.rels");
-          if (!relsFile) return [];
-          const relsText = await relsFile.async("string");
-          
-          const rIdToTarget = {};
-          const relRegex = /<Relationship[^>]+Id="([^"]+)"[^>]+Target="([^"]+)"/g;
-          while ((match = relRegex.exec(relsText)) !== null) {
-            rIdToTarget[match[1]] = match[2].replace("../", "xl/");
-          }
-          
-          const checkedShapes = new Set();
-          for (const shapeId in shapeToRId) {
-            const rId = shapeToRId[shapeId];
-            const target = rIdToTarget[rId];
-            if (target) {
-              const propFile = zip.file(target);
-              if (propFile) {
-                const propText = await propFile.async("string");
-                if (propText.includes('checked="Checked"') || propText.includes('checked="1"') || propText.includes('checked="true"')) {
-                  checkedShapes.add(shapeId);
+          if (sheet1File) {
+            const sheet1Text = await sheet1File.async("string");
+            const shapeToRId = {};
+            const controlRegex = /<control[^>]+shapeId="(\d+)"[^>]+r:id="([^"]+)"/g;
+            let match;
+            while ((match = controlRegex.exec(sheet1Text)) !== null) {
+              shapeToRId[match[1]] = match[2];
+            }
+            
+            const relsFile = zip.file("xl/worksheets/_rels/sheet1.xml.rels");
+            if (relsFile) {
+              const relsText = await relsFile.async("string");
+              const rIdToTarget = {};
+              const relRegex = /<Relationship[^>]+Id="([^"]+)"[^>]+Target="([^"]+)"/g;
+              while ((match = relRegex.exec(relsText)) !== null) {
+                rIdToTarget[match[1]] = match[2].replace("../", "xl/");
+              }
+              
+              const checkedShapes = new Set();
+              for (const shapeId in shapeToRId) {
+                const rId = shapeToRId[shapeId];
+                const target = rIdToTarget[rId];
+                if (target) {
+                  const propFile = zip.file(target);
+                  if (propFile) {
+                    const propText = await propFile.async("string");
+                    if (propText.includes('checked="Checked"') || propText.includes('checked="1"') || propText.includes('checked="true"')) {
+                      checkedShapes.add(shapeId);
+                    }
+                  }
+                }
+              }
+              
+              const drawingFile = zip.file("xl/drawings/drawing1.xml");
+              if (drawingFile) {
+                const drawingText = await drawingFile.async("string");
+                const anchorRegex = /<xdr:twoCellAnchor>([\s\S]*?)<\/xdr:twoCellAnchor>/g;
+                while ((match = anchorRegex.exec(drawingText)) !== null) {
+                  const anchorContent = match[1];
+                  const shapeIdMatch = anchorContent.match(/<xdr:cNvPr[^>]+id="(\d+)"/);
+                  if (!shapeIdMatch) continue;
+                  
+                  const shapeId = shapeIdMatch[1];
+                  if (checkedShapes.has(shapeId)) {
+                    const colMatch = anchorContent.match(/<xdr:col>(\d+)<\/xdr:col>/);
+                    const rowMatch = anchorContent.match(/<xdr:row>(\d+)<\/xdr:row>/);
+                    if (colMatch && rowMatch) {
+                      checkedCells.push({
+                        row: parseInt(rowMatch[1], 10),
+                        col: parseInt(colMatch[1], 10)
+                      });
+                    }
+                  }
                 }
               }
             }
           }
-          
-          const drawingFile = zip.file("xl/drawings/drawing1.xml");
-          if (!drawingFile) return [];
-          const drawingText = await drawingFile.async("string");
-          
-          const checkedCells = [];
-          const anchorRegex = /<xdr:twoCellAnchor>([\s\S]*?)<\/xdr:twoCellAnchor>/g;
-          
-          while ((match = anchorRegex.exec(drawingText)) !== null) {
-            const anchorContent = match[1];
-            const shapeIdMatch = anchorContent.match(/<xdr:cNvPr[^>]+id="(\d+)"/);
-            if (!shapeIdMatch) continue;
-            
-            const shapeId = shapeIdMatch[1];
-            if (checkedShapes.has(shapeId)) {
-              const colMatch = anchorContent.match(/<xdr:col>(\d+)<\/xdr:col>/);
-              const rowMatch = anchorContent.match(/<xdr:row>(\d+)<\/xdr:row>/);
-              if (colMatch && rowMatch) {
-                checkedCells.push({
-                  row: parseInt(rowMatch[1], 10),
-                  col: parseInt(colMatch[1], 10)
-                });
+
+          // 2. Parse vmlDrawing files for Legacy Form Controls (The ones in Menu_Import 1.xlsx)
+          for (let i = 1; i <= 5; i++) {
+            const vmlFile = zip.file(`xl/drawings/vmlDrawing${i}.vml`);
+            if (vmlFile) {
+              const vmlText = await vmlFile.async("string");
+              const clientDataRegex = /<x:ClientData ObjectType="Checkbox">([\s\S]*?)<\/x:ClientData>/g;
+              let vmlMatch;
+              while ((vmlMatch = clientDataRegex.exec(vmlText)) !== null) {
+                const block = vmlMatch[1];
+                if (block.includes('<x:Checked>1</x:Checked>') || block.includes('<x:Checked>Checked</x:Checked>')) {
+                  // Anchor format: LeftCol, LeftOffset, TopRow, TopOffset, RightCol, RightOffset, BottomRow, BottomOffset
+                  const anchorMatch = block.match(/<x:Anchor>\s*(\d+)\s*,\s*\d+\s*,\s*(\d+)/);
+                  if (anchorMatch) {
+                    checkedCells.push({
+                      col: parseInt(anchorMatch[1], 10),
+                      row: parseInt(anchorMatch[2], 10)
+                    });
+                  }
+                }
               }
             }
           }
+
           return checkedCells;
         } catch (e) {
           console.error("parseExcelFormControls error:", e);
@@ -1064,6 +1089,7 @@
                 val === true ||
                 val === 1 ||
                 valStr === "TRUE" ||
+                valStr === "T" ||
                 valStr === "Y" ||
                 valStr === "YES" ||
                 valStr === "X" ||
@@ -1093,13 +1119,7 @@
                   .replace("allergica2026_", "");
 
                 const found = ingDict.find(
-                  (i) => {
-                    let th = i.nameThClean;
-                    let en = i.nameEnClean;
-                    if (th && (th === cleanName || th === strippedName || th.startsWith(strippedName) || strippedName.startsWith(th))) return true;
-                    if (en && (en === cleanName || en === strippedName || en.startsWith(strippedName) || strippedName.startsWith(en))) return true;
-                    return false;
-                  }
+                  (ing) => ing.nameThClean === cleanName || ing.nameEnClean === cleanName || ing.nameThClean === strippedName || ing.nameEnClean === strippedName
                 );
 
                 if (found) {
