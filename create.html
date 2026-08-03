@@ -308,7 +308,26 @@
         }
       }
     </style>
-  </head>
+  
+<style>
+.hover-scroll {
+    overflow-x: auto;
+}
+.hover-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+.hover-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+.hover-scroll::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 4px;
+}
+.hover-scroll:hover::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+}
+</style>
+</head>
   <body class="bg-[#f1f5f9] h-screen flex flex-col overflow-hidden">
     <header
       class="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-center z-20 shrink-0"
@@ -1740,9 +1759,11 @@
                 a.image_url ||
                 "https://via.placeholder.com/40/ffffff/cccccc?text=IMG";
               const displayName = a.name_th || a.name_en || "Unknown";
-              return `<div class="flex items-center gap-3 p-2 bg-red-50/50 border border-red-100 rounded-lg shadow-sm mb-2">
-                <img src="${imgUrl}" class="w-8 h-8 object-contain rounded border border-red-200 bg-white p-0.5" onerror="this.src='https://placehold.co/100x100/e2e8f0/94a3b8?text=No+Image'">
-                <span class="text-xs font-bold text-red-700 uppercase tracking-widest">${displayName}</span>
+              return `<div class="flex items-center gap-3 p-2 bg-red-50/50 border border-red-100 rounded-lg shadow-sm mb-2 overflow-hidden">
+                <img src="${imgUrl}" class="w-8 h-8 flex-shrink-0 object-contain rounded border border-red-200 bg-white p-0.5" onerror="this.src='https://placehold.co/100x100/e2e8f0/94a3b8?text=No+Image'">
+                <div class="flex-1 hover-scroll pb-1">
+                  <span class="text-xs font-bold text-red-700 uppercase tracking-widest leading-snug block">${displayName}</span>
+                </div>
              </div>`;
             })
             .join("");
@@ -1757,9 +1778,11 @@
                 a.image_url ||
                 "https://via.placeholder.com/40/ffffff/cccccc?text=IMG";
               const displayName = a.name_th || a.name_en || "Unknown";
-              return `<div class="flex items-center gap-3 p-2 bg-emerald-50/50 border border-emerald-100 rounded-lg shadow-sm mb-2">
-                <img src="${imgUrl}" class="w-8 h-8 object-contain rounded border border-emerald-200 bg-white p-0.5" onerror="this.src='https://placehold.co/100x100/e2e8f0/94a3b8?text=No+Image'">
-                <span class="text-xs font-bold text-emerald-700 uppercase tracking-widest">${displayName}</span>
+              return `<div class="flex items-center gap-3 p-2 bg-emerald-50/50 border border-emerald-100 rounded-lg shadow-sm mb-2 overflow-hidden">
+                <img src="${imgUrl}" class="w-8 h-8 flex-shrink-0 object-contain rounded border border-emerald-200 bg-white p-0.5" onerror="this.src='https://placehold.co/100x100/e2e8f0/94a3b8?text=No+Image'">
+                <div class="flex-1 hover-scroll pb-1">
+                  <span class="text-xs font-bold text-emerald-700 uppercase tracking-widest leading-snug block">${displayName}</span>
+                </div>
              </div>`;
             })
             .join("");
@@ -2631,13 +2654,17 @@
                     const img = a.icon_url || a.image_url || "";
                     const name = a.name_th || a.name_en || "?";
                     return img
-                      ? `<div class="flex items-center gap-3 w-full border-b border-slate-100 pb-2 last:border-0 last:pb-0">
+                      ? `<div class="flex items-center gap-3 w-full border-b border-slate-100 pb-2 last:border-0 last:pb-0 overflow-hidden">
                          <img src="${img}" class="w-8 h-8 object-contain rounded border border-slate-200 bg-white p-0.5 flex-shrink-0" title="${name}">
-                         <span class="text-[12px] font-bold text-red-600 leading-tight whitespace-normal break-words">${name}</span>
+                         <div class="flex-1 hover-scroll pb-1">
+                           <span class="text-[12px] font-bold text-red-600 leading-tight block">${name}</span>
+                         </div>
                        </div>`
-                      : `<div class="flex items-center gap-3 w-full border-b border-slate-100 pb-2 last:border-0 last:pb-0">
+                      : `<div class="flex items-center gap-3 w-full border-b border-slate-100 pb-2 last:border-0 last:pb-0 overflow-hidden">
                          <div class="w-8 h-8 flex items-center justify-center rounded bg-red-50 border border-slate-200 text-[14px] font-black text-red-400 flex-shrink-0">${name[0]}</div>
-                         <span class="text-[12px] font-bold text-red-600 leading-tight whitespace-normal break-words">${name}</span>
+                         <div class="flex-1 hover-scroll pb-1">
+                           <span class="text-[12px] font-bold text-red-600 leading-tight block">${name}</span>
+                         </div>
                        </div>`;
                   })
                   .join("")}
@@ -2659,13 +2686,17 @@
                     const img = a.icon_url || a.image_url || "";
                     const name = a.name_th || a.name_en || "?";
                     return img
-                      ? `<div class="flex items-center gap-3 w-full border-b border-slate-100 pb-2 last:border-0 last:pb-0">
+                      ? `<div class="flex items-center gap-3 w-full border-b border-slate-100 pb-2 last:border-0 last:pb-0 overflow-hidden">
                          <img src="${img}" class="w-8 h-8 object-contain rounded border border-slate-200 bg-white p-0.5 flex-shrink-0" title="${name}">
-                         <span class="text-[12px] font-bold text-emerald-600 leading-tight whitespace-normal break-words">${name}</span>
+                         <div class="flex-1 hover-scroll pb-1">
+                           <span class="text-[12px] font-bold text-emerald-600 leading-tight block">${name}</span>
+                         </div>
                        </div>`
-                      : `<div class="flex items-center gap-3 w-full border-b border-slate-100 pb-2 last:border-0 last:pb-0">
+                      : `<div class="flex items-center gap-3 w-full border-b border-slate-100 pb-2 last:border-0 last:pb-0 overflow-hidden">
                          <div class="w-8 h-8 flex items-center justify-center rounded bg-emerald-50 border border-slate-200 text-[14px] font-black text-emerald-500 flex-shrink-0">${name[0]}</div>
-                         <span class="text-[12px] font-bold text-emerald-600 leading-tight whitespace-normal break-words">${name}</span>
+                         <div class="flex-1 hover-scroll pb-1">
+                           <span class="text-[12px] font-bold text-emerald-600 leading-tight block">${name}</span>
+                         </div>
                        </div>`;
                   })
                   .join("")}

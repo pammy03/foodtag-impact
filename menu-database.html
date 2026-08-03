@@ -45,7 +45,26 @@
         transition: background-color 0.2s;
       }
     </style>
-  </head>
+  
+<style>
+.hover-scroll {
+    overflow-x: auto;
+}
+.hover-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+.hover-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+.hover-scroll::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 4px;
+}
+.hover-scroll:hover::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+}
+</style>
+</head>
   <body class="bg-[#f8fafc] flex h-screen overflow-hidden">
     <div id="sidebar-container" class="shrink-0 h-full z-20"></div>
 
@@ -581,9 +600,11 @@
             ings
               .map(
                 (ing) => `
-            <div class="flex items-start gap-3 bg-white shadow-sm border border-slate-200 px-3 py-2.5 rounded-xl mb-2 w-full max-w-[220px] group transition-all hover:border-slate-300">
+            <div class="flex items-center gap-3 bg-white shadow-sm border border-slate-200 px-3 py-2.5 rounded-xl mb-2 w-full max-w-[220px] group transition-all hover:border-slate-300 overflow-hidden">
                 <img src="${ing.icon_url || ing.image_url}" class="w-9 h-9 object-contain rounded-md flex-shrink-0 bg-slate-50 border border-slate-100 p-1">
-                <span class="text-[14px] font-bold text-slate-700 tracking-wide line-clamp-3 leading-snug pt-0.5" title="${ing.name_en || ing.name_th || "IMG"}">${ing.name_en || ing.name_th || "IMG"}</span>
+                <div class="flex-1 hover-scroll pb-1">
+                  <span class="text-[14px] font-bold text-slate-700 tracking-wide leading-snug pt-0.5 block pr-2" title="${ing.name_en || ing.name_th || "IMG"}">${ing.name_en || ing.name_th || "IMG"}</span>
+                </div>
             </div>`,
               )
               .join("");
@@ -1072,7 +1093,45 @@
             nameEnClean: (ing.name_en || "").toLowerCase().replace(/\s+/g, ""),
           }));
 
+          // Group rows by item ID (__EMPTY) before processing
+          const groupedRows = [];
+          const rowMap = new Map();
+
           for (const row of jsonData) {
+            const nameTh = row["Menu Name (TH)"] || "";
+            const nameEn = row["Menu Name (EN)"] || "";
+            if (!nameTh && !nameEn) continue;
+
+            const itemId = row["__EMPTY"];
+            if (itemId) {
+              if (rowMap.has(itemId)) {
+                // Merge allergens (true values) into the existing row
+                const existing = rowMap.get(itemId);
+                Object.keys(row).forEach(key => {
+                  if (key !== "Menu Name (TH)" && key !== "Menu Name (EN)" && key !== "__EMPTY") {
+                    if (row[key]) {
+                      existing[key] = row[key];
+                    }
+                  }
+                });
+                // Merge names if they are different
+                if (nameTh && existing["Menu Name (TH)"] !== nameTh && !existing["Menu Name (TH)"].includes(nameTh)) {
+                  existing["Menu Name (TH)"] += " / " + nameTh;
+                }
+                if (nameEn && existing["Menu Name (EN)"] !== nameEn && !existing["Menu Name (EN)"].includes(nameEn)) {
+                  existing["Menu Name (EN)"] += " / " + nameEn;
+                }
+              } else {
+                rowMap.set(itemId, row);
+                groupedRows.push(row);
+              }
+            } else {
+              // No itemId, just process it as a separate row
+              groupedRows.push(row);
+            }
+          }
+
+          for (const row of groupedRows) {
             const nameTh = row["Menu Name (TH)"] || "";
             const nameEn = row["Menu Name (EN)"] || "";
 
