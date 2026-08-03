@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Analytics & Insights | IMPACT Food Tag</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
     <link
@@ -21,7 +21,7 @@
 
     <style>
       body {
-        font-family: "Inter", "Sarabun", sans-serif;
+        font-family: "Poppins", "Sarabun", sans-serif;
       }
       .material-symbols-outlined {
         font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
@@ -350,7 +350,7 @@
 
       Chart.register(ChartDataLabels);
       Chart.defaults.plugins.datalabels.display = false;
-      Chart.defaults.font.family = "'Inter', 'Sarabun', sans-serif";
+      Chart.defaults.font.family = "'Poppins', 'Sarabun', sans-serif";
 
       // ─── State ───────────────────────────────────────────────────
       let pieChart = null, lineChart = null, barChart = null, paperChart = null;
@@ -908,7 +908,7 @@ async function downloadPDF() {
     left:       "-9999px",
     width:      "794px",          // A4 portrait px
     background: "#ffffff",
-    fontFamily: "'Inter', 'Sarabun', sans-serif",
+    fontFamily: "'Poppins', 'Sarabun', sans-serif",
     color:      "#1e293b",
     padding:    "0",
     boxSizing:  "border-box",
@@ -1006,7 +1006,7 @@ function buildReportHTML({ dateFilterText, generatedAt, exportedBy, kpi, chartIm
     <style>
       /* ── Base ─────────────────────────────────── */
       * { box-sizing: border-box; margin: 0; padding: 0; }
-      body { font-family: 'Inter', 'Sarabun', sans-serif; }
+      body { font-family: 'Poppins', 'Sarabun', sans-serif; }
 
       /* ── Page wrapper ─────────────────────────── */
       .page {

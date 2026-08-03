@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Menu Database | IMPACT Food Tag</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
     <link
@@ -18,7 +18,7 @@
     <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
     <style>
       body {
-        font-family: "Inter", sans-serif;
+        font-family: "Poppins", sans-serif;
       }
       .modal-overlay {
         position: fixed;
@@ -485,6 +485,30 @@
       const supabaseUrl = "https://nexvompdeubppbkvnwor.supabase.co";
       const supabaseKey = "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI";
       const dbClient = supabase.createClient(supabaseUrl, supabaseKey);
+      
+      function showCustomAlert(title, messageHtml = "") {
+        const overlay = document.createElement('div');
+        overlay.className = 'fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-all opacity-100';
+        
+        const modal = document.createElement('div');
+        modal.className = 'bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform scale-100 transition-all';
+        
+        modal.innerHTML = `
+          <div class="bg-red-50 p-4 border-b border-red-100 flex items-center gap-3">
+            <span class="material-symbols-outlined text-red-500 text-2xl">warning</span>
+            <h3 class="text-lg font-bold text-red-700">${title}</h3>
+          </div>
+          <div class="p-5 text-sm text-slate-600 space-y-3 max-h-[60vh] overflow-y-auto">
+            ${messageHtml}
+          </div>
+          <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+            <button class="px-5 py-2 bg-slate-800 text-white font-bold rounded-lg hover:bg-slate-700 transition-colors shadow-sm" onclick="this.closest('.fixed').remove()">รับทราบ / ยืนยัน</button>
+          </div>
+        `;
+        
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+      }
 
       let dbMenus = [];
       let dbIngredients = [];
@@ -599,14 +623,29 @@
           const buildIngHtml = (ings) =>
             ings
               .map(
-                (ing) => `
-            <div class="flex items-center gap-3 bg-white shadow-sm border border-slate-200 px-3 py-2.5 rounded-xl mb-2 w-full max-w-[220px] group transition-all hover:border-slate-300 overflow-hidden">
-                <img src="${ing.icon_url || ing.image_url}" class="w-9 h-9 object-contain rounded-md flex-shrink-0 bg-slate-50 border border-slate-100 p-1">
+                (ing) => {
+                const imgUrl = ing.icon_url || ing.image_url;
+                const nameText = ing.name_en || ing.name_th || "IMG";
+                const imgHtml = imgUrl 
+                  ? `<img src="${imgUrl}" class="w-9 h-9 object-contain rounded-md flex-shrink-0 bg-slate-50 border border-slate-100 p-1">` 
+                  : `<div class="w-9 h-9 flex-shrink-0 rounded-md border border-dashed border-red-300 bg-red-50 flex flex-col items-center justify-center p-0.5" title="ไม่มีรูปภาพ">
+                       <span class="text-[8px] font-bold text-red-500 leading-tight">NO</span>
+                       <span class="text-[8px] font-bold text-red-500 leading-tight">IMG</span>
+                     </div>`;
+                     
+                const containerStyle = imgUrl
+                  ? "bg-white border-slate-200 hover:border-slate-300"
+                  : "bg-red-50 border-red-300 hover:border-red-400 shadow-[0_0_10px_rgba(239,68,68,0.15)]";
+                const textStyle = imgUrl ? "text-slate-700" : "text-red-700";
+
+                return `
+            <div class="flex items-center gap-3 shadow-sm border px-3 py-2.5 rounded-xl mb-2 w-full max-w-[220px] group transition-all overflow-hidden ${containerStyle}">
+                ${imgHtml}
                 <div class="flex-1 hover-scroll pb-1">
-                  <span class="text-[14px] font-bold text-slate-700 tracking-wide leading-snug pt-0.5 block pr-2" title="${ing.name_en || ing.name_th || "IMG"}">${ing.name_en || ing.name_th || "IMG"}</span>
+                  <span class="text-[14px] font-bold tracking-wide leading-snug pt-0.5 block pr-2 ${textStyle}" title="${nameText}">${nameText}</span>
                 </div>
-            </div>`,
-              )
+            </div>`;
+              })
               .join("");
 
           const mainIngHtml = buildIngHtml(mainIngs);
@@ -820,7 +859,7 @@
           closeModal("menuModal");
           fetchData();
         } catch (e) {
-          alert(e.message);
+          showCustomAlert("Error", `<p class="text-red-500">${e.message}</p>`);
         } finally {
           btn.disabled = false;
           btn.innerHTML = "ยืนยัน";
@@ -890,7 +929,7 @@
           updateBulkDeleteButton();
           fetchData();
         } catch (e) {
-          alert("Error deleting menus: " + e.message);
+          showCustomAlert("Error deleting menus", `<p class="text-red-500">${e.message}</p>`);
         } finally {
           btn.disabled = false;
           btn.innerHTML = "ลบข้อมูลทั้งหมด";
@@ -921,7 +960,7 @@
           closeModal("deleteModal");
           fetchData();
         } catch (e) {
-          alert("Error deleting menu: " + e.message);
+          showCustomAlert("Error deleting menu", `<p class="text-red-500">${e.message}</p>`);
         } finally {
           btn.disabled = false;
           btn.innerHTML = "ลบข้อมูล";
@@ -1086,11 +1125,15 @@
           }
 
           let currentMaxId = getLatestMenuNumber();
+          let missingNames = new Set();
+          let autoCreatedIngs = new Set();
+          let missingImages = new Set();
 
           const ingDict = dbIngredients.map((ing) => ({
             id: ing.id,
             nameThClean: (ing.name_th || "").toLowerCase().replace(/\s+/g, ""),
             nameEnClean: (ing.name_en || "").toLowerCase().replace(/\s+/g, ""),
+            hasImage: !!(ing.icon_url || ing.image_url)
           }));
 
           // Group rows by item ID (__EMPTY) before processing
@@ -1135,7 +1178,10 @@
             const nameTh = row["Menu Name (TH)"] || "";
             const nameEn = row["Menu Name (EN)"] || "";
 
-            if (!nameTh && !nameEn) continue;
+            if (!nameTh && !nameEn) {
+              missingNames.add("Row: " + (groupedRows.indexOf(row) + 2));
+              continue;
+            }
 
             currentMaxId++;
             let mainIngredientIds = [];

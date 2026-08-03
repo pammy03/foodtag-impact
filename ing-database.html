@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ingredients | IMPACT Food Tag</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link
@@ -16,7 +16,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
       body {
-        font-family: "Inter", sans-serif;
+        font-family: "Poppins", sans-serif;
       }
       .custom-scroll::-webkit-scrollbar {
         width: 6px;
@@ -113,6 +113,10 @@
                   <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll()" class="w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all">
                   Select All
               </label>
+              <button id="btnFilterMissing" onclick="toggleFilterMissing()" class="px-4 py-2.5 bg-red-50 text-red-600 border border-red-200 rounded-xl font-bold hover:bg-red-100 transition-all flex items-center gap-2 shadow-sm text-sm">
+                 <span class="material-symbols-outlined text-[18px]">warning</span>
+                 Needs Image (<span id="missingCount">0</span>)
+              </button>
               <button id="bulkDeleteBtn" onclick="confirmBulkDelete()" class="hidden px-5 py-2.5 bg-red-50 text-red-500 font-bold rounded-xl border border-red-200 hover:bg-red-100 hover:text-red-600 transition-all items-center gap-2 text-sm shadow-sm cursor-pointer">
                  <span class="material-symbols-outlined text-[20px]">delete_sweep</span>
                  Delete (<span id="selectedCount">0</span>)
@@ -437,6 +441,20 @@
 
       let dbIngredients = [];
       let currentViewType = "list";
+      let showMissingOnly = false;
+
+      function toggleFilterMissing() {
+        showMissingOnly = !showMissingOnly;
+        const btn = document.getElementById("btnFilterMissing");
+        if (showMissingOnly) {
+          btn.classList.add("bg-red-500", "text-white", "border-red-600");
+          btn.classList.remove("bg-red-50", "text-red-600", "border-red-200", "hover:bg-red-100");
+        } else {
+          btn.classList.remove("bg-red-500", "text-white", "border-red-600");
+          btn.classList.add("bg-red-50", "text-red-600", "border-red-200", "hover:bg-red-100");
+        }
+        filterIngredients();
+      }
       let editImageFile = null;
       let pendingSaveType = null;
 
@@ -534,25 +552,34 @@
               }
               const safeName = displayName.replace(/'/g, "\\'");
 
+              const hasImage = !!ing.icon_url;
+              const boxStyle = hasImage ? "bg-white border-slate-200" : "bg-red-50 border-red-300 border-2 shadow-[0_0_15px_rgba(239,68,68,0.2)]";
+
               return `
-              <div class="ing-item bg-white border border-slate-200 rounded-2xl p-5 flex flex-col items-center justify-center hover:shadow-lg transition-all group relative overflow-hidden" data-name="${(ing.name_th || "").toLowerCase()} ${(ing.name_en || "").toLowerCase()}">
+              <div class="ing-item ${boxStyle} rounded-2xl p-5 flex flex-col items-center justify-center hover:shadow-lg transition-all group relative overflow-hidden" data-name="${(ing.name_th || "").toLowerCase()} ${(ing.name_en || "").toLowerCase()}" data-has-image="${hasImage}">
                 
                 <div class="absolute top-3 left-3 flex items-center gap-2 z-30">
                     <input type="checkbox" value="${ing.id}" class="row-checkbox w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all shadow-sm" onclick="updateBulkDeleteButton()">
                     <span class="bg-white text-slate-400 text-[10px] font-black px-2 py-0.5 rounded-lg border border-slate-200 pointer-events-none shadow-sm opacity-80">${index + 1}</span>
                 </div>
 
-                <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-[2px] transition-all flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 z-20">
+                <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px] transition-all flex flex-col items-center justify-center gap-3 opacity-0 group-hover:opacity-100 z-20">
+                    ${!hasImage ? `
+                    <button onclick="openEditModal('${ing.id}')" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-full shadow-lg flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 transition-all duration-200 text-sm" title="แก้ไขด่วน">
+                        <span class="material-symbols-outlined text-[18px]">add_a_photo</span> Fix Image
+                    </button>
+                    ` : `
                     <button onclick="openEditModal('${ing.id}')" class="w-11 h-11 bg-white hover:bg-emerald-50 text-[#006d4b] rounded-full shadow-lg flex items-center justify-center transform translate-y-2 group-hover:translate-y-0 transition-all duration-200" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
+                    `}
                     <button onclick="deleteIngredient('${ing.id}', '${safeName}')" class="w-11 h-11 bg-white hover:bg-red-50 text-red-500 rounded-full shadow-lg flex items-center justify-center transform translate-y-2 group-hover:translate-y-0 transition-all duration-200 delay-75" title="Delete">
                         <span class="material-symbols-outlined text-[20px]">delete</span>
                     </button>
                 </div>
 
-                <div class="w-14 h-14 flex items-center justify-center relative bg-slate-50 rounded-xl p-2 border border-slate-100 mt-2">
-                    <img src="${ing.icon_url}" class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'">
+                <div class="w-14 h-14 flex items-center justify-center relative ${hasImage ? 'bg-slate-50 border border-slate-100' : 'bg-red-100 border border-dashed border-red-300 text-red-400'} rounded-xl p-2 mt-2">
+                    ${hasImage ? `<img src="${ing.icon_url}" class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'">` : `<span class="material-symbols-outlined">image_not_supported</span>`}
                 </div>
                 
                 <div class="mt-3 w-full px-2">
@@ -574,8 +601,11 @@
               }
               const safeName = displayName.replace(/'/g, "\\'");
 
+              const hasImage = !!ing.icon_url;
+              const boxStyle = hasImage ? "bg-white border-slate-200" : "bg-red-50 border-red-300 border-2 shadow-[0_0_15px_rgba(239,68,68,0.2)]";
+
               return `
-              <div class="ing-item flex items-center justify-between bg-white border border-slate-200 rounded-[1.25rem] p-4 hover:shadow-md transition-all group" data-name="${(ing.name_th || "").toLowerCase()} ${(ing.name_en || "").toLowerCase()}">
+              <div class="ing-item flex items-center justify-between ${boxStyle} rounded-[1.25rem] p-4 hover:shadow-md transition-all group" data-name="${(ing.name_th || "").toLowerCase()} ${(ing.name_en || "").toLowerCase()}" data-has-image="${hasImage}">
                  <div class="flex items-center w-full overflow-hidden pr-4 gap-4">
                     <div class="pl-2 flex items-center justify-center shrink-0">
                        <input type="checkbox" value="${ing.id}" class="row-checkbox w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all" onclick="updateBulkDeleteButton()">
@@ -584,18 +614,25 @@
                         ${index + 1}
                     </div>
 
-                    <div class="w-[60px] h-[60px] bg-slate-50 rounded-xl p-2 border border-slate-100 flex items-center justify-center shrink-0 mr-5">
-                        <img src="${ing.icon_url}" class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'">
+                    <div class="w-[60px] h-[60px] ${hasImage ? 'bg-slate-50 border border-slate-100' : 'bg-red-100 border border-dashed border-red-300 text-red-400'} rounded-xl p-2 flex items-center justify-center shrink-0 mr-5">
+                        ${hasImage ? `<img src="${ing.icon_url}" class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'">` : `<span class="material-symbols-outlined text-[28px]">image_not_supported</span>`}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h4 class="text-[14px] font-extrabold text-slate-700 tracking-wide truncate" title="${displayName}">${displayName || "-"}</h4>
+                        <h4 class="text-[14px] font-extrabold ${hasImage ? 'text-slate-700' : 'text-red-700'} tracking-wide truncate" title="${displayName}">${displayName || "-"}</h4>
+                        ${!hasImage ? `<span class="text-[10px] text-red-500 font-bold bg-white px-2 py-0.5 rounded shadow-sm mt-1 inline-block">ไม่มีรูปภาพ</span>` : ''}
                     </div>
                  </div>
                  
                  <div class="flex items-center gap-1 shrink-0 pr-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                     ${!hasImage ? `
+                     <button onclick="openEditModal('${ing.id}')" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-full transition-all text-xs flex items-center gap-1 shadow-md mr-2" title="แก้ไขด่วน">
+                          <span class="material-symbols-outlined text-[16px]">add_a_photo</span> Fix Image
+                     </button>
+                     ` : `
                      <button onclick="openEditModal('${ing.id}')" class="text-slate-400 hover:text-[#006d4b] hover:bg-emerald-50 p-2.5 rounded-full transition-all" title="Edit">
                           <span class="material-symbols-outlined text-[22px]">edit</span>
                      </button>
+                     `}
                      <button onclick="deleteIngredient('${ing.id}', '${safeName}')" class="text-slate-400 hover:text-red-500 hover:bg-red-50 p-2.5 rounded-full transition-all" title="Delete">
                           <span class="material-symbols-outlined text-[22px]">delete</span>
                      </button>
@@ -609,6 +646,12 @@
         const selectAll = document.getElementById("selectAllCheckbox");
         if(selectAll) selectAll.checked = false;
         if(typeof updateBulkDeleteButton === 'function') updateBulkDeleteButton();
+        
+        const missingCount = dbIngredients.filter(i => !i.icon_url).length;
+        const missingCountEl = document.getElementById("missingCount");
+        if (missingCountEl) missingCountEl.innerText = missingCount;
+        
+        filterIngredients();
       }
 
       function openEditModal(id) {
@@ -719,6 +762,13 @@
 
         items.forEach((item) => {
           const name = item.getAttribute("data-name");
+          const hasImage = item.getAttribute("data-has-image") === "true";
+
+          if (showMissingOnly && hasImage) {
+            item.style.display = "none";
+            return;
+          }
+
           if (name.includes(query)) {
             item.style.display = "flex";
             if (query && name.startsWith(query)) {
