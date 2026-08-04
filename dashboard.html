@@ -346,51 +346,62 @@
         body {
           margin: 0 !important;
           padding: 0 !important;
-          background: white;
+          background: white !important;
           width: 100% !important;
-          height: 100% !important;
+          height: auto !important;
+          display: block !important;
+          overflow: visible !important;
+        }
+        #printArea {
+          display: block !important;
+          width: 100% !important;
+          height: auto !important;
+          padding: 0 !important;
+          position: static !important;
+          background: white !important;
+        }
+        .paper-container {
+          position: relative !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          page-break-after: always !important;
+          break-after: page !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          box-shadow: none !important;
           display: flex !important;
           justify-content: center !important;
           align-items: center !important;
           overflow: hidden !important;
-        }
-        #printArea {
-          display: flex !important;
-          justify-content: center !important;
-          align-items: center !important;
-          width: 100% !important;
-          height: 100% !important;
-          padding: 0 !important;
-          position: absolute !important;
-          top: 0 !important;
-          left: 0 !important;
-          background: white !important;
+          box-sizing: border-box !important;
         }
         .preview-paper {
           position: relative !important;
+          display: flex !important;
+          justify-content: center !important;
+          align-items: center !important;
           width: 100% !important;
           height: 100% !important;
           max-width: 100vw !important;
           max-height: 100vh !important;
           overflow: hidden !important;
           box-shadow: none !important;
-          margin: auto !important;
+          margin: 0 !important;
           padding: 0 !important;
           page-break-after: avoid !important;
           page-break-before: avoid !important;
           page-break-inside: avoid !important;
           box-sizing: border-box !important;
           transform: none !important;
-          transform-origin: center center !important;
           border: none !important;
         }
         .inner-grid {
           border: 1px solid #64748b !important;
           margin: 0 !important;
-          position: absolute !important;
-          top: 50% !important;
-          left: 50% !important;
-          transform: translate(-50%, -50%) !important;
+          position: relative !important;
+          top: auto !important;
+          left: auto !important;
+          transform: none !important;
           box-sizing: border-box !important;
         }
         .slot {
@@ -716,6 +727,15 @@
             </div>
           </div>
           <div class="flex items-center gap-3">
+            <div id="previewPagination" class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 mr-2 hidden">
+              <button onclick="changePreviewPage(-1)" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+              </button>
+              <span id="previewPageText" class="text-sm font-bold text-slate-700 min-w-[3rem] text-center">1 / 1</span>
+              <button onclick="changePreviewPage(1)" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+              </button>
+            </div>
             <button
               id="modalPrintBtn"
               class="bg-[#006d4b] text-white px-5 py-2 rounded-xl font-semibold hover:bg-[#005a3d] transition-all flex items-center gap-2 active:scale-95 shadow-sm"
@@ -867,6 +887,17 @@
       let currentViewMode = "grid";
       let currentPage = 1;
       const itemsPerPage = 8;
+
+      function getDisplayTemplateNames(tag) {
+        if (tag.slotsData && tag.slotsData.__pageConfigs) {
+          const configValues = Object.values(tag.slotsData.__pageConfigs);
+          if (configValues.length > 0) {
+            const uniqueNames = [...new Set(configValues)];
+            return uniqueNames.join(', ');
+          }
+        }
+        return tag.templateName;
+      }
 
       function getPaperDimensions(templateName, paperSize) {
         const config = TEMPLATE_CONFIGS[templateName];
@@ -1099,7 +1130,7 @@
           const displayOrder = startIndex + idx + 1;
           const dims = getPaperDimensions(tag.templateName, tag.paperSize);
           const creatorName = tag.createdBy || "UNKNOWN";
-          const displayTemplateName = tag.templateName;
+          const displayTemplateName = getDisplayTemplateNames(tag);
 
           // 🎯 จัดการสถานะ Draft/Ready
           const isDraft = tag.status === "Draft";
@@ -1316,110 +1347,165 @@
       }
 
       function generatePaperHTML(tagData) {
-        const config = TEMPLATE_CONFIGS[tagData.templateName];
-        if (!config) return "";
-
-        let slotsHTML = "";
+        let totalHTML = "";
         const slotsData = tagData.slotsData || {};
-        const dims = getPaperDimensions(
-          tagData.templateName,
-          tagData.paperSize,
-        );
+        const pageConfigsObj = slotsData.__pageConfigs || { "1": tagData.templateName };
+        const totalPages = Object.keys(pageConfigsObj).length;
+        
+        let globalStartSlot = 1;
 
-        for (let i = 1; i <= config.slots_count; i++) {
-          const menu = slotsData[i] || {};
-          const slotBgUrl = menu.bgUrl || "";
-          const bgHtml = slotBgUrl
-            ? `<img src="${slotBgUrl}" class="slot-bg">`
-            : "";
+        for (let p = 1; p <= totalPages; p++) {
+          const pTempName = pageConfigsObj[p] || tagData.templateName;
+          const config = TEMPLATE_CONFIGS[pTempName];
+          if (!config) continue;
+          
+          let slotsHTML = "";
+          const dims = getPaperDimensions(pTempName, tagData.paperSize);
+          const endSlot = globalStartSlot + config.slots_count - 1;
 
-          if (!menu.name_th && !menu.name_en) {
-            slotsHTML += `<div class="slot">${bgHtml}<div class="w-full h-full flex flex-col items-center justify-center relative z-10 p-4"><div class="slot-content"></div></div></div>`;
-            continue;
+          for (let i = globalStartSlot; i <= endSlot; i++) {
+            const menu = slotsData[i] || {};
+            const slotBgUrl = menu.bgUrl || "";
+            const bgHtml = slotBgUrl
+              ? `<img src="${slotBgUrl}" class="slot-bg">`
+              : "";
+
+            if (!menu.name_th && !menu.name_en) {
+              slotsHTML += `<div class="slot">${bgHtml}<div class="w-full h-full flex flex-col items-center justify-center relative z-10 p-4"><div class="slot-content"></div></div></div>`;
+              continue;
+            }
+
+            const fTh = menu.fontTh || "'Sarabun', sans-serif";
+            const sTh = menu.fontSizeTh || "22px";
+            const fEn = menu.fontEn || "'Poppins', sans-serif";
+            const sEn = menu.fontSizeEn || "22px";
+
+            const sizeMainStyle = menu.allergenIconSizeMain
+              ? `width: ${menu.allergenIconSizeMain}px !important; height: ${menu.allergenIconSizeMain}px !important;`
+              : "";
+            const sizeContainStyle = menu.allergenIconSizeContain
+              ? `width: ${menu.allergenIconSizeContain}px !important; height: ${menu.allergenIconSizeContain}px !important;`
+              : "";
+
+            let fullAllergensHtml = "";
+
+            if (!config.hide_allergies) {
+              let mainHtml = "";
+              if (
+                menu.main_allergens &&
+                Array.isArray(menu.main_allergens) &&
+                menu.main_allergens.length > 0
+              ) {
+                const icons = menu.main_allergens
+                  .map((a) => {
+                    const imgUrl =
+                      a.icon_url ||
+                      a.image_url ||
+                      "https://placehold.co/100x100/e2e8f0/94a3b8?text=No+Image";
+                    const nameText = a.name_th || a.name_en || "";
+                    return `<img src="${imgUrl}" class="allergen-icon" style="${sizeMainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.src='https://placehold.co/100x100/fee2e2/ef4444?text=Error'">`;
+                  })
+                  .join("");
+
+                mainHtml = `
+                  <div class="w-full mt-2">
+                    <div class="text-[9px] sm:text-[10px] font-black text-red-600 tracking-widest text-center mb-1 w-full uppercase" style="font-family: 'Poppins', sans-serif;">CONTAIN</div>
+                    <div class="allergen-container">${icons}</div>
+                  </div>`;
+              }
+
+              let containHtml = "";
+              if (
+                menu.allergens &&
+                Array.isArray(menu.allergens) &&
+                menu.allergens.length > 0
+              ) {
+                const icons = menu.allergens
+                  .map((a) => {
+                    const imgUrl =
+                      a.icon_url ||
+                      a.image_url ||
+                      "https://placehold.co/100x100/e2e8f0/94a3b8?text=No+Image";
+                    const nameText = a.name_th || a.name_en || "";
+                    return `<img src="${imgUrl}" class="allergen-icon" style="${sizeContainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.src='https://placehold.co/100x100/fee2e2/ef4444?text=Error'">`;
+                  })
+                  .join("");
+
+                containHtml = `
+                  <div class="w-full mt-2">
+                    <div class="text-[9px] sm:text-[10px] font-black text-emerald-700 tracking-widest text-center mb-1 w-full uppercase" style="font-family: 'Poppins', sans-serif;">MAY CONTAIN</div>
+                    <div class="allergen-container">${icons}</div>
+                  </div>`;
+              }
+
+              if (mainHtml || containHtml) {
+                fullAllergensHtml = `<div class="w-full flex flex-col items-center mt-1 space-y-1.5">${mainHtml}${containHtml}</div>`;
+              }
+            }
+
+            slotsHTML += `
+              <div class="slot">
+                  ${bgHtml}
+                  <div class="w-full h-full flex flex-col items-center justify-center relative z-10 p-4">
+                      <div class="slot-content">
+                          <div class="slot-text-th font-black text-slate-800 mb-1 leading-tight text-center whitespace-pre-line" style="font-family: ${fTh}; font-size: ${sTh};">${menu.name_th || ""}</div>
+                          <div class="slot-text-en font-medium text-slate-500 mb-1 leading-tight text-center whitespace-pre-line" style="font-family: ${fEn}; font-size: ${sEn};">${menu.name_en || ""}</div>
+                          ${fullAllergensHtml}
+                      </div>
+                  </div>
+              </div>`;
           }
 
-          const fTh = menu.fontTh || "'Sarabun', sans-serif";
-          const sTh = menu.fontSizeTh || "22px";
-          const fEn = menu.fontEn || "'Poppins', sans-serif";
-          const sEn = menu.fontSizeEn || "22px";
-
-          const sizeMainStyle = menu.allergenIconSizeMain
-            ? `width: ${menu.allergenIconSizeMain}px !important; height: ${menu.allergenIconSizeMain}px !important;`
-            : "";
-          const sizeContainStyle = menu.allergenIconSizeContain
-            ? `width: ${menu.allergenIconSizeContain}px !important; height: ${menu.allergenIconSizeContain}px !important;`
-            : "";
-
-          let fullAllergensHtml = "";
-
-          if (!config.hide_allergies) {
-            let mainHtml = "";
-            if (
-              menu.main_allergens &&
-              Array.isArray(menu.main_allergens) &&
-              menu.main_allergens.length > 0
-            ) {
-              const icons = menu.main_allergens
-                .map((a) => {
-                  const imgUrl =
-                    a.icon_url ||
-                    a.image_url ||
-                    "https://placehold.co/100x100/e2e8f0/94a3b8?text=No+Image";
-                  const nameText = a.name_th || a.name_en || "";
-                  return `<img src="${imgUrl}" class="allergen-icon" style="${sizeMainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.src='https://placehold.co/100x100/fee2e2/ef4444?text=Error'">`;
-                })
-                .join("");
-
-              mainHtml = `
-                <div class="w-full mt-2">
-                  <div class="text-[9px] sm:text-[10px] font-black text-red-600 tracking-widest text-center mb-1 w-full uppercase" style="font-family: 'Poppins', sans-serif;">CONTAIN</div>
-                  <div class="allergen-container">${icons}</div>
-                </div>`;
-            }
-
-            let containHtml = "";
-            if (
-              menu.allergens &&
-              Array.isArray(menu.allergens) &&
-              menu.allergens.length > 0
-            ) {
-              const icons = menu.allergens
-                .map((a) => {
-                  const imgUrl =
-                    a.icon_url ||
-                    a.image_url ||
-                    "https://placehold.co/100x100/e2e8f0/94a3b8?text=No+Image";
-                  const nameText = a.name_th || a.name_en || "";
-                  return `<img src="${imgUrl}" class="allergen-icon" style="${sizeContainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.src='https://placehold.co/100x100/fee2e2/ef4444?text=Error'">`;
-                })
-                .join("");
-
-              containHtml = `
-                <div class="w-full mt-2">
-                  <div class="text-[9px] sm:text-[10px] font-black text-emerald-700 tracking-widest text-center mb-1 w-full uppercase" style="font-family: 'Poppins', sans-serif;">MAY CONTAIN</div>
-                  <div class="allergen-container">${icons}</div>
-                </div>`;
-            }
-
-            if (mainHtml || containHtml) {
-              fullAllergensHtml = `<div class="w-full flex flex-col items-center mt-1 space-y-1.5">${mainHtml}${containHtml}</div>`;
-            }
-          }
-
-          slotsHTML += `
-            <div class="slot">
-                ${bgHtml}
-                <div class="w-full h-full flex flex-col items-center justify-center relative z-10 p-4">
-                    <div class="slot-content">
-                        <div class="slot-text-th font-black text-slate-800 mb-1 leading-tight text-center whitespace-pre-line" style="font-family: ${fTh}; font-size: ${sTh};">${menu.name_th || ""}</div>
-                        <div class="slot-text-en font-medium text-slate-500 mb-1 leading-tight text-center whitespace-pre-line" style="font-family: ${fEn}; font-size: ${sEn};">${menu.name_en || ""}</div>
-                        ${fullAllergensHtml}
-                    </div>
-                </div>
-            </div>`;
+          totalHTML += `<div class="paper-container mb-6 flex-shrink-0 relative mx-auto"><div class="preview-paper shadow-md" style="width: ${dims.w}px; height: ${dims.h}px; background: white; padding: 0; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; align-items: center;"><div class="inner-grid ${config.grid_class}">${slotsHTML}</div></div></div>`;
+          globalStartSlot += config.slots_count;
         }
 
-        return `<div class="preview-paper" style="width: ${dims.w}px; height: ${dims.h}px; background: white; padding: 0; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; align-items: center;"><div class="inner-grid ${config.grid_class}">${slotsHTML}</div></div>`;
+        return totalHTML;
+      }
+
+      let currentPreviewPage = 1;
+      let totalPreviewPages = 1;
+
+      function changePreviewPage(delta) {
+        let newPage = currentPreviewPage + delta;
+        if (newPage < 1) newPage = 1;
+        if (newPage > totalPreviewPages) newPage = totalPreviewPages;
+        if (newPage === currentPreviewPage) return;
+
+        currentPreviewPage = newPage;
+        updatePreviewPagination();
+        updatePreviewVisibility();
+      }
+
+      function updatePreviewPagination() {
+        const text = document.getElementById("previewPageText");
+        const pagination = document.getElementById("previewPagination");
+        
+        if (totalPreviewPages <= 1) {
+          pagination.classList.add("hidden");
+        } else {
+          pagination.classList.remove("hidden");
+          text.innerText = `${currentPreviewPage} / ${totalPreviewPages}`;
+          
+          const btns = pagination.querySelectorAll("button");
+          btns[0].disabled = currentPreviewPage <= 1;
+          btns[1].disabled = currentPreviewPage >= totalPreviewPages;
+        }
+      }
+
+      function updatePreviewVisibility() {
+        const wrapper = document.getElementById("modalPaperWrapper");
+        const containers = wrapper.querySelectorAll(".paper-container");
+        
+        containers.forEach((container, index) => {
+          if (index + 1 === currentPreviewPage) {
+            container.style.display = "flex";
+            wrapper.style.width = container.style.width;
+            wrapper.style.height = container.style.height;
+          } else {
+            container.style.display = "none";
+          }
+        });
       }
 
       function openPreviewModal(tagId) {
@@ -1428,7 +1514,7 @@
         const modal = document.getElementById("previewModal");
         modal.classList.remove("hidden");
         document.getElementById("modalTitle").innerText = tag.title;
-        const displayTemplateName = tag.templateName;
+        const displayTemplateName = getDisplayTemplateNames(tag);
         document.getElementById("modalSubtitle").innerText = displayTemplateName;
         document.getElementById("modalPaperSizeBadge").innerText =
           tag.paperSize || "A4";
@@ -1439,14 +1525,32 @@
 
         setTimeout(() => {
           const modalBody = document.getElementById("modalBody");
-          const scale = Math.min(
-            (modalBody.clientWidth - 64) / dims.w,
-            (modalBody.clientHeight - 64) / dims.h,
-          );
-          const paper = wrapper.querySelector(".preview-paper");
-          paper.style.transform = `scale(${scale})`;
-          wrapper.style.width = dims.w * scale + "px";
-          wrapper.style.height = dims.h * scale + "px";
+          
+          const containers = wrapper.querySelectorAll(".paper-container");
+          totalPreviewPages = containers.length;
+          currentPreviewPage = 1;
+
+          containers.forEach(container => {
+             const paper = container.querySelector(".preview-paper");
+             const pw = parseInt(paper.style.width);
+             const ph = parseInt(paper.style.height);
+
+             const scale = Math.min(
+               (modalBody.clientWidth - 64) / pw,
+               (modalBody.clientHeight - 64) / ph,
+             );
+
+             paper.style.transform = `scale(${scale})`;
+             paper.style.transformOrigin = "top left";
+             
+             container.style.width = (pw * scale) + "px";
+             container.style.height = (ph * scale) + "px";
+             container.style.marginBottom = "0px";
+             container.classList.remove("mb-6");
+          });
+
+          updatePreviewPagination();
+          updatePreviewVisibility();
 
           modal.classList.add("opacity-100");
           document
@@ -1600,7 +1704,7 @@
           style.id = "printPageOrientation";
           document.head.appendChild(style);
         }
-        style.innerHTML = `@page { size: ${paperSize} ${orientation}; margin: 0mm; } body { margin: 0; }`;
+        style.innerHTML = `@media print { @page { size: ${paperSize} ${orientation}; margin: 0; } }`;
 
         printArea.classList.remove("hidden");
         setTimeout(() => {

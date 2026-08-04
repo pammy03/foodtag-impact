@@ -177,6 +177,9 @@
         border-radius: 10px;
       }
 
+      .hidden-page { display: none !important; }
+      .active-page { display: flex !important; }
+
       @media print {
         html,
         body {
@@ -184,54 +187,53 @@
           padding: 0;
           background: white;
           width: 100%;
-          height: 100%;
-          display: flex !important;
-          justify-content: center !important;
-          align-items: center !important;
+          height: auto;
+          display: block !important;
         }
         header,
         aside,
-        .preview-header {
+        .preview-header,
+        #paginationControls {
           display: none !important;
         }
         main {
           padding: 0 !important;
           background: white !important;
-          display: flex !important;
-          justify-content: center !important;
-          align-items: center !important;
+          display: block !important;
           width: 100% !important;
-          height: 100% !important;
-          overflow: hidden !important;
+          height: auto !important;
+          overflow: visible !important;
         }
         #paperContainer {
-          display: flex !important;
-          justify-content: center !important;
-          align-items: center !important;
+          display: block !important;
           width: 100% !important;
-          height: 100% !important;
+          height: auto !important;
           padding: 0 !important;
         }
 
-        #a4Paper {
+        .a4-paper {
           position: relative !important;
           display: flex !important;
           justify-content: center !important;
           align-items: center !important;
-          width: 100% !important;
-          height: 100% !important;
+          width: 100vw !important;
+          height: 100vh !important;
           max-width: none !important;
           max-height: none !important;
           overflow: hidden !important;
           box-shadow: none !important;
           margin: 0 !important;
           padding: 0 !important;
-          page-break-after: avoid !important;
+          page-break-after: always !important;
           page-break-before: avoid !important;
           page-break-inside: avoid !important;
           box-sizing: border-box !important;
           transform: none !important;
           transform-origin: center center !important;
+        }
+
+        .a4-paper:last-of-type {
+          page-break-after: auto !important;
         }
 
         .inner-grid {
@@ -791,7 +793,7 @@
                 <span class="material-symbols-outlined text-[20px]"
                   >content_copy</span
                 >
-                ใช้เมนูนี้กับทุก Slot
+                ใช้เมนูนี้กับทุก Slot ในหน้านี้
               </button>
             </div>
           </div>
@@ -839,21 +841,29 @@
       </aside>
 
       <main class="flex-1 bg-slate-200 flex flex-col overflow-hidden relative">
-        <div class="preview-header p-6 pb-2 flex-shrink-0 z-10">
-          <h2
-            class="text-2xl font-black text-[#006d4b] uppercase tracking-tight"
-          >
-            Preview
-          </h2>
-          <p class="text-sm text-slate-500" id="previewPaperText">A4 Paper</p>
-        </div>
-        <div
-          id="paperContainer"
-          class="flex-1 w-full h-full flex justify-center items-center overflow-hidden p-6"
-        >
-          <div id="a4Paper" class="a4-paper">
-            <div id="innerGrid" class="inner-grid"></div>
+        <div class="preview-header p-6 pb-2 flex-shrink-0 z-10 flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-black text-[#006d4b] uppercase tracking-tight">Preview</h2>
+            <p class="text-sm text-slate-500" id="previewPaperText">A4 Paper</p>
           </div>
+          <div id="paginationControls" class="flex items-center gap-3 print:hidden">
+            <button onclick="prevPage()" class="p-1 rounded hover:bg-slate-200 disabled:opacity-30 text-slate-400 font-bold transition-colors flex items-center justify-center" id="prevPageBtn">
+              <span class="material-symbols-outlined font-bold text-2xl">chevron_left</span>
+            </button>
+            <span class="text-xl font-black text-[#334155]" id="pageIndicator">Page 1/1</span>
+            <button onclick="nextPage()" class="p-1 rounded hover:bg-slate-200 disabled:opacity-30 text-slate-400 font-bold transition-colors flex items-center justify-center" id="nextPageBtn">
+              <span class="material-symbols-outlined font-bold text-2xl">chevron_right</span>
+            </button>
+            <button onclick="addNewPage()" class="ml-4 px-4 py-2 bg-[#006d4b] text-white text-sm font-bold rounded-lg flex items-center gap-1 hover:bg-[#005a3e] shadow-sm transition-colors">
+              <span class="material-symbols-outlined text-[18px] font-bold">add</span> Add Page
+            </button>
+            <button onclick="showDeletePageConfirmModal()" class="ml-2 px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-30 disabled:hover:bg-red-50 text-sm font-bold rounded-lg flex items-center justify-center transition-colors" id="deletePageBtn" title="Delete Current Page">
+              <span class="material-symbols-outlined text-[20px]">delete</span>
+            </button>
+          </div>
+        </div>
+        <div id="paperContainer" class="flex-1 w-full h-full flex justify-center items-center overflow-hidden p-6">
+          <!-- Pages will be generated here -->
         </div>
       </main>
     </div>
@@ -950,6 +960,41 @@
     </div>
 
     <div
+      id="deletePageConfirmModal"
+      class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300"
+    >
+      <div
+        class="bg-white rounded-2xl shadow-2xl w-[400px] p-8 text-center transform scale-95 transition-transform duration-300"
+      >
+        <div
+          class="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-5 border-2 border-red-100"
+        >
+          <span class="material-symbols-outlined text-3xl">delete</span>
+        </div>
+        <h3 class="text-xl font-bold text-slate-800 mb-2">
+          ยืนยันการลบหน้า
+        </h3>
+        <p class="text-sm text-slate-500 mb-6 leading-relaxed">
+          คุณต้องการลบหน้านี้ใช่หรือไม่?<br />ข้อมูลทั้งหมดในหน้านี้จะหายไป
+        </p>
+        <div class="flex gap-3 w-full">
+          <button
+            onclick="closeDeletePageConfirmModal()"
+            class="flex-1 py-3 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors"
+          >
+            ยกเลิก
+          </button>
+          <button
+            onclick="executeDeleteCurrentPage()"
+            class="flex-1 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 shadow-sm transition-colors"
+          >
+            ลบ
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
       id="clearSlotConfirmModal"
       class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300"
     >
@@ -1004,7 +1049,7 @@
         <p class="text-sm text-slate-500 mb-6 leading-relaxed">
           คุณต้องการคัดลอกข้อมูลเมนู การตั้งค่าฟอนต์<br />และพื้นหลังของ
           <span id="copySlotNumber" class="font-bold text-[#006d4b]"></span
-          ><br />ไปยังป้ายอาหารทุกช่องใช่หรือไม่?
+          ><br />ไปยังป้ายอาหารทุกช่องในหน้านี้ใช่หรือไม่?
         </p>
         <div class="flex gap-3 w-full">
           <button
@@ -1227,12 +1272,13 @@
       const supabaseKey = "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI";
       const dbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-      let currentTemplateConfig = {};
       let activeSlot = 1;
       let slotsData = {};
       let isInitialLoading = false;
       let selectedPaperSize = "A4";
       let isDraftStatus = true;
+      let currentPage = 1;
+      let totalPages = 1;
 
       const TEMPLATE_CONFIGS = {
         plate: {
@@ -1379,6 +1425,16 @@
           if (tagToEdit) {
             document.getElementById("profileName").value = tagToEdit.title;
             slotsData = tagToEdit.slotsData || {};
+            
+            if (slotsData.__pageConfigs) {
+               for (const p in slotsData.__pageConfigs) {
+                  const tName = slotsData.__pageConfigs[p];
+                  pageConfigs[p] = TEMPLATE_CONFIGS[TEMPLATE_NAME_TO_KEY[tName]];
+               }
+               delete slotsData.__pageConfigs;
+            } else {
+               pageConfigs[1] = TEMPLATE_CONFIGS[TEMPLATE_NAME_TO_KEY[tagToEdit.templateName]];
+            }
 
             if (tagToEdit.status === "Ready") {
               isDraftStatus = false;
@@ -1393,16 +1449,18 @@
               setPaperSize("A4");
             }
 
-            const config =
-              TEMPLATE_CONFIGS[TEMPLATE_NAME_TO_KEY[tagToEdit.templateName]];
+            const config = pageConfigs[1] || TEMPLATE_CONFIGS[TEMPLATE_NAME_TO_KEY[tagToEdit.templateName]];
             console.log("Loading edit config:", config, tagToEdit);
             if (config) {
               await applyTemplate(config, null);
-              syncTemplateDropdown(tagToEdit.templateName);
+              syncTemplateDropdown(config.name);
 
               console.log("Slots data after applyTemplate:", slotsData);
 
-              for (let i = 1; i <= config.slots_count; i++) {
+              const slotsKeys = Object.keys(slotsData).map(Number).filter(k => !isNaN(k));
+              const maxSlot = slotsKeys.length > 0 ? Math.max(...slotsKeys) : 0;
+              
+              for (let i = 1; i <= maxSlot; i++) {
                 const slotDiv = document.getElementById(`slot-${i}`);
                 if (slotDiv) {
                   const wrapper = slotDiv.querySelector("div:last-child");
@@ -1430,8 +1488,8 @@
 
       function resizePaper() {
         const container = document.getElementById("paperContainer");
-        const paper = document.getElementById("a4Paper");
-        if (!container || !paper || !currentTemplateConfig.orientation) return;
+        const papers = document.querySelectorAll(".a4-paper");
+        if (!container || papers.length === 0 || !currentTemplateConfig.orientation) return;
         const cWidth = container.clientWidth - 40;
         const cHeight = container.clientHeight - 40;
 
@@ -1448,17 +1506,6 @@
             currentTemplateConfig.orientation === "landscape" ? 794 : 1123;
         }
 
-        paper.style.width = `${pWidth}px`;
-        paper.style.height = `${pHeight}px`;
-
-        if (currentTemplateConfig.orientation === "landscape") {
-          paper.classList.add("landscape");
-          paper.classList.remove("portrait");
-        } else {
-          paper.classList.add("portrait");
-          paper.classList.remove("landscape");
-        }
-
         let style = document.getElementById("dynamicPrintStyle");
         if (!style) {
           style = document.createElement("style");
@@ -1468,58 +1515,137 @@
         style.innerHTML = `@media print { @page { size: ${selectedPaperSize} ${currentTemplateConfig.orientation}; margin: 0; } }`;
 
         const scale = Math.min(cWidth / pWidth, cHeight / pHeight);
-        paper.style.transform = `scale(${scale})`;
+        
+        papers.forEach(paper => {
+          paper.style.width = `${pWidth}px`;
+          paper.style.height = `${pHeight}px`;
+          paper.style.transform = `scale(${scale})`;
+
+          if (currentTemplateConfig.orientation === "landscape") {
+            paper.classList.add("landscape");
+            paper.classList.remove("portrait");
+          } else {
+            paper.classList.add("portrait");
+            paper.classList.remove("landscape");
+          }
+        });
       }
+
+      let currentTemplateConfig = {};
+      let pageConfigs = {};
 
       window.addEventListener("resize", resizePaper);
 
       function applyTemplate(temp, btnElement) {
-        currentTemplateConfig = temp;
-
-        if (!isInitialLoading) slotsData = {};
-        activeSlot = 1;
+        if (!pageConfigs[currentPage]) {
+          pageConfigs[currentPage] = temp;
+        }
+        
+        // If clicking a template button on the left panel
+        if (btnElement || temp !== pageConfigs[currentPage]) {
+          pageConfigs[currentPage] = temp;
+        }
+        
+        currentTemplateConfig = pageConfigs[currentPage];
+        let startSlot = 1;
+        for (let p = 1; p < currentPage; p++) {
+           startSlot += pageConfigs[p].slots_count;
+        }
+        activeSlot = startSlot;
 
         return loadBackgrounds(temp.name).then(() => {
           setupGridStructure();
           renderSlotControls(temp.slots_count);
-          if (!isInitialLoading) clearInputs();
           setTimeout(resizePaper, 50);
         });
       }
 
       function setupGridStructure() {
-        const innerGrid = document.getElementById("innerGrid");
-        innerGrid.className = `inner-grid ${currentTemplateConfig.grid_class}`;
+        const container = document.getElementById("paperContainer");
+        if (!container) return;
+
+        // Ensure pageConfigs is populated up to totalPages
+        if (Object.keys(pageConfigs).length === 0) {
+           pageConfigs[1] = currentTemplateConfig || TEMPLATE_CONFIGS["buffet"];
+        }
+
+        // If loading from DB, calculate totalPages based on maxSlot and pageConfigs
+        if (isInitialLoading) {
+          const slotsKeys = Object.keys(slotsData).map(Number).filter(k => !isNaN(k));
+          const maxSlot = slotsKeys.length > 0 ? Math.max(...slotsKeys) : 0;
+          
+          let p = 1;
+          let currentMax = 0;
+          while (currentMax < maxSlot || p === 1) {
+            if (!pageConfigs[p]) pageConfigs[p] = pageConfigs[p-1] || TEMPLATE_CONFIGS["buffet"];
+            currentMax += pageConfigs[p].slots_count;
+            p++;
+          }
+          totalPages = Math.max(1, p - 1);
+        }
+
+        if (currentPage > totalPages) currentPage = totalPages;
+        
+        currentTemplateConfig = pageConfigs[currentPage] || TEMPLATE_CONFIGS["buffet"];
         document.getElementById("allergenSection").style.display =
           currentTemplateConfig.hide_allergies ? "none" : "block";
-        innerGrid.innerHTML = "";
+        
+        container.innerHTML = "";
 
-        for (let i = 1; i <= currentTemplateConfig.slots_count; i++) {
-          const div = document.createElement("div");
-          div.id = `slot-${i}`;
-          div.className = `slot ${i === activeSlot ? "active" : ""}`;
-          const indicator = document.createElement("div");
-          indicator.className = `absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded print:hidden z-20 transition-colors hidden-on-export ${i === activeSlot ? "bg-[#006d4b] text-white shadow-sm" : "bg-slate-100 text-slate-400"}`;
-          indicator.innerText =
-            i === activeSlot ? `Slot ${i} (Editing...)` : `Slot ${i}`;
-          div.appendChild(indicator);
+        let globalStartSlot = 1;
+        
+        for (let p = 1; p <= totalPages; p++) {
+          if (!pageConfigs[p]) {
+             pageConfigs[p] = pageConfigs[p-1] || TEMPLATE_CONFIGS["buffet"];
+          }
+          const config = pageConfigs[p];
 
-          const contentWrapper = document.createElement("div");
-          contentWrapper.className =
-            "w-full h-full flex flex-col items-center justify-center relative z-10 p-4";
-          div.appendChild(contentWrapper);
-          innerGrid.appendChild(div);
+          const paper = document.createElement("div");
+          paper.className = `a4-paper print-page ${p === currentPage ? 'active-page' : 'hidden-page'}`;
+          paper.id = `paper-page-${p}`;
 
-          if (!slotsData[i]) {
-            slotsData[i] = { bgUrl: "" };
-          } else if (!slotsData[i].bgUrl) {
-            slotsData[i].bgUrl = "";
+          const innerGrid = document.createElement("div");
+          innerGrid.className = `inner-grid ${config.grid_class}`;
+          innerGrid.id = `innerGrid-page-${p}`;
+
+          const startSlot = globalStartSlot;
+          const endSlot = globalStartSlot + config.slots_count - 1;
+
+          for (let i = startSlot; i <= endSlot; i++) {
+            const div = document.createElement("div");
+            div.id = `slot-${i}`;
+            div.className = `slot ${i === activeSlot ? "active" : ""}`;
+            
+            const indicator = document.createElement("div");
+            indicator.className = `absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded print:hidden z-20 transition-colors hidden-on-export ${i === activeSlot ? "bg-[#006d4b] text-white shadow-sm" : "bg-slate-100 text-slate-400"}`;
+            
+            const relativeSlot = i - startSlot + 1;
+            indicator.innerText = i === activeSlot ? `Slot ${relativeSlot} (Editing...)` : `Slot ${relativeSlot}`;
+            div.appendChild(indicator);
+
+            const contentWrapper = document.createElement("div");
+            contentWrapper.className =
+              "w-full h-full flex flex-col items-center justify-center relative z-10 p-4";
+            div.appendChild(contentWrapper);
+            innerGrid.appendChild(div);
+
+            if (!slotsData[i]) {
+              slotsData[i] = { bgUrl: "" };
+            } else if (!slotsData[i].bgUrl) {
+              slotsData[i].bgUrl = "";
+            }
+
+            renderSlotContent(contentWrapper, slotsData[i], i);
           }
 
-          renderSlotContent(contentWrapper, slotsData[i], i);
+          globalStartSlot = endSlot + 1;
+          
+          paper.appendChild(innerGrid);
+          container.appendChild(paper);
         }
 
         syncBgSelectWithCurrentSlot();
+        if (typeof updatePaginationUI === 'function') updatePaginationUI();
       }
 
       function getBaseIconSize() {
@@ -1533,43 +1659,43 @@
       }
 
       function changeAllergenIconSize(type, delta) {
-        if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
-
         const baseSize = getBaseIconSize();
 
+        let currentSize;
         if (type === "main") {
-          let currentSize = slotsData[activeSlot].allergenIconSizeMain;
-          if (!currentSize) currentSize = baseSize;
+          currentSize = slotsData[activeSlot]?.allergenIconSizeMain;
+        } else {
+          currentSize = slotsData[activeSlot]?.allergenIconSizeContain;
+        }
+        if (!currentSize) currentSize = baseSize;
 
-          currentSize += delta;
-          if (currentSize < 15) currentSize = 15;
-          if (currentSize > 200) currentSize = 200;
+        currentSize += delta;
+        if (currentSize < 15) currentSize = 15;
+        if (currentSize > 200) currentSize = 200;
+
+        if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
+        if (type === "main") {
           slotsData[activeSlot].allergenIconSizeMain = currentSize;
         } else {
-          let currentSize = slotsData[activeSlot].allergenIconSizeContain;
-          if (!currentSize) currentSize = baseSize;
-
-          currentSize += delta;
-          if (currentSize < 15) currentSize = 15;
-          if (currentSize > 200) currentSize = 200;
           slotsData[activeSlot].allergenIconSizeContain = currentSize;
         }
-
-        updateInputs(slotsData[activeSlot]);
+        
         renderActiveSlotOnly();
+
+        updateInputs(slotsData[activeSlot] || {});
       }
 
       function resetAllergenIconSize(type) {
-        if (!slotsData[activeSlot]) return;
-
-        if (type === "main") {
-          slotsData[activeSlot].allergenIconSizeMain = null;
-        } else {
-          slotsData[activeSlot].allergenIconSizeContain = null;
+        if (slotsData[activeSlot]) {
+          if (type === "main") {
+            slotsData[activeSlot].allergenIconSizeMain = null;
+          } else {
+            slotsData[activeSlot].allergenIconSizeContain = null;
+          }
+          renderActiveSlotOnly();
         }
 
-        updateInputs(slotsData[activeSlot]);
-        renderActiveSlotOnly();
+        updateInputs(slotsData[activeSlot] || {});
       }
 
       function renderSlotContent(element, menu, index) {
@@ -1678,10 +1804,17 @@
           container.className = "grid grid-cols-2 gap-2 mb-4";
         }
 
-        for (let i = 1; i <= count; i++) {
+        let startSlot = 1;
+        for (let p = 1; p < currentPage; p++) {
+           startSlot += pageConfigs[p].slots_count;
+        }
+        const endSlot = startSlot + count - 1;
+
+        for (let i = startSlot; i <= endSlot; i++) {
+          const relativeSlot = i - startSlot + 1;
           const btn = document.createElement("button");
           btn.className = `py-2 rounded-lg border font-bold text-xs transition-all ${i === activeSlot ? "bg-[#006d4b] border-[#006d4b] text-white shadow-md" : "bg-white text-slate-600 hover:bg-slate-50"}`;
-          btn.innerText = `Slot ${i}`;
+          btn.innerText = `Slot ${relativeSlot}`;
           btn.onclick = () => {
             activeSlot = i;
             renderSlotControls(count);
@@ -1690,16 +1823,22 @@
               .forEach((s) => s.classList.remove("active"));
 
             const currentSlot = document.getElementById(`slot-${i}`);
-            currentSlot.classList.add("active");
+            if (currentSlot) currentSlot.classList.add("active");
 
+            // Update all slot indicators in the DOM
             document
-              .querySelectorAll(".slot > div:first-child")
-              .forEach((el, idx) => {
-                el.innerText =
-                  idx + 1 === activeSlot
-                    ? `Slot ${idx + 1} (Editing...)`
-                    : `Slot ${idx + 1}`;
-                el.className = `absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded print:hidden z-20 transition-colors hidden-on-export ${idx + 1 === activeSlot ? "bg-[#006d4b] text-white shadow-sm" : "bg-slate-100 text-slate-400"}`;
+              .querySelectorAll(".slot")
+              .forEach((slotEl) => {
+                const slotIdParts = slotEl.id.split('-');
+                if(slotIdParts.length > 1) {
+                  const slotIndex = parseInt(slotIdParts[1], 10);
+                  const relIndex = slotIndex - startSlot + 1;
+                  const indicator = slotEl.querySelector("div:first-child");
+                  if (indicator) {
+                    indicator.innerText = slotIndex === activeSlot ? `Slot ${relIndex} (Editing...)` : `Slot ${relIndex}`;
+                    indicator.className = `absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded print:hidden z-20 transition-colors hidden-on-export ${slotIndex === activeSlot ? "bg-[#006d4b] text-white shadow-sm" : "bg-slate-100 text-slate-400"}`;
+                  }
+                }
               });
 
             if (slotsData[i]) {
@@ -1713,6 +1852,171 @@
           container.appendChild(btn);
         }
       }
+
+      function updatePaginationUI() {
+        const indicator = document.getElementById('pageIndicator');
+        if (indicator) indicator.innerText = `Page ${currentPage}/${totalPages}`;
+        
+        const prevBtn = document.getElementById('prevPageBtn');
+        if (prevBtn) prevBtn.disabled = currentPage === 1;
+        
+        const nextBtn = document.getElementById('nextPageBtn');
+        if (nextBtn) nextBtn.disabled = currentPage === totalPages;
+
+        const delBtn = document.getElementById('deletePageBtn');
+        if (delBtn) delBtn.disabled = totalPages <= 1;
+      }
+
+      function changePage(newPage) {
+        if (newPage < 1 || newPage > totalPages) return;
+        currentPage = newPage;
+        
+        currentTemplateConfig = pageConfigs[currentPage] || TEMPLATE_CONFIGS["buffet"];
+        
+        let startSlot = 1;
+        for (let p = 1; p < currentPage; p++) {
+           startSlot += pageConfigs[p].slots_count;
+        }
+        activeSlot = startSlot;
+        
+        if (slotsData[activeSlot]) {
+          updateInputs(slotsData[activeSlot]);
+        } else {
+          clearInputs();
+        }
+        
+        syncTemplateDropdown(currentTemplateConfig.name);
+        
+        if (document.querySelectorAll('.a4-paper').length !== totalPages) {
+          setupGridStructure();
+          setTimeout(resizePaper, 50);
+        } else {
+          // Fast DOM update for navigation (no flicker)
+          document.querySelectorAll('.a4-paper').forEach(paper => {
+            const p = parseInt(paper.id.split('-').pop(), 10);
+            if (p === currentPage) {
+              paper.classList.remove('hidden-page');
+              paper.classList.add('active-page');
+            } else {
+              paper.classList.remove('active-page');
+              paper.classList.add('hidden-page');
+            }
+          });
+          
+          document.querySelectorAll(".slot").forEach((s) => s.classList.remove("active"));
+          const currentSlot = document.getElementById(`slot-${activeSlot}`);
+          if (currentSlot) currentSlot.classList.add("active");
+
+          const endSlot = startSlot + currentTemplateConfig.slots_count - 1;
+          
+          document.querySelectorAll(".slot").forEach((slotEl) => {
+            const slotIdParts = slotEl.id.split('-');
+            if(slotIdParts.length > 1) {
+              const slotIndex = parseInt(slotIdParts[1], 10);
+              const relIndex = slotIndex - startSlot + 1;
+              const indicator = slotEl.querySelector("div:first-child");
+              if (indicator && slotIndex >= startSlot && slotIndex <= endSlot) {
+                indicator.innerText = slotIndex === activeSlot ? `Slot ${relIndex} (Editing...)` : `Slot ${relIndex}`;
+                indicator.className = `absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded print:hidden z-20 transition-colors hidden-on-export ${slotIndex === activeSlot ? "bg-[#006d4b] text-white shadow-sm" : "bg-slate-100 text-slate-400"}`;
+              }
+            }
+          });
+
+          updatePaginationUI();
+        }
+        
+        renderSlotControls(currentTemplateConfig.slots_count);
+      }
+
+      function prevPage() {
+        changePage(currentPage - 1);
+      }
+
+      function nextPage() {
+        changePage(currentPage + 1);
+      }
+
+      function addNewPage() {
+        const nextTotal = totalPages + 1;
+        
+        // Inherit config from current page
+        pageConfigs[nextTotal] = pageConfigs[currentPage] || TEMPLATE_CONFIGS["buffet"];
+        
+        // Calculate where the new page starts
+        let newPageStartSlot = 1;
+        for (let p = 1; p < nextTotal; p++) {
+           newPageStartSlot += pageConfigs[p].slots_count;
+        }
+        
+        const defaultBgUrl = slotsData[1]?.bgUrl || "";
+        for (let i = 0; i < pageConfigs[nextTotal].slots_count; i++) {
+          slotsData[newPageStartSlot + i] = { bgUrl: defaultBgUrl }; 
+        }
+        
+        totalPages = nextTotal;
+        changePage(totalPages);
+      }
+
+      function showDeletePageConfirmModal() {
+        if (totalPages <= 1) return;
+        const modal = document.getElementById("deletePageConfirmModal");
+        modal.classList.remove("hidden");
+        // Trigger reflow
+        void modal.offsetWidth;
+        modal.classList.remove("opacity-0");
+        modal.querySelector("div").classList.remove("scale-95");
+      }
+
+      function closeDeletePageConfirmModal() {
+        const modal = document.getElementById("deletePageConfirmModal");
+        modal.classList.add("opacity-0");
+        modal.querySelector("div").classList.add("scale-95");
+        setTimeout(() => modal.classList.add("hidden"), 300);
+      }
+
+      function executeDeleteCurrentPage() {
+        if (totalPages <= 1) return;
+        
+        closeDeletePageConfirmModal();
+        
+        let deleteStartSlot = 1;
+        for (let p = 1; p < currentPage; p++) {
+           deleteStartSlot += pageConfigs[p].slots_count;
+        }
+        const count = pageConfigs[currentPage].slots_count;
+        
+        // Find total slots across all pages
+        let totalSlots = 0;
+        for (let p = 1; p <= totalPages; p++) {
+           totalSlots += pageConfigs[p].slots_count;
+        }
+        
+        // Shift data down
+        for (let i = deleteStartSlot; i <= totalSlots - count; i++) {
+           slotsData[i] = slotsData[i + count];
+        }
+        
+        // Remove the last page's data
+        for (let i = totalSlots - count + 1; i <= totalSlots; i++) {
+           delete slotsData[i];
+        }
+        
+        // Shift page configs down
+        for (let p = currentPage; p < totalPages; p++) {
+           pageConfigs[p] = pageConfigs[p + 1];
+        }
+        delete pageConfigs[totalPages];
+        
+        totalPages--;
+        if (currentPage > totalPages) {
+           currentPage = totalPages;
+        }
+        
+        setupGridStructure();
+        changePage(currentPage);
+        setTimeout(resizePaper, 50);
+      }
+
 
       function syncBgSelectWithCurrentSlot() {
         const select = document.getElementById("bgSelect");
@@ -1838,7 +2142,10 @@
         closeBgConfirmModal();
         const select = document.getElementById("bgSelect");
         const bgUrl = select.value;
-        const count = currentTemplateConfig.slots_count;
+        let count = 0;
+        for (let p = 1; p <= totalPages; p++) {
+          count += pageConfigs[p].slots_count;
+        }
         for (let i = 1; i <= count; i++) {
           if (!slotsData[i]) slotsData[i] = {};
           slotsData[i].bgUrl = bgUrl;
@@ -1941,8 +2248,14 @@
       function executeApplyToAllSlots() {
         closeMenuConfirmModal();
         const currentMenu = slotsData[activeSlot];
-        const count = currentTemplateConfig.slots_count;
-        for (let i = 1; i <= count; i++) {
+        
+        let startSlot = 1;
+        for (let p = 1; p < currentPage; p++) {
+           startSlot += pageConfigs[p].slots_count;
+        }
+        const endSlot = startSlot + currentTemplateConfig.slots_count - 1;
+
+        for (let i = startSlot; i <= endSlot; i++) {
           slotsData[i] = JSON.parse(JSON.stringify(currentMenu));
           const slotDiv = document.getElementById(`slot-${i}`);
           if (slotDiv) {
@@ -2084,8 +2397,13 @@
           }
 
           if (firstBgUrl && typeof isInitialLoading !== "undefined" && !isInitialLoading) {
+            let startSlot = 1;
+            for (let p = 1; p < currentPage; p++) {
+              startSlot += pageConfigs[p].slots_count;
+            }
             const count = currentTemplateConfig.slots_count;
-            for (let i = 1; i <= count; i++) {
+            const endSlot = startSlot + count - 1;
+            for (let i = startSlot; i <= endSlot; i++) {
               if (!slotsData[i]) {
                 slotsData[i] = { bgUrl: firstBgUrl };
               } else if (!slotsData[i].bgUrl) {
@@ -2163,6 +2481,15 @@
             let logAction = "CREATE";
             const tagId = editId || Date.now().toString();
 
+            // Build pageConfigs string mapping for DB
+            const pageConfigsStr = {};
+            for (const p in pageConfigs) {
+              if (pageConfigs[p]) {
+                pageConfigsStr[p] = pageConfigs[p].name || pageConfigs[p].templateName || "Buffet / Coffee Break";
+              }
+            }
+            slotsData.__pageConfigs = pageConfigsStr;
+
             const newTag = {
               id: tagId,
               title: profileName,
@@ -2198,7 +2525,11 @@
 
       async function capturePaper() {
         document.body.style.cursor = "wait";
-        const paper = document.getElementById("a4Paper");
+        const paper = document.querySelector(".a4-paper.active-page");
+        if (!paper) {
+          document.body.style.cursor = "default";
+          return null;
+        }
         document
           .querySelectorAll(".hidden-on-export")
           .forEach((el) => (el.style.display = "none"));
