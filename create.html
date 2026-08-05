@@ -1614,7 +1614,8 @@
           for (let i = startSlot; i <= endSlot; i++) {
             const div = document.createElement("div");
             div.id = `slot-${i}`;
-            div.className = `slot ${i === activeSlot ? "active" : ""}`;
+            div.className = `slot cursor-pointer ${i === activeSlot ? "active" : ""}`;
+            div.onclick = () => selectSlot(i);
             
             const indicator = document.createElement("div");
             indicator.className = `absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded print:hidden z-20 transition-colors hidden-on-export ${i === activeSlot ? "bg-[#006d4b] text-white shadow-sm" : "bg-slate-100 text-slate-400"}`;
@@ -1735,13 +1736,13 @@
               .map((a) => {
                 const imgUrl = a.icon_url || a.image_url || "";
                 const nameText = a.name_th || a.name_en || "";
-                if (!imgUrl) {
-                  return `<div class="allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-red-50 border border-dashed border-red-300" style="${sizeMainStyle}; display: flex !important; border-radius: 50%; padding: 2px;" title="${nameText}">
-                            <span style="font-size: 0.4rem; font-weight: bold; color: #ef4444; line-height: 1.2;">ไม่มีรูปภาพ</span>
-                            <span style="font-size: 0.35rem; color: #ef4444; line-height: 1; margin-top: 2px; word-break: break-word;">${nameText.substring(0, 15)}</span>
+                if (!imgUrl || imgUrl.trim() === "") {
+                  return `<div class="allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-red-50 border border-dashed border-red-400 shadow-[0_0_10px_rgba(239,68,68,0.3)]" style="${sizeMainStyle}; display: flex !important; border-radius: 50%; padding: 2px;" title="${nameText}">
+                            <span style="font-size: 8px; font-weight: bold; color: #ef4444; line-height: 1.1;">NO IMG</span>
+                            <span style="font-size: 7px; color: #ef4444; line-height: 1; margin-top: 2px; word-break: break-word;">${nameText.substring(0, 12)}</span>
                           </div>`;
                 }
-                return `<img src="${imgUrl}" class="allergen-icon" style="${sizeMainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.src='https://placehold.co/100x100/fee2e2/ef4444?text=Error'">`;
+                return `<img src="${imgUrl}" class="allergen-icon" style="${sizeMainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.outerHTML='<div class=\\'allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-red-50 border border-dashed border-red-400\\' style=\\'${sizeMainStyle}; display: flex !important; border-radius: 50%; padding: 2px;\\'><span style=\\'font-size: 8px; font-weight: bold; color: #ef4444; line-height: 1.1;\\'>NO IMG</span></div>'">`;
               })
               .join("");
 
@@ -1762,13 +1763,13 @@
               .map((a) => {
                 const imgUrl = a.icon_url || a.image_url || "";
                 const nameText = a.name_th || a.name_en || "";
-                if (!imgUrl) {
-                  return `<div class="allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-red-50 border border-dashed border-red-300" style="${sizeContainStyle}; display: flex !important; border-radius: 50%; padding: 2px;" title="${nameText}">
-                            <span style="font-size: 0.4rem; font-weight: bold; color: #ef4444; line-height: 1.2;">ไม่มีรูปภาพ</span>
-                            <span style="font-size: 0.35rem; color: #ef4444; line-height: 1; margin-top: 2px; word-break: break-word;">${nameText.substring(0, 15)}</span>
+                if (!imgUrl || imgUrl.trim() === "") {
+                  return `<div class="allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-emerald-50 border border-dashed border-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.3)]" style="${sizeContainStyle}; display: flex !important; border-radius: 50%; padding: 2px;" title="${nameText}">
+                            <span style="font-size: 8px; font-weight: bold; color: #10b981; line-height: 1.1;">NO IMG</span>
+                            <span style="font-size: 7px; color: #10b981; line-height: 1; margin-top: 2px; word-break: break-word;">${nameText.substring(0, 12)}</span>
                           </div>`;
                 }
-                return `<img src="${imgUrl}" class="allergen-icon" style="${sizeContainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.src='https://placehold.co/100x100/fee2e2/ef4444?text=Error'">`;
+                return `<img src="${imgUrl}" class="allergen-icon" style="${sizeContainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.outerHTML='<div class=\\'allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-emerald-50 border border-dashed border-emerald-400\\' style=\\'${sizeContainStyle}; display: flex !important; border-radius: 50%; padding: 2px;\\'><span style=\\'font-size: 8px; font-weight: bold; color: #10b981; line-height: 1.1;\\'>NO IMG</span></div>'">`;
               })
               .join("");
 
@@ -1794,6 +1795,47 @@
         `;
       }
 
+      function selectSlot(slotIndex) {
+        activeSlot = slotIndex;
+        const count = currentTemplateConfig.slots_count;
+        renderSlotControls(count);
+        document
+          .querySelectorAll(".slot")
+          .forEach((s) => s.classList.remove("active"));
+
+        const currentSlot = document.getElementById(`slot-${slotIndex}`);
+        if (currentSlot) currentSlot.classList.add("active");
+
+        let startSlot = 1;
+        for (let p = 1; p < currentPage; p++) {
+           startSlot += pageConfigs[p].slots_count;
+        }
+
+        // Update all slot indicators in the DOM
+        document
+          .querySelectorAll(".slot")
+          .forEach((slotEl) => {
+            const slotIdParts = slotEl.id.split('-');
+            if(slotIdParts.length > 1) {
+              const sIndex = parseInt(slotIdParts[1], 10);
+              const relIndex = sIndex - startSlot + 1;
+              const indicator = slotEl.querySelector("div:first-child");
+              if (indicator) {
+                indicator.innerText = sIndex === activeSlot ? `Slot ${relIndex} (Editing...)` : `Slot ${relIndex}`;
+                indicator.className = `absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded print:hidden z-20 transition-colors hidden-on-export ${sIndex === activeSlot ? "bg-[#006d4b] text-white shadow-sm" : "bg-slate-100 text-slate-400"}`;
+              }
+            }
+          });
+
+        if (slotsData[slotIndex]) {
+          updateInputs(slotsData[slotIndex]);
+        } else {
+          clearInputs();
+        }
+
+        syncBgSelectWithCurrentSlot();
+      }
+
       function renderSlotControls(count) {
         const container = document.getElementById("slotControls");
         container.innerHTML = "";
@@ -1815,40 +1857,7 @@
           const btn = document.createElement("button");
           btn.className = `py-2 rounded-lg border font-bold text-xs transition-all ${i === activeSlot ? "bg-[#006d4b] border-[#006d4b] text-white shadow-md" : "bg-white text-slate-600 hover:bg-slate-50"}`;
           btn.innerText = `Slot ${relativeSlot}`;
-          btn.onclick = () => {
-            activeSlot = i;
-            renderSlotControls(count);
-            document
-              .querySelectorAll(".slot")
-              .forEach((s) => s.classList.remove("active"));
-
-            const currentSlot = document.getElementById(`slot-${i}`);
-            if (currentSlot) currentSlot.classList.add("active");
-
-            // Update all slot indicators in the DOM
-            document
-              .querySelectorAll(".slot")
-              .forEach((slotEl) => {
-                const slotIdParts = slotEl.id.split('-');
-                if(slotIdParts.length > 1) {
-                  const slotIndex = parseInt(slotIdParts[1], 10);
-                  const relIndex = slotIndex - startSlot + 1;
-                  const indicator = slotEl.querySelector("div:first-child");
-                  if (indicator) {
-                    indicator.innerText = slotIndex === activeSlot ? `Slot ${relIndex} (Editing...)` : `Slot ${relIndex}`;
-                    indicator.className = `absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded print:hidden z-20 transition-colors hidden-on-export ${slotIndex === activeSlot ? "bg-[#006d4b] text-white shadow-sm" : "bg-slate-100 text-slate-400"}`;
-                  }
-                }
-              });
-
-            if (slotsData[i]) {
-              updateInputs(slotsData[i]);
-            } else {
-              clearInputs();
-            }
-
-            syncBgSelectWithCurrentSlot();
-          };
+          btn.onclick = () => selectSlot(i);
           container.appendChild(btn);
         }
       }

@@ -109,17 +109,14 @@
 
           <div class="flex items-center gap-4 shrink-0">
             <div class="flex items-center gap-3 shrink-0">
-              <label class="flex items-center gap-3 text-[13px] font-bold text-slate-600 cursor-pointer px-4 py-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all shadow-sm">
-                  <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll()" class="w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all">
-                  Select All
-              </label>
+
               <button id="btnFilterMissing" onclick="toggleFilterMissing()" class="px-4 py-2.5 bg-red-50 text-red-600 border border-red-200 rounded-xl font-bold hover:bg-red-100 transition-all flex items-center gap-2 shadow-sm text-sm">
                  <span class="material-symbols-outlined text-[18px]">warning</span>
-                 Needs Image (<span id="missingCount">0</span>)
+                 Needs Image <span id="missingCount" class="bg-red-100/50 text-red-600 px-2 py-0.5 rounded-full text-[12px] font-extrabold ml-1 leading-none flex items-center justify-center min-w-[20px] h-[20px]">0</span>
               </button>
               <button id="bulkDeleteBtn" onclick="confirmBulkDelete()" class="hidden px-5 py-2.5 bg-red-50 text-red-500 font-bold rounded-xl border border-red-200 hover:bg-red-100 hover:text-red-600 transition-all items-center gap-2 text-sm shadow-sm cursor-pointer">
                  <span class="material-symbols-outlined text-[20px]">delete_sweep</span>
-                 Delete (<span id="selectedCount">0</span>)
+                 Delete <span id="selectedCount" class="bg-red-100/50 text-red-500 px-2 py-0.5 rounded-full text-[12px] font-extrabold ml-1 leading-none flex items-center justify-center min-w-[20px] h-[20px]">0</span>
               </button>
             </div>
 
@@ -590,8 +587,28 @@
             })
             .join("");
         } else {
-          gallery.className = "flex flex-col gap-4 w-full";
-          gallery.innerHTML = dbIngredients
+          gallery.className = "flex flex-col w-full";
+          
+          const headerRow = `
+              <div class="flex items-center justify-between px-6 py-5 bg-slate-50 border-b border-slate-200 rounded-t-2xl -mx-6 -mt-6">
+                 <div class="flex items-center w-full overflow-hidden pr-4 gap-4">
+                    <div class="flex items-center justify-center shrink-0 w-5">
+                        <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll()" class="w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all">
+                    </div>
+                    <div class="text-[16px] font-extrabold text-slate-600 w-8 text-center shrink-0">No.</div>
+                    <div class="w-[60px] text-[16px] font-extrabold text-slate-600 text-center shrink-0 mr-5">Image</div>
+                    <div class="flex-1 min-w-0">
+                        <span class="text-[16px] font-extrabold text-slate-600">Ingredient Name</span>
+                    </div>
+                 </div>
+                 
+                 <div class="flex items-center justify-center shrink-0 pr-4 w-[110px]">
+                     <span class="text-[16px] font-extrabold text-slate-600">Manage</span>
+                 </div>
+              </div>
+          `;
+
+          gallery.innerHTML = headerRow + dbIngredients
             .map((ing, index) => {
               let displayName = ing.name_th || "";
               if (ing.name_en && ing.name_en !== ing.name_th) {
@@ -602,12 +619,12 @@
               const safeName = displayName.replace(/'/g, "\\'");
 
               const hasImage = !!ing.icon_url;
-              const boxStyle = hasImage ? "bg-white border-slate-200" : "bg-red-50 border-red-300 border-2 shadow-[0_0_15px_rgba(239,68,68,0.2)]";
+              const boxStyle = hasImage ? "bg-white border-b border-slate-100 last:border-0" : "bg-red-50/30 border-b border-red-200 last:border-0";
 
               return `
-              <div class="ing-item flex items-center justify-between ${boxStyle} rounded-[1.25rem] p-4 hover:shadow-md transition-all group" data-name="${(ing.name_th || "").toLowerCase()} ${(ing.name_en || "").toLowerCase()}" data-has-image="${hasImage}">
+              <div class="ing-item flex items-center justify-between ${boxStyle} py-4 px-6 hover:bg-slate-50 transition-all group -mx-6" data-name="${(ing.name_th || "").toLowerCase()} ${(ing.name_en || "").toLowerCase()}" data-has-image="${hasImage}">
                  <div class="flex items-center w-full overflow-hidden pr-4 gap-4">
-                    <div class="pl-2 flex items-center justify-center shrink-0">
+                    <div class="flex items-center justify-center shrink-0 w-5">
                        <input type="checkbox" value="${ing.id}" class="row-checkbox w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all" onclick="updateBulkDeleteButton()">
                     </div>
                     <div class="text-[14px] font-extrabold text-slate-500 w-8 text-center shrink-0">

@@ -658,8 +658,17 @@
             "\\'",
           );
 
+          const hasMissingImage = mainIngs.some(ing => !ing.icon_url && !ing.image_url) || containIngs.some(ing => !ing.icon_url && !ing.image_url);
+          const needsWarning = hasMissingImage;
+          
+          const trClass = needsWarning 
+            ? "menu-row bg-red-50/20 border-l-4 border-l-red-500 border-y border-y-red-100 border-r border-r-red-100 align-top" 
+            : "menu-row border-b border-slate-100 last:border-0 align-top";
+
+          const noDataHtml = `<span class='text-slate-300 text-xs italic mt-2'>- ไม่มีข้อมูล -</span>`;
+
           html += `
-          <tr class="menu-row border-b border-slate-100 last:border-0 align-top">
+          <tr class="${trClass}">
             <td class="py-5 px-6">
                 <div class="flex items-start gap-4">
                     <input type="checkbox" value="${menu.id}" class="row-checkbox w-5 h-5 flex-shrink-0 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all mt-0.5" onclick="updateBulkDeleteButton()">
@@ -670,9 +679,10 @@
             <td class="py-5 px-6">
                 <div class="text-[16px] font-extrabold text-slate-700 leading-tight">${menu.name_th || "-"}</div>
                 <div class="text-[14px] font-bold text-slate-500 leading-tight mt-1.5">${menu.name_en || "-"}</div>
+                ${needsWarning ? `<div class="mt-2 text-xs font-bold text-red-500 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">warning</span> ข้อมูลส่วนผสมบางตัวไม่มีรูปภาพ</div>` : ''}
             </td>
-            <td class="py-5 px-6"><div class="flex flex-wrap">${mainIngHtml || "<span class='text-slate-300 text-xs italic mt-2'>- ไม่มีข้อมูล -</span>"}</div></td>
-            <td class="py-5 px-6"><div class="flex flex-wrap">${containIngHtml || "<span class='text-slate-300 text-xs italic mt-2'>- ไม่มีข้อมูล -</span>"}</div></td>
+            <td class="py-5 px-6"><div class="flex flex-wrap">${mainIngHtml || noDataHtml}</div></td>
+            <td class="py-5 px-6"><div class="flex flex-wrap">${containIngHtml || noDataHtml}</div></td>
             <td class="py-5 px-8 text-center">
                 <div class="flex items-center justify-center gap-2">
                     <button onclick="openMenuModal('${menuDataStr}')" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-[#006d4b] hover:bg-emerald-50 rounded-full transition-all cursor-pointer"><span class="material-symbols-outlined text-[18px]">edit</span></button>
@@ -1136,7 +1146,6 @@
             hasImage: !!(ing.icon_url || ing.image_url)
           }));
 
-          // Group rows by item ID (__EMPTY) before processing
           const groupedRows = [];
           const rowMap = new Map();
 
@@ -1171,6 +1180,80 @@
             } else {
               // No itemId, just process it as a separate row
               groupedRows.push(row);
+            }
+          }
+
+          // Pre-scan to create missing ingredients
+          const newIngredientsToCreate = new Map();
+          for (const row of groupedRows) {
+            Object.keys(row).forEach((key) => {
+              let val = row[key];
+              let valStr = String(val).trim().toUpperCase();
+              if (
+                val === true ||
+                val === 1 ||
+                valStr === "TRUE" ||
+                valStr === "T" ||
+                valStr === "Y" ||
+                valStr === "YES" ||
+                valStr === "X" ||
+                valStr === "/" ||
+                valStr === "✔" ||
+                valStr === "☑" ||
+                valStr === "✓" ||
+                valStr === "✅"
+              ) {
+                let baseName = key
+                  .replace(/\(Main Contain\)/gi, "")
+                  .replace(/\(May Contain\)/gi, "")
+                  .replace(/\(Contain\)/gi, "")
+                  .replace(/\(Main\)/gi, "")
+                  .replace(/\(May\)/gi, "")
+                  .replace(/\_1$/g, "")
+                  .replace(/\_2$/g, "")
+                  .trim();
+                  
+                let cleanName = baseName.toLowerCase().replace(/\s+/g, "");
+                let strippedName = cleanName
+                  .replace("allergies2026_", "")
+                  .replace("allergica2026_", "");
+
+                const found = ingDict.find(
+                  (ing) => ing.nameThClean === cleanName || ing.nameEnClean === cleanName || ing.nameThClean === strippedName || ing.nameEnClean === strippedName
+                );
+
+                if (!found && !newIngredientsToCreate.has(cleanName)) {
+                  let displayName = baseName;
+                  newIngredientsToCreate.set(cleanName, displayName);
+                }
+              }
+            });
+          }
+
+          if (newIngredientsToCreate.size > 0) {
+            const insertPayload = Array.from(newIngredientsToCreate.entries()).map(([clean, display]) => ({
+              name_en: display,
+              name_th: display, 
+            }));
+            
+            try {
+              const { data: insertedIngs, error } = await dbClient.from('ingredients').insert(insertPayload).select();
+              if (error) throw error;
+              
+              if (insertedIngs) {
+                insertedIngs.forEach(ing => {
+                  dbIngredients.push(ing);
+                  ingDict.push({
+                    id: ing.id,
+                    nameThClean: (ing.name_th || "").toLowerCase().replace(/\s+/g, ""),
+                    nameEnClean: (ing.name_en || "").toLowerCase().replace(/\s+/g, ""),
+                    hasImage: false
+                  });
+                });
+                autoCreatedIngs.add(insertedIngs.length);
+              }
+            } catch (err) {
+              console.error("Error inserting new ingredients:", err);
             }
           }
 
