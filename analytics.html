@@ -294,11 +294,6 @@
                   <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">trending_down</span> Least Printed</span>
                 </button>
               </div>
-              
-              <button onclick="exportRankingCSV()" class="px-4 py-2 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2 text-sm shadow-sm cursor-pointer whitespace-nowrap shrink-0 active:scale-95">
-                <span class="material-symbols-outlined text-[18px]">download</span>
-                Export CSV
-              </button>
             </div>
           </div>
           
@@ -490,28 +485,31 @@
         refreshBadge.classList.add('flex');
 
         try {
-          let menusQuery = dbClient.from("menus").select("id", { count: "exact" });
-          let usersQuery = dbClient.from("users").select("id", { count: "exact" });
+          let menusQuery = dbClient.from("menus").select("id", { count: "exact", head: true });
+          let usersQuery = dbClient.from("users").select("id", { count: "exact", head: true });
+          let tagsQuery = dbClient.from("saved_tags").select("id", { count: "exact", head: true });
 
           const { start, end } = getDateRange();
           if (start) {
             menusQuery = menusQuery.gte('created_at', start.toISOString());
             usersQuery = usersQuery.gte('created_at', start.toISOString());
+            tagsQuery = tagsQuery.gte('created_at', start.toISOString());
           }
           if (end) {
             menusQuery = menusQuery.lte('created_at', end.toISOString());
             usersQuery = usersQuery.lte('created_at', end.toISOString());
+            tagsQuery = tagsQuery.lte('created_at', end.toISOString());
           }
 
-          const [menusRes, usersRes] = await Promise.all([
-            menusQuery, usersQuery
+          const [menusRes, usersRes, tagsRes] = await Promise.all([
+            menusQuery, usersQuery, tagsQuery
           ]);
 
           const totalMenus = menusRes.count || 0;
           const totalUsers = usersRes.count || 0;
+          const totalTags = tagsRes.count || 0;
 
           const aggregatedData = await fetchAndAggregateLogs(start, end);
-          const totalTags = aggregatedData.actionCounts.CREATE || 0;
 
           animateValue("statTotalTags", 0, totalTags, 800);
           animateValue("statTotalPrints", 0, aggregatedData.actionCounts.PRINT || 0, 800);
@@ -546,6 +544,45 @@
         requestAnimationFrame(step);
       }
 
+      // ─── Chart Empty State Plugin ──────────────────────────────
+      const emptyStatePlugin = {
+        id: 'emptyState',
+        beforeDraw(chart) {
+          const hasData = chart.data.datasets.some(ds => ds.data.some(val => val > 0));
+          if (!hasData) {
+            const { ctx, chartArea } = chart;
+            ctx.save();
+            
+            const centerX = (chartArea.left + chartArea.right) / 2;
+            const centerY = (chartArea.top + chartArea.bottom) / 2;
+
+            if (chart.config.type === 'doughnut') {
+              const outerRadius = Math.min(chartArea.right - chartArea.left, chartArea.bottom - chartArea.top) / 2;
+              const innerRadius = outerRadius * 0.65;
+              ctx.beginPath();
+              ctx.arc(centerX, centerY, outerRadius, 0, 2 * Math.PI);
+              ctx.arc(centerX, centerY, innerRadius, 0, 2 * Math.PI, true);
+              ctx.fillStyle = '#e2e8f0'; // Darker gray for doughnut placeholder
+              ctx.fill();
+            }
+
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = 'bold 15px "Sarabun", "Poppins", sans-serif'; // Slightly larger font
+            
+            if (chart.config.type !== 'doughnut') {
+              const textWidth = ctx.measureText('ยังไม่มีข้อมูลการใช้งาน').width + 24;
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+              ctx.fillRect(centerX - textWidth/2, centerY - 16, textWidth, 32);
+            }
+            
+            ctx.fillStyle = '#64748b'; // Darker text color (slate-500)
+            ctx.fillText('ยังไม่มีข้อมูลการใช้งาน', centerX, centerY);
+            ctx.restore();
+          }
+        }
+      };
+
       // ─── Action Pie Chart ────────────────────────────────────────
       function renderActionPieChart(counts) {
         const ctx = document.getElementById('actionPieChart').getContext('2d');
@@ -570,7 +607,8 @@
                 padding: 12, cornerRadius: 8
               }
             }
-          }
+          },
+          plugins: [emptyStatePlugin]
         });
       }
 
@@ -621,7 +659,8 @@
               y: { beginAtZero: true, grace: '20%', grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } },
               x: { grid: { display: false }, ticks: { font: { weight: '500' } } }
             }
-          }
+          },
+          plugins: [emptyStatePlugin]
         });
       }
 
@@ -655,7 +694,8 @@
               y: { beginAtZero: true, grace: '10%', grid: { color: '#f1f5f9' } },
               x: { grid: { display: false }, ticks: { font: { weight: '600' } } }
             }
-          }
+          },
+          plugins: [emptyStatePlugin]
         });
       }
 
@@ -667,6 +707,8 @@
 
         const ctx = document.getElementById('paperSizePieChart').getContext('2d');
         if (paperChart) paperChart.destroy();
+
+        let hasData = a4Count > 0 || a3Count > 0 || otherCount > 0;
 
         // Always show A4 and A3 so the user sees all available standard sizes
         const labels = ['A4', 'A3'];
@@ -712,13 +754,15 @@
                 border: { display: false }
               },
               y: { 
+                display: true,
                 grid: { display: false }, 
                 border: { display: false }, 
                 ticks: { font: { weight: '700', size: 12 }, color: '#334155' } 
               }
             },
             layout: { padding: { right: 30 } }
-          }
+          },
+          plugins: [emptyStatePlugin]
         });
       }
 
@@ -819,22 +863,6 @@
         document.getElementById('pageIndicator').innerText = currentRankingPage;
       }
 
-      function exportRankingCSV() {
-        const data = getFilteredRankingData();
-        if (data.length === 0) { alert("No data available to export."); return; }
-        
-        let csv = "data:text/csv;charset=utf-8,\uFEFFRank,Tag Name,Type,Print Count\r\n";
-        data.forEach((r, i) => {
-          csv += `${i+1},"${r.name.replace(/"/g, '""')}","${r.type}",${r.count}\r\n`;
-        });
-        
-        const link = document.createElement("a");
-        link.href = encodeURI(csv);
-        link.download = `Ranking_${currentRankingMode}_Printed.csv`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
 
       // ─── PDF Export ──────────────────────────────────────────────
 /* ==========================================================================
@@ -1027,10 +1055,6 @@ function buildReportHTML({ dateFilterText, generatedAt, exportedBy, kpi, chartIm
         letter-spacing: 0.07em;
         margin-bottom: 16px;
         display: flex;
-        align-items: center;
-        gap: 6px;
-        border-left: 3px solid #006d4b;
-        padding-left: 10px;
       }
 
       /* ── Divider ──────────────────────────────── */
@@ -1100,8 +1124,8 @@ function buildReportHTML({ dateFilterText, generatedAt, exportedBy, kpi, chartIm
     </style>
 
     ${buildPage1({ dateFilterText, generatedAt, exportedBy, kpi })}
-    ${buildPage2({ chartImages })}
-    ${buildPage3({ top10, chartImages })}
+    ${buildPage2({ chartImages, kpi })}
+    ${buildPage3({ top10, chartImages, kpi })}
   `;
 }
 
@@ -1187,7 +1211,7 @@ function buildPage1({ dateFilterText, generatedAt, exportedBy, kpi }) {
 /* ─────────────────────────────────────────────────────
    PAGE 2 · Charts & Breakdowns
 ───────────────────────────────────────────────────── */
-function buildPage2({ chartImages }) {
+function buildPage2({ chartImages, kpi }) {
 
   // สร้าง <img> tag หรือ placeholder ถ้าไม่มีรูป (ปรับให้ไม่ยืดเสียทรง)
   function chartImg(src, alt, h = 200) {
@@ -1206,11 +1230,9 @@ function buildPage2({ chartImages }) {
       <p class="section-title">Section B &nbsp;·&nbsp; Activity Trends (Last 7 Days)</p>
       <div class="card" style="padding:16px;">
         ${chartImg(chartImages.trend, "Activity Trends Chart", 320)}
-        <div class="insight insight-green" style="margin-top:20px;">
-          <p class="insight-title">วิธีอ่านกราฟนี้</p>
-          <p>เส้นกราฟแสดงจำนวน CREATE (เส้นประ) และ PRINT (พื้นทึบ) รายวัน
-          วันไหนที่ CREATE สูงกว่า PRINT มาก แสดงว่ามี Draft ค้างในระบบ
-          ควรติดตาม Tag ที่ยังไม่ถูกพิมพ์</p>
+        <div class="insight insight-gray" style="margin-top:20px;">
+          <p class="insight-title">Activity Summary</p>
+          <p>พบการสร้างป้ายอาหารทั้งหมด ${kpi.tags} รายการ และมีการสั่งพิมพ์ ${kpi.prints} ครั้งในช่วงเวลานี้</p>
         </div>
       </div>
 
@@ -1222,10 +1244,9 @@ function buildPage2({ chartImages }) {
           <p class="section-title">Section C &nbsp;·&nbsp; System Actions</p>
           <div class="card" style="padding:16px; display:flex; flex-direction:column;">
             ${chartImg(chartImages.action, "System Actions Chart", 260)}
-            <div class="insight insight-green" style="margin-top:auto;">
-              <p class="insight-title">สัดส่วน Create vs Print</p>
-              <p>อัตราส่วน Create:Print ควรอยู่ที่ 1:1 ถึง 2:1
-              ถ้า Create สูงกว่ามาก แสดงว่ามี Tag ที่สร้างแต่ไม่ได้ใช้งาน</p>
+            <div class="insight insight-gray" style="margin-top:auto;">
+              <p class="insight-title">Actions Summary</p>
+              <p>สัดส่วนของการสั่งพิมพ์ป้ายอาหารเทียบกับการสร้างป้ายใหม่ในระบบ</p>
             </div>
           </div>
         </div>
@@ -1234,9 +1255,8 @@ function buildPage2({ chartImages }) {
           <div class="card" style="padding:16px; display:flex; flex-direction:column;">
             ${chartImg(chartImages.paper, "Paper Size Chart", 260)}
             <div class="insight insight-gray" style="margin-top:auto;">
-              <p class="insight-title">วางแผนการสั่ง Stock กระดาษ</p>
-              <p>สัดส่วน A4 vs A3 ช่วยให้ฝ่ายจัดซื้อกำหนดปริมาณการสั่งซื้อ
-              กระดาษแต่ละขนาดได้อย่างเหมาะสม</p>
+              <p class="insight-title">Paper Size Summary</p>
+              <p>สัดส่วนขนาดกระดาษที่ถูกตั้งค่าในการพิมพ์ป้ายอาหารทั้งหมด</p>
             </div>
           </div>
         </div>
@@ -1257,7 +1277,7 @@ function buildPage2({ chartImages }) {
 /* ─────────────────────────────────────────────────────
    PAGE 3 · Print Ranking + Key Insights
 ───────────────────────────────────────────────────── */
-function buildPage3({ top10, chartImages }) {
+function buildPage3({ top10, chartImages, kpi }) {
 
   // สร้าง rank badge
   function rankBadge(rank) {
@@ -1300,9 +1320,8 @@ function buildPage3({ top10, chartImages }) {
       <div class="card" style="padding:16px;">
         ${chartImg(chartImages.users, "Top Users Chart", 320)}
         <div class="insight insight-gray" style="margin-top:20px;">
-          <p class="insight-title">ข้อควรระวัง</p>
-          <p>หาก User คนเดียวมีสัดส่วน Action สูงกว่า 50% ของทั้งหมด
-          ควรตรวจสอบว่าเป็นการทำงานปกติ หรืออาจต้องกระจาย workload</p>
+          <p class="insight-title">Staff Activity Summary</p>
+          <p>มีพนักงานล็อคอินเข้าใช้งานและทำกิจกรรมในระบบรวม ${kpi.staff} คนในช่วงเวลานี้</p>
         </div>
       </div>
 
@@ -1327,25 +1346,7 @@ function buildPage3({ top10, chartImages }) {
         * แสดง ${top10.length} รายการสูงสุด จากทั้งหมดที่มีประวัติการพิมพ์
       </p>
 
-      <hr class="divider">
 
-      <!-- ══ Section G · Key Insights ══ -->
-      <p class="section-title">Section G &nbsp;·&nbsp; Key Insights &amp; Recommendations</p>
-
-      <div style="display:flex; flex-direction:column; gap:10px;">
-
-        <div class="insight insight-green">
-          <p class="insight-title">📈 Tags ที่ถูกพิมพ์บ่อยที่สุด</p>
-          <p>
-            Tag อันดับ 1 ที่ถูกพิมพ์มากที่สุดคือ
-            <strong>${top10[0]?.name || "–"}</strong>
-            (${top10[0]?.count || 0} ครั้ง)
-            ควรให้ความสำคัญในการตรวจสอบความถูกต้องของ Allergen ใน Tag นี้เป็นพิเศษ
-            เนื่องจากมีการแจกจ่ายให้ลูกค้าในปริมาณมาก
-          </p>
-        </div>
-
-      </div>
 
       <!-- ══ Footer ══ -->
       <div class="page-footer">

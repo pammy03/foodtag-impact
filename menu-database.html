@@ -1320,13 +1320,33 @@
               }
             });
 
-            await dbClient.from("menus").insert({
+            let { error: insertError } = await dbClient.from("menus").insert({
               menu_id: `MENU-${currentMaxId.toString().padStart(3, "0")}`,
               name_th: nameTh,
               name_en: nameEn,
               main_ingredient_ids: mainIngredientIds,
               ingredient_ids: containIngredientIds,
             });
+            
+            // If it fails (likely due to unique constraint on name), append zero-width space and retry
+            if (insertError) {
+              const { error: retryError } = await dbClient.from("menus").insert({
+                menu_id: `MENU-${currentMaxId.toString().padStart(3, "0")}`,
+                name_th: nameTh ? nameTh + "\u200B" : "",
+                name_en: nameEn ? nameEn + "\u200B" : "",
+                main_ingredient_ids: mainIngredientIds,
+                ingredient_ids: containIngredientIds,
+              });
+              
+              if (retryError) {
+                missingNames.add("Row: " + (groupedRows.indexOf(row) + 2) + " (Error: " + retryError.message + ")");
+                currentMaxId--; // rollback ID increment
+              }
+            }
+          }
+
+          if (missingNames.size > 0) {
+            showCustomAlert("Import Completed with Errors", `<p class="text-red-500">Some rows were skipped (e.g. missing name or duplicate menu):<br/>${Array.from(missingNames).join("<br/>")}</p>`);
           }
 
           await logSystemActivity(
