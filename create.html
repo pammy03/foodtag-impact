@@ -608,6 +608,7 @@
                     class="w-full pl-3 pr-8 py-1.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600 cursor-pointer appearance-none"
                     style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.6rem center; background-size: 1em;"
                   >
+                    <option value="'2006_iannnnnbkk', sans-serif">2006_iannnnnbkk</option>
                     <option value="'Sarabun', sans-serif">Sarabun</option>
                     <option value="'Poppins', sans-serif">Poppins</option>
                     <option value="'Mali', cursive">Mali (น่ารัก)</option>
@@ -1725,9 +1726,9 @@
           return;
         }
 
-        const fTh = menu.fontTh || "'Sarabun', sans-serif";
+        const fTh = menu.fontTh || "'2006_iannnnnbkk', sans-serif";
         const sTh = menu.fontSizeTh || "22px";
-        const fEn = menu.fontEn || "'Poppins', sans-serif";
+        const fEn = menu.fontEn || "'Aptos', sans-serif";
         const sEn = menu.fontSizeEn || "22px";
 
         const sizeMainStyle = menu.allergenIconSizeMain
@@ -1805,7 +1806,7 @@
             ${bgHtml}
             <div class="slot-content">
               <div class="slot-text-th font-black text-slate-800 mb-1 leading-tight text-center whitespace-pre-line" style="font-family: ${fTh}; font-size: ${sTh};">${menu.name_th || ""}</div>
-              <div class="slot-text-en font-medium text-slate-500 mb-1 leading-tight text-center whitespace-pre-line" style="font-family: ${fEn}; font-size: ${sEn};">${menu.name_en || ""}</div>
+              <div class="slot-text-en font-medium text-slate-500 mb-1 leading-tight text-center whitespace-pre-line uppercase" style="font-family: ${fEn}; font-size: ${sEn};">${menu.name_en || ""}</div>
               ${fullAllergensHtml}
             </div>
         `;
@@ -2057,12 +2058,12 @@
           : "";
 
         document.getElementById("fontSelectTh").value =
-          menu.fontTh || "'Sarabun', sans-serif";
+          menu.fontTh || "'2006_iannnnnbkk', sans-serif";
         document.getElementById("fontSizeTh").value = parseInt(
           menu.fontSizeTh || "22px",
         );
         document.getElementById("fontSelectEn").value =
-          menu.fontEn || "'Poppins', sans-serif";
+          menu.fontEn || "'Aptos', sans-serif";
         document.getElementById("fontSizeEn").value = parseInt(
           menu.fontSizeEn || "22px",
         );
@@ -2136,9 +2137,9 @@
         document.getElementById("menuSearch").value = "";
         document.getElementById("allergenList").innerHTML = "";
 
-        document.getElementById("fontSelectTh").value = "'Sarabun', sans-serif";
+        document.getElementById("fontSelectTh").value = "'2006_iannnnnbkk', sans-serif";
         document.getElementById("fontSizeTh").value = parseInt("22px");
-        document.getElementById("fontSelectEn").value = "'Poppins', sans-serif";
+        document.getElementById("fontSelectEn").value = "'Aptos', sans-serif";
         document.getElementById("fontSizeEn").value = parseInt("22px");
 
         const sizeMainDisplay = document.getElementById("sizeMainDisplay");
@@ -2375,9 +2376,9 @@
         slotsData[activeSlot] = {
           ...menu,
           bgUrl: currentSlotData.bgUrl || "",
-          fontTh: currentSlotData.fontTh || "'Sarabun', sans-serif",
+          fontTh: currentSlotData.fontTh || "'2006_iannnnnbkk', sans-serif",
           fontSizeTh: currentSlotData.fontSizeTh || "22px",
-          fontEn: currentSlotData.fontEn || "'Poppins', sans-serif",
+          fontEn: currentSlotData.fontEn || "'Aptos', sans-serif",
           fontSizeEn: currentSlotData.fontSizeEn || "22px",
           allergenIconSizeMain: currentSlotData.allergenIconSizeMain || null,
           allergenIconSizeContain:
