@@ -551,12 +551,15 @@
         let html = "";
 
         let filtered = dbMenus.filter((m) => {
-          const mainIngs = (m.main_ingredient_ids || [])
-            .map((id) => dbIngredients.find((i) => String(i.id) === String(id)))
-            .filter(Boolean);
-          const containIngs = (m.ingredient_ids || [])
-            .map((id) => dbIngredients.find((i) => String(i.id) === String(id)))
-            .filter(Boolean);
+          const resolveIngs = (ids, names) => {
+             if (names && names.length > 0) {
+                 return names.map(n => dbIngredients.find(i => (i.name_en || i.name_th || '') === n)).filter(Boolean);
+             }
+             return (ids || []).map(id => dbIngredients.find((i) => String(i.id) === String(id))).filter(Boolean);
+          };
+
+          const mainIngs = resolveIngs(m.main_ingredient_ids, m.main_ingredient_names);
+          const containIngs = resolveIngs(m.ingredient_ids, m.ingredient_names);
 
           const ingText = mainIngs
             .map((i) => (i.name_th || "") + " " + (i.name_en || ""))
@@ -612,13 +615,15 @@
         }
 
         filtered.forEach((menu, index) => {
-          const mainIngs = (menu.main_ingredient_ids || [])
-            .map((id) => dbIngredients.find((i) => String(i.id) === String(id)))
-            .filter(Boolean);
+          const resolveIngs = (ids, names) => {
+             if (names && names.length > 0) {
+                 return names.map(n => dbIngredients.find(i => (i.name_en || i.name_th || '') === n)).filter(Boolean);
+             }
+             return (ids || []).map(id => dbIngredients.find((i) => String(i.id) === String(id))).filter(Boolean);
+          };
 
-          const containIngs = (menu.ingredient_ids || [])
-            .map((id) => dbIngredients.find((i) => String(i.id) === String(id)))
-            .filter(Boolean);
+          const mainIngs = resolveIngs(menu.main_ingredient_ids, menu.main_ingredient_names);
+          const containIngs = resolveIngs(menu.ingredient_ids, menu.ingredient_names);
 
           const buildIngHtml = (ings) =>
             ings
@@ -722,8 +727,18 @@
           document.getElementById("inputMenuId").value = menu.menu_id || "-";
           document.getElementById("inputNameTh").value = menu.name_th || "";
           document.getElementById("inputNameEn").value = menu.name_en || "";
-          selectedMainIds = (menu.main_ingredient_ids || []).map(String);
-          selectedContainIds = (menu.ingredient_ids || []).map(String);
+          const mapNamesToCurrentIds = (ids, names) => {
+             if (names && names.length > 0) {
+                 return names.map(n => {
+                     const found = dbIngredients.find(i => (i.name_en || i.name_th || '') === n);
+                     return found ? String(found.id) : null;
+                 }).filter(Boolean);
+             }
+             return (ids || []).map(String);
+          };
+
+          selectedMainIds = mapNamesToCurrentIds(menu.main_ingredient_ids, menu.main_ingredient_names);
+          selectedContainIds = mapNamesToCurrentIds(menu.ingredient_ids, menu.ingredient_names);
         } else {
           editingMenuDbId = null;
           document.getElementById("menuModalTitle").innerText = "Add New Menu";
@@ -824,6 +839,8 @@
 
         const mainIds = [];
         const containIds = [];
+        const mainNames = [];
+        const containNames = [];
         dbIngredients.forEach((ing) => {
           const isMainChecked = document.getElementById(
             `chk_main_${ing.id}`,
@@ -832,8 +849,16 @@
             `chk_contain_${ing.id}`,
           )?.checked;
 
-          if (isMainChecked) mainIds.push(ing.id);
-          if (isContainChecked) containIds.push(ing.id);
+          const ingName = ing.name_en || ing.name_th || '';
+
+          if (isMainChecked) {
+              mainIds.push(ing.id);
+              mainNames.push(ingName);
+          }
+          if (isContainChecked) {
+              containIds.push(ing.id);
+              containNames.push(ingName);
+          }
         });
 
         const payload = {
@@ -1269,6 +1294,8 @@
             currentMaxId++;
             let mainIngredientIds = [];
             let containIngredientIds = [];
+            let mainIngredientNames = [];
+            let containIngredientNames = [];
 
             Object.keys(row).forEach((key) => {
               let val = row[key];
@@ -1311,10 +1338,13 @@
                 );
 
                 if (found) {
+                  const ingName = found.name_en || found.name_th || '';
                   if (isMain && !mainIngredientIds.includes(found.id)) {
                     mainIngredientIds.push(found.id); 
+                    mainIngredientNames.push(ingName);
                   } else if (isMayContain && !containIngredientIds.includes(found.id)) {
                     containIngredientIds.push(found.id); 
+                    containIngredientNames.push(ingName);
                   }
                 }
               }

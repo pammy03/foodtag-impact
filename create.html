@@ -2340,16 +2340,15 @@
 
             results.innerHTML = filtered
               .map((m) => {
-                const allergens = (m.ingredient_ids || [])
-                  .map((id) =>
-                    allIngs.find((ing) => String(ing.id) === String(id)),
-                  )
-                  .filter(Boolean);
-                const mainAllergens = (m.main_ingredient_ids || [])
-                  .map((id) =>
-                    allIngs.find((ing) => String(ing.id) === String(id)),
-                  )
-                  .filter(Boolean);
+                const resolveIngs = (ids, names) => {
+                   if (names && names.length > 0) {
+                       return names.map(n => allIngs.find(i => (i.name_en || i.name_th || '') === n)).filter(Boolean);
+                   }
+                   return (ids || []).map(id => allIngs.find(i => String(i.id) === String(id))).filter(Boolean);
+                };
+
+                const allergens = resolveIngs(m.ingredient_ids, m.ingredient_names);
+                const mainAllergens = resolveIngs(m.main_ingredient_ids, m.main_ingredient_names);
 
                 const completeMenu = {
                   ...m,
