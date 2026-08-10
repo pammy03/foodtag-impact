@@ -26,6 +26,9 @@ function injectSidebar() {
       <a href="bg-database.html" id="nav-bg-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
         <span class="material-symbols-outlined text-[24px]">wallpaper</span> Backgrounds
       </a>
+      <button onclick="openSettingsModal()" id="nav-global-settings" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all w-full text-left">
+        <span class="material-symbols-outlined text-[24px]">settings</span> Global Settings
+      </button>
     `;
   }
 
@@ -201,6 +204,84 @@ function injectSidebar() {
     `;
     document.body.insertAdjacentHTML("beforeend", logoutModalHTML);
   }
+
+  // --- 🎯 สร้าง Modal Global Settings ---
+  if (!document.getElementById("settingsModal")) {
+    const settingsModalHTML = `
+      <div id="settingsModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[99999] hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-[450px] p-6 transform scale-95 transition-transform duration-300" id="settingsModalContent">
+          <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-3">
+            <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#006d4b]">settings</span>
+              Global Settings
+            </h3>
+            <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          
+          <div class="space-y-5">
+            <!-- Text Defaults -->
+            <div class="space-y-3">
+              <h4 class="text-sm font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">match_case</span> ข้อความ (Text)</h4>
+              <div class="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ภาษาไทย</label>
+                  <select id="defFontTh" class="w-full pl-2 pr-8 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
+                      <option value="'2006_iannnnnbkk', sans-serif">2006_iannnnnbkk</option>
+                      <option value="'Sarabun', sans-serif">Sarabun</option>
+                      <option value="'Poppins', sans-serif">Poppins</option>
+                      <option value="'Mali', cursive">Mali (น่ารัก)</option>
+                      <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
+                      <option value="'Aptos', sans-serif">Aptos</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด (px)</label>
+                  <input type="number" id="defFontSizeTh" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b]" value="22">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ภาษาอังกฤษ</label>
+                  <select id="defFontEn" class="w-full pl-2 pr-8 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
+                      <option value="'Poppins', sans-serif">Poppins</option>
+                      <option value="'Sarabun', sans-serif">Sarabun</option>
+                      <option value="'Mali', cursive">Mali (น่ารัก)</option>
+                      <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
+                      <option value="'Aptos', sans-serif">Aptos</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด (px)</label>
+                  <input type="number" id="defFontSizeEn" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b]" value="22">
+                </div>
+              </div>
+            </div>
+            
+            <!-- Image Defaults -->
+            <div class="space-y-3">
+              <h4 class="text-sm font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">image</span> ขนาดรูปภาพ Ingredients</h4>
+              <div class="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด Main (px)</label>
+                  <input type="number" id="defIconSizeMain" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b]" value="61">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด Contain (px)</label>
+                  <input type="number" id="defIconSizeContain" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b]" value="61">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 flex gap-3">
+            <button onclick="closeSettingsModal()" class="flex-1 py-2 border border-slate-200 text-slate-600 font-bold rounded-lg hover:bg-slate-50 transition-colors text-sm">ยกเลิก</button>
+            <button onclick="saveGlobalSettings()" class="flex-1 py-2 bg-[#006d4b] text-white font-bold rounded-lg hover:bg-[#005a3d] transition-colors text-sm">บันทึกค่าเริ่มต้น</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML("beforeend", settingsModalHTML);
+  }
 }
 
 /* ===== 🎯 ฟังก์ชันช่วยเหลือต่างๆ ===== */
@@ -367,6 +448,62 @@ async function saveMyProfile(e) {
   } finally {
     btnText.innerText = "บันทึกข้อมูลส่วนตัว";
   }
+}
+
+// Global Settings Functions
+function getGlobalSettings() {
+  const stored = localStorage.getItem("globalDefaultSettings");
+  if (stored) return JSON.parse(stored);
+  return {
+    fontTh: "'2006_iannnnnbkk', sans-serif",
+    fontSizeTh: "22px",
+    fontEn: "'Aptos', sans-serif",
+    fontSizeEn: "22px",
+    iconSizeMain: "61px",
+    iconSizeContain: "61px"
+  };
+}
+
+function openSettingsModal() {
+  const settings = getGlobalSettings();
+  document.getElementById("defFontTh").value = settings.fontTh;
+  document.getElementById("defFontSizeTh").value = parseInt(settings.fontSizeTh);
+  document.getElementById("defFontEn").value = settings.fontEn;
+  document.getElementById("defFontSizeEn").value = parseInt(settings.fontSizeEn);
+  document.getElementById("defIconSizeMain").value = parseInt(settings.iconSizeMain);
+  document.getElementById("defIconSizeContain").value = parseInt(settings.iconSizeContain);
+
+  const modal = document.getElementById("settingsModal");
+  modal.classList.remove("hidden");
+  setTimeout(() => {
+    modal.classList.remove("opacity-0");
+    document.getElementById("settingsModalContent").classList.remove("scale-95");
+  }, 10);
+}
+
+function closeSettingsModal() {
+  const modal = document.getElementById("settingsModal");
+  const content = document.getElementById("settingsModalContent");
+  modal.classList.add("opacity-0");
+  content.classList.add("scale-95");
+  setTimeout(() => {
+    modal.classList.add("hidden");
+  }, 300);
+}
+
+function saveGlobalSettings() {
+  const settings = {
+    fontTh: document.getElementById("defFontTh").value,
+    fontSizeTh: document.getElementById("defFontSizeTh").value + "px",
+    fontEn: document.getElementById("defFontEn").value,
+    fontSizeEn: document.getElementById("defFontSizeEn").value + "px",
+    iconSizeMain: document.getElementById("defIconSizeMain").value + "px",
+    iconSizeContain: document.getElementById("defIconSizeContain").value + "px"
+  };
+  localStorage.setItem("globalDefaultSettings", JSON.stringify(settings));
+  alert("บันทึกค่าเริ่มต้นเรียบร้อยแล้ว");
+  closeSettingsModal();
+  window.dispatchEvent(new CustomEvent('globalSettingsUpdated'));
 }
 
 // เริ่มต้นการทำงาน

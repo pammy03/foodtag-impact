@@ -336,7 +336,7 @@
     >
       <div class="flex items-center gap-3">
         <button
-          onclick="window.location.href = 'dashboard.html'"
+          onclick="handleGoBack()"
           class="w-10 h-10 flex items-center justify-center hover:bg-slate-100 rounded-full text-slate-500 transition-colors"
         >
           <span class="material-symbols-outlined text-[24px]">arrow_back</span>
@@ -374,6 +374,14 @@
         >
           <span class="material-symbols-outlined text-[20px]">save</span>
           <span id="saveButtonText">Save Profile</span>
+        </button>
+
+        <button
+          onclick="openSettingsModal()"
+          class="w-10 h-10 flex items-center justify-center bg-white border-2 border-slate-200 text-slate-500 font-bold rounded-lg hover:bg-slate-50 hover:text-slate-700 hover:border-slate-300 transition-all shadow-sm"
+          title="Default Settings"
+        >
+          <span class="material-symbols-outlined text-[22px]">settings</span>
         </button>
       </div>
     </header>
@@ -644,7 +652,7 @@
                 class="text-base text-slate-600 whitespace-pre-line break-words mb-4"
               ></div>
               <div
-                class="mt-auto border-t border-slate-100 pt-3 grid grid-cols-[1.5fr_1fr] gap-3"
+                class="mt-auto border-t border-slate-100 pt-3 grid grid-cols-[1.5fr_1fr_auto] gap-3 items-end"
               >
                 <div>
                   <label
@@ -675,6 +683,17 @@
                     onchange="changeFontSizeEn(this.value)"
                     class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600"
                   />
+                </div>
+                <div class="mb-[6px] flex items-center">
+                  <label class="flex items-center gap-1.5 cursor-pointer" title="Uppercase">
+                    <input
+                      type="checkbox"
+                      id="uppercaseEn"
+                      onchange="changeUppercaseEn(this.checked)"
+                      class="w-4 h-4 text-[#006d4b] rounded border-slate-300 focus:ring-[#006d4b]"
+                    />
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Caps</span>
+                  </label>
                 </div>
               </div>
             </div>
@@ -868,6 +887,36 @@
         </div>
       </main>
     </div>
+
+    <div
+      id="leaveConfirmModal"
+      class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300"
+    >
+      <div
+        class="bg-white rounded-2xl shadow-2xl w-[400px] p-6 text-center transform scale-95 transition-transform duration-300"
+        id="leaveConfirmModalContent"
+      >
+        <div class="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-amber-100">
+          <span class="material-symbols-outlined text-3xl">warning</span>
+        </div>
+        <h3 class="text-xl font-bold text-slate-800 mb-2">ต้องการบันทึกข้อมูลหรือไม่?</h3>
+        <p class="text-sm text-slate-500 mb-6 leading-relaxed">คุณมีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก<br>หากออกจากหน้านี้โดยไม่บันทึก ข้อมูลจะสูญหาย</p>
+        <div class="flex gap-2 w-full flex-col">
+          <div class="flex gap-2 w-full">
+            <button onclick="closeLeaveModal()" class="flex-1 py-2.5 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors">ยกเลิก</button>
+            <button onclick="window.location.href = 'dashboard.html'" class="flex-1 py-2.5 bg-red-50 text-red-600 font-bold rounded-xl hover:bg-red-100 transition-colors">ไม่บันทึก</button>
+          </div>
+          <button onclick="closeLeaveModal(); showSaveModal();" class="w-full py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-md transition-colors flex justify-center items-center gap-2 mt-1">
+            <span class="material-symbols-outlined text-[18px]">save</span> บันทึกข้อมูล
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="settingsModal"
+      class="hidden"
+    ></div>
 
     <div
       id="saveModal"
@@ -1402,7 +1451,7 @@
         if (editId) {
           isInitialLoading = true;
           document.getElementById("pageTitle").innerText = "Edit Profile";
-          document.getElementById("saveButtonText").innerText = "Update Profile";
+          document.getElementById("saveButtonText").innerText = "Save Profile";
 
           let tagToEdit = null;
           try {
@@ -1716,27 +1765,37 @@
 
       function renderSlotContent(element, menu, index) {
         const showAllergies = !currentTemplateConfig.hide_allergies;
-        const slotBgUrl = menu.bgUrl || "";
+        let slotBgUrl = menu.bgUrl || "";
+        if (!slotBgUrl && currentTemplateConfig && currentTemplateConfig.id) {
+          slotBgUrl = localStorage.getItem("defaultBg_" + currentTemplateConfig.id) || "";
+        }
         const bgHtml = slotBgUrl
           ? `<img src="${slotBgUrl}" class="slot-bg">`
           : "";
+
+        const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {
+          fontTh: "'2006_iannnnnbkk', sans-serif", fontSizeTh: "22px",
+          fontEn: "'Aptos', sans-serif", fontSizeEn: "22px",
+          iconSizeMain: typeof getBaseIconSize === "function" ? getBaseIconSize() + "px" : "61px",
+          iconSizeContain: typeof getBaseIconSize === "function" ? getBaseIconSize() + "px" : "61px"
+        };
 
         if (!menu.name_th && !menu.name_en) {
           element.innerHTML = bgHtml + `<div class="slot-content"></div>`;
           return;
         }
 
-        const fTh = menu.fontTh || "'2006_iannnnnbkk', sans-serif";
-        const sTh = menu.fontSizeTh || "22px";
-        const fEn = menu.fontEn || "'Aptos', sans-serif";
-        const sEn = menu.fontSizeEn || "22px";
+        const fTh = menu.fontTh || globalSettings.fontTh;
+        const sTh = menu.fontSizeTh || globalSettings.fontSizeTh;
+        const fEn = menu.fontEn || globalSettings.fontEn;
+        const sEn = menu.fontSizeEn || globalSettings.fontSizeEn;
 
         const sizeMainStyle = menu.allergenIconSizeMain
           ? `width: ${menu.allergenIconSizeMain}px !important; height: ${menu.allergenIconSizeMain}px !important;`
-          : "";
+          : `width: ${globalSettings.iconSizeMain} !important; height: ${globalSettings.iconSizeMain} !important;`;
         const sizeContainStyle = menu.allergenIconSizeContain
           ? `width: ${menu.allergenIconSizeContain}px !important; height: ${menu.allergenIconSizeContain}px !important;`
-          : "";
+          : `width: ${globalSettings.iconSizeContain} !important; height: ${globalSettings.iconSizeContain} !important;`;
 
         let fullAllergensHtml = "";
 
@@ -1806,7 +1865,7 @@
             ${bgHtml}
             <div class="slot-content">
               <div class="slot-text-th font-black text-slate-800 mb-1 leading-tight text-center whitespace-pre-line" style="font-family: ${fTh}; font-size: ${sTh};">${menu.name_th || ""}</div>
-              <div class="slot-text-en font-medium text-slate-500 mb-1 leading-tight text-center whitespace-pre-line uppercase" style="font-family: ${fEn}; font-size: ${sEn};">${menu.name_en || ""}</div>
+              <div class="slot-text-en font-medium text-slate-500 mb-1 leading-tight text-center whitespace-pre-line ${menu.uppercaseEn ? 'uppercase' : ''}" style="font-family: ${fEn}; font-size: ${sEn};">${menu.name_en || ""}</div>
               ${fullAllergensHtml}
             </div>
         `;
@@ -2046,11 +2105,21 @@
 
       function syncBgSelectWithCurrentSlot() {
         const select = document.getElementById("bgSelect");
-        const currentBg = slotsData[activeSlot]?.bgUrl || "";
+        let currentBg = slotsData[activeSlot]?.bgUrl || "";
+        if (!currentBg && currentTemplateConfig && currentTemplateConfig.id) {
+           currentBg = localStorage.getItem("defaultBg_" + currentTemplateConfig.id) || "";
+        }
         select.value = currentBg;
       }
 
       function updateInputs(menu) {
+        const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {
+          fontTh: "'2006_iannnnnbkk', sans-serif", fontSizeTh: "22px",
+          fontEn: "'Aptos', sans-serif", fontSizeEn: "22px",
+          iconSizeMain: typeof getBaseIconSize === "function" ? getBaseIconSize() + "px" : "61px",
+          iconSizeContain: typeof getBaseIconSize === "function" ? getBaseIconSize() + "px" : "61px"
+        };
+
         document.getElementById("nameTh").innerText = menu.name_th || "";
         document.getElementById("nameEn").innerText = menu.name_en || "";
         document.getElementById("menuSearch").value = menu.name_th
@@ -2058,21 +2127,23 @@
           : "";
 
         document.getElementById("fontSelectTh").value =
-          menu.fontTh || "'2006_iannnnnbkk', sans-serif";
+          menu.fontTh || globalSettings.fontTh;
         document.getElementById("fontSizeTh").value = parseInt(
-          menu.fontSizeTh || "22px",
+          menu.fontSizeTh || globalSettings.fontSizeTh,
         );
+
         document.getElementById("fontSelectEn").value =
-          menu.fontEn || "'Aptos', sans-serif";
+          menu.fontEn || globalSettings.fontEn;
         document.getElementById("fontSizeEn").value = parseInt(
-          menu.fontSizeEn || "22px",
+          menu.fontSizeEn || globalSettings.fontSizeEn,
         );
+        document.getElementById("uppercaseEn").checked = !!menu.uppercaseEn;
 
         const sizeMainDisplay = document.getElementById("sizeMainDisplay");
         if (sizeMainDisplay) {
           sizeMainDisplay.innerText = menu.allergenIconSizeMain
             ? menu.allergenIconSizeMain + "px"
-            : getBaseIconSize() + "px";
+            : globalSettings.iconSizeMain;
         }
 
         const sizeContainDisplay =
@@ -2080,7 +2151,7 @@
         if (sizeContainDisplay) {
           sizeContainDisplay.innerText = menu.allergenIconSizeContain
             ? menu.allergenIconSizeContain + "px"
-            : getBaseIconSize() + "px";
+            : globalSettings.iconSizeContain;
         }
 
         const list = document.getElementById("allergenList");
@@ -2132,22 +2203,30 @@
       }
 
       function clearInputs() {
+        const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {
+          fontTh: "'2006_iannnnnbkk', sans-serif", fontSizeTh: "22px",
+          fontEn: "'Aptos', sans-serif", fontSizeEn: "22px",
+          iconSizeMain: typeof getBaseIconSize === "function" ? getBaseIconSize() + "px" : "61px",
+          iconSizeContain: typeof getBaseIconSize === "function" ? getBaseIconSize() + "px" : "61px"
+        };
+
         document.getElementById("nameTh").innerText = "";
         document.getElementById("nameEn").innerText = "";
         document.getElementById("menuSearch").value = "";
         document.getElementById("allergenList").innerHTML = "";
 
-        document.getElementById("fontSelectTh").value = "'2006_iannnnnbkk', sans-serif";
-        document.getElementById("fontSizeTh").value = parseInt("22px");
-        document.getElementById("fontSelectEn").value = "'Aptos', sans-serif";
-        document.getElementById("fontSizeEn").value = parseInt("22px");
+        document.getElementById("fontSelectTh").value = globalSettings.fontTh;
+        document.getElementById("fontSizeTh").value = parseInt(globalSettings.fontSizeTh);
+        document.getElementById("fontSelectEn").value = globalSettings.fontEn;
+        document.getElementById("fontSizeEn").value = parseInt(globalSettings.fontSizeEn);
+        document.getElementById("uppercaseEn").checked = false;
 
         const sizeMainDisplay = document.getElementById("sizeMainDisplay");
-        if (sizeMainDisplay) sizeMainDisplay.innerText = "61px";
+        if (sizeMainDisplay) sizeMainDisplay.innerText = globalSettings.iconSizeMain;
 
         const sizeContainDisplay =
           document.getElementById("sizeContainDisplay");
-        if (sizeContainDisplay) sizeContainDisplay.innerText = "61px";
+        if (sizeContainDisplay) sizeContainDisplay.innerText = globalSettings.iconSizeContain;
       }
 
       function showBgConfirmModal() {
@@ -2410,6 +2489,15 @@
 
           let firstBgUrl = null;
 
+          const storedDefaults = localStorage.getItem("defaultBackgrounds");
+          let userDefaultBg = null;
+          if (storedDefaults) {
+             try {
+                const parsed = JSON.parse(storedDefaults);
+                userDefaultBg = parsed[dbSizeName] || null;
+             } catch(e) {}
+          }
+
           if (bgs && bgs.length > 0) {
             const seenNames = new Set();
             bgs.forEach((bg) => {
@@ -2419,6 +2507,10 @@
                 if (!firstBgUrl) firstBgUrl = bg.image_url;
               }
             });
+            if (userDefaultBg) {
+               const exists = bgs.find(b => b.image_url === userDefaultBg);
+               if (exists) firstBgUrl = userDefaultBg;
+            }
           }
 
           if (firstBgUrl && typeof isInitialLoading !== "undefined" && !isInitialLoading) {
@@ -3107,6 +3199,31 @@
         renderActiveSlotOnly();
       }
 
+      function handleGoBack() {
+        const modal = document.getElementById("leaveConfirmModal");
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+          modal.classList.remove("opacity-0");
+          document.getElementById("leaveConfirmModalContent").classList.remove("scale-95");
+        }, 10);
+      }
+
+      function closeLeaveModal() {
+        const modal = document.getElementById("leaveConfirmModal");
+        const content = document.getElementById("leaveConfirmModalContent");
+        modal.classList.add("opacity-0");
+        content.classList.add("scale-95");
+        setTimeout(() => {
+          modal.classList.add("hidden");
+        }, 300);
+      }
+
+      function changeUppercaseEn(isUppercase) {
+        if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
+        slotsData[activeSlot].uppercaseEn = isUppercase;
+        renderActiveSlotOnly();
+      }
+
       window.addEventListener('beforeunload', function (e) {
           const urlParams = new URLSearchParams(window.location.search);
           const editId = urlParams.get("edit");
@@ -3121,6 +3238,32 @@
           }
       });
       
+
+
+      window.addEventListener('globalSettingsUpdated', () => {
+        const count = currentTemplateConfig ? currentTemplateConfig.slots_count : 0;
+        if (count > 0) {
+           updateInputs(slotsData[activeSlot] || {});
+           renderSlotControls(count);
+           changePage(currentPage);
+        }
+      });
+
+      function setTemplateDefaultBackground() {
+        if (!currentTemplateConfig || !currentTemplateConfig.id) {
+          alert("ไม่พบข้อมูลเทมเพลต");
+          return;
+        }
+        const select = document.getElementById("bgSelect");
+        const selectedBg = select.value;
+        if (!selectedBg) {
+          alert("กรุณาเลือกพื้นหลังที่ต้องการตั้งเป็นค่าเริ่มต้น");
+          return;
+        }
+        localStorage.setItem("defaultBg_" + currentTemplateConfig.id, selectedBg);
+        alert("ตั้งเป็นค่าเริ่มต้นสำหรับเทมเพลต " + currentTemplateConfig.name + " แล้ว\\nในครั้งถัดไปที่คุณใช้งานเทมเพลตนี้ จะแสดงพื้นหลังนี้เป็นค่าเริ่มต้น");
+      }
+
       window.addEventListener('load', function() {
           const urlParams = new URLSearchParams(window.location.search);
           const editId = urlParams.get("edit");
