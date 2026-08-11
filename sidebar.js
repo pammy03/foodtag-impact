@@ -223,7 +223,7 @@ function injectSidebar() {
           <div class="space-y-5">
             <!-- Text Defaults -->
             <div class="space-y-3">
-              <h4 class="text-sm font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">match_case</span> ข้อความ (Text)</h4>
+              <h4 class="text-sm font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">match_case</span> ข้อความ </h4>
               <div class="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
                 <div>
                   <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ภาษาไทย</label>
@@ -262,11 +262,11 @@ function injectSidebar() {
               <h4 class="text-sm font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">image</span> ขนาดรูปภาพ Ingredients</h4>
               <div class="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
                 <div>
-                  <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด Main (px)</label>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด Contain (px)</label>
                   <input type="number" id="defIconSizeMain" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b]" value="61">
                 </div>
                 <div>
-                  <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด Contain (px)</label>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด May Contain (px)</label>
                   <input type="number" id="defIconSizeContain" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b]" value="61">
                 </div>
               </div>
@@ -275,7 +275,7 @@ function injectSidebar() {
 
           <div class="mt-6 flex gap-3">
             <button onclick="closeSettingsModal()" class="flex-1 py-2 border border-slate-200 text-slate-600 font-bold rounded-lg hover:bg-slate-50 transition-colors text-sm">ยกเลิก</button>
-            <button onclick="saveGlobalSettings()" class="flex-1 py-2 bg-[#006d4b] text-white font-bold rounded-lg hover:bg-[#005a3d] transition-colors text-sm">บันทึกค่าเริ่มต้น</button>
+            <button onclick="confirmSaveGlobalSettings()" class="flex-1 py-2 bg-[#006d4b] text-white font-bold rounded-lg hover:bg-[#005a3d] transition-colors text-sm">บันทึกค่าเริ่มต้น</button>
           </div>
         </div>
       </div>
@@ -450,6 +450,93 @@ async function saveMyProfile(e) {
   }
 }
 
+function showConfirmModal(title, message, confirmText, cancelText, onConfirm) {
+  const modalId = 'customConfirmModal_' + Date.now();
+  const modalHTML = `
+    <div id="${modalId}" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300" style="z-index: 999999;">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300">
+        <div class="p-6 text-center">
+          <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-amber-500 text-3xl">error</span>
+          </div>
+          <h3 class="text-xl font-bold text-slate-800 mb-2">${title}</h3>
+          <p class="text-slate-500 text-sm mb-6">${message}</p>
+          <div class="flex gap-3">
+            <button id="${modalId}_cancel" class="flex-1 py-2.5 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors">
+              ${cancelText}
+            </button>
+            <button id="${modalId}_confirm" class="flex-1 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] transition-colors shadow-lg shadow-[#006d4b]/20">
+              ${confirmText}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+  const modalEl = document.getElementById(modalId);
+  const modalInner = modalEl.querySelector('.bg-white');
+
+  setTimeout(() => {
+    modalEl.classList.remove('opacity-0');
+    modalInner.classList.remove('scale-95');
+  }, 10);
+
+  const closeModal = () => {
+    modalEl.classList.add('opacity-0');
+    modalInner.classList.add('scale-95');
+    setTimeout(() => {
+      modalEl.remove();
+    }, 300);
+  };
+
+  document.getElementById(`${modalId}_cancel`).addEventListener('click', closeModal);
+  document.getElementById(`${modalId}_confirm`).addEventListener('click', () => {
+    closeModal();
+    if (onConfirm) onConfirm();
+  });
+}
+
+function showSuccessModal(title, message) {
+  const modalId = 'customSuccessModal_' + Date.now();
+  const modalHTML = `
+    <div id="${modalId}" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300" style="z-index: 999999;">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300">
+        <div class="p-6 text-center">
+          <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-emerald-500 text-3xl">check_circle</span>
+          </div>
+          <h3 class="text-xl font-bold text-slate-800 mb-2">${title}</h3>
+          <p class="text-slate-500 text-sm mb-6">${message}</p>
+          <button id="${modalId}_ok" class="w-full py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] transition-colors shadow-lg shadow-[#006d4b]/20">
+            ตกลง
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+  const modalEl = document.getElementById(modalId);
+  const modalInner = modalEl.querySelector('.bg-white');
+
+  setTimeout(() => {
+    modalEl.classList.remove('opacity-0');
+    modalInner.classList.remove('scale-95');
+  }, 10);
+
+  const closeModal = () => {
+    modalEl.classList.add('opacity-0');
+    modalInner.classList.add('scale-95');
+    setTimeout(() => {
+      modalEl.remove();
+    }, 300);
+  };
+
+  document.getElementById(`${modalId}_ok`).addEventListener('click', closeModal);
+}
+
 // Global Settings Functions
 function getGlobalSettings() {
   const stored = localStorage.getItem("globalDefaultSettings");
@@ -491,6 +578,18 @@ function closeSettingsModal() {
   }, 300);
 }
 
+function confirmSaveGlobalSettings() {
+  showConfirmModal(
+    "ยืนยันการบันทึก",
+    "คุณต้องการบันทึกการเปลี่ยนแปลงการตั้งค่าพื้นฐาน (Global Settings) ใช่หรือไม่?",
+    "บันทึก",
+    "ยกเลิก",
+    () => {
+      saveGlobalSettings();
+    }
+  );
+}
+
 function saveGlobalSettings() {
   const settings = {
     fontTh: document.getElementById("defFontTh").value,
@@ -501,7 +600,7 @@ function saveGlobalSettings() {
     iconSizeContain: document.getElementById("defIconSizeContain").value + "px"
   };
   localStorage.setItem("globalDefaultSettings", JSON.stringify(settings));
-  alert("บันทึกค่าเริ่มต้นเรียบร้อยแล้ว");
+  showSuccessModal("บันทึกสำเร็จ", "บันทึกค่าเริ่มต้นเรียบร้อยแล้ว");
   closeSettingsModal();
   window.dispatchEvent(new CustomEvent('globalSettingsUpdated'));
 }

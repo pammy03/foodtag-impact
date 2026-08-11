@@ -614,7 +614,7 @@
 
         <div class="mt-6 flex gap-3">
           <button onclick="closeModal('defaultBgModal')" class="flex-1 py-2 border border-slate-200 text-slate-600 font-bold rounded-lg hover:bg-slate-50 transition-colors text-sm">ยกเลิก</button>
-          <button onclick="saveDefaultBackgrounds()" class="flex-1 py-2 bg-[#006d4b] text-white font-bold rounded-lg hover:bg-[#005a3d] transition-colors text-sm">บันทึกค่าเริ่มต้น</button>
+          <button onclick="confirmSaveDefaultBackgrounds()" class="flex-1 py-2 bg-[#006d4b] text-white font-bold rounded-lg hover:bg-[#005a3d] transition-colors text-sm">บันทึกค่าเริ่มต้น</button>
         </div>
       </div>
     </div>
@@ -1101,6 +1101,18 @@
         }
       }
 
+      function confirmSaveDefaultBackgrounds() {
+        showConfirmModal(
+          "ยืนยันการบันทึก",
+          "คุณต้องการบันทึกการตั้งค่า Default Backgrounds ใช่หรือไม่?",
+          "บันทึก",
+          "ยกเลิก",
+          () => {
+            saveDefaultBackgrounds();
+          }
+        );
+      }
+
       function saveDefaultBackgrounds() {
         const sizes = [
           "Plate / Food Stall",
@@ -1119,7 +1131,7 @@
         });
         
         localStorage.setItem("defaultBackgrounds", JSON.stringify(defaultBgData));
-        alert("บันทึกค่า Default Backgrounds เรียบร้อยแล้ว");
+        showSuccessModal("บันทึกสำเร็จ", "บันทึกค่า Default Backgrounds เรียบร้อยแล้ว");
         closeModal("defaultBgModal");
       }
 

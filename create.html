@@ -2450,14 +2450,20 @@
 
       function selectMenu(menu) {
         const currentSlotData = slotsData[activeSlot] || {};
+        const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {
+          fontTh: "'2006_iannnnnbkk', sans-serif", fontSizeTh: "22px",
+          fontEn: "'Aptos', sans-serif", fontSizeEn: "22px",
+          iconSizeMain: "61px",
+          iconSizeContain: "61px"
+        };
 
         slotsData[activeSlot] = {
           ...menu,
           bgUrl: currentSlotData.bgUrl || "",
-          fontTh: currentSlotData.fontTh || "'2006_iannnnnbkk', sans-serif",
-          fontSizeTh: currentSlotData.fontSizeTh || "22px",
-          fontEn: currentSlotData.fontEn || "'Aptos', sans-serif",
-          fontSizeEn: currentSlotData.fontSizeEn || "22px",
+          fontTh: currentSlotData.fontTh || globalSettings.fontTh,
+          fontSizeTh: currentSlotData.fontSizeTh || globalSettings.fontSizeTh,
+          fontEn: currentSlotData.fontEn || globalSettings.fontEn,
+          fontSizeEn: currentSlotData.fontSizeEn || globalSettings.fontSizeEn,
           allergenIconSizeMain: currentSlotData.allergenIconSizeMain || null,
           allergenIconSizeContain:
             currentSlotData.allergenIconSizeContain || null,

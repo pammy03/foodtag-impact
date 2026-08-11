@@ -1375,17 +1375,24 @@
               continue;
             }
 
-            const fTh = menu.fontTh || "'Sarabun', sans-serif";
-            const sTh = menu.fontSizeTh || "22px";
-            const fEn = menu.fontEn || "'Poppins', sans-serif";
-            const sEn = menu.fontSizeEn || "22px";
+            const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {
+              fontTh: "'2006_iannnnnbkk', sans-serif", fontSizeTh: "22px",
+              fontEn: "'Aptos', sans-serif", fontSizeEn: "22px",
+              iconSizeMain: "61px",
+              iconSizeContain: "61px"
+            };
+
+            const fTh = menu.fontTh || globalSettings.fontTh;
+            const sTh = menu.fontSizeTh || globalSettings.fontSizeTh;
+            const fEn = menu.fontEn || globalSettings.fontEn;
+            const sEn = menu.fontSizeEn || globalSettings.fontSizeEn;
 
             const sizeMainStyle = menu.allergenIconSizeMain
               ? `width: ${menu.allergenIconSizeMain}px !important; height: ${menu.allergenIconSizeMain}px !important;`
-              : "";
+              : `width: ${globalSettings.iconSizeMain} !important; height: ${globalSettings.iconSizeMain} !important;`;
             const sizeContainStyle = menu.allergenIconSizeContain
               ? `width: ${menu.allergenIconSizeContain}px !important; height: ${menu.allergenIconSizeContain}px !important;`
-              : "";
+              : `width: ${globalSettings.iconSizeContain} !important; height: ${globalSettings.iconSizeContain} !important;`;
 
             let fullAllergensHtml = "";
 
