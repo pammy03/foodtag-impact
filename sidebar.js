@@ -26,9 +26,6 @@ function injectSidebar() {
       <a href="bg-database.html" id="nav-bg-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
         <span class="material-symbols-outlined text-[24px]">wallpaper</span> Backgrounds
       </a>
-      <button onclick="openSettingsModal()" id="nav-global-settings" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all w-full text-left">
-        <span class="material-symbols-outlined text-[24px]">settings</span> Global Settings
-      </button>
     `;
   }
 
@@ -45,7 +42,17 @@ function injectSidebar() {
       <a href="analytics.html" id="nav-analytics" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
         <span class="material-symbols-outlined text-[24px]">insights</span> Analytics & Insights
       </a>
+      <button onclick="openSettingsModal()" id="nav-global-settings" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all w-full text-left">
+        <span class="material-symbols-outlined text-[24px]">settings</span> Global Settings
+      </button>
     `;
+    
+    // Unhide the gear icon in create.html for super admins
+    const createBtn = document.getElementById("create-page-settings-btn");
+    if (createBtn) {
+      createBtn.classList.remove("hidden");
+      createBtn.classList.add("flex");
+    }
   }
 
   const sidebarHTML = `
@@ -209,7 +216,7 @@ function injectSidebar() {
   if (!document.getElementById("settingsModal")) {
     const settingsModalHTML = `
       <div id="settingsModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[99999] hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-2xl shadow-2xl w-[450px] p-6 transform scale-95 transition-transform duration-300" id="settingsModalContent">
+        <div class="bg-white rounded-2xl shadow-2xl w-[600px] max-h-[90vh] overflow-y-auto p-6 transform scale-95 transition-transform duration-300" id="settingsModalContent">
           <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-3">
             <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
               <span class="material-symbols-outlined text-[#006d4b]">settings</span>
@@ -224,14 +231,13 @@ function injectSidebar() {
             <!-- Text Defaults -->
             <div class="space-y-3">
               <h4 class="text-sm font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">match_case</span> ข้อความ </h4>
-              <div class="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+              <div class="grid grid-cols-3 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
                 <div>
                   <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ภาษาไทย</label>
                   <select id="defFontTh" class="w-full pl-2 pr-8 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
                       <option value="'2006_iannnnnbkk', sans-serif">2006_iannnnnbkk</option>
                       <option value="'Sarabun', sans-serif">Sarabun</option>
                       <option value="'Poppins', sans-serif">Poppins</option>
-                      <option value="'Mali', cursive">Mali (น่ารัก)</option>
                       <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
                       <option value="'Aptos', sans-serif">Aptos</option>
                   </select>
@@ -241,11 +247,18 @@ function injectSidebar() {
                   <input type="number" id="defFontSizeTh" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b]" value="22">
                 </div>
                 <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-1">สีฟอนต์</label>
+                  <div class="flex items-center gap-1">
+                    <input type="color" id="defFontColorTh" class="w-6 h-6 p-0 border-0 rounded cursor-pointer" value="#0f172a" oninput="document.getElementById('defFontColorThText').value = this.value.toUpperCase()">
+                    <input type="text" id="defFontColorThText" class="w-full px-1.5 py-1.5 text-[10px] uppercase font-mono border rounded outline-none focus:border-[#006d4b]" value="#0F172A" oninput="document.getElementById('defFontColorTh').value = this.value">
+                  </div>
+                </div>
+                <div>
                   <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ภาษาอังกฤษ</label>
                   <select id="defFontEn" class="w-full pl-2 pr-8 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
-                      <option value="'Poppins', sans-serif">Poppins</option>
+                      <option value="'2006_iannnnnbkk', sans-serif">2006_iannnnnbkk</option>
                       <option value="'Sarabun', sans-serif">Sarabun</option>
-                      <option value="'Mali', cursive">Mali (น่ารัก)</option>
+                      <option value="'Poppins', sans-serif">Poppins</option>
                       <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
                       <option value="'Aptos', sans-serif">Aptos</option>
                   </select>
@@ -253,6 +266,121 @@ function injectSidebar() {
                 <div>
                   <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด (px)</label>
                   <input type="number" id="defFontSizeEn" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b]" value="22">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-1">สีฟอนต์</label>
+                  <div class="flex items-center gap-1">
+                    <input type="color" id="defFontColorEn" class="w-6 h-6 p-0 border-0 rounded cursor-pointer" value="#0f172a" oninput="document.getElementById('defFontColorEnText').value = this.value.toUpperCase()">
+                    <input type="text" id="defFontColorEnText" class="w-full px-1.5 py-1.5 text-[10px] uppercase font-mono border rounded outline-none focus:border-[#006d4b]" value="#0F172A" oninput="document.getElementById('defFontColorEn').value = this.value">
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Allergen Label Defaults -->
+            <div class="space-y-3">
+              <h4 class="text-sm font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">health_and_safety</span> ข้อมูลสารก่อภูมิแพ้ (Allergens)</h4>
+              <div class="grid grid-cols-3 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200 max-h-[300px] overflow-y-auto">
+                <div class="col-span-3">
+                  <div class="flex items-center justify-between mt-1 mb-2">
+                    <span class="font-bold text-[11px] text-[#006d4b] uppercase tracking-wider">ALLERGENS TITLE</span>
+                    <div class="flex items-center gap-2 font-normal">
+                      <label class="text-[11px] text-slate-500 whitespace-nowrap">Show Side Lines</label>
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="defLabelTitleLines" class="sr-only peer" checked>
+                        <div class="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#006d4b]"></div>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-4 gap-3">
+                    <div class="col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ข้อความ (Text)</label>
+                      <input type="text" id="defLabelTitleText" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b]" value="Allergens">
+                    </div>
+                    <div class="col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ (Font)</label>
+                      <select id="defLabelTitleFont" class="w-full pl-2 pr-8 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b] appearance-none bg-white" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
+                          <option value="'2006_iannnnnbkk', sans-serif">2006_iannnnnbkk</option>
+                          <option value="'Sarabun', sans-serif">Sarabun</option>
+                          <option value="'Poppins', sans-serif">Poppins</option>
+                          <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
+                          <option value="'Aptos', sans-serif">Aptos</option>
+                      </select>
+                    </div>
+                    <div class="col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด (px)</label>
+                      <input type="number" id="defLabelTitleSize" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b]" value="12">
+                    </div>
+                    <div class="col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-500 mb-1">สีฟอนต์ (Color)</label>
+                      <div class="flex items-center gap-1">
+                        <input type="color" id="defLabelTitleColor" class="w-6 h-6 p-0 border-0 rounded cursor-pointer" value="#d32f2f" oninput="document.getElementById('defLabelTitleColorText').value = this.value.toUpperCase()">
+                        <input type="text" id="defLabelTitleColorText" class="w-full px-1.5 py-1.5 text-[10px] uppercase font-mono border rounded outline-none focus:border-[#006d4b]" value="#D32F2F" oninput="document.getElementById('defLabelTitleColor').value = this.value">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-span-3 border-t pt-2 mt-1">
+                  <div class="font-bold text-[11px] text-red-600 uppercase tracking-wider mb-2">CONTAIN</div>
+                  <div class="grid grid-cols-4 gap-3">
+                    <div class="col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ข้อความ (Text)</label>
+                      <input type="text" id="defLabelContainText" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-red-500" value="CONTAIN">
+                    </div>
+                    <div class="col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ (Font)</label>
+                      <select id="defLabelContainFont" class="w-full pl-2 pr-8 py-1.5 text-xs border rounded outline-none focus:border-red-500 appearance-none bg-white" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
+                          <option value="'2006_iannnnnbkk', sans-serif">2006_iannnnnbkk</option>
+                          <option value="'Sarabun', sans-serif">Sarabun</option>
+                          <option value="'Poppins', sans-serif">Poppins</option>
+                          <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
+                          <option value="'Aptos', sans-serif">Aptos</option>
+                      </select>
+                    </div>
+                    <div class="col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด (px)</label>
+                      <input type="number" id="defLabelContainSize" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-red-500" value="10">
+                    </div>
+                    <div class="col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-500 mb-1">สีฟอนต์ (Color)</label>
+                      <div class="flex items-center gap-1">
+                        <input type="color" id="defLabelContainColor" class="w-6 h-6 p-0 border-0 rounded cursor-pointer" value="#d32f2f" oninput="document.getElementById('defLabelContainColorText').value = this.value.toUpperCase()">
+                        <input type="text" id="defLabelContainColorText" class="w-full px-1.5 py-1.5 text-[10px] uppercase font-mono border rounded outline-none focus:border-red-500" value="#D32F2F" oninput="document.getElementById('defLabelContainColor').value = this.value">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-span-3 border-t pt-2 mt-1">
+                  <div class="font-bold text-[11px] text-emerald-600 uppercase tracking-wider mb-2">MAY CONTAIN</div>
+                  <div class="grid grid-cols-4 gap-3">
+                    <div class="col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ข้อความ (Text)</label>
+                      <input type="text" id="defLabelMayContainText" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-emerald-500" value="MAY CONTAIN">
+                    </div>
+                    <div class="col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ (Font)</label>
+                      <select id="defLabelMayContainFont" class="w-full pl-2 pr-8 py-1.5 text-xs border rounded outline-none focus:border-emerald-500 appearance-none bg-white" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
+                          <option value="'2006_iannnnnbkk', sans-serif">2006_iannnnnbkk</option>
+                          <option value="'Sarabun', sans-serif">Sarabun</option>
+                          <option value="'Poppins', sans-serif">Poppins</option>
+                          <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
+                          <option value="'Aptos', sans-serif">Aptos</option>
+                      </select>
+                    </div>
+                    <div class="col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด (px)</label>
+                      <input type="number" id="defLabelMayContainSize" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-emerald-500" value="10">
+                    </div>
+                    <div class="col-span-2">
+                      <label class="block text-[11px] font-bold text-slate-500 mb-1">สีฟอนต์ (Color)</label>
+                      <div class="flex items-center gap-1">
+                        <input type="color" id="defLabelMayContainColor" class="w-6 h-6 p-0 border-0 rounded cursor-pointer" value="#d32f2f" oninput="document.getElementById('defLabelMayContainColorText').value = this.value.toUpperCase()">
+                        <input type="text" id="defLabelMayContainColorText" class="w-full px-1.5 py-1.5 text-[10px] uppercase font-mono border rounded outline-none focus:border-emerald-500" value="#D32F2F" oninput="document.getElementById('defLabelMayContainColor').value = this.value">
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -553,19 +681,66 @@ function getGlobalSettings() {
 
 function openSettingsModal() {
   const settings = getGlobalSettings();
-  document.getElementById("defFontTh").value = settings.fontTh;
-  document.getElementById("defFontSizeTh").value = parseInt(settings.fontSizeTh);
-  document.getElementById("defFontEn").value = settings.fontEn;
-  document.getElementById("defFontSizeEn").value = parseInt(settings.fontSizeEn);
-  document.getElementById("defIconSizeMain").value = parseInt(settings.iconSizeMain);
-  document.getElementById("defIconSizeContain").value = parseInt(settings.iconSizeContain);
+  
+  const setVal = (id, val) => {
+    const el = document.getElementById(id);
+    if (el && val !== undefined) el.value = val;
+  };
+  const setCheck = (id, val) => {
+    const el = document.getElementById(id);
+    if (el && val !== undefined) el.checked = val;
+  };
+
+  setVal("defFontTh", settings.fontTh);
+  setVal("defFontSizeTh", settings.fontSizeTh ? parseInt(settings.fontSizeTh) : undefined);
+  setVal("defFontEn", settings.fontEn);
+  setVal("defFontSizeEn", settings.fontSizeEn ? parseInt(settings.fontSizeEn) : undefined);
+  setVal("defIconSizeMain", settings.iconSizeMain ? parseInt(settings.iconSizeMain) : undefined);
+  setVal("defIconSizeContain", settings.iconSizeContain ? parseInt(settings.iconSizeContain) : undefined);
+
+  if (settings.fontColorTh) {
+    setVal("defFontColorTh", settings.fontColorTh);
+    setVal("defFontColorThText", settings.fontColorTh.toUpperCase());
+  }
+  if (settings.fontColorEn) {
+    setVal("defFontColorEn", settings.fontColorEn);
+    setVal("defFontColorEnText", settings.fontColorEn.toUpperCase());
+  }
+
+  setVal("defLabelTitleText", settings.labelTitleText);
+  if (settings.labelTitleColor) {
+    setVal("defLabelTitleColor", settings.labelTitleColor);
+    setVal("defLabelTitleColorText", settings.labelTitleColor.toUpperCase());
+  }
+  setVal("defLabelTitleSize", settings.labelTitleSize);
+  setCheck("defLabelTitleLines", settings.labelTitleLines);
+  setVal("defLabelTitleFont", settings.labelTitleFont);
+
+  setVal("defLabelContainText", settings.labelContainText);
+  if (settings.labelContainColor) {
+    setVal("defLabelContainColor", settings.labelContainColor);
+    setVal("defLabelContainColorText", settings.labelContainColor.toUpperCase());
+  }
+  setVal("defLabelContainSize", settings.labelContainSize);
+  setVal("defLabelContainFont", settings.labelContainFont);
+
+  setVal("defLabelMayContainText", settings.labelMayContainText);
+  if (settings.labelMayContainColor) {
+    setVal("defLabelMayContainColor", settings.labelMayContainColor);
+    setVal("defLabelMayContainColorText", settings.labelMayContainColor.toUpperCase());
+  }
+  setVal("defLabelMayContainSize", settings.labelMayContainSize);
+  setVal("defLabelMayContainFont", settings.labelMayContainFont);
 
   const modal = document.getElementById("settingsModal");
-  modal.classList.remove("hidden");
-  setTimeout(() => {
-    modal.classList.remove("opacity-0");
-    document.getElementById("settingsModalContent").classList.remove("scale-95");
-  }, 10);
+  if (modal) {
+    modal.classList.remove("hidden");
+    setTimeout(() => {
+      modal.classList.remove("opacity-0");
+      const content = document.getElementById("settingsModalContent");
+      if (content) content.classList.remove("scale-95");
+    }, 10);
+  }
 }
 
 function closeSettingsModal() {
@@ -594,10 +769,25 @@ function saveGlobalSettings() {
   const settings = {
     fontTh: document.getElementById("defFontTh").value,
     fontSizeTh: document.getElementById("defFontSizeTh").value + "px",
+    fontColorTh: document.getElementById("defFontColorTh").value,
     fontEn: document.getElementById("defFontEn").value,
     fontSizeEn: document.getElementById("defFontSizeEn").value + "px",
+    fontColorEn: document.getElementById("defFontColorEn").value,
     iconSizeMain: document.getElementById("defIconSizeMain").value + "px",
-    iconSizeContain: document.getElementById("defIconSizeContain").value + "px"
+    iconSizeContain: document.getElementById("defIconSizeContain").value + "px",
+    labelTitleText: document.getElementById("defLabelTitleText").value,
+    labelTitleColor: document.getElementById("defLabelTitleColor").value,
+    labelTitleSize: document.getElementById("defLabelTitleSize").value,
+    labelTitleLines: document.getElementById("defLabelTitleLines").checked,
+    labelTitleFont: document.getElementById("defLabelTitleFont").value,
+    labelContainText: document.getElementById("defLabelContainText").value,
+    labelContainColor: document.getElementById("defLabelContainColor").value,
+    labelContainSize: document.getElementById("defLabelContainSize").value,
+    labelContainFont: document.getElementById("defLabelContainFont").value,
+    labelMayContainText: document.getElementById("defLabelMayContainText").value,
+    labelMayContainColor: document.getElementById("defLabelMayContainColor").value,
+    labelMayContainSize: document.getElementById("defLabelMayContainSize").value,
+    labelMayContainFont: document.getElementById("defLabelMayContainFont").value
   };
   localStorage.setItem("globalDefaultSettings", JSON.stringify(settings));
   showSuccessModal("บันทึกสำเร็จ", "บันทึกค่าเริ่มต้นเรียบร้อยแล้ว");
@@ -609,5 +799,9 @@ function saveGlobalSettings() {
 if (document.getElementById("sidebar-container")) {
   injectSidebar();
 } else {
-  document.addEventListener("DOMContentLoaded", injectSidebar);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", injectSidebar);
+  } else {
+    injectSidebar();
+  }
 }
