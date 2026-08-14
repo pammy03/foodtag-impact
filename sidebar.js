@@ -165,7 +165,7 @@ function injectSidebar() {
                 <div>
                   <label class="block text-[16px] font-black text-slate-800 mb-2 ml-1">เปลี่ยนรหัสผ่านใหม่</label>
                   <div class="relative">
-                    <input id="prof_password" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-sm font-semibold pr-14" placeholder="เว้นว่างไว้ถ้าไม่เปลี่ยน" type="password" />
+                    <input id="prof_password" class="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl outline-none text-sm font-semibold pr-14" placeholder="เว้นว่างไว้ถ้าไม่เปลี่ยน" type="password" />
                     <button type="button" onclick="togglePasswordVisibility('prof_password', 'eye_icon_new')" class="absolute right-4 top-3 text-slate-400">
                       <span id="eye_icon_new" class="material-symbols-outlined text-2xl">visibility_off</span>
                     </button>
@@ -216,8 +216,10 @@ function injectSidebar() {
   if (!document.getElementById("settingsModal")) {
     const settingsModalHTML = `
       <div id="settingsModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[99999] hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-2xl shadow-2xl w-[600px] max-h-[90vh] overflow-y-auto p-6 transform scale-95 transition-transform duration-300" id="settingsModalContent">
-          <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-3">
+        <div class="bg-white rounded-2xl shadow-2xl w-[600px] max-h-[90vh] flex flex-col transform scale-95 transition-transform duration-300" id="settingsModalContent">
+          
+          <!-- Header (Sticky) -->
+          <div class="flex items-center justify-between p-6 border-b border-slate-100 shrink-0">
             <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
               <span class="material-symbols-outlined text-[#006d4b]">settings</span>
               Global Settings
@@ -227,14 +229,16 @@ function injectSidebar() {
             </button>
           </div>
           
-          <div class="space-y-5">
+          <!-- Body (Scrollable) -->
+          <div class="p-6 overflow-y-auto space-y-6">
+            
             <!-- Text Defaults -->
             <div class="space-y-3">
               <h4 class="text-sm font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">match_case</span> ข้อความ </h4>
               <div class="grid grid-cols-3 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
                 <div>
                   <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ภาษาไทย</label>
-                  <select id="defFontTh" class="w-full pl-2 pr-8 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
+                  <select id="defFontTh" class="w-full pl-2 pr-8 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
                       <option value="'2006_iannnnnbkk', sans-serif">2006_iannnnnbkk</option>
                       <option value="'Sarabun', sans-serif">Sarabun</option>
                       <option value="'Poppins', sans-serif">Poppins</option>
@@ -244,7 +248,7 @@ function injectSidebar() {
                 </div>
                 <div>
                   <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด (px)</label>
-                  <input type="number" id="defFontSizeTh" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b]" value="22">
+                  <input type="number" id="defFontSizeTh" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="22">
                 </div>
                 <div>
                   <label class="block text-[11px] font-bold text-slate-500 mb-1">สีฟอนต์</label>
@@ -255,7 +259,7 @@ function injectSidebar() {
                 </div>
                 <div>
                   <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ภาษาอังกฤษ</label>
-                  <select id="defFontEn" class="w-full pl-2 pr-8 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
+                  <select id="defFontEn" class="w-full pl-2 pr-8 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
                       <option value="'2006_iannnnnbkk', sans-serif">2006_iannnnnbkk</option>
                       <option value="'Sarabun', sans-serif">Sarabun</option>
                       <option value="'Poppins', sans-serif">Poppins</option>
@@ -265,7 +269,7 @@ function injectSidebar() {
                 </div>
                 <div>
                   <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด (px)</label>
-                  <input type="number" id="defFontSizeEn" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b]" value="22">
+                  <input type="number" id="defFontSizeEn" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="22">
                 </div>
                 <div>
                   <label class="block text-[11px] font-bold text-slate-500 mb-1">สีฟอนต์</label>
@@ -280,7 +284,7 @@ function injectSidebar() {
             <!-- Allergen Label Defaults -->
             <div class="space-y-3">
               <h4 class="text-sm font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">health_and_safety</span> ข้อมูลสารก่อภูมิแพ้ (Allergens)</h4>
-              <div class="grid grid-cols-3 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200 max-h-[300px] overflow-y-auto">
+              <div class="grid grid-cols-3 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
                 <div class="col-span-3">
                   <div class="flex items-center justify-between mt-1 mb-2">
                     <span class="font-bold text-[11px] text-[#006d4b] uppercase tracking-wider">ALLERGENS TITLE</span>
@@ -295,11 +299,11 @@ function injectSidebar() {
                   <div class="grid grid-cols-4 gap-3">
                     <div class="col-span-2">
                       <label class="block text-[11px] font-bold text-slate-500 mb-1">ข้อความ (Text)</label>
-                      <input type="text" id="defLabelTitleText" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b]" value="Allergens">
+                      <input type="text" id="defLabelTitleText" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="Allergens">
                     </div>
                     <div class="col-span-2">
                       <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ (Font)</label>
-                      <select id="defLabelTitleFont" class="w-full pl-2 pr-8 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b] appearance-none bg-white" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
+                      <select id="defLabelTitleFont" class="w-full pl-2 pr-8 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
                           <option value="'2006_iannnnnbkk', sans-serif">2006_iannnnnbkk</option>
                           <option value="'Sarabun', sans-serif">Sarabun</option>
                           <option value="'Poppins', sans-serif">Poppins</option>
@@ -309,7 +313,7 @@ function injectSidebar() {
                     </div>
                     <div class="col-span-2">
                       <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด (px)</label>
-                      <input type="number" id="defLabelTitleSize" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b]" value="12">
+                      <input type="number" id="defLabelTitleSize" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="12">
                     </div>
                     <div class="col-span-2">
                       <label class="block text-[11px] font-bold text-slate-500 mb-1">สีฟอนต์ (Color)</label>
@@ -321,16 +325,16 @@ function injectSidebar() {
                   </div>
                 </div>
                 
-                <div class="col-span-3 border-t pt-2 mt-1">
+                <div class="col-span-3 border-t border-slate-200 pt-3 mt-1">
                   <div class="font-bold text-[11px] text-red-600 uppercase tracking-wider mb-2">CONTAIN</div>
                   <div class="grid grid-cols-4 gap-3">
                     <div class="col-span-2">
                       <label class="block text-[11px] font-bold text-slate-500 mb-1">ข้อความ (Text)</label>
-                      <input type="text" id="defLabelContainText" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-red-500" value="CONTAIN">
+                      <input type="text" id="defLabelContainText" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-red-500" value="CONTAIN">
                     </div>
                     <div class="col-span-2">
                       <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ (Font)</label>
-                      <select id="defLabelContainFont" class="w-full pl-2 pr-8 py-1.5 text-xs border rounded outline-none focus:border-red-500 appearance-none bg-white" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
+                      <select id="defLabelContainFont" class="w-full pl-2 pr-8 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-red-500 appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
                           <option value="'2006_iannnnnbkk', sans-serif">2006_iannnnnbkk</option>
                           <option value="'Sarabun', sans-serif">Sarabun</option>
                           <option value="'Poppins', sans-serif">Poppins</option>
@@ -340,7 +344,7 @@ function injectSidebar() {
                     </div>
                     <div class="col-span-2">
                       <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด (px)</label>
-                      <input type="number" id="defLabelContainSize" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-red-500" value="10">
+                      <input type="number" id="defLabelContainSize" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-red-500" value="10">
                     </div>
                     <div class="col-span-2">
                       <label class="block text-[11px] font-bold text-slate-500 mb-1">สีฟอนต์ (Color)</label>
@@ -352,16 +356,16 @@ function injectSidebar() {
                   </div>
                 </div>
                 
-                <div class="col-span-3 border-t pt-2 mt-1">
+                <div class="col-span-3 border-t border-slate-200 pt-3 mt-1">
                   <div class="font-bold text-[11px] text-emerald-600 uppercase tracking-wider mb-2">MAY CONTAIN</div>
                   <div class="grid grid-cols-4 gap-3">
                     <div class="col-span-2">
                       <label class="block text-[11px] font-bold text-slate-500 mb-1">ข้อความ (Text)</label>
-                      <input type="text" id="defLabelMayContainText" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-emerald-500" value="MAY CONTAIN">
+                      <input type="text" id="defLabelMayContainText" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-emerald-500" value="MAY CONTAIN">
                     </div>
                     <div class="col-span-2">
                       <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ (Font)</label>
-                      <select id="defLabelMayContainFont" class="w-full pl-2 pr-8 py-1.5 text-xs border rounded outline-none focus:border-emerald-500 appearance-none bg-white" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
+                      <select id="defLabelMayContainFont" class="w-full pl-2 pr-8 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-emerald-500 appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
                           <option value="'2006_iannnnnbkk', sans-serif">2006_iannnnnbkk</option>
                           <option value="'Sarabun', sans-serif">Sarabun</option>
                           <option value="'Poppins', sans-serif">Poppins</option>
@@ -371,7 +375,7 @@ function injectSidebar() {
                     </div>
                     <div class="col-span-2">
                       <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด (px)</label>
-                      <input type="number" id="defLabelMayContainSize" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-emerald-500" value="10">
+                      <input type="number" id="defLabelMayContainSize" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-emerald-500" value="10">
                     </div>
                     <div class="col-span-2">
                       <label class="block text-[11px] font-bold text-slate-500 mb-1">สีฟอนต์ (Color)</label>
@@ -391,19 +395,23 @@ function injectSidebar() {
               <div class="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
                 <div>
                   <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด Contain (px)</label>
-                  <input type="number" id="defIconSizeMain" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b]" value="61">
+                  <input type="number" id="defIconSizeMain" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="61">
                 </div>
                 <div>
                   <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด May Contain (px)</label>
-                  <input type="number" id="defIconSizeContain" class="w-full px-2 py-1.5 text-xs border rounded outline-none focus:border-[#006d4b]" value="61">
+                  <input type="number" id="defIconSizeContain" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="61">
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="mt-6 flex gap-3">
-            <button onclick="closeSettingsModal()" class="flex-1 py-2 border border-slate-200 text-slate-600 font-bold rounded-lg hover:bg-slate-50 transition-colors text-sm">ยกเลิก</button>
-            <button onclick="confirmSaveGlobalSettings()" class="flex-1 py-2 bg-[#006d4b] text-white font-bold rounded-lg hover:bg-[#005a3d] transition-colors text-sm">บันทึกค่าเริ่มต้น</button>
+          <!-- Footer (Sticky) -->
+          <div class="p-6 border-t border-slate-100 flex gap-3 shrink-0 bg-white rounded-b-2xl">
+            <button onclick="closeSettingsModal()" class="flex-1 py-2.5 border border-slate-200 text-slate-600 font-bold rounded-lg hover:bg-slate-50 transition-colors text-sm shadow-sm">ยกเลิก</button>
+            <button onclick="confirmSaveGlobalSettings()" class="flex-1 py-2.5 bg-[#006d4b] text-white font-bold rounded-lg hover:bg-[#005a3d] transition-colors text-sm shadow-md flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-[18px]">save</span>
+              บันทึกค่าเริ่มต้น
+            </button>
           </div>
         </div>
       </div>
@@ -590,7 +598,7 @@ function showConfirmModal(title, message, confirmText, cancelText, onConfirm) {
           <h3 class="text-xl font-bold text-slate-800 mb-2">${title}</h3>
           <p class="text-slate-500 text-sm mb-6">${message}</p>
           <div class="flex gap-3">
-            <button id="${modalId}_cancel" class="flex-1 py-2.5 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors">
+            <button id="${modalId}_cancel" class="flex-1 py-2.5 border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-colors">
               ${cancelText}
             </button>
             <button id="${modalId}_confirm" class="flex-1 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] transition-colors shadow-lg shadow-[#006d4b]/20">
