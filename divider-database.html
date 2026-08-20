@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Backgrounds Database | IMPACT Food Tag</title>
+    <title>Divider Gallery | IMPACT Food Tag</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -57,7 +57,7 @@
         <div>
           <div class="flex items-center gap-3">
             <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">
-              Backgrounds
+              Divider Gallery
             </h2>
             <div
               id="totalBgCount"
@@ -66,7 +66,7 @@
               ...
             </div>
           </div>
-          <p class="text-slate-500 font-medium mt-1">จัดการรูปภาพพื้นหลัง</p>
+          <p class="text-slate-500 font-medium mt-1">Manage Menu Dividers</p>
         </div>
 
         <div class="flex gap-3 items-center">
@@ -78,7 +78,7 @@
             <span class="material-symbols-outlined text-[20px]"
               >wallpaper</span
             >
-            Default Backgrounds
+            Default Dividers
           </button>
           <button
             type="button"
@@ -88,7 +88,7 @@
             <span class="material-symbols-outlined text-[20px]"
               >add_photo_alternate</span
             >
-            Upload Background
+            Upload Divider
           </button>
         </div>
       </header>
@@ -103,20 +103,20 @@
               <input
                 type="text"
                 id="searchInput"
-                onkeyup="renderBgList()"
-                placeholder="Search backgrounds..."
+                onkeyup="renderDividerList()"
+                placeholder="Search dividers..."
                 class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all shadow-sm text-sm"
               />
             </div>
-            <select id="sortFilter" onchange="renderBgList()" class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10 shrink-0 ml-2" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.2em;">
+            <select id="sortFilter" onchange="renderDividerList()" class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10 shrink-0 ml-2" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.2em;">
                <option value="newest">อัปโหลดล่าสุด (Newest First)</option>
                <option value="oldest">อัปโหลดเก่าสุด (Oldest First)</option>
             </select>
           </div>
 
           <select
-            id="bgFilter"
-            onchange="renderBgList()"
+            id="dividerFilter"
+            onchange="renderDividerList()"
             class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10"
             style="
               background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;);
@@ -154,7 +154,7 @@
                 <th
                   class="py-5 px-6 text-[16px] font-extrabold text-slate-600 w-[40%] border-b"
                 >
-                  Background Name
+                  Divider Name
                 </th>
                 <th
                   class="py-5 px-6 text-[16px] font-extrabold text-slate-600 border-b"
@@ -203,9 +203,9 @@
           class="px-8 py-6 border-b flex justify-between items-center bg-slate-50"
         >
           <div>
-            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Upload Background</h2>
+            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Upload Divider</h2>
             <p class="text-sm text-slate-500 font-medium mt-1">
-              Upload a new background image to the system
+              Upload a new divider image to the system
             </p>
           </div>
           <button
@@ -220,7 +220,7 @@
           <div>
             <label
               class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
-              >Background Name</label
+              >Divider Name</label
             >
             <input
               type="text"
@@ -251,10 +251,13 @@
             </select>
           </div>
           <div>
-            <label
-              class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
-              >Image File</label
-            >
+            <div class="flex flex-col gap-1 mb-3 ml-1">
+              <label
+                class="block text-[13px] font-black text-slate-500 uppercase tracking-widest"
+                >Image File</label
+              >
+              <span class="text-[11px] font-medium text-slate-400">ขนาดแนะนำ: กว้าง 300-600px / สูงไม่เกิน 30px</span>
+            </div>
             <div
               class="border-2 border-dashed border-slate-300 rounded-2xl p-6 flex flex-col items-center justify-center relative hover:bg-emerald-50 hover:border-[#006d4b]/50 transition-all cursor-pointer bg-slate-50 group"
             >
@@ -289,7 +292,7 @@
                 <span class="text-sm font-bold uppercase tracking-widest"
                   >Click to browse</span
                 >
-                <span class="text-xs mt-1 opacity-70">JPG, PNG only</span>
+                <span class="text-[10px] mt-0.5 opacity-60 font-bold text-slate-400">ขนาดแนะนำ: กว้าง 300-600px / สูงไม่เกิน 30px</span>
               </div>
             </div>
           </div>
@@ -340,10 +343,13 @@
           <input type="hidden" id="editBgId" />
 
           <div>
-            <label
-              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
-              >Background Image</label
-            >
+            <div class="flex flex-col gap-1 mb-2">
+              <label
+                class="block text-xs font-black text-slate-400 uppercase tracking-widest"
+                >Divider Image</label
+              >
+              <span class="text-[10px] font-medium text-slate-400">ขนาดแนะนำ: กว้าง 300-600px / สูงไม่เกิน 30px</span>
+            </div>
             <div
               class="flex justify-center relative group w-full h-40 mx-auto cursor-pointer"
               onclick="document.getElementById('editBgImageInput').click()"
@@ -383,7 +389,7 @@
           <div>
             <label
               class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
-              >Background Name</label
+              >Divider Name</label
             >
             <input
               type="text"
@@ -468,7 +474,7 @@
             <div>
               <label
                 class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1"
-                >Background Name</label
+                >Divider Name</label
               >
               <div id="viewName" class="text-lg font-bold text-slate-800"></div>
             </div>
@@ -653,10 +659,10 @@
         return map[sizeVal] || sizeVal;
       }
 
-      let dbBackgrounds = [];
+      let dbDividers = [];
       let editBgImageFile = null;
 
-      async function fetchBackgrounds() {
+      async function fetchDividers() {
         try {
           const fetchAll = async (table, orderCol = null) => {
             let allData = [];
@@ -680,9 +686,9 @@
             return allData;
           };
 
-          const data = await fetchAll("backgrounds", "id");
-          dbBackgrounds = data || [];
-          renderBgList();
+          const data = await fetchAll("dividers", "id");
+          dbDividers = data || [];
+          renderDividerList();
         } catch (err) {
           console.error("Error fetching backgrounds", err);
           document.getElementById("bgTableBody").innerHTML =
@@ -695,12 +701,12 @@
       let currentSearchQuery = "";
       let currentFilterValue = "all";
 
-      function renderBgList() {
+      function renderDividerList() {
         const tbody = document.getElementById("bgTableBody");
         const query = document
           .getElementById("searchInput")
           .value.toLowerCase();
-        const filterValue = document.getElementById("bgFilter").value;
+        const filterValue = document.getElementById("dividerFilter").value;
         const sortValue = document.getElementById("sortFilter") ? document.getElementById("sortFilter").value : "newest";
         
         if (query !== currentSearchQuery || filterValue !== currentFilterValue) {
@@ -709,7 +715,7 @@
           currentFilterValue = filterValue;
         }
 
-        const filteredBgs = dbBackgrounds.filter((bg) => {
+        const filteredBgs = dbDividers.filter((bg) => {
           const matchName = (bg.name || "").toLowerCase().includes(query);
           const matchSize =
             filterValue === "all" || bg.template_size === filterValue;
@@ -752,7 +758,7 @@
         if (totalItems === 0) {
           tbody.innerHTML = `<tr><td colspan="4" class="py-24 text-center">
               <span class="material-symbols-outlined text-6xl mb-4 text-slate-200">search_off</span>
-              <p class="text-slate-400 font-bold tracking-widest uppercase">No Backgrounds Found</p>
+              <p class="text-slate-400 font-bold tracking-widest uppercase">No Dividers Found</p>
           </td></tr>`;
           const pc = document.getElementById("paginationControls");
           if (pc) pc.classList.add("hidden");
@@ -795,7 +801,7 @@
                     <button onclick="openEditModal('${bgDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all cursor-pointer" title="Edit Background">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
-                    <button onclick="deleteBackground('${bg.id}', '${safeName}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer" title="Delete">
+                    <button onclick="deleteDivider('${bg.id}', '${safeName}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer" title="Delete">
                         <span class="material-symbols-outlined text-[20px]">delete</span>
                     </button>
                 </div>
@@ -853,7 +859,7 @@
 
       function goToPage(page) {
         currentPage = page;
-        renderBgList();
+        renderDividerList();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
@@ -933,20 +939,20 @@
 
         try {
           // get the background records to delete images from storage
-          const toDelete = dbBackgrounds.filter(bg => idsToDelete.includes(bg.id.toString()));
+          const toDelete = dbDividers.filter(bg => idsToDelete.includes(bg.id.toString()));
           
           for(const bg of toDelete) {
             if (bg.image_url) {
                 try {
                     const urlParts = bg.image_url.split("/");
                     const fileName = urlParts[urlParts.length - 1];
-                    await dbClient.storage.from("backgrounds").remove([fileName]);
+                    await dbClient.storage.from("dividers").remove([fileName]);
                 } catch(e) {}
             }
           }
 
           // Send bulk delete request
-          await dbClient.from("backgrounds").delete().in("id", idsToDelete);
+          await dbClient.from("dividers").delete().in("id", idsToDelete);
           await logSystemActivity(
             "DELETE",
             `ลบรูปภาพพื้นหลังจำนวน: ${idsToDelete.length} รายการ`
@@ -954,7 +960,7 @@
           closeModal("bulkDeleteModal");
           document.getElementById("selectAllCheckbox").checked = false;
           updateBulkDeleteButton();
-          fetchBackgrounds();
+          fetchDividers();
         } catch (e) {
           alert("Error deleting backgrounds: " + e.message);
         } finally {
@@ -1012,15 +1018,15 @@
         try {
           const fileName = `bg_${Date.now()}_${Math.floor(Math.random() * 1000)}.png`;
           const { error: uploadError } = await dbClient.storage
-            .from("backgrounds")
+            .from("dividers")
             .upload(fileName, file);
           if (uploadError) throw uploadError;
 
           const { data: urlData } = dbClient.storage
-            .from("backgrounds")
+            .from("dividers")
             .getPublicUrl(fileName);
 
-          const { error: dbError } = await dbClient.from("backgrounds").insert({
+          const { error: dbError } = await dbClient.from("dividers").insert({
             name: name,
             template_size: size,
             image_url: urlData.publicUrl,
@@ -1031,7 +1037,7 @@
           await logSystemActivity("CREATE", `อัปโหลดพื้นหลังใหม่: ${name}`);
 
           closeModal("uploadModal");
-          fetchBackgrounds();
+          fetchDividers();
         } catch (e) {
           alert("Error: " + e.message);
         } finally {
@@ -1089,20 +1095,20 @@
           if (editBgImageFile) {
             const fileName = `bg_update_${Date.now()}_${Math.floor(Math.random() * 1000)}.png`;
             const { error: uploadError } = await dbClient.storage
-              .from("backgrounds")
+              .from("dividers")
               .upload(fileName, editBgImageFile);
 
             if (uploadError) throw uploadError;
 
             const { data: urlData } = dbClient.storage
-              .from("backgrounds")
+              .from("dividers")
               .getPublicUrl(fileName);
 
             updatePayload.image_url = urlData.publicUrl;
           }
 
           const { error: dbError } = await dbClient
-            .from("backgrounds")
+            .from("dividers")
             .update(updatePayload)
             .eq("id", id);
 
@@ -1111,7 +1117,7 @@
           await logSystemActivity("EDIT", `แก้ไขพื้นหลัง: ${name}`);
 
           closeModal("editModal");
-          fetchBackgrounds();
+          fetchDividers();
         } catch (e) {
           alert("Error: " + e.message);
         } finally {
@@ -1121,7 +1127,7 @@
       }
 
       // 🎯 เปิด Delete Modal สไตล์ใหม่
-      function deleteBackground(id, name) {
+      function deleteDivider(id, name) {
         document.getElementById("deleteBgId").value = id;
         document.getElementById("deleteItemName").innerText = name;
         document.getElementById("deleteModal").classList.add("active");
@@ -1144,7 +1150,7 @@
 
         try {
           const { error } = await dbClient
-            .from("backgrounds")
+            .from("dividers")
             .delete()
             .eq("id", id);
 
@@ -1153,7 +1159,7 @@
           await logSystemActivity("DELETE", `ลบรูปภาพพื้นหลัง: ${name}`);
 
           closeDeleteModal();
-          fetchBackgrounds();
+          fetchDividers();
         } catch (e) {
           alert("ไม่สามารถลบได้: " + e.message);
         } finally {
@@ -1175,13 +1181,13 @@
             "Mini Tag"
           ];
           
-          const storedDefaults = localStorage.getItem("defaultBackgrounds");
+          const storedDefaults = localStorage.getItem("defaultDividers");
           let defaultBgData = {};
           if (storedDefaults) {
              try { defaultBgData = JSON.parse(storedDefaults); } catch(e) {}
           }
           
-          const { data: bgs, error } = await dbClient.from("backgrounds").select("*");
+          const { data: bgs, error } = await dbClient.from("dividers").select("*");
           if (error) throw error;
           
           let html = "";
@@ -1246,12 +1252,12 @@
            }
         });
         
-        localStorage.setItem("defaultBackgrounds", JSON.stringify(defaultBgData));
-        showSuccessModal("บันทึกสำเร็จ", "บันทึกค่า Default Backgrounds เรียบร้อยแล้ว");
+        localStorage.setItem("defaultDividers", JSON.stringify(defaultBgData));
+        showSuccessModal("บันทึกสำเร็จ", "บันทึกค่า Default Dividers เรียบร้อยแล้ว");
         closeModal("defaultBgModal");
       }
 
-      window.onload = fetchBackgrounds;
+      window.onload = fetchDividers;
     </script>
   </body>
 </html>

@@ -225,6 +225,13 @@
             </tbody>
           </table>
         </div>
+        
+        <div id="paginationControls" class="flex justify-between items-center mt-6 px-2 hidden">
+          <div class="text-[13px] text-slate-500 font-bold tracking-wide" id="paginationInfo">Showing 1 to 100 of 1000 menus</div>
+          <div class="flex items-center gap-1.5" id="paginationButtons">
+            <!-- Buttons dynamically generated -->
+          </div>
+        </div>
       </main>
     </div>
 
@@ -474,6 +481,7 @@
       </div>
     </div>
 
+    <script src="font-manager.js"></script>
     <script src="sidebar.js"></script>
     <script src="action-logger.js"></script>
 
@@ -517,15 +525,30 @@
 
       async function fetchData() {
         try {
-          const { data: ingData } = await dbClient
-            .from("ingredients")
-            .select("*");
-          dbIngredients = ingData || [];
-          const { data: menuData } = await dbClient
-            .from("menus")
-            .select("*")
-            .order("created_at", { ascending: false });
-          dbMenus = menuData || [];
+          const fetchAll = async (table, orderCol = null) => {
+            let allData = [];
+            let from = 0;
+            const step = 1000;
+            while (true) {
+              let query = dbClient.from(table).select("*").range(from, from + step - 1);
+              if (orderCol) {
+                query = query.order(orderCol, { ascending: false });
+              }
+              const { data, error } = await query;
+              if (error) throw error;
+              if (data && data.length > 0) {
+                allData = allData.concat(data);
+                if (data.length < step) break;
+                from += step;
+              } else {
+                break;
+              }
+            }
+            return allData;
+          };
+
+          dbIngredients = await fetchAll("ingredients");
+          dbMenus = await fetchAll("menus", "created_at");
 
           const countEl = document.getElementById("totalMenuCount");
           if (dbMenus.length > 0) {
@@ -542,12 +565,22 @@
 
       window.onload = fetchData;
 
+      let currentPage = 1;
+      let itemsPerPage = 100;
+      let currentSearchQuery = "";
+
       function renderTable() {
         const tbody = document.getElementById("menuTableBody");
         const query = document
           .getElementById("searchInput")
           .value.toLowerCase();
         const sortOrder = document.getElementById("sortFilter") ? document.getElementById("sortFilter").value : "desc";
+        
+        if (query !== currentSearchQuery) {
+          currentPage = 1;
+          currentSearchQuery = query;
+        }
+        
         let html = "";
 
         let filtered = dbMenus.filter((m) => {
@@ -609,12 +642,27 @@
           });
         }
 
-        if (filtered.length === 0) {
+        const totalItems = filtered.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        
+        if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        if (totalItems === 0) {
           tbody.innerHTML = `<tr><td colspan="5" class="py-24 text-center"><span class="material-symbols-outlined text-6xl mb-4 text-slate-200">search_off</span><p class="text-slate-400 font-bold tracking-widest uppercase">No menus found</p></td></tr>`;
+          const pc = document.getElementById("paginationControls");
+          if (pc) pc.classList.add("hidden");
           return;
         }
 
-        filtered.forEach((menu, index) => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+        const paginatedItems = filtered.slice(startIndex, endIndex);
+
+        paginatedItems.forEach((menu, idx) => {
+          const index = startIndex + idx;
+          const displayNo = sortOrder === "desc" ? (totalItems - index) : (index + 1);
+          
           const resolveIngs = (ids, names) => {
              if (names && names.length > 0) {
                  return names.map(n => dbIngredients.find(i => (i.name_en || i.name_th || '') === n)).filter(Boolean);
@@ -677,7 +725,7 @@
             <td class="py-5 px-6">
                 <div class="flex items-start gap-4">
                     <input type="checkbox" value="${menu.id}" class="row-checkbox w-5 h-5 flex-shrink-0 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all mt-0.5" onclick="updateBulkDeleteButton()">
-                    <span class="text-[14px] font-extrabold text-slate-500 w-6 flex-shrink-0 text-center leading-6">${index + 1}</span>
+                    <span class="text-[14px] font-extrabold text-slate-500 w-6 flex-shrink-0 text-center leading-6">${displayNo}</span>
                     <span class="text-[14px] font-extrabold text-slate-600 whitespace-nowrap leading-6">${displayId}</span>
                 </div>
             </td>
@@ -697,10 +745,60 @@
           </tr>`;
         });
         tbody.innerHTML = html;
+        
+        updatePaginationUI(totalItems, totalPages, startIndex, endIndex);
+        
         const selectAll = document.getElementById("selectAllCheckbox");
         if (selectAll) selectAll.checked = false;
         if (typeof updateBulkDeleteButton === "function")
           updateBulkDeleteButton();
+      }
+
+      function updatePaginationUI(totalItems, totalPages, startIndex, endIndex) {
+        let paginationControls = document.getElementById("paginationControls");
+        if (!paginationControls) return;
+
+        if (totalPages <= 1) {
+          paginationControls.classList.add("hidden");
+          return;
+        }
+
+        paginationControls.classList.remove("hidden");
+        document.getElementById("paginationInfo").innerText = `Showing ${startIndex + 1} to ${endIndex} of ${totalItems} menus`;
+        
+        let buttonsHtml = '';
+        
+        buttonsHtml += `<button onclick="goToPage(${currentPage - 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === 1 ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`;
+        
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+        
+        if (startPage > 1) {
+          buttonsHtml += `<button onclick="goToPage(1)" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">1</button><span class="px-2 text-slate-400">...</span>`;
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+          if (i === currentPage) {
+            buttonsHtml += `<button class="px-3 py-1.5 rounded-lg bg-[#006d4b] text-white border border-[#006d4b] text-[13px] font-bold shadow-sm cursor-default">${i}</button>`;
+          } else {
+            buttonsHtml += `<button onclick="goToPage(${i})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all">${i}</button>`;
+          }
+        }
+        
+        if (endPage < totalPages) {
+          buttonsHtml += `<span class="px-2 text-slate-400">...</span><button onclick="goToPage(${totalPages})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">${totalPages}</button>`;
+        }
+        
+        buttonsHtml += `<button onclick="goToPage(${currentPage + 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === totalPages ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+        
+        document.getElementById("paginationButtons").innerHTML = buttonsHtml;
+      }
+
+      function goToPage(page) {
+        currentPage = page;
+        renderTable();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
       function getLatestMenuNumber() {
@@ -1172,40 +1270,12 @@
           }));
 
           const groupedRows = [];
-          const rowMap = new Map();
-
           for (const row of jsonData) {
             const nameTh = row["Menu Name (TH)"] || "";
             const nameEn = row["Menu Name (EN)"] || "";
             if (!nameTh && !nameEn) continue;
 
-            const itemId = row["__EMPTY"];
-            if (itemId) {
-              if (rowMap.has(itemId)) {
-                // Merge allergens (true values) into the existing row
-                const existing = rowMap.get(itemId);
-                Object.keys(row).forEach(key => {
-                  if (key !== "Menu Name (TH)" && key !== "Menu Name (EN)" && key !== "__EMPTY") {
-                    if (row[key]) {
-                      existing[key] = row[key];
-                    }
-                  }
-                });
-                // Merge names if they are different
-                if (nameTh && existing["Menu Name (TH)"] !== nameTh && !existing["Menu Name (TH)"].includes(nameTh)) {
-                  existing["Menu Name (TH)"] += " / " + nameTh;
-                }
-                if (nameEn && existing["Menu Name (EN)"] !== nameEn && !existing["Menu Name (EN)"].includes(nameEn)) {
-                  existing["Menu Name (EN)"] += " / " + nameEn;
-                }
-              } else {
-                rowMap.set(itemId, row);
-                groupedRows.push(row);
-              }
-            } else {
-              // No itemId, just process it as a separate row
-              groupedRows.push(row);
-            }
+            groupedRows.push(row);
           }
 
           // Pre-scan to create missing ingredients

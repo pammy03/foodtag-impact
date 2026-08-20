@@ -155,6 +155,13 @@
               <p class="mt-4 font-bold tracking-widest">LOADING DATABASE...</p>
             </div>
           </div>
+          
+          <div id="paginationControls" class="flex justify-between items-center mt-6 px-2 hidden">
+            <div class="text-[13px] text-slate-500 font-bold tracking-wide" id="paginationInfo">Showing 1 to 100 of 1000 items</div>
+            <div class="flex items-center gap-1.5" id="paginationButtons">
+              <!-- Buttons dynamically generated -->
+            </div>
+          </div>
         </div>
       </main>
     </div>
@@ -424,6 +431,7 @@
       </div>
     </div>
 
+    <script src="font-manager.js"></script>
     <script src="sidebar.js"></script>
     <script src="action-logger.js"></script>
 
@@ -439,6 +447,8 @@
       let dbIngredients = [];
       let currentViewType = "list";
       let showMissingOnly = false;
+      let currentPage = 1;
+      let itemsPerPage = 100;
 
       function toggleFilterMissing() {
         showMissingOnly = !showMissingOnly;
@@ -450,7 +460,8 @@
           btn.classList.remove("bg-red-500", "text-white", "border-red-600");
           btn.classList.add("bg-red-50", "text-red-600", "border-red-200", "hover:bg-red-100");
         }
-        filterIngredients();
+        currentPage = 1;
+        renderIngList();
       }
       let editImageFile = null;
       let pendingSaveType = null;
@@ -481,12 +492,30 @@
 
       async function fetchIngredients() {
         try {
-          const { data, error } = await dbClient
-            .from("ingredients")
-            .select("*")
-            .order("id", { ascending: false });
+          const fetchAll = async (table, orderCol = null) => {
+            let allData = [];
+            let from = 0;
+            const step = 1000;
+            while (true) {
+              let query = dbClient.from(table).select("*").range(from, from + step - 1);
+              if (orderCol) {
+                query = query.order(orderCol, { ascending: false });
+              }
+              const { data, error } = await query;
+              if (error) throw error;
+              if (data && data.length > 0) {
+                allData = allData.concat(data);
+                if (data.length < step) break;
+                from += step;
+              } else {
+                break;
+              }
+            }
+            return allData;
+          };
 
-          if (error) throw error;
+          const data = await fetchAll("ingredients", "id");
+
           dbIngredients = data || [];
           renderIngList();
         } catch (err) {
@@ -514,40 +543,58 @@
         }
 
         renderIngList();
-        filterIngredients();
       }
 
       function renderIngList() {
         const gallery = document.getElementById("ingGallery");
+        const query = document.getElementById("searchInput").value.toLowerCase();
+
+        const filteredItems = dbIngredients.filter(ing => {
+          const name = (ing.name_th || "").toLowerCase() + " " + (ing.name_en || "").toLowerCase();
+          const hasImage = !!ing.icon_url;
+          if (showMissingOnly && hasImage) return false;
+          return name.includes(query);
+        });
+
+        const totalItems = filteredItems.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        
+        if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
 
         const countEl = document.getElementById("totalIngCount");
-        countEl.innerText = `${dbIngredients.length} Items`;
+        countEl.innerText = `${totalItems} Items`;
         countEl.classList.remove("hidden");
 
-        if (dbIngredients.length === 0) {
-          gallery.className =
-            "flex flex-col items-center justify-center py-24 w-full h-full";
+        if (totalItems === 0) {
+          gallery.className = "flex flex-col items-center justify-center py-24 w-full h-full";
           gallery.innerHTML = `
             <div class="flex flex-col items-center justify-center text-slate-400 bg-white rounded-3xl border border-slate-200 border-dashed w-full max-w-2xl py-24 mx-auto">
                 <span class="material-symbols-outlined text-6xl mb-3 opacity-40">imagesmode</span>
-                <p class="font-bold text-lg text-slate-500 uppercase tracking-widest">No Images Found</p>
-                <p class="text-sm mt-1">Click the Add Image button above to start</p>
+                <p class="font-bold text-lg text-slate-500 uppercase tracking-widest">No Items Found</p>
             </div>`;
+          document.getElementById("paginationControls").classList.add("hidden");
           return;
         }
 
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+        const paginatedItems = filteredItems.slice(startIndex, endIndex);
+
         if (currentViewType === "grid") {
-          gallery.className =
-            "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-6";
-          gallery.innerHTML = dbIngredients
-            .map((ing, index) => {
+          gallery.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-6";
+          gallery.innerHTML = paginatedItems
+            .map((ing, idx) => {
+              const index = startIndex + idx;
+              const displayNo = totalItems - index; // descending
+
               let displayName = ing.name_th || "";
               if (ing.name_en && ing.name_en !== ing.name_th) {
                 displayName = `${ing.name_en} (${ing.name_th})`;
               } else if (!ing.name_th && ing.name_en) {
                 displayName = ing.name_en;
               }
-              const safeName = displayName.replace(/'/g, "\\'");
+              const safeName = displayName.replace(/'/g, "\'");
 
               const hasImage = !!ing.icon_url;
               const boxStyle = hasImage ? "bg-white border-slate-200" : "bg-red-50 border-red-300 border-2 shadow-[0_0_15px_rgba(239,68,68,0.2)]";
@@ -557,7 +604,7 @@
                 
                 <div class="absolute top-3 left-3 flex items-center gap-2 z-30">
                     <input type="checkbox" value="${ing.id}" class="row-checkbox w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all shadow-sm" onclick="updateBulkDeleteButton()">
-                    <span class="bg-white text-slate-400 text-[10px] font-black px-2 py-0.5 rounded-lg border border-slate-200 pointer-events-none shadow-sm opacity-80">${index + 1}</span>
+                    <span class="bg-white text-slate-400 text-[10px] font-black px-2 py-0.5 rounded-lg border border-slate-200 pointer-events-none shadow-sm opacity-80">${displayNo}</span>
                 </div>
 
                 <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px] transition-all flex flex-col items-center justify-center gap-3 opacity-0 group-hover:opacity-100 z-20">
@@ -586,9 +633,9 @@
             `;
             })
             .join("");
+
         } else {
           gallery.className = "flex flex-col w-full";
-          
           const headerRow = `
               <div class="flex items-center justify-between px-6 py-5 bg-slate-50 border-b border-slate-200 rounded-t-2xl -mx-6 -mt-6">
                  <div class="flex items-center w-full overflow-hidden pr-4 gap-4">
@@ -608,15 +655,18 @@
               </div>
           `;
 
-          gallery.innerHTML = headerRow + dbIngredients
-            .map((ing, index) => {
+          gallery.innerHTML = headerRow + paginatedItems
+            .map((ing, idx) => {
+              const index = startIndex + idx;
+              const displayNo = totalItems - index; // descending
+
               let displayName = ing.name_th || "";
               if (ing.name_en && ing.name_en !== ing.name_th) {
                 displayName = `${ing.name_en} (${ing.name_th})`;
               } else if (!ing.name_th && ing.name_en) {
                 displayName = ing.name_en;
               }
-              const safeName = displayName.replace(/'/g, "\\'");
+              const safeName = displayName.replace(/'/g, "\'");
 
               const hasImage = !!ing.icon_url;
               const boxStyle = hasImage ? "bg-white border-b border-slate-100 last:border-0" : "bg-red-50/30 border-b border-red-200 last:border-0";
@@ -628,7 +678,7 @@
                        <input type="checkbox" value="${ing.id}" class="row-checkbox w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all" onclick="updateBulkDeleteButton()">
                     </div>
                     <div class="text-[14px] font-extrabold text-slate-500 w-8 text-center shrink-0">
-                        ${index + 1}
+                        ${displayNo}
                     </div>
 
                     <div class="w-[60px] h-[60px] ${hasImage ? 'bg-slate-50 border border-slate-100' : 'bg-red-100 border border-dashed border-red-300 text-red-400'} rounded-xl p-2 flex items-center justify-center shrink-0 mr-5">
@@ -658,8 +708,7 @@
             `;
             })
             .join("");
-        }
-
+        
         const selectAll = document.getElementById("selectAllCheckbox");
         if(selectAll) selectAll.checked = false;
         if(typeof updateBulkDeleteButton === 'function') updateBulkDeleteButton();
@@ -667,45 +716,72 @@
         const missingCount = dbIngredients.filter(i => !i.icon_url).length;
         const missingCountEl = document.getElementById("missingCount");
         if (missingCountEl) missingCountEl.innerText = missingCount;
+
+        }
         
-        filterIngredients();
+        updatePaginationUI(totalItems, totalPages, startIndex, endIndex);
       }
+
+      function updatePaginationUI(totalItems, totalPages, startIndex, endIndex) {
+        let paginationControls = document.getElementById("paginationControls");
+        if (!paginationControls) return;
+
+        paginationControls.classList.remove("hidden");
+        document.getElementById("paginationInfo").innerText = `Showing ${totalItems === 0 ? 0 : startIndex + 1} to ${endIndex} of ${totalItems} items`;
+        
+        if (totalItems === 0) {
+          document.getElementById("paginationButtons").innerHTML = '';
+          return;
+        }
+
+        let buttonsHtml = '';
+        
+        buttonsHtml += `<button onclick="goToPage(${currentPage - 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === 1 ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`;
+        
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+        
+        if (startPage > 1) {
+          buttonsHtml += `<button onclick="goToPage(1)" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">1</button><span class="px-2 text-slate-400">...</span>`;
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+          if (i === currentPage) {
+            buttonsHtml += `<button class="px-3 py-1.5 rounded-lg bg-[#006d4b] text-white border border-[#006d4b] text-[13px] font-bold shadow-sm cursor-default">${i}</button>`;
+          } else {
+            buttonsHtml += `<button onclick="goToPage(${i})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all">${i}</button>`;
+          }
+        }
+        
+        if (endPage < totalPages) {
+          buttonsHtml += `<span class="px-2 text-slate-400">...</span><button onclick="goToPage(${totalPages})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">${totalPages}</button>`;
+        }
+        
+        buttonsHtml += `<button onclick="goToPage(${currentPage + 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === totalPages ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+        
+        document.getElementById("paginationButtons").innerHTML = buttonsHtml;
+      }
+
+      function goToPage(page) { currentPage = page; renderIngList(); }
 
       function openEditModal(id) {
         const ing = dbIngredients.find((i) => i.id == id);
         if (!ing) return;
-
         document.getElementById("editIngId").value = ing.id;
-
-        let combinedName = ing.name_th || "";
-        if (ing.name_en && ing.name_en !== ing.name_th) {
-          combinedName = `${ing.name_en} (${ing.name_th})`;
-        }
-        if (!ing.name_th && ing.name_en) {
-          combinedName = ing.name_en;
-        }
-
-        document.getElementById("editName").value = combinedName;
-        document.getElementById("editIngImage").src = ing.icon_url;
-        document.getElementById("editIngImageInput").value = "";
-        editImageFile = null;
-
+        document.getElementById("editName").value = ing.name_th || ing.name_en || "";
+        document.getElementById("editIngImage").src = ing.icon_url || "";
         document.getElementById("editModal").classList.add("active");
       }
 
-      function closeEditModal() {
-        document.getElementById("editModal").classList.remove("active");
-        editImageFile = null;
-      }
+      function closeEditModal() { document.getElementById("editModal").classList.remove("active"); }
 
       function previewEditImage(e) {
         const file = e.target.files[0];
         if (file) {
           editImageFile = file;
           const reader = new FileReader();
-          reader.onload = (ev) => {
-            document.getElementById("editIngImage").src = ev.target.result;
-          };
+          reader.onload = (ev) => { document.getElementById("editIngImage").src = ev.target.result; };
           reader.readAsDataURL(file);
         }
       }
@@ -713,53 +789,19 @@
       async function saveEditIngredient() {
         const id = document.getElementById("editIngId").value;
         const rawName = document.getElementById("editName").value.trim();
-
-        const btn = document.getElementById("saveEditBtn");
-        btn.disabled = true;
-        btn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> Saving...`;
-
         try {
-          let nameEn = rawName;
-          let nameTh = rawName;
-
-          const match = rawName.match(/(.+?)\s*\((.+)\)/);
-          if (match) {
-            nameEn = match[1].trim();
-            nameTh = match[2].trim();
-          }
-
-          let updatePayload = {
-            name_th: nameTh,
-            name_en: nameEn,
-          };
-
+          let updatePayload = { name_th: rawName, name_en: rawName };
           if (editImageFile) {
             const fileName = `img_update_${Date.now()}.png`;
-            const { error: uploadError } = await dbClient.storage
-              .from("ingredients")
-              .upload(fileName, editImageFile);
-
-            if (uploadError) throw uploadError;
-
-            const { data: urlData } = dbClient.storage
-              .from("ingredients")
-              .getPublicUrl(fileName);
-
-            updatePayload.icon_url = urlData.publicUrl;
+            await dbClient.storage.from("ingredients").upload(fileName, editImageFile);
+            const { data } = dbClient.storage.from("ingredients").getPublicUrl(fileName);
+            updatePayload.icon_url = data.publicUrl;
           }
-
-          const { error } = await dbClient
-            .from("ingredients")
-            .update(updatePayload)
-            .eq("id", id);
-
-          if (error) throw error;
-
+          await dbClient.from("ingredients").update(updatePayload).eq("id", id);
           await logSystemActivity(
             "EDIT",
-            `แก้ไขข้อมูลรูปภาพส่วนผสม: ${rawName}`,
+            `แก้ไขข้อมูลรูปภาพส่วนผสม: ${rawName}`
           );
-
           closeEditModal();
           fetchIngredients();
         } catch (e) {

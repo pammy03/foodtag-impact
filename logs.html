@@ -187,9 +187,17 @@
             </tbody>
           </table>
         </div>
+
+        <div id="paginationControls" class="flex justify-between items-center mt-6 px-2 hidden">
+          <div class="text-[13px] text-slate-500 font-bold tracking-wide" id="paginationInfo">Showing 1 to 100 of 1000 logs</div>
+          <div class="flex items-center gap-1.5" id="paginationButtons">
+            <!-- Buttons dynamically generated -->
+          </div>
+        </div>
       </main>
     </div>
 
+    <script src="font-manager.js"></script>
     <script src="sidebar.js"></script>
     <script>
       const checkUser = JSON.parse(localStorage.getItem("userData"));
@@ -205,11 +213,29 @@
 
       async function fetchLogs() {
         try {
-          const { data, error } = await dbClient
-            .from("activity_logs")
-            .select("*")
-            .order("created_at", { ascending: false });
-          if (error) throw error;
+          const fetchAll = async (table, orderCol = null) => {
+            let allData = [];
+            let from = 0;
+            const step = 1000;
+            while (true) {
+              let query = dbClient.from(table).select("*").range(from, from + step - 1);
+              if (orderCol) {
+                query = query.order(orderCol, { ascending: false });
+              }
+              const { data, error } = await query;
+              if (error) throw error;
+              if (data && data.length > 0) {
+                allData = allData.concat(data);
+                if (data.length < step) break;
+                from += step;
+              } else {
+                break;
+              }
+            }
+            return allData;
+          };
+
+          const data = await fetchAll("activity_logs", "created_at");
           dbLogs = data || [];
           const countEl = document.getElementById("totalLogsCount");
           if (dbLogs.length > 0) {
@@ -239,6 +265,12 @@
         .subscribe();
 
       window.onload = fetchLogs;
+
+      let currentPage = 1;
+      let itemsPerPage = 100;
+      let currentSearchQuery = "";
+      let currentRoleFilter = "ALL";
+      let currentActionFilter = "ALL";
 
       
       function formatDate(isoString) {
@@ -287,6 +319,14 @@
           .value.toLowerCase();
         const roleFilter = document.getElementById("roleFilter").value;
         const actionFilter = document.getElementById("actionFilter").value;
+        
+        if (query !== currentSearchQuery || roleFilter !== currentRoleFilter || actionFilter !== currentActionFilter) {
+          currentPage = 1;
+          currentSearchQuery = query;
+          currentRoleFilter = roleFilter;
+          currentActionFilter = actionFilter;
+        }
+        
         let html = "";
 
         const filtered = dbLogs.filter((log) => {
@@ -303,12 +343,27 @@
         countEl.innerText = `${filtered.length} Items`;
         countEl.classList.remove("hidden");
 
-        if (filtered.length === 0) {
+        const totalItems = filtered.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        
+        if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        if (totalItems === 0) {
           tbody.innerHTML = `<tr><td colspan="6" class="py-24 text-center"><p class="text-slate-400 font-bold uppercase tracking-widest">No matching logs found</p></td></tr>`;
+          const pc = document.getElementById("paginationControls");
+          if (pc) pc.classList.add("hidden");
           return;
         }
 
-        filtered.forEach((log, index) => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+        const paginatedItems = filtered.slice(startIndex, endIndex);
+
+        paginatedItems.forEach((log, idx) => {
+          const index = startIndex + idx;
+          const displayNo = totalItems - index; // descending since logs are sorted newest first
+          
           const style = getActionStyle(log.action);
           let roleBadge = "";
 
@@ -322,7 +377,7 @@
 
           html += `
           <tr class="log-row border-b border-slate-100">
-            <td class="py-5 px-8 text-center"><span class="text-[14px] font-extrabold text-slate-500">${index + 1}</span></td>
+            <td class="py-5 px-8 text-center"><span class="text-[14px] font-extrabold text-slate-500">${displayNo}</span></td>
             <td class="py-5 px-6"><div class="text-[14px] font-bold text-slate-500 whitespace-nowrap">${formatDate(log.created_at)}</div></td>
             <td class="py-5 px-6">
                 <div class="text-[14px] font-extrabold text-slate-700">${log.user_name}</div>
@@ -337,6 +392,55 @@
           </tr>`;
         });
         tbody.innerHTML = html;
+        
+        updatePaginationUI(totalItems, totalPages, startIndex, endIndex);
+      }
+
+      function updatePaginationUI(totalItems, totalPages, startIndex, endIndex) {
+        let paginationControls = document.getElementById("paginationControls");
+        if (!paginationControls) return;
+
+        if (totalPages <= 1) {
+          paginationControls.classList.add("hidden");
+          return;
+        }
+
+        paginationControls.classList.remove("hidden");
+        document.getElementById("paginationInfo").innerText = `Showing ${startIndex + 1} to ${endIndex} of ${totalItems} logs`;
+        
+        let buttonsHtml = '';
+        
+        buttonsHtml += `<button onclick="goToPage(${currentPage - 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === 1 ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`;
+        
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+        
+        if (startPage > 1) {
+          buttonsHtml += `<button onclick="goToPage(1)" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">1</button><span class="px-2 text-slate-400">...</span>`;
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+          if (i === currentPage) {
+            buttonsHtml += `<button class="px-3 py-1.5 rounded-lg bg-[#006d4b] text-white border border-[#006d4b] text-[13px] font-bold shadow-sm cursor-default">${i}</button>`;
+          } else {
+            buttonsHtml += `<button onclick="goToPage(${i})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all">${i}</button>`;
+          }
+        }
+        
+        if (endPage < totalPages) {
+          buttonsHtml += `<span class="px-2 text-slate-400">...</span><button onclick="goToPage(${totalPages})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">${totalPages}</button>`;
+        }
+        
+        buttonsHtml += `<button onclick="goToPage(${currentPage + 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === totalPages ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+        
+        document.getElementById("paginationButtons").innerHTML = buttonsHtml;
+      }
+
+      function goToPage(page) {
+        currentPage = page;
+        renderLogsTable();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
       function exportLogsCSV() {

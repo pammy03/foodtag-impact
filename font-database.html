@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Font Gallery | IMPACT Food Tag</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+      }
+      .custom-scroll::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scroll::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      /* Modal Overlay */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+      }
+      .modal-overlay.active {
+        display: flex !important;
+      }
+      
+      /* Preview Text styling */
+      .font-preview-text {
+        font-size: 24px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    </style>
+  </head>
+  <body class="bg-[#f8fafc] flex h-screen overflow-hidden">
+    <!-- Sidebar Container -->
+    <div id="sidebar-container" class="shrink-0 h-full z-20"></div>
+
+    <div class="flex-1 flex flex-col h-full overflow-hidden relative bg-[#f1f5f9]">
+      <header class="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-end z-20 shrink-0">
+        <div>
+          <div class="flex items-center gap-3">
+            <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">
+              Font Gallery
+            </h2>
+            <div
+              id="totalFontCount"
+              class="px-3 py-1 bg-emerald-50 text-[#006d4b] font-black text-[13px] rounded-lg tracking-wider border border-emerald-100 hidden"
+            >
+              ...
+            </div>
+          </div>
+          <p class="text-slate-500 font-medium mt-1">
+            คลังฟอนต์ทั้งหมดในระบบ (Google Fonts พื้นฐาน และฟอนต์ที่อัปโหลดเอง)
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button
+            onclick="openUploadFontModal()"
+            class="px-5 py-2.5 bg-[#006d4b] text-white font-bold rounded-lg hover:bg-[#005a3e] transition-all flex items-center gap-2 shadow-sm"
+          >
+            <span class="material-symbols-outlined text-[20px]">upload_file</span>
+            Upload Custom Font
+          </button>
+        </div>
+      </header>
+
+      <main class="flex-1 flex flex-col p-8 overflow-hidden z-10">
+        <div class="bg-white p-5 rounded-t-2xl border border-slate-200 border-b-0 flex justify-between items-center shrink-0">
+          <div class="flex items-center gap-3 w-full max-w-2xl">
+            <div class="w-full relative">
+              <span class="material-symbols-outlined absolute left-4 top-3 text-slate-400 pointer-events-none">search</span>
+              <input
+                type="text"
+                id="searchInput"
+                onkeyup="filterFonts()"
+                placeholder="Search fonts by name..."
+                class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all shadow-sm text-sm"
+              />
+            </div>
+            <select id="fontFilter" onchange="filterFonts()" class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10 shrink-0 ml-2" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.2em;">
+               <option value="newest">อัปโหลดล่าสุด (Newest First)</option>
+               <option value="oldest">อัปโหลดเก่าสุด (Oldest First)</option>
+               <option value="default">ค่าเริ่มต้น (Google Fonts First)</option>
+               <option value="google">เฉพาะ Google Fonts</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="bg-white border-x border-b border-slate-200 rounded-b-2xl flex-1 overflow-y-auto p-6 custom-scroll">
+          <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm mb-4">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 border-b border-slate-200 text-slate-700">
+                <tr>
+                  <th class="px-6 py-4 font-bold w-16 text-center">No.</th>
+                  <th class="px-6 py-4 font-bold w-1/4">Font Name</th>
+                  <th class="px-6 py-4 font-bold w-1/3">Preview</th>
+                  <th class="px-6 py-4 font-bold w-32">Source</th>
+                  <th class="px-6 py-4 font-bold w-24">Format</th>
+                  <th class="px-6 py-4 font-bold w-24 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="allFontsTableBody" class="divide-y divide-slate-100">
+                <tr><td colspan="6" class="px-6 py-8 text-center text-slate-500 italic">Loading fonts...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="paginationControls" class="flex justify-between items-center mt-6 px-2 hidden">
+            <div class="text-[13px] text-slate-500 font-bold tracking-wide" id="paginationInfo">Showing 1 to 100 of 1000 fonts</div>
+            <div class="flex items-center gap-1.5" id="paginationButtons">
+              <!-- Buttons dynamically generated -->
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Upload Font Modal -->
+    <div id="uploadFontModal" class="modal-overlay opacity-0 transition-opacity duration-300">
+      <div id="uploadFontModalContent" class="bg-white rounded-2xl shadow-2xl w-[500px] scale-95 transition-transform duration-300 overflow-hidden flex flex-col">
+        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+          <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#006d4b]">upload_file</span>
+            Upload Custom Font
+          </h3>
+          <button onclick="closeUploadFontModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-500 transition-colors">
+            <span class="material-symbols-outlined text-[20px]">close</span>
+          </button>
+        </div>
+        
+        <div class="p-6 overflow-y-auto custom-scroll">
+          <div class="space-y-5">
+            <!-- Font Name field is hidden because we use filename now -->
+            <div style="display: none;">
+              <label class="block text-sm font-bold text-slate-700 mb-1.5">Font Name</label>
+              <input
+                type="text"
+                id="uploadFontName"
+                placeholder="e.g. MyBrandFont"
+                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all text-sm"
+              />
+              <p class="text-[11px] text-slate-500 mt-1">Please enter a unique name without spaces.</p>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-1.5">Font File (.ttf, .otf)</label>
+              <input
+                type="file"
+                id="uploadFontFile"
+                accept=".ttf,.otf"
+                multiple
+                class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-[#006d4b] hover:file:bg-emerald-100 cursor-pointer border border-slate-200 rounded-xl p-1"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 bg-slate-50 shrink-0">
+          <button onclick="closeUploadFontModal()" class="px-5 py-2.5 text-slate-600 font-bold hover:bg-slate-200 rounded-xl transition-colors">
+            Cancel
+          </button>
+          <button onclick="handleUploadFont()" class="px-5 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3e] transition-colors shadow-sm flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">save</span>
+            Save Font
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Alert Modal -->
+    <div id="customAlertModal" class="modal-overlay opacity-0 transition-opacity duration-300 z-[999999]">
+      <div class="bg-white rounded-2xl shadow-2xl w-[400px] scale-95 transition-transform duration-300 overflow-hidden flex flex-col items-center p-8 text-center" id="customAlertContent">
+        <div id="customAlertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-[32px] text-white" id="customAlertIconSymbol">check</span>
+        </div>
+        <h3 class="text-xl font-bold text-slate-800 mb-2" id="customAlertTitle">Success</h3>
+        <p class="text-slate-600 mb-6" id="customAlertMessage">Message goes here</p>
+        <button onclick="closeCustomAlert()" class="px-8 py-2.5 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-700 transition-colors shadow-sm w-full">
+          ตกลง (OK)
+        </button>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="font-manager.js"></script>
+    <script src="sidebar.js"></script>
+    <script>
+      // Load user data for sidebar
+      const userData = JSON.parse(localStorage.getItem("userData"));
+      if (!userData || userData.role !== "Super Admin") {
+        alert("Permission denied.");
+        window.location.href = "dashboard.html";
+      }
+
+      let allFontsData = [];
+      let currentPage = 1;
+      let itemsPerPage = 100;
+      let currentSearchQuery = "";
+
+      // Initialize UI
+      document.addEventListener("DOMContentLoaded", async () => {
+        await loadFontsData();
+      });
+
+      async function loadFontsData() {
+        const customFonts = await getCustomFontsFromDB();
+        
+        allFontsData = [];
+        
+        // Add Google Fonts
+        PRELOADED_GOOGLE_FONTS.forEach(font => {
+          allFontsData.push({
+            name: font,
+            type: 'Google Font',
+            format: 'TTF',
+            isCustom: false
+          });
+        });
+        
+        // Add Custom Fonts
+        customFonts.forEach(font => {
+          allFontsData.push({
+            name: font.name,
+            type: 'Custom Upload',
+            format: font.type ? font.type.toUpperCase() : 'TTF',
+            isCustom: true
+          });
+        });
+        
+        updateTotalCount();
+        renderAllFonts();
+      }
+
+      function renderAllFonts() {
+        const tbody = document.getElementById("allFontsTableBody");
+        if (!tbody) return;
+
+        const query = document.getElementById("searchInput").value.toLowerCase();
+        const filterType = document.getElementById("fontFilter") ? document.getElementById("fontFilter").value : "default";
+        
+        if (query !== currentSearchQuery) {
+          currentPage = 1;
+          currentSearchQuery = query;
+        }
+
+        let filteredFonts = allFontsData.filter(f => f.name.toLowerCase().includes(query));
+        
+        // Apply Dropdown Filter/Sort
+        if (filterType === "google") {
+            filteredFonts = filteredFonts.filter(f => !f.isCustom);
+        } else if (filterType === "newest") {
+            filteredFonts.sort((a, b) => {
+                if (a.isCustom && !b.isCustom) return -1;
+                if (!a.isCustom && b.isCustom) return 1;
+                return 0; // custom fonts are already newest first from DB
+            });
+        } else if (filterType === "oldest") {
+            filteredFonts.sort((a, b) => {
+                if (a.isCustom && !b.isCustom) return -1;
+                if (!a.isCustom && b.isCustom) return 1;
+                return 0;
+            });
+            // Reverse custom fonts to be oldest first
+            const customFonts = filteredFonts.filter(f => f.isCustom).reverse();
+            const googleFonts = filteredFonts.filter(f => !f.isCustom);
+            filteredFonts = [...customFonts, ...googleFonts];
+        } else {
+            // Default: Google first, then custom
+            filteredFonts.sort((a, b) => {
+                if (!a.isCustom && b.isCustom) return -1;
+                if (a.isCustom && !b.isCustom) return 1;
+                return 0;
+            });
+        }
+        
+        const totalItems = filteredFonts.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        
+        if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        if (totalItems === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="py-24 text-center">
+              <span class="material-symbols-outlined text-6xl mb-4 text-slate-200">font_download_off</span>
+              <p class="text-slate-400 font-bold tracking-widest uppercase">No Fonts Found</p>
+          </td></tr>`;
+          const pc = document.getElementById("paginationControls");
+          if (pc) pc.classList.add("hidden");
+          return;
+        }
+
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+        const paginatedItems = filteredFonts.slice(startIndex, endIndex);
+
+        let html = "";
+        paginatedItems.forEach((font, idx) => {
+          const index = startIndex + idx;
+          const displayNo = index + 1; // Ascending
+
+          if (!font.isCustom) {
+            html += `
+              <tr class="font-row hover:bg-slate-50 transition-colors" data-name="${font.name.toLowerCase()}">
+                <td class="px-6 py-4 text-center text-slate-500 font-medium">${displayNo}</td>
+                <td class="px-6 py-4 font-bold text-slate-800">${font.name}</td>
+                <td class="px-6 py-4 text-slate-600 text-lg truncate max-w-[200px]" style="font-family: '${font.name}', sans-serif;">สวัสดีชาวโลก ABC</td>
+                <td class="px-6 py-4">
+                  <span class="px-3 py-1 bg-indigo-50 text-indigo-600 text-[11px] font-bold rounded-lg border border-indigo-100 whitespace-nowrap">${font.type}</span>
+                </td>
+                <td class="px-6 py-4 text-slate-500 font-medium">${font.format}</td>
+                <td class="px-6 py-4 text-center text-slate-400">
+                  -
+                </td>
+              </tr>
+            `;
+          } else {
+            html += `
+              <tr class="font-row hover:bg-emerald-50/30 transition-colors border-l-4 border-l-emerald-500" data-name="${font.name.toLowerCase()}">
+                <td class="px-6 py-4 text-center text-slate-500 font-medium">${displayNo}</td>
+                <td class="px-6 py-4 font-bold text-[#006d4b]">${font.name}</td>
+                <td class="px-6 py-4 text-slate-600 text-lg truncate max-w-[200px]" style="font-family: '${font.name}', sans-serif;">สวัสดีชาวโลก ABC</td>
+                <td class="px-6 py-4">
+                  <span class="px-3 py-1 bg-emerald-50 text-emerald-600 text-[11px] font-bold rounded-lg border border-emerald-100 whitespace-nowrap">${font.type}</span>
+                </td>
+                <td class="px-6 py-4 text-slate-500 font-medium">${font.format}</td>
+                <td class="px-6 py-4 flex justify-center">
+                  <button onclick="confirmDeleteCustomFont('${font.name}')" class="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors shadow-sm" title="Delete Font">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
+                </td>
+              </tr>
+            `;
+          }
+        });
+        
+        tbody.innerHTML = html;
+        updatePaginationUI(totalItems, totalPages, startIndex, endIndex);
+      }
+
+      function filterFonts() {
+        renderAllFonts();
+      }
+
+      function updatePaginationUI(totalItems, totalPages, startIndex, endIndex) {
+        let paginationControls = document.getElementById("paginationControls");
+        if (!paginationControls) return;
+
+        if (totalPages <= 1) {
+          paginationControls.classList.add("hidden");
+          return;
+        }
+
+        paginationControls.classList.remove("hidden");
+        document.getElementById("paginationInfo").innerText = `Showing ${startIndex + 1} to ${endIndex} of ${totalItems} fonts`;
+        
+        let buttonsHtml = '';
+        
+        buttonsHtml += `<button onclick="goToPage(${currentPage - 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === 1 ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`;
+        
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+        
+        if (startPage > 1) {
+          buttonsHtml += `<button onclick="goToPage(1)" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">1</button><span class="px-2 text-slate-400">...</span>`;
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+          if (i === currentPage) {
+            buttonsHtml += `<button class="px-3 py-1.5 rounded-lg bg-[#006d4b] text-white border border-[#006d4b] text-[13px] font-bold shadow-sm cursor-default">${i}</button>`;
+          } else {
+            buttonsHtml += `<button onclick="goToPage(${i})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all">${i}</button>`;
+          }
+        }
+        
+        if (endPage < totalPages) {
+          buttonsHtml += `<span class="px-2 text-slate-400">...</span><button onclick="goToPage(${totalPages})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">${totalPages}</button>`;
+        }
+        
+        buttonsHtml += `<button onclick="goToPage(${currentPage + 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === totalPages ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+        
+        document.getElementById("paginationButtons").innerHTML = buttonsHtml;
+      }
+
+      function goToPage(page) {
+        currentPage = page;
+        renderAllFonts();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function updateTotalCount() {
+        const total = allFontsData.length;
+        const countEl = document.getElementById("totalFontCount");
+        if (countEl) {
+          countEl.textContent = `${total} Fonts`;
+          countEl.classList.remove("hidden");
+        }
+      }
+
+      // --- Custom Alert System ---
+      function showCustomAlert(message, isError = false) {
+        const modal = document.getElementById("customAlertModal");
+        const content = document.getElementById("customAlertContent");
+        const iconDiv = document.getElementById("customAlertIcon");
+        const iconSymbol = document.getElementById("customAlertIconSymbol");
+        const title = document.getElementById("customAlertTitle");
+        const msg = document.getElementById("customAlertMessage");
+        
+        msg.textContent = message;
+        
+        if (isError) {
+          iconDiv.className = "w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-red-500 shadow-lg shadow-red-500/30";
+          iconSymbol.textContent = "close";
+          title.textContent = "เกิดข้อผิดพลาด";
+          title.className = "text-xl font-bold text-red-600 mb-2";
+        } else {
+          iconDiv.className = "w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-emerald-500 shadow-lg shadow-emerald-500/30";
+          iconSymbol.textContent = "check";
+          title.textContent = "สำเร็จ!";
+          title.className = "text-xl font-bold text-emerald-600 mb-2";
+        }
+        
+        modal.classList.add("active");
+        setTimeout(() => {
+          modal.classList.remove("opacity-0");
+          content.classList.remove("scale-95");
+          content.classList.add("scale-100");
+        }, 10);
+      }
+      
+      function closeCustomAlert() {
+        const modal = document.getElementById("customAlertModal");
+        const content = document.getElementById("customAlertContent");
+        
+        modal.classList.add("opacity-0");
+        content.classList.remove("scale-100");
+        content.classList.add("scale-95");
+        
+        setTimeout(() => {
+          modal.classList.remove("active");
+        }, 300);
+      }
+
+      // Modal Logic
+      function openUploadFontModal() {
+        document.getElementById("uploadFontName").value = "";
+        document.getElementById("uploadFontFile").value = "";
+        
+        const modal = document.getElementById("uploadFontModal");
+        const content = document.getElementById("uploadFontModalContent");
+        modal.classList.add("active");
+        setTimeout(() => {
+          modal.classList.remove("opacity-0");
+          content.classList.remove("scale-95");
+          content.classList.add("scale-100");
+        }, 10);
+      }
+
+      function closeUploadFontModal() {
+        const modal = document.getElementById("uploadFontModal");
+        const content = document.getElementById("uploadFontModalContent");
+        modal.classList.add("opacity-0");
+        content.classList.remove("scale-100");
+        content.classList.add("scale-95");
+        setTimeout(() => {
+          modal.classList.remove("active");
+        }, 300);
+      }
+
+      function handleUploadFont() {
+        const fileInput = document.getElementById("uploadFontFile");
+
+        if (fileInput.files.length === 0) {
+          closeUploadFontModal();
+          setTimeout(() => {
+            showCustomAlert("กรุณาเลือกไฟล์ .ttf หรือ .otf อย่างน้อย 1 ไฟล์", true);
+          }, 300);
+          return;
+        }
+
+        showConfirmModal(
+          "ยืนยันการเพิ่มฟอนต์",
+          `คุณต้องการอัปโหลดและติดตั้งฟอนต์ใหม่จำนวน <strong class="text-[#006d4b]">${fileInput.files.length}</strong> ไฟล์ เข้าสู่ระบบใช่หรือไม่?`,
+          "ยืนยัน",
+          "ยกเลิก",
+          async () => {
+            await executeUploadFont();
+          }
+        );
+      }
+
+      async function executeUploadFont() {
+        const fileInput = document.getElementById("uploadFontFile");
+        const filesToProcess = Array.from(fileInput.files);
+        let successCount = 0;
+        let skipCount = 0;
+        
+        for (const file of filesToProcess) {
+          const extension = file.name.split('.').pop().toLowerCase();
+          
+          if (extension !== "ttf" && extension !== "otf") {
+            console.warn("Skipping unsupported file:", file.name);
+            continue;
+          }
+          
+          // Use filename as font name (remove extension and replace spaces/special chars)
+          let fontName = file.name.replace(/\.[^/.]+$/, "");
+          // Optional: sanitize name if needed
+          fontName = fontName.replace(/[^a-zA-Z0-9_-]/g, "_");
+          
+          try {
+            const supabase = getSupabase();
+            if (!supabase) throw new Error("Supabase is not initialized");
+
+            // 1. ตรวจสอบว่ามีชื่อฟอนต์นี้อยู่แล้วหรือไม่
+            const { data: existingFont } = await supabase
+              .from('fonts')
+              .select('name')
+              .eq('name', fontName)
+              .maybeSingle();
+
+            if (existingFont) {
+              console.warn(`Font ${fontName} already exists. Skipping.`);
+              skipCount++;
+              continue; // ข้ามการอัปโหลดไฟล์นี้
+            }
+
+            // 2. ถ้าไม่มี ค่อยทำการอัปโหลด
+            const fileName = `${Date.now()}_${fontName}.${extension}`;
+            
+            const { data: uploadData, error: uploadError } = await supabase.storage
+              .from('font-files')
+              .upload(fileName, file, {
+                cacheControl: '3600',
+                upsert: false
+              });
+              
+            if (uploadError) throw uploadError;
+
+            // Get public URL
+            const { data: publicUrlData } = supabase.storage
+              .from('font-files')
+              .getPublicUrl(fileName);
+              
+            const fontUrl = publicUrlData.publicUrl;
+            
+            await saveCustomFontToDB({
+              name: fontName,
+              type: extension,
+              url: fontUrl
+            });
+            successCount++;
+          } catch (err) {
+            console.error("Error saving font", file.name, err);
+          }
+        }
+        
+        if (successCount > 0) {
+          // Reload fonts in document
+          await applyAllFontsToDocument();
+          // Re-render UI
+          closeUploadFontModal();
+          // Reset file input
+          fileInput.value = '';
+          
+          let msg = `อัปโหลดฟอนต์ใหม่สำเร็จ ${successCount} ไฟล์`;
+          if (skipCount > 0) msg += `\n(ข้ามไฟล์ชื่อซ้ำ ${skipCount} ไฟล์)`;
+          
+          showCustomAlert(msg);
+          await loadFontsData();
+        } else if (skipCount > 0) {
+          closeUploadFontModal();
+          fileInput.value = '';
+          setTimeout(() => {
+            showCustomAlert(`ไม่มีการอัปโหลดฟอนต์ใหม่ (ชื่อไฟล์ทั้ง ${skipCount} ไฟล์มีอยู่ในระบบแล้ว)`, true);
+          }, 300);
+        } else {
+          closeUploadFontModal();
+          fileInput.value = '';
+          setTimeout(() => {
+            showCustomAlert("ไม่พบไฟล์ฟอนต์ที่รองรับ หรือเกิดข้อผิดพลาด", true);
+          }, 300);
+        }
+      }
+      
+      function confirmDeleteCustomFont(fontName) {
+        showConfirmModal(
+          "ยืนยันการลบฟอนต์",
+          `คุณแน่ใจหรือไม่ว่าต้องการลบฟอนต์ <strong class="text-slate-800">${fontName}</strong> ออกจากระบบ?<br><span class="text-red-500 font-medium">ข้อมูลจะไม่สามารถกู้คืนได้</span>`,
+          "ลบฟอนต์",
+          "ยกเลิก",
+          async () => {
+            try {
+              await deleteCustomFontFromDB(fontName);
+              await applyAllFontsToDocument();
+              showCustomAlert(`ลบฟอนต์ ${fontName} สำเร็จ`);
+              await loadFontsData();
+            } catch (e) {
+              console.error("Delete error:", e);
+              showCustomAlert("เกิดข้อผิดพลาดในการลบฟอนต์", true);
+            }
+          }
+        );
+      }
+    </script>
+  </body>
+</html>

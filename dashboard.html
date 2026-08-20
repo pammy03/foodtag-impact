@@ -881,6 +881,7 @@
       </div>
     </div>
 
+    <script src="font-manager.js"></script>
     <script src="sidebar.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="action-logger.js"></script>
@@ -1354,41 +1355,45 @@
         const totalPages = Math.ceil(totalItems / itemsPerPage);
         const container = document.getElementById("paginationContainer");
 
-        if (totalPages <= 1) {
+        if (totalItems === 0) {
           container.innerHTML = "";
           return;
         }
 
-        let html = `<div class="flex items-center gap-1.5 text-[13px] font-bold text-slate-500 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm">`;
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
 
-        html += `<button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled class="p-1 opacity-30 cursor-not-allowed flex items-center"' : 'class="p-1 hover:bg-slate-100 hover:text-slate-800 rounded-full transition-colors flex items-center"'}><span class="material-symbols-outlined text-[20px]">chevron_left</span></button>`;
+        let html = `
+          <div class="flex justify-between items-center w-full px-2">
+            <div class="text-[13px] text-slate-500 font-bold tracking-wide">Showing ${startIndex + 1} to ${endIndex} of ${totalItems} tags</div>
+            <div class="flex items-center gap-1.5">
+        `;
 
-        let pages = [];
-        for (let i = 1; i <= totalPages; i++) {
-          if (
-            i === 1 ||
-            i === totalPages ||
-            i === currentPage ||
-            i === currentPage - 1 ||
-            i === currentPage + 1
-          ) {
-            pages.push(i);
+        html += `<button onclick="changePage(${currentPage - 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === 1 ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`;
+        
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+        
+        if (startPage > 1) {
+          html += `<button onclick="changePage(1)" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">1</button><span class="px-2 text-slate-400">...</span>`;
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+          if (i === currentPage) {
+            html += `<button class="px-3 py-1.5 rounded-lg bg-[#006d4b] text-white border border-[#006d4b] text-[13px] font-bold shadow-sm cursor-default">${i}</button>`;
+          } else {
+            html += `<button onclick="changePage(${i})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all">${i}</button>`;
           }
         }
-
-        let prev = 0;
-        for (let p of pages) {
-          if (prev && p - prev > 1)
-            html += `<span class="w-8 h-8 flex items-center justify-center text-slate-400">...</span>`;
-          if (p === currentPage)
-            html += `<button class="w-8 h-8 bg-[#006d4b] text-white rounded-full shadow-md flex items-center justify-center transition-all mx-1">${p}</button>`;
-          else
-            html += `<button onclick="changePage(${p})" class="w-8 h-8 hover:bg-slate-100 hover:text-slate-800 rounded-full flex items-center justify-center transition-all">${p}</button>`;
-          prev = p;
+        
+        if (endPage < totalPages) {
+          html += `<span class="px-2 text-slate-400">...</span><button onclick="changePage(${totalPages})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">${totalPages}</button>`;
         }
-
-        html += `<button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled class="p-1 opacity-30 cursor-not-allowed flex items-center"' : 'class="p-1 hover:bg-slate-100 hover:text-slate-800 rounded-full transition-colors flex items-center"'}><span class="material-symbols-outlined text-[20px]">chevron_right</span></button>`;
-        html += `</div>`;
+        
+        html += `<button onclick="changePage(${currentPage + 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === totalPages ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+        
+        html += `</div></div>`;
         container.innerHTML = html;
       }
 
@@ -1482,7 +1487,7 @@
 
                 mainHtml = `
                   <div class="w-full mt-2">
-                    <div class="font-black tracking-widest text-center mb-1 w-full uppercase" style="font-family: ${labelContainFont}; color: ${labelContainColor}; font-size: ${labelContainSize}; line-height: 1.1;">${labelContainText}</div>
+                    <div class="font-black tracking-widest text-center mb-1 w-full uppercase" style="font-family: ${labelContainFont}; color: ${labelContainColor}; font-size: ${labelContainSize}; line-height: 1.1; font-weight: 900 !important; -webkit-text-stroke: 0.5px currentColor;">${labelContainText}</div>
                     <div class="allergen-container">${icons}</div>
                   </div>`;
               }
@@ -1524,7 +1529,7 @@
 
                 containHtml = `
                   <div class="w-full mt-2">
-                    <div class="font-black tracking-widest text-center mb-1 w-full uppercase" style="font-family: ${labelMayContainFont}; color: ${labelMayContainColor}; font-size: ${labelMayContainSize}; line-height: 1.1;">${labelMayContainText}</div>
+                    <div class="font-black tracking-widest text-center mb-1 w-full uppercase" style="font-family: ${labelMayContainFont}; color: ${labelMayContainColor}; font-size: ${labelMayContainSize}; line-height: 1.1; font-weight: 900 !important; -webkit-text-stroke: 0.5px currentColor;">${labelMayContainText}</div>
                     <div class="allergen-container">${icons}</div>
                   </div>`;
               }
@@ -1540,17 +1545,26 @@
                 const allergensTitleHtml = `
                   <div class="w-[85%] mx-auto flex items-center justify-center mb-0.5 mt-1">
                     ${lineHtml}
-                    <div class="mx-3 font-bold" style="font-family: ${titleFont}; color: ${titleColor}; font-size: ${titleSize};">${titleText}</div>
+                    <div class="mx-3 font-black" style="font-family: ${titleFont}; color: ${titleColor}; font-size: ${titleSize}; font-weight: 900 !important; -webkit-text-stroke: 0.5px currentColor;">${titleText}</div>
                     ${lineHtml}
                   </div>`;
                 fullAllergensHtml = `<div class="w-full flex flex-col items-center mt-1 space-y-1.5">${allergensTitleHtml}${mainHtml}${containHtml}</div>`;
               }
+            }
+            
+            let headerHtml = "";
+            if (menu.showHeader && menu.headerText) {
+                const hFont = menu.headerFont || globalSettings.fontEn || "'Aptos', sans-serif";
+                const hSize = menu.headerFontSize || "30px";
+                const hColor = menu.headerFontColor || "#1e293b";
+                headerHtml = `<div class="w-full text-center mb-3 font-bold" style="font-family: ${hFont}; font-size: ${hSize}; color: ${hColor};">${menu.headerText}</div>`;
             }
 
             slotsHTML += `
               <div class="slot relative overflow-hidden flex flex-col justify-center items-center">
                   ${bgHtml}
                   <div class="slot-content relative z-10 flex flex-col items-center w-full">
+                      ${headerHtml}
                       <div class="slot-text-th font-black mb-1 leading-tight text-center whitespace-pre-line" style="font-family: ${fTh}; font-size: ${sTh}; color: ${cTh};">${menu.name_th || ""}</div>
                       <div class="slot-text-en font-medium mb-1 leading-tight text-center whitespace-pre-line ${menu.uppercaseEn ? 'uppercase' : ''}" style="font-family: ${fEn}; font-size: ${sEn}; color: ${cEn};">${menu.name_en || ""}</div>
                       ${fullAllergensHtml}

@@ -42,26 +42,25 @@ function injectSidebar() {
       <a href="analytics.html" id="nav-analytics" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
         <span class="material-symbols-outlined text-[24px]">insights</span> Analytics & Insights
       </a>
+      <a href="font-database.html" id="nav-font-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
+        <span class="material-symbols-outlined text-[24px]">font_download</span> Font Gallery
+      </a>
+      <a href="divider-database.html" id="nav-divider-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
+        <span class="material-symbols-outlined text-[24px]">horizontal_rule</span> Divider Gallery
+      </a>
       <button onclick="openSettingsModal()" id="nav-global-settings" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all w-full text-left">
         <span class="material-symbols-outlined text-[24px]">settings</span> Global Settings
       </button>
     `;
-    
-    // Unhide the gear icon in create.html for super admins
-    const createBtn = document.getElementById("create-page-settings-btn");
-    if (createBtn) {
-      createBtn.classList.remove("hidden");
-      createBtn.classList.add("flex");
-    }
   }
 
   const sidebarHTML = `
-    <aside class="w-72 bg-white border-r border-slate-200 flex flex-col p-6 shrink-0 z-10 h-full shadow-sm overflow-y-auto overflow-x-hidden">
+    <aside class="w-72 bg-white border-r border-slate-200 flex flex-col p-6 shrink-0 z-10 h-full shadow-sm">
       <div class="text-center shrink-0 mb-8 mt-2">
         <img src="images/Impact_Logo.png" alt="IMPACT Logo" class="h-10 mx-auto object-contain" onerror="this.parentNode.style.display = 'none'" />
       </div>
 
-      <div class="bg-slate-50 border border-slate-100 p-5 rounded-2xl mb-8 flex items-center gap-4">
+      <div class="bg-slate-50 border border-slate-100 p-5 rounded-2xl mb-8 flex items-center gap-4 shrink-0">
         <div class="w-12 h-12 bg-[#003B71] rounded-full flex items-center justify-center text-white font-bold shrink-0 shadow-sm">
           <span class="material-symbols-outlined text-2xl">person</span>
         </div>
@@ -78,17 +77,17 @@ function injectSidebar() {
         </div>
       </div>
 
-      <nav class="space-y-1.5 flex-1" id="nav-wrapper">
+      <nav class="space-y-1.5 flex-1 overflow-y-auto overflow-x-hidden min-h-0 pr-1" id="nav-wrapper">
         ${navItems}
       </nav>
       
-      <div class="mt-auto flex flex-col gap-2 border-t border-slate-100 pt-6">
-        <button onclick="showMyProfileModal()" class="flex items-center gap-3 text-slate-500 font-bold px-4 py-4 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all w-full text-left text-base">
+      <div class="mt-auto flex flex-col gap-1 border-t border-slate-100 pt-3 shrink-0">
+        <button onclick="showMyProfileModal()" class="flex items-center gap-3 text-slate-500 font-bold px-4 py-3 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all w-full text-left text-base">
           <span class="material-symbols-outlined text-[#006d4b] text-[24px]">manage_accounts</span> My Account
         </button>
 
-        <button onclick="showLogoutModal()" class="flex items-center gap-3 text-red-500 font-bold px-4 py-4 hover:bg-red-50 rounded-xl transition-all w-full text-left text-base">
-          <span class="material-symbols-outlined text-[24px]">logout</span> ออกจากระบบ
+        <button onclick="showLogoutModal()" class="flex items-center gap-3 text-red-500 font-bold px-4 py-3 hover:bg-red-50 rounded-xl transition-all w-full text-left text-base">
+          <span class="material-symbols-outlined text-[24px]">logout</span> Log out
         </button>
       </div>
     </aside>
@@ -108,6 +107,8 @@ function injectSidebar() {
       "ing-database": "nav-ing-db",
       "menu-database": "nav-menu-db",
       "bg-database": "nav-bg-db",
+      "font-database": "nav-font-db",
+      "divider-database": "nav-divider-db",
       "logs": "nav-logs",
       "users-management": "nav-users",
     };
@@ -200,11 +201,11 @@ function injectSidebar() {
           <div class="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-6 border-4 border-white shadow-inner">
             <span class="material-symbols-outlined text-4xl font-bold">logout</span>
           </div>
-          <h3 class="text-2xl font-black text-slate-800 mb-3">ออกจากระบบ?</h3>
-          <p class="text-base text-slate-500 mb-10 font-medium px-4 whitespace-nowrap">คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบในขณะนี้</p>
+          <h3 class="text-2xl font-black text-slate-800 mb-3">Log out?</h3>
+          <p class="text-base text-slate-500 mb-10 font-medium px-4 whitespace-nowrap">Are you sure you want to log out?</p>
           <div class="flex gap-4 w-full">
-            <button onclick="closeLogoutModal()" class="flex-1 py-4 border-2 border-slate-100 text-slate-500 font-black rounded-2xl hover:bg-slate-50 transition-colors text-base">ยกเลิก</button>
-            <button onclick="confirmLogout()" class="flex-1 py-4 bg-red-500 text-white font-black rounded-2xl hover:bg-red-600 shadow-xl shadow-red-200 transition-all text-base">ยืนยัน</button>
+            <button onclick="closeLogoutModal()" class="flex-1 py-4 border-2 border-slate-100 text-slate-500 font-black rounded-2xl hover:bg-slate-50 transition-colors text-base">Cancel</button>
+            <button onclick="confirmLogout()" class="flex-1 py-4 bg-red-500 text-white font-black rounded-2xl hover:bg-red-600 shadow-xl shadow-red-200 transition-all text-base">Log out</button>
           </div>
         </div>
       </div>
@@ -216,172 +217,191 @@ function injectSidebar() {
   if (!document.getElementById("settingsModal")) {
     const settingsModalHTML = `
       <div id="settingsModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[99999] hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-2xl shadow-2xl w-[600px] max-h-[90vh] flex flex-col transform scale-95 transition-transform duration-300" id="settingsModalContent">
+        <div class="bg-white rounded-2xl shadow-2xl w-[800px] max-w-[95vw] max-h-[90vh] flex flex-col transform scale-95 transition-transform duration-300" id="settingsModalContent">
           
           <!-- Header (Sticky) -->
-          <div class="flex items-center justify-between p-6 border-b border-slate-100 shrink-0">
-            <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-              <span class="material-symbols-outlined text-[#006d4b]">settings</span>
+          <div class="flex items-center justify-between p-6 md:p-8 border-b border-slate-100 shrink-0">
+            <h3 class="text-2xl font-bold text-slate-800 flex items-center gap-3">
+              <span class="material-symbols-outlined text-[#006d4b] text-[28px]">settings</span>
               Global Settings
             </h3>
-            <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+            <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 transition-colors bg-slate-100 hover:bg-slate-200 p-2 rounded-full flex items-center justify-center">
               <span class="material-symbols-outlined">close</span>
             </button>
           </div>
           
           <!-- Body (Scrollable) -->
-          <div class="p-6 overflow-y-auto space-y-6">
+          <div class="p-6 md:p-8 overflow-y-auto space-y-8 custom-scroll">
             
             <!-- Text Defaults -->
-            <div class="space-y-3">
-              <h4 class="text-sm font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">match_case</span> ข้อความ </h4>
-              <div class="grid grid-cols-3 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <div class="space-y-4">
+              <h4 class="text-base font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-2"><span class="material-symbols-outlined text-[20px]">match_case</span> Text Defaults</h4>
+              <div class="grid grid-cols-3 gap-5 p-5 bg-slate-50 rounded-xl border border-slate-200">
                 <div>
-                  <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ภาษาไทย</label>
-                  <select id="defFontTh" class="w-full pl-2 pr-8 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
-                      <option value="'2006_iannnnnbkk', sans-serif">2006_iannnnnbkk</option>
-                      <option value="'Sarabun', sans-serif">Sarabun</option>
-                      <option value="'Poppins', sans-serif">Poppins</option>
-                      <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
-                      <option value="'Aptos', sans-serif">Aptos</option>
+                  <label class="block text-sm font-bold text-slate-600 mb-2">Thai Font</label>
+                  <select id="defFontTh" class="w-full pl-3 pr-8 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;">
+                      <option value="">Loading fonts...</option>
                   </select>
                 </div>
                 <div>
-                  <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด (px)</label>
-                  <input type="number" id="defFontSizeTh" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="22">
+                  <label class="block text-sm font-bold text-slate-600 mb-2">Size (px)</label>
+                  <input type="number" id="defFontSizeTh" class="w-full px-3 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-[#006d4b]" value="22">
                 </div>
                 <div>
-                  <label class="block text-[11px] font-bold text-slate-500 mb-1">สีฟอนต์</label>
-                  <div class="flex items-center gap-1">
-                    <input type="color" id="defFontColorTh" class="w-6 h-6 p-0 border-0 rounded cursor-pointer" value="#0f172a" oninput="document.getElementById('defFontColorThText').value = this.value.toUpperCase()">
-                    <input type="text" id="defFontColorThText" class="w-full px-1.5 py-1.5 text-[10px] uppercase font-mono border rounded outline-none focus:border-[#006d4b]" value="#0F172A" oninput="document.getElementById('defFontColorTh').value = this.value">
+                  <label class="block text-sm font-bold text-slate-600 mb-2">Font Color</label>
+                  <div class="flex items-center gap-2">
+                    <input type="color" id="defFontColorTh" class="w-10 h-10 p-0 border-0 rounded cursor-pointer shrink-0" value="#0f172a" oninput="document.getElementById('defFontColorThText').value = this.value.toUpperCase()">
+                    <input type="text" id="defFontColorThText" class="w-full px-3 py-2.5 text-sm uppercase font-mono border border-slate-200 rounded-lg outline-none focus:border-[#006d4b]" value="#0F172A" oninput="document.getElementById('defFontColorTh').value = this.value">
                   </div>
                 </div>
                 <div>
-                  <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ภาษาอังกฤษ</label>
-                  <select id="defFontEn" class="w-full pl-2 pr-8 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
-                      <option value="'2006_iannnnnbkk', sans-serif">2006_iannnnnbkk</option>
-                      <option value="'Sarabun', sans-serif">Sarabun</option>
-                      <option value="'Poppins', sans-serif">Poppins</option>
-                      <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
-                      <option value="'Aptos', sans-serif">Aptos</option>
+                  <label class="block text-sm font-bold text-slate-600 mb-2">English Font</label>
+                  <select id="defFontEn" class="w-full pl-3 pr-8 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;">
+                      <option value="">Loading fonts...</option>
                   </select>
                 </div>
                 <div>
-                  <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด (px)</label>
-                  <input type="number" id="defFontSizeEn" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="22">
+                  <label class="block text-sm font-bold text-slate-600 mb-2">Size (px)</label>
+                  <input type="number" id="defFontSizeEn" class="w-full px-3 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-[#006d4b]" value="22">
                 </div>
                 <div>
-                  <label class="block text-[11px] font-bold text-slate-500 mb-1">สีฟอนต์</label>
-                  <div class="flex items-center gap-1">
-                    <input type="color" id="defFontColorEn" class="w-6 h-6 p-0 border-0 rounded cursor-pointer" value="#0f172a" oninput="document.getElementById('defFontColorEnText').value = this.value.toUpperCase()">
-                    <input type="text" id="defFontColorEnText" class="w-full px-1.5 py-1.5 text-[10px] uppercase font-mono border rounded outline-none focus:border-[#006d4b]" value="#0F172A" oninput="document.getElementById('defFontColorEn').value = this.value">
+                  <label class="block text-sm font-bold text-slate-600 mb-2">Font Color</label>
+                  <div class="flex items-center gap-2">
+                    <input type="color" id="defFontColorEn" class="w-10 h-10 p-0 border-0 rounded cursor-pointer shrink-0" value="#0f172a" oninput="document.getElementById('defFontColorEnText').value = this.value.toUpperCase()">
+                    <input type="text" id="defFontColorEnText" class="w-full px-3 py-2.5 text-sm uppercase font-mono border border-slate-200 rounded-lg outline-none focus:border-[#006d4b]" value="#0F172A" oninput="document.getElementById('defFontColorEn').value = this.value">
                   </div>
                 </div>
               </div>
             </div>
             
-            <!-- Allergen Label Defaults -->
-            <div class="space-y-3">
-              <h4 class="text-sm font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">health_and_safety</span> ข้อมูลสารก่อภูมิแพ้ (Allergens)</h4>
-              <div class="grid grid-cols-3 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <!-- Slot Header Defaults -->
+            <div class="space-y-4">
+              <h4 class="text-base font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-2"><span class="material-symbols-outlined text-[20px]">title</span> Slot Header Defaults</h4>
+              <div class="grid grid-cols-3 gap-5 p-5 bg-slate-50 rounded-xl border border-slate-200">
                 <div class="col-span-3">
-                  <div class="flex items-center justify-between mt-1 mb-2">
-                    <span class="font-bold text-[11px] text-[#006d4b] uppercase tracking-wider">ALLERGENS TITLE</span>
-                    <div class="flex items-center gap-2 font-normal">
-                      <label class="text-[11px] text-slate-500 whitespace-nowrap">Show Side Lines</label>
+                  <div class="flex items-center gap-3 mb-2">
+                    <label class="text-sm font-bold text-slate-600 whitespace-nowrap">Show Header</label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" id="defShowHeader" class="sr-only peer">
+                      <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#006d4b]"></div>
+                    </label>
+                  </div>
+                </div>
+                <div class="col-span-3">
+                  <label class="block text-sm font-bold text-slate-600 mb-2">Header Text</label>
+                  <input type="text" id="defHeaderText" class="w-full px-3 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-[#006d4b]" value="Menu">
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-slate-600 mb-2">Font</label>
+                  <select id="defHeaderFont" class="w-full pl-3 pr-8 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;">
+                      <option value="">Loading fonts...</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-slate-600 mb-2">Size (px)</label>
+                  <input type="number" id="defHeaderFontSize" class="w-full px-3 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-[#006d4b]" value="30">
+                </div>
+                <div>
+                  <label class="block text-sm font-bold text-slate-600 mb-2">Font Color</label>
+                  <div class="flex items-center gap-2">
+                    <input type="color" id="defHeaderFontColor" class="w-10 h-10 p-0 border-0 rounded cursor-pointer shrink-0" value="#1e293b" oninput="document.getElementById('defHeaderFontColorText').value = this.value.toUpperCase()">
+                    <input type="text" id="defHeaderFontColorText" class="w-full px-3 py-2.5 text-sm uppercase font-mono border border-slate-200 rounded-lg outline-none focus:border-[#006d4b]" value="#1E293B" oninput="document.getElementById('defHeaderFontColor').value = this.value">
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Custom Fonts section has been moved to Font Gallery -->
+
+            <!-- Allergen Label Defaults -->
+            <div class="space-y-4">
+              <h4 class="text-base font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-2"><span class="material-symbols-outlined text-[20px]">health_and_safety</span> Allergens Defaults</h4>
+              <div class="grid grid-cols-3 gap-5 p-5 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="col-span-3">
+                  <div class="flex items-center justify-between mb-4">
+                    <span class="font-bold text-sm text-[#006d4b] uppercase tracking-wider">ALLERGENS TITLE</span>
+                    <div class="flex items-center gap-3 font-normal">
+                      <label class="text-sm text-slate-600 whitespace-nowrap">Show Side Lines</label>
                       <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="defLabelTitleLines" class="sr-only peer" checked>
-                        <div class="w-7 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#006d4b]"></div>
+                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#006d4b]"></div>
                       </label>
                     </div>
                   </div>
-                  <div class="grid grid-cols-4 gap-3">
+                  <div class="grid grid-cols-4 gap-5">
                     <div class="col-span-2">
-                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ข้อความ (Text)</label>
-                      <input type="text" id="defLabelTitleText" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="Allergens">
+                      <label class="block text-sm font-bold text-slate-600 mb-2">Text</label>
+                      <input type="text" id="defLabelTitleText" class="w-full px-3 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-[#006d4b]" value="Allergens">
                     </div>
                     <div class="col-span-2">
-                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ (Font)</label>
-                      <select id="defLabelTitleFont" class="w-full pl-2 pr-8 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
-                          <option value="'2006_iannnnnbkk', sans-serif">2006_iannnnnbkk</option>
-                          <option value="'Sarabun', sans-serif">Sarabun</option>
-                          <option value="'Poppins', sans-serif">Poppins</option>
-                          <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
-                          <option value="'Aptos', sans-serif">Aptos</option>
+                      <label class="block text-sm font-bold text-slate-600 mb-2">Font</label>
+                      <select id="defLabelTitleFont" class="w-full pl-3 pr-8 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;">
+                          <option value="">Loading fonts...</option>
                       </select>
                     </div>
                     <div class="col-span-2">
-                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด (px)</label>
-                      <input type="number" id="defLabelTitleSize" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="12">
+                      <label class="block text-sm font-bold text-slate-600 mb-2">Size (px)</label>
+                      <input type="number" id="defLabelTitleSize" class="w-full px-3 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-[#006d4b]" value="12">
                     </div>
                     <div class="col-span-2">
-                      <label class="block text-[11px] font-bold text-slate-500 mb-1">สีฟอนต์ (Color)</label>
-                      <div class="flex items-center gap-1">
-                        <input type="color" id="defLabelTitleColor" class="w-6 h-6 p-0 border-0 rounded cursor-pointer" value="#d32f2f" oninput="document.getElementById('defLabelTitleColorText').value = this.value.toUpperCase()">
-                        <input type="text" id="defLabelTitleColorText" class="w-full px-1.5 py-1.5 text-[10px] uppercase font-mono border rounded outline-none focus:border-[#006d4b]" value="#D32F2F" oninput="document.getElementById('defLabelTitleColor').value = this.value">
+                      <label class="block text-sm font-bold text-slate-600 mb-2">Color</label>
+                      <div class="flex items-center gap-2">
+                        <input type="color" id="defLabelTitleColor" class="w-10 h-10 p-0 border-0 rounded cursor-pointer shrink-0" value="#d32f2f" oninput="document.getElementById('defLabelTitleColorText').value = this.value.toUpperCase()">
+                        <input type="text" id="defLabelTitleColorText" class="w-full px-3 py-2.5 text-sm uppercase font-mono border border-slate-200 rounded-lg outline-none focus:border-[#006d4b]" value="#D32F2F" oninput="document.getElementById('defLabelTitleColor').value = this.value">
                       </div>
                     </div>
                   </div>
                 </div>
                 
-                <div class="col-span-3 border-t border-slate-200 pt-3 mt-1">
-                  <div class="font-bold text-[11px] text-red-600 uppercase tracking-wider mb-2">CONTAIN</div>
-                  <div class="grid grid-cols-4 gap-3">
+                <div class="col-span-3 border-t border-slate-200 pt-5 mt-2">
+                  <div class="font-bold text-sm text-red-600 uppercase tracking-wider mb-4">CONTAIN</div>
+                  <div class="grid grid-cols-4 gap-5">
                     <div class="col-span-2">
-                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ข้อความ (Text)</label>
-                      <input type="text" id="defLabelContainText" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-red-500" value="CONTAIN">
+                      <label class="block text-sm font-bold text-slate-600 mb-2">Text</label>
+                      <input type="text" id="defLabelContainText" class="w-full px-3 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-red-500" value="CONTAIN">
                     </div>
                     <div class="col-span-2">
-                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ (Font)</label>
-                      <select id="defLabelContainFont" class="w-full pl-2 pr-8 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-red-500 appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
-                          <option value="'2006_iannnnnbkk', sans-serif">2006_iannnnnbkk</option>
-                          <option value="'Sarabun', sans-serif">Sarabun</option>
-                          <option value="'Poppins', sans-serif">Poppins</option>
-                          <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
-                          <option value="'Aptos', sans-serif">Aptos</option>
+                      <label class="block text-sm font-bold text-slate-600 mb-2">Font</label>
+                      <select id="defLabelContainFont" class="w-full pl-3 pr-8 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-red-500 appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;">
+                          <option value="">Loading fonts...</option>
                       </select>
                     </div>
                     <div class="col-span-2">
-                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด (px)</label>
-                      <input type="number" id="defLabelContainSize" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-red-500" value="10">
+                      <label class="block text-sm font-bold text-slate-600 mb-2">Size (px)</label>
+                      <input type="number" id="defLabelContainSize" class="w-full px-3 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-red-500" value="10">
                     </div>
                     <div class="col-span-2">
-                      <label class="block text-[11px] font-bold text-slate-500 mb-1">สีฟอนต์ (Color)</label>
-                      <div class="flex items-center gap-1">
-                        <input type="color" id="defLabelContainColor" class="w-6 h-6 p-0 border-0 rounded cursor-pointer" value="#d32f2f" oninput="document.getElementById('defLabelContainColorText').value = this.value.toUpperCase()">
-                        <input type="text" id="defLabelContainColorText" class="w-full px-1.5 py-1.5 text-[10px] uppercase font-mono border rounded outline-none focus:border-red-500" value="#D32F2F" oninput="document.getElementById('defLabelContainColor').value = this.value">
+                      <label class="block text-sm font-bold text-slate-600 mb-2">Color</label>
+                      <div class="flex items-center gap-2">
+                        <input type="color" id="defLabelContainColor" class="w-10 h-10 p-0 border-0 rounded cursor-pointer shrink-0" value="#d32f2f" oninput="document.getElementById('defLabelContainColorText').value = this.value.toUpperCase()">
+                        <input type="text" id="defLabelContainColorText" class="w-full px-3 py-2.5 text-sm uppercase font-mono border border-slate-200 rounded-lg outline-none focus:border-red-500" value="#D32F2F" oninput="document.getElementById('defLabelContainColor').value = this.value">
                       </div>
                     </div>
                   </div>
                 </div>
                 
-                <div class="col-span-3 border-t border-slate-200 pt-3 mt-1">
-                  <div class="font-bold text-[11px] text-emerald-600 uppercase tracking-wider mb-2">MAY CONTAIN</div>
-                  <div class="grid grid-cols-4 gap-3">
+                <div class="col-span-3 border-t border-slate-200 pt-5 mt-2">
+                  <div class="font-bold text-sm text-emerald-600 uppercase tracking-wider mb-4">MAY CONTAIN</div>
+                  <div class="grid grid-cols-4 gap-5">
                     <div class="col-span-2">
-                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ข้อความ (Text)</label>
-                      <input type="text" id="defLabelMayContainText" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-emerald-500" value="MAY CONTAIN">
+                      <label class="block text-sm font-bold text-slate-600 mb-2">Text</label>
+                      <input type="text" id="defLabelMayContainText" class="w-full px-3 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-emerald-500" value="MAY CONTAIN">
                     </div>
                     <div class="col-span-2">
-                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ฟอนต์ (Font)</label>
-                      <select id="defLabelMayContainFont" class="w-full pl-2 pr-8 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-emerald-500 appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em;">
-                          <option value="'2006_iannnnnbkk', sans-serif">2006_iannnnnbkk</option>
-                          <option value="'Sarabun', sans-serif">Sarabun</option>
-                          <option value="'Poppins', sans-serif">Poppins</option>
-                          <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
-                          <option value="'Aptos', sans-serif">Aptos</option>
+                      <label class="block text-sm font-bold text-slate-600 mb-2">Font</label>
+                      <select id="defLabelMayContainFont" class="w-full pl-3 pr-8 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-emerald-500 appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;">
+                          <option value="">Loading fonts...</option>
                       </select>
                     </div>
                     <div class="col-span-2">
-                      <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด (px)</label>
-                      <input type="number" id="defLabelMayContainSize" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-emerald-500" value="10">
+                      <label class="block text-sm font-bold text-slate-600 mb-2">Size (px)</label>
+                      <input type="number" id="defLabelMayContainSize" class="w-full px-3 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-emerald-500" value="10">
                     </div>
                     <div class="col-span-2">
-                      <label class="block text-[11px] font-bold text-slate-500 mb-1">สีฟอนต์ (Color)</label>
-                      <div class="flex items-center gap-1">
-                        <input type="color" id="defLabelMayContainColor" class="w-6 h-6 p-0 border-0 rounded cursor-pointer" value="#d32f2f" oninput="document.getElementById('defLabelMayContainColorText').value = this.value.toUpperCase()">
-                        <input type="text" id="defLabelMayContainColorText" class="w-full px-1.5 py-1.5 text-[10px] uppercase font-mono border rounded outline-none focus:border-emerald-500" value="#D32F2F" oninput="document.getElementById('defLabelMayContainColor').value = this.value">
+                      <label class="block text-sm font-bold text-slate-600 mb-2">Color</label>
+                      <div class="flex items-center gap-2">
+                        <input type="color" id="defLabelMayContainColor" class="w-10 h-10 p-0 border-0 rounded cursor-pointer shrink-0" value="#d32f2f" oninput="document.getElementById('defLabelMayContainColorText').value = this.value.toUpperCase()">
+                        <input type="text" id="defLabelMayContainColorText" class="w-full px-3 py-2.5 text-sm uppercase font-mono border border-slate-200 rounded-lg outline-none focus:border-emerald-500" value="#D32F2F" oninput="document.getElementById('defLabelMayContainColor').value = this.value">
                       </div>
                     </div>
                   </div>
@@ -390,27 +410,40 @@ function injectSidebar() {
             </div>
             
             <!-- Image Defaults -->
-            <div class="space-y-3">
-              <h4 class="text-sm font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">image</span> ขนาดรูปภาพ Ingredients</h4>
-              <div class="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <div class="space-y-4">
+              <h4 class="text-base font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-2"><span class="material-symbols-outlined text-[20px]">image</span> Ingredient Icon Size Defaults</h4>
+              <div class="grid grid-cols-2 gap-5 p-5 bg-slate-50 rounded-xl border border-slate-200">
                 <div>
-                  <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด Contain (px)</label>
-                  <input type="number" id="defIconSizeMain" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="61">
+                  <label class="block text-sm font-bold text-slate-600 mb-2">Contain Size (px)</label>
+                  <input type="number" id="defIconSizeMain" class="w-full px-3 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-[#006d4b]" value="61">
                 </div>
                 <div>
-                  <label class="block text-[11px] font-bold text-slate-500 mb-1">ขนาด May Contain (px)</label>
-                  <input type="number" id="defIconSizeContain" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="61">
+                  <label class="block text-sm font-bold text-slate-600 mb-2">May Contain Size (px)</label>
+                  <input type="number" id="defIconSizeContain" class="w-full px-3 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-[#006d4b]" value="61">
+                </div>
+              </div>
+            </div>
+            <!-- Layout Style -->
+            <div class="space-y-4">
+              <h4 class="text-base font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-2"><span class="material-symbols-outlined text-[20px]">view_quilt</span> Layout Style Defaults</h4>
+              <div class="grid grid-cols-2 gap-5 p-5 bg-slate-50 rounded-xl border border-slate-200">
+                <div>
+                  <label class="block text-sm font-bold text-slate-600 mb-2">Menu Divider</label>
+                  <select id="defDividerStyle" class="w-full pl-3 pr-8 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;">
+                    <option value="line">Basic Line</option>
+                    <option value="none">None</option>
+                  </select>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Footer (Sticky) -->
-          <div class="p-6 border-t border-slate-100 flex gap-3 shrink-0 bg-white rounded-b-2xl">
-            <button onclick="closeSettingsModal()" class="flex-1 py-2.5 border border-slate-200 text-slate-600 font-bold rounded-lg hover:bg-slate-50 transition-colors text-sm shadow-sm">ยกเลิก</button>
-            <button onclick="confirmSaveGlobalSettings()" class="flex-1 py-2.5 bg-[#006d4b] text-white font-bold rounded-lg hover:bg-[#005a3d] transition-colors text-sm shadow-md flex items-center justify-center gap-2">
-              <span class="material-symbols-outlined text-[18px]">save</span>
-              บันทึกค่าเริ่มต้น
+          <div class="p-6 md:p-8 border-t border-slate-100 flex justify-end gap-4 shrink-0 bg-white rounded-b-2xl">
+            <button onclick="closeSettingsModal()" class="px-8 py-3 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors shadow-sm">Cancel</button>
+            <button onclick="confirmSaveGlobalSettings()" class="px-8 py-3 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] transition-colors shadow-md flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-[20px]">save</span>
+              Save Global Settings
             </button>
           </div>
         </div>
@@ -674,16 +707,34 @@ function showSuccessModal(title, message) {
 }
 
 // Global Settings Functions
+async function syncGlobalSettings() {
+  if (typeof window.supabase !== 'undefined') {
+    let client = window.dbClient;
+    if (!client) client = window.supabase.createClient("https://nexvompdeubppbkvnwor.supabase.co", "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI");
+    
+    try {
+      const { data, error } = await client.from('global_settings').select('settings_data').eq('id', 1).single();
+      if (!error && data && data.settings_data) {
+        if (Object.keys(data.settings_data).length > 0) {
+          localStorage.setItem("globalDefaultSettings", JSON.stringify(data.settings_data));
+          window.dispatchEvent(new CustomEvent('globalSettingsUpdated'));
+        }
+      }
+    } catch (e) { console.error("Error syncing global settings:", e); }
+  }
+}
+
 function getGlobalSettings() {
   const stored = localStorage.getItem("globalDefaultSettings");
   if (stored) return JSON.parse(stored);
   return {
-    fontTh: "'2006_iannnnnbkk', sans-serif",
+    fontTh: "'Prompt', sans-serif",
     fontSizeTh: "22px",
     fontEn: "'Aptos', sans-serif",
     fontSizeEn: "22px",
     iconSizeMain: "61px",
-    iconSizeContain: "61px"
+    iconSizeContain: "61px",
+    dividerStyle: "line"
   };
 }
 
@@ -692,7 +743,29 @@ function openSettingsModal() {
   
   const setVal = (id, val) => {
     const el = document.getElementById(id);
-    if (el && val !== undefined) el.value = val;
+    if (el && val !== undefined) {
+      if (el.tagName === 'SELECT') {
+        // Check if option exists, add if not so el.value works
+        let optionExists = false;
+        Array.from(el.options || []).forEach(opt => {
+          if (opt.value === val) optionExists = true;
+        });
+        if (!optionExists) {
+          const newOpt = document.createElement('option');
+          newOpt.value = val;
+          newOpt.textContent = val.replace(/'/g, '').split(',')[0];
+          el.appendChild(newOpt);
+        }
+      }
+      
+      el.value = val;
+      
+      const textSpan = document.getElementById(`selected_text_${id}`);
+      if (textSpan) {
+        textSpan.style.fontFamily = val;
+        textSpan.textContent = val.replace(/'/g, '').split(',')[0];
+      }
+    }
   };
   const setCheck = (id, val) => {
     const el = document.getElementById(id);
@@ -705,6 +778,19 @@ function openSettingsModal() {
   setVal("defFontSizeEn", settings.fontSizeEn ? parseInt(settings.fontSizeEn) : undefined);
   setVal("defIconSizeMain", settings.iconSizeMain ? parseInt(settings.iconSizeMain) : undefined);
   setVal("defIconSizeContain", settings.iconSizeContain ? parseInt(settings.iconSizeContain) : undefined);
+
+  const defDivider = document.getElementById("defDividerStyle");
+  const mainDivider = document.getElementById("dividerStyle");
+  if (defDivider && mainDivider) {
+      defDivider.innerHTML = "";
+      Array.from(mainDivider.options).forEach(opt => {
+          if (opt.value !== "custom") {
+              const newOpt = opt.cloneNode(true);
+              defDivider.appendChild(newOpt);
+          }
+      });
+  }
+  setVal("defDividerStyle", settings.dividerStyle || "line");
 
   if (settings.fontColorTh) {
     setVal("defFontColorTh", settings.fontColorTh);
@@ -740,6 +826,15 @@ function openSettingsModal() {
   setVal("defLabelMayContainSize", settings.labelMayContainSize);
   setVal("defLabelMayContainFont", settings.labelMayContainFont);
 
+  setCheck("defShowHeader", settings.showHeader);
+  setVal("defHeaderText", settings.headerText);
+  setVal("defHeaderFont", settings.headerFont);
+  setVal("defHeaderFontSize", settings.headerFontSize ? parseInt(settings.headerFontSize) : undefined);
+  if (settings.headerFontColor) {
+    setVal("defHeaderFontColor", settings.headerFontColor);
+    setVal("defHeaderFontColorText", settings.headerFontColor.toUpperCase());
+  }
+
   const modal = document.getElementById("settingsModal");
   if (modal) {
     modal.classList.remove("hidden");
@@ -749,7 +844,22 @@ function openSettingsModal() {
       if (content) content.classList.remove("scale-95");
     }, 10);
   }
+  
+  if(typeof window.syncGenericDropdowns === 'function') window.syncGenericDropdowns();
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  
+  // Unhide the gear icon in create.html for super admins
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  if (userData && userData.role === "Super Admin") {
+    const createBtn = document.getElementById("create-page-settings-btn");
+    if (createBtn) {
+      createBtn.classList.remove("hidden");
+      createBtn.classList.add("flex");
+    }
+  }
+});
 
 function closeSettingsModal() {
   const modal = document.getElementById("settingsModal");
@@ -773,7 +883,7 @@ function confirmSaveGlobalSettings() {
   );
 }
 
-function saveGlobalSettings() {
+async function saveGlobalSettings() {
   const settings = {
     fontTh: document.getElementById("defFontTh").value,
     fontSizeTh: document.getElementById("defFontSizeTh").value + "px",
@@ -795,10 +905,28 @@ function saveGlobalSettings() {
     labelMayContainText: document.getElementById("defLabelMayContainText").value,
     labelMayContainColor: document.getElementById("defLabelMayContainColor").value,
     labelMayContainSize: document.getElementById("defLabelMayContainSize").value,
-    labelMayContainFont: document.getElementById("defLabelMayContainFont").value
+    labelMayContainFont: document.getElementById("defLabelMayContainFont").value,
+    showHeader: document.getElementById("defShowHeader").checked,
+    headerText: document.getElementById("defHeaderText").value,
+    headerFont: document.getElementById("defHeaderFont").value,
+    headerFontSize: document.getElementById("defHeaderFontSize").value + "px",
+    headerFontColor: document.getElementById("defHeaderFontColor").value,
+    dividerStyle: document.getElementById("defDividerStyle").value
   };
+
   localStorage.setItem("globalDefaultSettings", JSON.stringify(settings));
-  showSuccessModal("บันทึกสำเร็จ", "บันทึกค่าเริ่มต้นเรียบร้อยแล้ว");
+  
+  if (typeof window.supabase !== 'undefined') {
+    let client = window.dbClient;
+    if (!client) client = window.supabase.createClient("https://nexvompdeubppbkvnwor.supabase.co", "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI");
+    try {
+      await client.from('global_settings').upsert({ id: 1, settings_data: settings });
+    } catch (e) {
+      console.error("Failed to save global settings to DB:", e);
+    }
+  }
+
+  showSuccessModal("บันทึกสำเร็จ", "บันทึกค่าเริ่มต้นลงฐานข้อมูลเรียบร้อยแล้ว");
   closeSettingsModal();
   window.dispatchEvent(new CustomEvent('globalSettingsUpdated'));
 }
@@ -806,10 +934,15 @@ function saveGlobalSettings() {
 // เริ่มต้นการทำงาน
 if (document.getElementById("sidebar-container")) {
   injectSidebar();
+  syncGlobalSettings();
 } else {
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", injectSidebar);
+    document.addEventListener("DOMContentLoaded", () => {
+      injectSidebar();
+      syncGlobalSettings();
+    });
   } else {
     injectSidebar();
+    syncGlobalSettings();
   }
 }

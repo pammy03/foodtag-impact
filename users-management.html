@@ -187,6 +187,13 @@
             </tbody>
           </table>
         </div>
+
+        <div id="paginationControls" class="flex justify-between items-center mt-6 px-2 hidden">
+          <div class="text-[13px] text-slate-500 font-bold tracking-wide" id="paginationInfo">Showing 1 to 100 of 1000 users</div>
+          <div class="flex items-center gap-1.5" id="paginationButtons">
+            <!-- Buttons dynamically generated -->
+          </div>
+        </div>
       </main>
     </div>
 
@@ -478,6 +485,7 @@
       </div>
     </div>
 
+    <script src="font-manager.js"></script>
     <script src="sidebar.js"></script>
     <script src="action-logger.js"></script>
 
@@ -537,12 +545,21 @@
         }
       }
 
+      let currentPage = 1;
+      let itemsPerPage = 100;
+      let currentSearchQuery = "";
+      
       function renderUserList() {
         const tbody = document.getElementById("userTableBody");
         const query = document
           .getElementById("searchInput")
           .value.toLowerCase();
         const filterRole = document.getElementById("roleFilter").value;
+        
+        if (query !== currentSearchQuery) {
+          currentPage = 1;
+          currentSearchQuery = query;
+        }
 
         const filteredUsers = dbUsers.filter((u) => {
           const matchText =
@@ -570,22 +587,37 @@
         countEl.innerText = `${filteredUsers.length} Items`;
         countEl.classList.remove("hidden");
 
-        if (filteredUsers.length === 0) {
+        const totalItems = filteredUsers.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        
+        if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        if (totalItems === 0) {
           tbody.innerHTML = `<tr><td colspan="6" class="py-24 text-center">
               <span class="material-symbols-outlined text-6xl mb-4 text-slate-200">person_off</span>
               <p class="text-slate-400 font-bold tracking-widest uppercase">No Users Found</p>
           </td></tr>`;
+          const pc = document.getElementById("paginationControls");
+          if (pc) pc.classList.add("hidden");
           return;
         }
 
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+        const paginatedItems = filteredUsers.slice(startIndex, endIndex);
+
         let html = "";
-        filteredUsers.forEach((u, index) => {
+        paginatedItems.forEach((u, idx) => {
+          const index = startIndex + idx;
+          const displayNo = index + 1; // Ascending order
+          
           const userDataStr = encodeURIComponent(JSON.stringify(u));
           const safeName = (u.name || "").replace(/'/g, "\\'");
 
           html += `
           <tr class="user-row border-b border-slate-100 last:border-0">
-            <td class="py-5 px-8 text-center"><span class="text-[14px] font-extrabold text-slate-500">${index + 1}</span></td>
+            <td class="py-5 px-8 text-center"><span class="text-[14px] font-extrabold text-slate-500">${displayNo}</span></td>
             <td class="py-5 px-6 text-[14px] font-bold text-slate-500">${u.emp_id}</td>
             <td class="py-5 px-6 text-[14px] font-extrabold text-slate-700">${u.name}</td>
             <td class="py-5 px-6">${getRoleBadge(u.role)}</td>
@@ -614,6 +646,55 @@
           </tr>`;
         });
         tbody.innerHTML = html;
+        
+        updatePaginationUI(totalItems, totalPages, startIndex, endIndex);
+      }
+
+      function updatePaginationUI(totalItems, totalPages, startIndex, endIndex) {
+        let paginationControls = document.getElementById("paginationControls");
+        if (!paginationControls) return;
+
+        if (totalPages <= 1) {
+          paginationControls.classList.add("hidden");
+          return;
+        }
+
+        paginationControls.classList.remove("hidden");
+        document.getElementById("paginationInfo").innerText = `Showing ${startIndex + 1} to ${endIndex} of ${totalItems} items`;
+        
+        let buttonsHtml = '';
+        
+        buttonsHtml += `<button onclick="goToPage(${currentPage - 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === 1 ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`;
+        
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+        
+        if (startPage > 1) {
+          buttonsHtml += `<button onclick="goToPage(1)" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">1</button><span class="px-2 text-slate-400">...</span>`;
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+          if (i === currentPage) {
+            buttonsHtml += `<button class="px-3 py-1.5 rounded-lg bg-[#006d4b] text-white border border-[#006d4b] text-[13px] font-bold shadow-sm cursor-default">${i}</button>`;
+          } else {
+            buttonsHtml += `<button onclick="goToPage(${i})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all">${i}</button>`;
+          }
+        }
+        
+        if (endPage < totalPages) {
+          buttonsHtml += `<span class="px-2 text-slate-400">...</span><button onclick="goToPage(${totalPages})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">${totalPages}</button>`;
+        }
+        
+        buttonsHtml += `<button onclick="goToPage(${currentPage + 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === totalPages ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+        
+        document.getElementById("paginationButtons").innerHTML = buttonsHtml;
+      }
+
+      function goToPage(page) {
+        currentPage = page;
+        renderUserList();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
       function openModal(id) {

@@ -330,6 +330,7 @@
       </div>
     </main>
 
+    <script src="font-manager.js"></script>
     <script src="sidebar.js"></script>
     <script>
       // ─── Auth ───────────────────────────────────────────────────
@@ -407,7 +408,7 @@
       }
 
       // ─── Main data load ──────────────────────────────────────────
-      async function fetchAndAggregateLogs(start, end) {
+      async function fetchAndAggregateLogs(start, end, activeUsers = [], allActiveNames = new Set()) {
         const agg = {
           actionCounts: { CREATE: 0, EDIT: 0, PRINT: 0, DELETE: 0 },
           paperSizes: { A4: 0, A3: 0, Other: 0 },
@@ -445,8 +446,16 @@
               agg.paperSizes[paperSize] = (agg.paperSizes[paperSize] || 0) + 1;
             }
 
-            const userName = l.user_name || 'Anonymous';
-            agg.topUsers[userName] = (agg.topUsers[userName] || 0) + 1;
+            let userName = l.user_name || 'Anonymous';
+            // Map renamed users
+            if (userName.toLowerCase() === 'admin_siriprapa' || userName.toLowerCase() === 'admin_siriprapha') {
+              userName = 'Admin';
+            }
+
+            // Only add to topUsers if they are in activeUsers or if it's a valid default name
+            if (activeUsers.includes(userName) || userName === 'Anonymous' || userName === 'Admin' || userName === 'Super Admin') {
+              agg.topUsers[userName] = (agg.topUsers[userName] || 0) + 1;
+            }
 
             if (l.action === 'PRINT') {
               let name = "Unknown";
@@ -461,6 +470,11 @@
                 const m2 = l.details.match(/ขนาด\s*([A-Za-z0-9]+)/i);
                 if (m1) paperSize = m1[1].toUpperCase();
                 else if (m2) paperSize = m2[1].toUpperCase();
+              }
+
+              // Add deleted indicator if name is not found in active tags/menus
+              if (name !== "Unknown" && !allActiveNames.has(name)) {
+                name = name + " (ถูกลบ)";
               }
 
               const key = `${name}|${paperSize}`;
@@ -501,15 +515,23 @@
             tagsQuery = tagsQuery.lte('created_at', end.toISOString());
           }
 
-          const [menusRes, usersRes, tagsRes] = await Promise.all([
-            menusQuery, usersQuery, tagsQuery
+          const [menusRes, usersRes, tagsRes, allUsersRes, allTagsRes, allMenusRes] = await Promise.all([
+            menusQuery, usersQuery, tagsQuery,
+            dbClient.from("users").select("name"),
+            dbClient.from("saved_tags").select("title"),
+            dbClient.from("menus").select("name_th, name_en")
           ]);
 
           const totalMenus = menusRes.count || 0;
           const totalUsers = usersRes.count || 0;
           const totalTags = tagsRes.count || 0;
 
-          const aggregatedData = await fetchAndAggregateLogs(start, end);
+          const activeUsers = (allUsersRes.data || []).map(u => u.name);
+          const activeTags = (allTagsRes.data || []).map(t => t.title);
+          const activeMenus = (allMenusRes.data || []).flatMap(m => [m.name_th, m.name_en].filter(Boolean));
+          const allActiveNames = new Set([...activeTags, ...activeMenus]);
+
+          const aggregatedData = await fetchAndAggregateLogs(start, end, activeUsers, allActiveNames);
 
           animateValue("statTotalTags", 0, totalTags, 800);
           animateValue("statTotalPrints", 0, aggregatedData.actionCounts.PRINT || 0, 800);
