@@ -105,10 +105,10 @@
                 id="searchInput"
                 onkeyup="renderBgList()"
                 placeholder="Search backgrounds..."
-                class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all shadow-sm text-sm"
+                class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all shadow-sm text-sm h-[42px]"
               />
             </div>
-            <select id="sortFilter" onchange="renderBgList()" class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10 shrink-0 ml-2" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.2em;">
+            <select id="sortFilter" onchange="renderBgList()" class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10 shrink-0 ml-2 h-[42px]" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.2em;">
                <option value="newest">อัปโหลดล่าสุด (Newest First)</option>
                <option value="oldest">อัปโหลดเก่าสุด (Oldest First)</option>
             </select>
@@ -117,7 +117,7 @@
           <select
             id="bgFilter"
             onchange="renderBgList()"
-            class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10"
+            class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10 h-[42px]"
             style="
               background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;);
               background-repeat: no-repeat;
@@ -236,7 +236,7 @@
             >
             <select
               id="inputBgSize"
-              class="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] text-sm cursor-pointer transition-all appearance-none"
+              class="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] text-sm cursor-pointer transition-all appearance-none h-[42px]"
               style="
                 background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;);
                 background-repeat: no-repeat;
@@ -398,7 +398,7 @@
             >
             <select
               id="editBgSize"
-              class="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] text-sm cursor-pointer transition-all appearance-none text-slate-800 font-medium"
+              class="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] text-sm cursor-pointer transition-all appearance-none text-slate-800 font-medium h-[42px]"
               style="
                 background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;);
                 background-repeat: no-repeat;
@@ -729,12 +729,10 @@
         } else {
             // Apply sorting if no query (query sorts by match quality first)
             filteredBgs.sort((a, b) => {
-                const dateA = new Date(a.created_at || 0);
-                const dateB = new Date(b.created_at || 0);
                 if (sortValue === "oldest") {
-                    return dateA - dateB;
+                    return a.id - b.id;
                 } else {
-                    return dateB - dateA;
+                    return b.id - a.id;
                 }
             });
         }
@@ -766,7 +764,7 @@
         let html = "";
         paginatedItems.forEach((bg, idx) => {
           const index = startIndex + idx;
-          const displayNo = totalItems - index; // descending
+          const displayNo = index + 1; // Always ascending
 
           const bgDataStr = encodeURIComponent(JSON.stringify(bg));
           const safeName = (bg.name || "").replace(/'/g, "\\'");
@@ -1193,7 +1191,7 @@
                 <div>
                    <label class="block text-[13px] font-bold text-slate-600 mb-1">${size}</label>
                    <select id="defBg_${size.replace(/\s+/g, '_').replace(/[/]/g, '')}" 
-                      class="w-full pl-3 pr-10 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] cursor-pointer transition-all appearance-none"
+                      class="w-full pl-3 pr-10 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] cursor-pointer transition-all appearance-none h-[42px]"
                       style="
                         -webkit-appearance: none;
                         -moz-appearance: none;

@@ -83,27 +83,8 @@
                 id="searchInput"
                 onkeyup="filterIngredients()"
                 placeholder="Search ingredients..."
-                class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all shadow-sm text-sm"
+                class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all shadow-sm text-sm h-[42px]"
               />
-            </div>
-
-            <div class="flex items-center gap-1 shrink-0">
-              <button
-                id="btnListView"
-                onclick="setView('list')"
-                class="w-11 h-11 flex items-center justify-center rounded-xl bg-emerald-50 text-[#006d4b] transition-all"
-                title="List View"
-              >
-                <span class="material-symbols-outlined">view_list</span>
-              </button>
-              <button
-                id="btnGridView"
-                onclick="setView('grid')"
-                class="w-11 h-11 flex items-center justify-center rounded-xl text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-all"
-                title="Grid View"
-              >
-                <span class="material-symbols-outlined">grid_view</span>
-              </button>
             </div>
           </div>
 
@@ -586,7 +567,7 @@
           gallery.innerHTML = paginatedItems
             .map((ing, idx) => {
               const index = startIndex + idx;
-              const displayNo = totalItems - index; // descending
+              const displayNo = index + 1; // Always ascending
 
               let displayName = ing.name_th || "";
               if (ing.name_en && ing.name_en !== ing.name_th) {
@@ -658,7 +639,7 @@
           gallery.innerHTML = headerRow + paginatedItems
             .map((ing, idx) => {
               const index = startIndex + idx;
-              const displayNo = totalItems - index; // descending
+              const displayNo = index + 1; // Always ascending
 
               let displayName = ing.name_th || "";
               if (ing.name_en && ing.name_en !== ing.name_th) {

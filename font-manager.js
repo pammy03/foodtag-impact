@@ -290,22 +290,37 @@ window.initGenericSearchableDropdowns = function() {
     select.style.display = 'none';
 
     const container = document.createElement('div');
-    container.className = 'relative w-full generic-search-dropdown-container';
     container.id = `generic_searchable_container_${select.id}`;
 
-    // Read initial style classes from the original select to match styling if needed
-    const selectClasses = select.className.replace(/hidden|appearance-none|bg-image-.*|style-.*|pl-\d+|pr-\d+/g, '').trim();
+    // Extract layout/sizing classes for the container
+    const layoutRegex = /(w-|min-w-|max-w-|flex-|shrink-|grow-|ml-|mr-|mx-|mt-|mb-|my-|m-|col-|row-|hidden|block|inline-)[^\s]+/g;
+    const layoutClasses = select.className.match(layoutRegex) || [];
+    
+    container.className = 'relative generic-search-dropdown-container ' + layoutClasses.join(' ');
+    if (!layoutClasses.some(c => c.startsWith('w-') || c === 'flex-1')) {
+        container.classList.add('w-full'); // fallback
+    }
 
+    // Extract visual classes for the button. Remove padding-right so we can force pr-8 for the arrow.
+    const visualClasses = select.className.replace(layoutRegex, '').replace(/appearance-none|bg-image-[^\s]+|style-[^\s]+|pr-\d+|pl-\d+/g, '').trim();
+    
+    // If the original select didn't have much styling, use defaults. ALWAYS enforce pr-8 for the arrow and pl-3 if no pl is provided.
+    const finalButtonClasses = `relative w-full h-full flex justify-between items-center cursor-pointer outline-none focus:ring-2 focus:ring-[#006d4b] pl-3 pr-8 ${visualClasses || 'py-2 bg-white border border-slate-200 rounded-lg text-[12px] font-semibold text-slate-600 min-h-[34px]'}`;
+
+    const showSearch = select.options.length > 5;
+    
     container.innerHTML = `
-      <button type="button" class="w-full pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-[12px] font-semibold text-slate-600 cursor-pointer flex justify-between items-center min-h-[34px]" onclick="toggleGenericDropdown('${select.id}')">
+      <button type="button" class="${finalButtonClasses}" onclick="toggleGenericDropdown('${select.id}')">
         <span id="generic_selected_text_${select.id}" class="truncate text-left flex-1"></span>
-        <span class="material-symbols-outlined text-[14px] absolute right-2 pointer-events-none text-slate-400">expand_more</span>
+        <span class="material-symbols-outlined text-[16px] absolute right-3 pointer-events-none text-slate-400">expand_more</span>
       </button>
       <div id="generic_dropdown_${select.id}" class="absolute z-[100] w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl hidden flex-col max-h-[250px] overflow-hidden" style="min-width: 220px; top: 100%; left: 0;">
+        ${showSearch ? `
         <div class="p-2 border-b border-slate-100 shrink-0 relative bg-slate-50">
           <span class="material-symbols-outlined absolute left-4 top-3.5 text-slate-400 text-[14px] pointer-events-none">search</span>
           <input type="text" id="generic_search_${select.id}" class="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b]" placeholder="Search..." onkeyup="filterGenericDropdown('${select.id}', this.value)" onclick="event.stopPropagation()">
         </div>
+        ` : ''}
         <div id="generic_list_${select.id}" class="flex-1 overflow-y-auto custom-scroll p-1"></div>
       </div>
     `;

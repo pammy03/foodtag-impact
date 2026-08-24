@@ -133,13 +133,13 @@
               id="searchInput"
               onkeyup="renderTable()"
               placeholder="Search menu name or Menu ID..."
-              class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all shadow-sm text-sm"
+              class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all shadow-sm text-sm h-[42px]"
             />
           </div>
           <select
             id="sortFilter"
             onchange="renderTable()"
-            class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10 ml-2"
+            class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10 ml-2 h-[42px]"
             style="
               background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;);
               background-repeat: no-repeat;
@@ -661,7 +661,7 @@
 
         paginatedItems.forEach((menu, idx) => {
           const index = startIndex + idx;
-          const displayNo = sortOrder === "desc" ? (totalItems - index) : (index + 1);
+          const displayNo = index + 1;
           
           const resolveIngs = (ids, names) => {
              if (names && names.length > 0) {
