@@ -26,6 +26,15 @@ function injectSidebar() {
       <a href="bg-database.html" id="nav-bg-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
         <span class="material-symbols-outlined text-[24px]">wallpaper</span> Backgrounds
       </a>
+      <a href="font-database.html" id="nav-font-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
+        <span class="material-symbols-outlined text-[24px]">font_download</span> Font Gallery
+      </a>
+      <a href="divider-database.html" id="nav-divider-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
+        <span class="material-symbols-outlined text-[24px]">horizontal_rule</span> Divider Gallery
+      </a>
+      <button type="button" onclick="openSettingsModal()" id="nav-global-settings" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all w-full text-left">
+        <span class="material-symbols-outlined text-[24px]">settings</span> Global Settings
+      </button>
     `;
   }
 
@@ -42,15 +51,6 @@ function injectSidebar() {
       <a href="analytics.html" id="nav-analytics" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
         <span class="material-symbols-outlined text-[24px]">insights</span> Analytics & Insights
       </a>
-      <a href="font-database.html" id="nav-font-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
-        <span class="material-symbols-outlined text-[24px]">font_download</span> Font Gallery
-      </a>
-      <a href="divider-database.html" id="nav-divider-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
-        <span class="material-symbols-outlined text-[24px]">horizontal_rule</span> Divider Gallery
-      </a>
-      <button onclick="openSettingsModal()" id="nav-global-settings" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all w-full text-left">
-        <span class="material-symbols-outlined text-[24px]">settings</span> Global Settings
-      </button>
     `;
   }
 
@@ -82,11 +82,11 @@ function injectSidebar() {
       </nav>
       
       <div class="mt-auto flex flex-col gap-1 border-t border-slate-100 pt-3 shrink-0">
-        <button onclick="showMyProfileModal()" class="flex items-center gap-3 text-slate-500 font-bold px-4 py-3 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all w-full text-left text-base">
+        <button type="button" onclick="showMyProfileModal()" class="flex items-center gap-3 text-slate-500 font-bold px-4 py-3 hover:bg-slate-50 hover:text-slate-800 rounded-xl transition-all w-full text-left text-base">
           <span class="material-symbols-outlined text-[#006d4b] text-[24px]">manage_accounts</span> My Account
         </button>
 
-        <button onclick="showLogoutModal()" class="flex items-center gap-3 text-red-500 font-bold px-4 py-3 hover:bg-red-50 rounded-xl transition-all w-full text-left text-base">
+        <button type="button" onclick="showLogoutModal()" class="flex items-center gap-3 text-red-500 font-bold px-4 py-3 hover:bg-red-50 rounded-xl transition-all w-full text-left text-base">
           <span class="material-symbols-outlined text-[24px]">logout</span> Log out
         </button>
       </div>
@@ -130,7 +130,7 @@ function injectSidebar() {
     const profileModalHTML = `
       <div id="myProfileModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[99999] hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-[40px] shadow-2xl w-[90%] max-w-[460px] p-8 transform scale-95 transition-transform duration-300 flex flex-col relative" id="myProfileModalContent">
-          <button onclick="closeMyProfileModal()" class="absolute top-5 right-5 w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-full transition-all">
+          <button type="button" onclick="closeMyProfileModal()" class="absolute top-5 right-5 w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-full transition-all">
             <span class="material-symbols-outlined text-2xl">close</span>
           </button>
           
@@ -204,8 +204,8 @@ function injectSidebar() {
           <h3 class="text-2xl font-black text-slate-800 mb-3">Log out?</h3>
           <p class="text-base text-slate-500 mb-10 font-medium px-4 whitespace-nowrap">Are you sure you want to log out?</p>
           <div class="flex gap-4 w-full">
-            <button onclick="closeLogoutModal()" class="flex-1 py-4 border-2 border-slate-100 text-slate-500 font-black rounded-2xl hover:bg-slate-50 transition-colors text-base">Cancel</button>
-            <button onclick="confirmLogout()" class="flex-1 py-4 bg-red-500 text-white font-black rounded-2xl hover:bg-red-600 shadow-xl shadow-red-200 transition-all text-base">Log out</button>
+            <button type="button" onclick="closeLogoutModal()" class="flex-1 py-4 border-2 border-slate-100 text-slate-500 font-black rounded-2xl hover:bg-slate-50 transition-colors text-base">Cancel</button>
+            <button type="button" onclick="confirmLogout()" class="flex-1 py-4 bg-red-500 text-white font-black rounded-2xl hover:bg-red-600 shadow-xl shadow-red-200 transition-all text-base">Log out</button>
           </div>
         </div>
       </div>
@@ -225,7 +225,7 @@ function injectSidebar() {
               <span class="material-symbols-outlined text-[#006d4b] text-[28px]">settings</span>
               Global Settings
             </h3>
-            <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 transition-colors bg-slate-100 hover:bg-slate-200 p-2 rounded-full flex items-center justify-center">
+            <button type="button" onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 transition-colors bg-slate-100 hover:bg-slate-200 p-2 rounded-full flex items-center justify-center">
               <span class="material-symbols-outlined">close</span>
             </button>
           </div>
@@ -440,8 +440,8 @@ function injectSidebar() {
 
           <!-- Footer (Sticky) -->
           <div class="p-6 md:p-8 border-t border-slate-100 flex justify-end gap-4 shrink-0 bg-white rounded-b-2xl">
-            <button onclick="closeSettingsModal()" class="px-8 py-3 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors shadow-sm">Cancel</button>
-            <button onclick="confirmSaveGlobalSettings()" class="px-8 py-3 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] transition-colors shadow-md flex items-center justify-center gap-2">
+            <button type="button" onclick="closeSettingsModal()" class="px-8 py-3 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors shadow-sm">Cancel</button>
+            <button type="button" onclick="confirmSaveGlobalSettings()" class="px-8 py-3 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] transition-colors shadow-md flex items-center justify-center gap-2">
               <span class="material-symbols-outlined text-[20px]">save</span>
               Save Global Settings
             </button>
@@ -631,10 +631,10 @@ function showConfirmModal(title, message, confirmText, cancelText, onConfirm) {
           <h3 class="text-xl font-bold text-slate-800 mb-2">${title}</h3>
           <p class="text-slate-500 text-sm mb-6">${message}</p>
           <div class="flex gap-3">
-            <button id="${modalId}_cancel" class="flex-1 py-2.5 border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-colors">
+            <button type="button" id="${modalId}_cancel" class="flex-1 py-2.5 border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-colors">
               ${cancelText}
             </button>
-            <button id="${modalId}_confirm" class="flex-1 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] transition-colors shadow-lg shadow-[#006d4b]/20">
+            <button type="button" id="${modalId}_confirm" class="flex-1 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] transition-colors shadow-lg shadow-[#006d4b]/20">
               ${confirmText}
             </button>
           </div>
@@ -678,7 +678,7 @@ function showSuccessModal(title, message) {
           </div>
           <h3 class="text-xl font-bold text-slate-800 mb-2">${title}</h3>
           <p class="text-slate-500 text-sm mb-6">${message}</p>
-          <button id="${modalId}_ok" class="w-full py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] transition-colors shadow-lg shadow-[#006d4b]/20">
+          <button type="button" id="${modalId}_ok" class="w-full py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] transition-colors shadow-lg shadow-[#006d4b]/20">
             ตกลง
           </button>
         </div>

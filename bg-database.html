@@ -131,7 +131,7 @@
             <option value="Buffet / Coffee Break">Buffet / Coffee Break (10.2 × 9.7 cm)</option>
             <option value="Mini Tag">Mini Tag (9 × 9 cm)</option>
           </select>
-          <button id="bulkDeleteBtn" onclick="confirmBulkDelete()" class="hidden ml-auto px-5 py-2.5 bg-red-50 text-red-500 font-bold rounded-xl border border-red-200 hover:bg-red-100 hover:text-red-600 transition-all items-center gap-2 text-sm shadow-sm cursor-pointer whitespace-nowrap">
+          <button type="button" id="bulkDeleteBtn" onclick="confirmBulkDelete()" class="hidden ml-auto px-5 py-2.5 bg-red-50 text-red-500 font-bold rounded-xl border border-red-200 hover:bg-red-100 hover:text-red-600 transition-all items-center gap-2 text-sm shadow-sm cursor-pointer whitespace-nowrap">
              <span class="material-symbols-outlined text-[20px]">delete_sweep</span>
              Delete Selected (<span id="selectedCount">0</span>)
           </button>
@@ -611,7 +611,7 @@
             <span class="material-symbols-outlined text-[#006d4b]">wallpaper</span>
             ตั้งค่า Default Backgrounds
           </h3>
-          <button onclick="closeModal('defaultBgModal')" class="text-slate-400 hover:text-slate-600 transition-colors">
+          <button type="button" onclick="closeModal('defaultBgModal')" class="text-slate-400 hover:text-slate-600 transition-colors">
             <span class="material-symbols-outlined">close</span>
           </button>
         </div>
@@ -623,8 +623,8 @@
         </div>
 
         <div class="mt-6 flex gap-3">
-          <button onclick="closeModal('defaultBgModal')" class="flex-1 py-2 border border-slate-200 text-slate-600 font-bold rounded-lg hover:bg-slate-50 transition-colors text-sm">ยกเลิก</button>
-          <button onclick="confirmSaveDefaultBackgrounds()" class="flex-1 py-2 bg-[#006d4b] text-white font-bold rounded-lg hover:bg-[#005a3d] transition-colors text-sm">บันทึกค่าเริ่มต้น</button>
+          <button type="button" onclick="closeModal('defaultBgModal')" class="flex-1 py-2 border border-slate-200 text-slate-600 font-bold rounded-lg hover:bg-slate-50 transition-colors text-sm">ยกเลิก</button>
+          <button type="button" onclick="confirmSaveDefaultBackgrounds()" class="flex-1 py-2 bg-[#006d4b] text-white font-bold rounded-lg hover:bg-[#005a3d] transition-colors text-sm">บันทึกค่าเริ่มต้น</button>
         </div>
       </div>
     </div>
@@ -787,13 +787,13 @@
             </td>
             <td class="py-5 px-8 text-center">
                 <div class="flex items-center justify-center gap-1">
-                    <button onclick="openViewModal('${bgDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-[#006d4b] hover:bg-emerald-50 rounded-full transition-all cursor-pointer" title="View Details">
+                    <button type="button" onclick="openViewModal('${bgDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-[#006d4b] hover:bg-emerald-50 rounded-full transition-all cursor-pointer" title="View Details">
                         <span class="material-symbols-outlined text-[20px]">visibility</span>
                     </button>
-                    <button onclick="openEditModal('${bgDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all cursor-pointer" title="Edit Background">
+                    <button type="button" onclick="openEditModal('${bgDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all cursor-pointer" title="Edit Background">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
-                    <button onclick="deleteBackground('${bg.id}', '${safeName}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer" title="Delete">
+                    <button type="button" onclick="deleteBackground('${bg.id}', '${safeName}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer" title="Delete">
                         <span class="material-symbols-outlined text-[20px]">delete</span>
                     </button>
                 </div>
@@ -822,29 +822,29 @@
         
         let buttonsHtml = '';
         
-        buttonsHtml += `<button onclick="goToPage(${currentPage - 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === 1 ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`;
+        buttonsHtml += `<button type="button" onclick="goToPage(${currentPage - 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === 1 ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`;
         
         let startPage = Math.max(1, currentPage - 2);
         let endPage = Math.min(totalPages, startPage + 4);
         if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
         
         if (startPage > 1) {
-          buttonsHtml += `<button onclick="goToPage(1)" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">1</button><span class="px-2 text-slate-400">...</span>`;
+          buttonsHtml += `<button type="button" onclick="goToPage(1)" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">1</button><span class="px-2 text-slate-400">...</span>`;
         }
         
         for (let i = startPage; i <= endPage; i++) {
           if (i === currentPage) {
-            buttonsHtml += `<button class="px-3 py-1.5 rounded-lg bg-[#006d4b] text-white border border-[#006d4b] text-[13px] font-bold shadow-sm cursor-default">${i}</button>`;
+            buttonsHtml += `<button type="button" class="px-3 py-1.5 rounded-lg bg-[#006d4b] text-white border border-[#006d4b] text-[13px] font-bold shadow-sm cursor-default">${i}</button>`;
           } else {
-            buttonsHtml += `<button onclick="goToPage(${i})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all">${i}</button>`;
+            buttonsHtml += `<button type="button" onclick="goToPage(${i})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all">${i}</button>`;
           }
         }
         
         if (endPage < totalPages) {
-          buttonsHtml += `<span class="px-2 text-slate-400">...</span><button onclick="goToPage(${totalPages})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">${totalPages}</button>`;
+          buttonsHtml += `<span class="px-2 text-slate-400">...</span><button type="button" onclick="goToPage(${totalPages})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">${totalPages}</button>`;
         }
         
-        buttonsHtml += `<button onclick="goToPage(${currentPage + 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === totalPages ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+        buttonsHtml += `<button type="button" onclick="goToPage(${currentPage + 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === totalPages ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
         
         document.getElementById("paginationButtons").innerHTML = buttonsHtml;
       }

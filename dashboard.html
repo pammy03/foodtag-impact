@@ -534,7 +534,7 @@
           </p>
         </div>
         <div class="flex gap-3 items-center">
-          <button
+          <button type="button"
             onclick="localStorage.removeItem('currentEditId'); window.location.href = 'create.html'"
             class="px-5 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] transition-all flex items-center justify-center gap-2 shadow-sm shadow-[#006d4b]/20 cursor-pointer active:scale-95"
           >
@@ -668,14 +668,14 @@
               class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1 hidden sm:block"
               >Sort by</span
             >
-            <button
+            <button type="button"
               class="sort-btn active px-3 py-1.5 text-xs font-semibold rounded-lg border"
               id="sortNewest"
               onclick="setSortOrder('newest')"
             >
               Newest
             </button>
-            <button
+            <button type="button"
               class="sort-btn px-3 py-1.5 text-xs font-semibold rounded-lg border"
               id="sortOldest"
               onclick="setSortOrder('oldest')"
@@ -734,22 +734,22 @@
           </div>
           <div class="flex items-center gap-3">
             <div id="previewPagination" class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 mr-2 hidden">
-              <button onclick="changePreviewPage(-1)" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+              <button type="button" onclick="changePreviewPage(-1)" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
                 <span class="material-symbols-outlined text-[20px]">chevron_left</span>
               </button>
               <span id="previewPageText" class="text-sm font-bold text-slate-700 min-w-[3rem] text-center">1 / 1</span>
-              <button onclick="changePreviewPage(1)" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+              <button type="button" onclick="changePreviewPage(1)" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
                 <span class="material-symbols-outlined text-[20px]">chevron_right</span>
               </button>
             </div>
-            <button
+            <button type="button"
               id="modalPrintBtn"
               class="bg-[#006d4b] text-white px-5 py-2 rounded-xl font-semibold hover:bg-[#005a3d] transition-all flex items-center gap-2 active:scale-95 shadow-sm"
             >
               <span class="material-symbols-outlined text-[20px]">print</span>
               Print
             </button>
-            <button
+            <button type="button"
               onclick="closePreviewModal()"
               class="w-10 h-10 flex justify-center items-center text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-full transition-colors"
             >
@@ -789,13 +789,13 @@
           คุณแน่ใจหรือไม่ว่าต้องการลบโปรไฟล์นี้?<br />ข้อมูลที่ถูกลบจะไม่สามารถกู้คืนได้
         </p>
         <div class="flex items-center gap-3 w-full">
-          <button
+          <button type="button"
             onclick="closeDeleteModal()"
             class="flex-1 py-2.5 bg-slate-100 text-slate-600 font-semibold rounded-xl hover:bg-slate-200 transition-colors"
           >
             ยกเลิก
           </button>
-          <button
+          <button type="button"
             onclick="executeDelete()"
             class="flex-1 py-2.5 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition-colors active:scale-95"
           >
@@ -825,13 +825,13 @@
           คุณต้องการทำสำเนาโปรไฟล์นี้ใช่หรือไม่?<br />โปรไฟล์ใหม่จะถูกสร้างและเพิ่มลงในรายการ
         </p>
         <div class="flex items-center gap-3 w-full">
-          <button
+          <button type="button"
             onclick="closeDuplicateModal()"
             class="flex-1 py-2.5 bg-slate-100 text-slate-600 font-semibold rounded-xl hover:bg-slate-200 transition-colors"
           >
             ยกเลิก
           </button>
-          <button
+          <button type="button"
             onclick="executeDuplicate()"
             class="flex-1 py-2.5 bg-purple-600 text-white font-semibold rounded-xl hover:bg-purple-700 transition-colors active:scale-95"
           >
@@ -1167,9 +1167,9 @@
             const manageButtons = isStaff
               ? ""
               : `
-                <button onclick="checkAndEditTag('${tag.id}')" title="Edit" class="action-icon-btn flex-shrink-0 flex justify-center items-center rounded-xl bg-slate-50 text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors border border-slate-100"><span class="material-symbols-outlined text-[18px]">edit</span></button>
-                <button onclick="confirmDuplicate('${tag.id}')" title="Duplicate" class="action-icon-btn flex-shrink-0 flex justify-center items-center rounded-xl bg-slate-50 text-slate-400 hover:text-purple-600 hover:bg-purple-50 transition-colors border border-slate-100"><span class="material-symbols-outlined text-[18px]">content_copy</span></button>
-                <button onclick="confirmDelete('${tag.id}')" title="Delete" class="action-icon-btn flex-shrink-0 flex justify-center items-center rounded-xl bg-slate-50 text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors border border-slate-100"><span class="material-symbols-outlined text-[18px]">delete_outline</span></button>
+                <button type="button" onclick="checkAndEditTag('${tag.id}')" title="Edit" class="action-icon-btn flex-shrink-0 flex justify-center items-center rounded-xl bg-slate-50 text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors border border-slate-100"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                <button type="button" onclick="confirmDuplicate('${tag.id}')" title="Duplicate" class="action-icon-btn flex-shrink-0 flex justify-center items-center rounded-xl bg-slate-50 text-slate-400 hover:text-purple-600 hover:bg-purple-50 transition-colors border border-slate-100"><span class="material-symbols-outlined text-[18px]">content_copy</span></button>
+                <button type="button" onclick="confirmDelete('${tag.id}')" title="Delete" class="action-icon-btn flex-shrink-0 flex justify-center items-center rounded-xl bg-slate-50 text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors border border-slate-100"><span class="material-symbols-outlined text-[18px]">delete_outline</span></button>
               `;
 
             const cardHTML = `
@@ -1204,7 +1204,7 @@
                 
                 <div class="list-actions-right flex items-center gap-2 ml-auto shrink-0">
                   ${manageButtons}
-                  <button onclick="${printBtnOnclick}" class="print-btn flex justify-center items-center gap-2 rounded-xl font-semibold transition-colors shadow-sm text-sm ${printBtnClass}"><span class="material-symbols-outlined text-[18px]">print</span> Print</button>
+                  <button type="button" onclick="${printBtnOnclick}" class="print-btn flex justify-center items-center gap-2 rounded-xl font-semibold transition-colors shadow-sm text-sm ${printBtnClass}"><span class="material-symbols-outlined text-[18px]">print</span> Print</button>
                 </div>
               </div>`;
 
@@ -1220,9 +1220,9 @@
             const manageButtons = isStaff
               ? ""
               : `
-                <button onclick="checkAndEditTag('${tag.id}')" title="Edit" class="w-11 h-11 flex-shrink-0 flex justify-center items-center rounded-xl bg-slate-50 text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors border border-slate-100"><span class="material-symbols-outlined text-[20px]">edit</span></button>
-                <button onclick="confirmDuplicate('${tag.id}')" title="Duplicate" class="w-11 h-11 flex-shrink-0 flex justify-center items-center rounded-xl bg-slate-50 text-slate-400 hover:text-purple-600 hover:bg-purple-50 transition-colors border border-slate-100"><span class="material-symbols-outlined text-[20px]">content_copy</span></button>
-                <button onclick="confirmDelete('${tag.id}')" title="Delete" class="w-11 h-11 flex-shrink-0 flex justify-center items-center rounded-xl bg-slate-50 text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors border border-slate-100"><span class="material-symbols-outlined text-[20px]">delete_outline</span></button>
+                <button type="button" onclick="checkAndEditTag('${tag.id}')" title="Edit" class="w-11 h-11 flex-shrink-0 flex justify-center items-center rounded-xl bg-slate-50 text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors border border-slate-100"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+                <button type="button" onclick="confirmDuplicate('${tag.id}')" title="Duplicate" class="w-11 h-11 flex-shrink-0 flex justify-center items-center rounded-xl bg-slate-50 text-slate-400 hover:text-purple-600 hover:bg-purple-50 transition-colors border border-slate-100"><span class="material-symbols-outlined text-[20px]">content_copy</span></button>
+                <button type="button" onclick="confirmDelete('${tag.id}')" title="Delete" class="w-11 h-11 flex-shrink-0 flex justify-center items-center rounded-xl bg-slate-50 text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors border border-slate-100"><span class="material-symbols-outlined text-[20px]">delete_outline</span></button>
               `;
 
             const cardHTML = `
@@ -1257,7 +1257,7 @@
                   
                   <div class="flex items-center gap-2 mt-4">
                     ${manageButtons}
-                    <button onclick="${printBtnOnclick}" class="flex-1 h-11 flex justify-center items-center gap-2 rounded-xl font-semibold transition-colors shadow-sm text-sm ${printBtnClass}"><span class="material-symbols-outlined text-[18px]">print</span> Print</button>
+                    <button type="button" onclick="${printBtnOnclick}" class="flex-1 h-11 flex justify-center items-center gap-2 rounded-xl font-semibold transition-colors shadow-sm text-sm ${printBtnClass}"><span class="material-symbols-outlined text-[18px]">print</span> Print</button>
                   </div>
                 </div>
               </div>`;
@@ -1329,29 +1329,29 @@
             <div class="flex items-center gap-1.5">
         `;
 
-        html += `<button onclick="changePage(${currentPage - 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === 1 ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`;
+        html += `<button type="button" onclick="changePage(${currentPage - 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === 1 ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`;
         
         let startPage = Math.max(1, currentPage - 2);
         let endPage = Math.min(totalPages, startPage + 4);
         if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
         
         if (startPage > 1) {
-          html += `<button onclick="changePage(1)" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">1</button><span class="px-2 text-slate-400">...</span>`;
+          html += `<button type="button" onclick="changePage(1)" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">1</button><span class="px-2 text-slate-400">...</span>`;
         }
         
         for (let i = startPage; i <= endPage; i++) {
           if (i === currentPage) {
-            html += `<button class="px-3 py-1.5 rounded-lg bg-[#006d4b] text-white border border-[#006d4b] text-[13px] font-bold shadow-sm cursor-default">${i}</button>`;
+            html += `<button type="button" class="px-3 py-1.5 rounded-lg bg-[#006d4b] text-white border border-[#006d4b] text-[13px] font-bold shadow-sm cursor-default">${i}</button>`;
           } else {
-            html += `<button onclick="changePage(${i})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all">${i}</button>`;
+            html += `<button type="button" onclick="changePage(${i})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all">${i}</button>`;
           }
         }
         
         if (endPage < totalPages) {
-          html += `<span class="px-2 text-slate-400">...</span><button onclick="changePage(${totalPages})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">${totalPages}</button>`;
+          html += `<span class="px-2 text-slate-400">...</span><button type="button" onclick="changePage(${totalPages})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">${totalPages}</button>`;
         }
         
-        html += `<button onclick="changePage(${currentPage + 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === totalPages ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+        html += `<button type="button" onclick="changePage(${currentPage + 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === totalPages ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
         
         html += `</div></div>`;
         container.innerHTML = html;

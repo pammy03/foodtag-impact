@@ -72,7 +72,7 @@
           </p>
         </div>
         <div class="flex items-center gap-3">
-          <button
+          <button type="button"
             onclick="openUploadFontModal()"
             class="px-5 py-2.5 bg-[#006d4b] text-white font-bold rounded-lg hover:bg-[#005a3e] transition-all flex items-center gap-2 shadow-sm"
           >
@@ -95,12 +95,20 @@
                 class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all shadow-sm text-sm h-[42px]"
               />
             </div>
-            <select id="fontFilter" onchange="filterFonts()" class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10 shrink-0 ml-2 h-[42px]" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.2em;">
-               <option value="newest">อัปโหลดล่าสุด (Newest First)</option>
-               <option value="oldest">อัปโหลดเก่าสุด (Oldest First)</option>
-               <option value="default">ค่าเริ่มต้น (Google Fonts First)</option>
-               <option value="google">เฉพาะ Google Fonts</option>
-            </select>
+            <select
+               id="sortFilter"
+               onchange="filterFonts()"
+               class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10 shrink-0 ml-2 h-[42px]"
+               style="
+                 background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;);
+                 background-repeat: no-repeat;
+                 background-position: right 1rem center;
+                 background-size: 1.2em;
+               "
+             >
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+             </select>
           </div>
         </div>
 
@@ -141,7 +149,7 @@
             <span class="material-symbols-outlined text-[#006d4b]">upload_file</span>
             Upload Custom Font
           </h3>
-          <button onclick="closeUploadFontModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-500 transition-colors">
+          <button type="button" onclick="closeUploadFontModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-500 transition-colors">
             <span class="material-symbols-outlined text-[20px]">close</span>
           </button>
         </div>
@@ -174,10 +182,10 @@
         </div>
 
         <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 bg-slate-50 shrink-0">
-          <button onclick="closeUploadFontModal()" class="px-5 py-2.5 text-slate-600 font-bold hover:bg-slate-200 rounded-xl transition-colors">
+          <button type="button" onclick="closeUploadFontModal()" class="px-5 py-2.5 text-slate-600 font-bold hover:bg-slate-200 rounded-xl transition-colors">
             Cancel
           </button>
-          <button onclick="handleUploadFont()" class="px-5 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3e] transition-colors shadow-sm flex items-center gap-2">
+          <button type="button" onclick="handleUploadFont()" class="px-5 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3e] transition-colors shadow-sm flex items-center gap-2">
             <span class="material-symbols-outlined text-[18px]">save</span>
             Save Font
           </button>
@@ -193,7 +201,7 @@
         </div>
         <h3 class="text-xl font-bold text-slate-800 mb-2" id="customAlertTitle">Success</h3>
         <p class="text-slate-600 mb-6" id="customAlertMessage">Message goes here</p>
-        <button onclick="closeCustomAlert()" class="px-8 py-2.5 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-700 transition-colors shadow-sm w-full">
+        <button type="button" onclick="closeCustomAlert()" class="px-8 py-2.5 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-700 transition-colors shadow-sm w-full">
           ตกลง (OK)
         </button>
       </div>
@@ -254,7 +262,7 @@
         if (!tbody) return;
 
         const query = document.getElementById("searchInput").value.toLowerCase();
-        const filterType = document.getElementById("fontFilter") ? document.getElementById("fontFilter").value : "default";
+        const filterType = document.getElementById("sortFilter") ? document.getElementById("sortFilter").value : "newest";
         
         if (query !== currentSearchQuery) {
           currentPage = 1;
@@ -342,7 +350,7 @@
                 </td>
                 <td class="px-6 py-4 text-slate-500 font-medium">${font.format}</td>
                 <td class="px-6 py-4 flex justify-center">
-                  <button onclick="confirmDeleteCustomFont('${font.name}')" class="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors shadow-sm" title="Delete Font">
+                  <button type="button" onclick="confirmDeleteCustomFont('${font.name}')" class="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors shadow-sm" title="Delete Font">
                     <span class="material-symbols-outlined text-[18px]">delete</span>
                   </button>
                 </td>
@@ -373,29 +381,29 @@
         
         let buttonsHtml = '';
         
-        buttonsHtml += `<button onclick="goToPage(${currentPage - 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === 1 ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`;
+        buttonsHtml += `<button type="button" onclick="goToPage(${currentPage - 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === 1 ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`;
         
         let startPage = Math.max(1, currentPage - 2);
         let endPage = Math.min(totalPages, startPage + 4);
         if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
         
         if (startPage > 1) {
-          buttonsHtml += `<button onclick="goToPage(1)" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">1</button><span class="px-2 text-slate-400">...</span>`;
+          buttonsHtml += `<button type="button" onclick="goToPage(1)" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">1</button><span class="px-2 text-slate-400">...</span>`;
         }
         
         for (let i = startPage; i <= endPage; i++) {
           if (i === currentPage) {
-            buttonsHtml += `<button class="px-3 py-1.5 rounded-lg bg-[#006d4b] text-white border border-[#006d4b] text-[13px] font-bold shadow-sm cursor-default">${i}</button>`;
+            buttonsHtml += `<button type="button" class="px-3 py-1.5 rounded-lg bg-[#006d4b] text-white border border-[#006d4b] text-[13px] font-bold shadow-sm cursor-default">${i}</button>`;
           } else {
-            buttonsHtml += `<button onclick="goToPage(${i})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all">${i}</button>`;
+            buttonsHtml += `<button type="button" onclick="goToPage(${i})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all">${i}</button>`;
           }
         }
         
         if (endPage < totalPages) {
-          buttonsHtml += `<span class="px-2 text-slate-400">...</span><button onclick="goToPage(${totalPages})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">${totalPages}</button>`;
+          buttonsHtml += `<span class="px-2 text-slate-400">...</span><button type="button" onclick="goToPage(${totalPages})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all">${totalPages}</button>`;
         }
         
-        buttonsHtml += `<button onclick="goToPage(${currentPage + 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === totalPages ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+        buttonsHtml += `<button type="button" onclick="goToPage(${currentPage + 1})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-[13px] font-bold transition-all ${currentPage === totalPages ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'}" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
         
         document.getElementById("paginationButtons").innerHTML = buttonsHtml;
       }
