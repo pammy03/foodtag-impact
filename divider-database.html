@@ -1008,7 +1008,7 @@
         const size = document.getElementById("inputBgSize").value;
         const file = document.getElementById("inputBgImage").files[0];
 
-        if (!name || !file) return alert("กรุณากรอกชื่อและอัปโหลดรูปภาพ");
+        if (!name || !file) return alert("Please enter a name and upload an image");
 
         const btn = document.getElementById("saveBgBtn");
         const originalText = btn.innerHTML;
@@ -1079,7 +1079,7 @@
         const name = document.getElementById("editBgName").value.trim();
         const size = document.getElementById("editBgSize").value;
 
-        if (!name) return alert("กรุณากรอกชื่อพื้นหลัง");
+        if (!name) return alert("Please enter a divider name");
 
         const btn = document.getElementById("saveEditBgBtn");
         const originalText = btn.innerHTML;
@@ -1161,7 +1161,7 @@
           closeDeleteModal();
           fetchDividers();
         } catch (e) {
-          alert("ไม่สามารถลบได้: " + e.message);
+          alert("Cannot delete: " + e.message);
         } finally {
           btn.disabled = false;
           btn.innerHTML = `ลบข้อมูล`;
@@ -1225,10 +1225,10 @@
 
       function confirmSaveDefaultBackgrounds() {
         showConfirmModal(
-          "ยืนยันการบันทึก",
-          "คุณต้องการบันทึกการตั้งค่า Default Backgrounds ใช่หรือไม่?",
-          "บันทึก",
-          "ยกเลิก",
+          "Confirm Save",
+          "Are you sure you want to save these Default Dividers?",
+          "Save",
+          "Cancel",
           () => {
             saveDefaultBackgrounds();
           }
@@ -1253,7 +1253,7 @@
         });
         
         localStorage.setItem("defaultDividers", JSON.stringify(defaultBgData));
-        showSuccessModal("บันทึกสำเร็จ", "บันทึกค่า Default Dividers เรียบร้อยแล้ว");
+        showSuccessModal("Success", "Default Dividers saved successfully");
         closeModal("defaultBgModal");
       }
 

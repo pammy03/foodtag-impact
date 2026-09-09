@@ -1015,7 +1015,7 @@ async function downloadPDF() {
 
   } catch (err) {
     console.error("[downloadPDF] Render error:", err);
-    alert("ไม่สามารถสร้าง PDF ได้ กรุณาลองใหม่อีกครั้ง");
+    alert("Cannot generate PDF. Please try again.");
 
   } finally {
     // ล้าง DOM ชั่วคราว

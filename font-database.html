@@ -499,16 +499,16 @@
         if (fileInput.files.length === 0) {
           closeUploadFontModal();
           setTimeout(() => {
-            showCustomAlert("กรุณาเลือกไฟล์ .ttf หรือ .otf อย่างน้อย 1 ไฟล์", true);
+            showCustomAlert("Please select at least one .ttf or .otf file", true);
           }, 300);
           return;
         }
 
         showConfirmModal(
-          "ยืนยันการเพิ่มฟอนต์",
-          `คุณต้องการอัปโหลดและติดตั้งฟอนต์ใหม่จำนวน <strong class="text-[#006d4b]">${fileInput.files.length}</strong> ไฟล์ เข้าสู่ระบบใช่หรือไม่?`,
-          "ยืนยัน",
-          "ยกเลิก",
+          "Confirm Add Font",
+          `Are you sure you want to upload and install <strong class="text-[#006d4b]">${fileInput.files.length}</strong> new fonts to the system?`,
+          "Confirm",
+          "Cancel",
           async () => {
             await executeUploadFont();
           }
@@ -589,8 +589,8 @@
           // Reset file input
           fileInput.value = '';
           
-          let msg = `อัปโหลดฟอนต์ใหม่สำเร็จ ${successCount} ไฟล์`;
-          if (skipCount > 0) msg += `\n(ข้ามไฟล์ชื่อซ้ำ ${skipCount} ไฟล์)`;
+          let msg = `Successfully uploaded ${successCount} new fonts`;
+          if (skipCount > 0) msg += `\n(Skipped ${skipCount} duplicate files)`;
           
           showCustomAlert(msg);
           await loadFontsData();
@@ -598,23 +598,23 @@
           closeUploadFontModal();
           fileInput.value = '';
           setTimeout(() => {
-            showCustomAlert(`ไม่มีการอัปโหลดฟอนต์ใหม่ (ชื่อไฟล์ทั้ง ${skipCount} ไฟล์มีอยู่ในระบบแล้ว)`, true);
+            showCustomAlert(`No new fonts uploaded (all ${skipCount} files already exist in the system)`, true);
           }, 300);
         } else {
           closeUploadFontModal();
           fileInput.value = '';
           setTimeout(() => {
-            showCustomAlert("ไม่พบไฟล์ฟอนต์ที่รองรับ หรือเกิดข้อผิดพลาด", true);
+            showCustomAlert("No supported font files found or an error occurred", true);
           }, 300);
         }
       }
       
       function confirmDeleteCustomFont(fontName) {
         showConfirmModal(
-          "ยืนยันการลบฟอนต์",
-          `คุณแน่ใจหรือไม่ว่าต้องการลบฟอนต์ <strong class="text-slate-800">${fontName}</strong> ออกจากระบบ?<br><span class="text-red-500 font-medium">ข้อมูลจะไม่สามารถกู้คืนได้</span>`,
-          "ลบฟอนต์",
-          "ยกเลิก",
+          "Confirm Delete",
+          `Are you sure you want to delete the font <strong class="text-slate-800">${fontName}</strong> from the system?<br><span class="text-red-500 font-medium">This action cannot be undone.</span>`,
+          "Delete Font",
+          "Cancel",
           async () => {
             try {
               await deleteCustomFontFromDB(fontName);

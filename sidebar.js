@@ -436,6 +436,89 @@ function injectSidebar() {
                 </div>
               </div>
             </div>
+            
+            <!-- Safe Area Settings -->
+            <div class="space-y-4">
+              <h4 class="text-base font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-2"><span class="material-symbols-outlined text-[20px]">margin</span> Safe Area Padding (%)</h4>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-5 p-5 bg-slate-50 rounded-xl border border-slate-200">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-600 mb-3 border-b border-slate-200 pb-1">Plate Service</label>
+                  <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                      <span class="text-[10px] font-bold text-slate-400 w-8 uppercase">Top:</span>
+                      <div class="relative w-full">
+                        <input type="number" id="defSafePlateTop" class="w-full pl-2 pr-6 py-1.5 text-xs text-right bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="15">
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">%</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-[10px] font-bold text-slate-400 w-8 uppercase">Bot:</span>
+                      <div class="relative w-full">
+                        <input type="number" id="defSafePlateBot" class="w-full pl-2 pr-6 py-1.5 text-xs text-right bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="15">
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">%</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-600 mb-3 border-b border-slate-200 pb-1">Western Set</label>
+                  <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                      <span class="text-[10px] font-bold text-slate-400 w-8 uppercase">Top:</span>
+                      <div class="relative w-full">
+                        <input type="number" id="defSafeWesternTop" class="w-full pl-2 pr-6 py-1.5 text-xs text-right bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="20">
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">%</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-[10px] font-bold text-slate-400 w-8 uppercase">Bot:</span>
+                      <div class="relative w-full">
+                        <input type="number" id="defSafeWesternBot" class="w-full pl-2 pr-6 py-1.5 text-xs text-right bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="15">
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">%</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-600 mb-3 border-b border-slate-200 pb-1">Buffet / Break</label>
+                  <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                      <span class="text-[10px] font-bold text-slate-400 w-8 uppercase">Top:</span>
+                      <div class="relative w-full">
+                        <input type="number" id="defSafeBuffetTop" class="w-full pl-2 pr-6 py-1.5 text-xs text-right bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="15">
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">%</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-[10px] font-bold text-slate-400 w-8 uppercase">Bot:</span>
+                      <div class="relative w-full">
+                        <input type="number" id="defSafeBuffetBot" class="w-full pl-2 pr-6 py-1.5 text-xs text-right bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="15">
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">%</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-600 mb-3 border-b border-slate-200 pb-1">Mini Tag</label>
+                  <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                      <span class="text-[10px] font-bold text-slate-400 w-8 uppercase">Top:</span>
+                      <div class="relative w-full">
+                        <input type="number" id="defSafeMiniTop" class="w-full pl-2 pr-6 py-1.5 text-xs text-right bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="12">
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">%</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-[10px] font-bold text-slate-400 w-8 uppercase">Bot:</span>
+                      <div class="relative w-full">
+                        <input type="number" id="defSafeMiniBot" class="w-full pl-2 pr-6 py-1.5 text-xs text-right bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="12">
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">%</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Footer (Sticky) -->
@@ -734,7 +817,11 @@ function getGlobalSettings() {
     fontSizeEn: "22px",
     iconSizeMain: "61px",
     iconSizeContain: "61px",
-    dividerStyle: "line"
+    dividerStyle: "line",
+    safePlateTop: "15", safePlateBot: "15",
+    safeWesternTop: "20", safeWesternBot: "15",
+    safeBuffetTop: "15", safeBuffetBot: "15",
+    safeMiniTop: "12", safeMiniBot: "12"
   };
 }
 
@@ -835,6 +922,15 @@ function openSettingsModal() {
     setVal("defHeaderFontColorText", settings.headerFontColor.toUpperCase());
   }
 
+  setVal("defSafePlateTop", settings.safePlateTop);
+  setVal("defSafePlateBot", settings.safePlateBot);
+  setVal("defSafeWesternTop", settings.safeWesternTop);
+  setVal("defSafeWesternBot", settings.safeWesternBot);
+  setVal("defSafeBuffetTop", settings.safeBuffetTop);
+  setVal("defSafeBuffetBot", settings.safeBuffetBot);
+  setVal("defSafeMiniTop", settings.safeMiniTop);
+  setVal("defSafeMiniBot", settings.safeMiniBot);
+
   const modal = document.getElementById("settingsModal");
   if (modal) {
     modal.classList.remove("hidden");
@@ -873,10 +969,10 @@ function closeSettingsModal() {
 
 function confirmSaveGlobalSettings() {
   showConfirmModal(
-    "ยืนยันการบันทึก",
-    "คุณต้องการบันทึกการเปลี่ยนแปลงการตั้งค่าพื้นฐาน (Global Settings) ใช่หรือไม่?",
-    "บันทึก",
-    "ยกเลิก",
+    "Confirm Save",
+    "Are you sure you want to save changes to Global Settings?",
+    "Save",
+    "Cancel",
     () => {
       saveGlobalSettings();
     }
@@ -911,7 +1007,15 @@ async function saveGlobalSettings() {
     headerFont: document.getElementById("defHeaderFont").value,
     headerFontSize: document.getElementById("defHeaderFontSize").value + "px",
     headerFontColor: document.getElementById("defHeaderFontColor").value,
-    dividerStyle: document.getElementById("defDividerStyle").value
+    dividerStyle: document.getElementById("defDividerStyle").value,
+    safePlateTop: document.getElementById("defSafePlateTop").value,
+    safePlateBot: document.getElementById("defSafePlateBot").value,
+    safeWesternTop: document.getElementById("defSafeWesternTop").value,
+    safeWesternBot: document.getElementById("defSafeWesternBot").value,
+    safeBuffetTop: document.getElementById("defSafeBuffetTop").value,
+    safeBuffetBot: document.getElementById("defSafeBuffetBot").value,
+    safeMiniTop: document.getElementById("defSafeMiniTop").value,
+    safeMiniBot: document.getElementById("defSafeMiniBot").value
   };
 
   localStorage.setItem("globalDefaultSettings", JSON.stringify(settings));
@@ -926,7 +1030,7 @@ async function saveGlobalSettings() {
     }
   }
 
-  showSuccessModal("บันทึกสำเร็จ", "บันทึกค่าเริ่มต้นลงฐานข้อมูลเรียบร้อยแล้ว");
+  showSuccessModal("Success", "Global Settings saved successfully");
   closeSettingsModal();
   window.dispatchEvent(new CustomEvent('globalSettingsUpdated'));
 }

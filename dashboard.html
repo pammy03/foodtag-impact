@@ -1149,7 +1149,7 @@
             ? "bg-slate-300 text-white cursor-not-allowed"
             : "bg-slate-800 hover:bg-black text-white active:scale-95";
           const printBtnOnclick = isDraft
-            ? "alert('⚠️ โปรไฟล์นี้ยังตั้งสถานะเป็น Draft อยู่ (ยังทำไม่เสร็จ)\\nหากต้องการพิมพ์ กรุณาเข้าไป Edit และกดเปลี่ยนสถานะเป็น Ready ก่อนครับ')"
+            ? "alert('⚠️ This profile is still in Draft status.\\nIf you want to print, please edit and change the status to Ready first.')"
             : `executePrint('${tag.id}')`;
 
           const dateObj = new Date(tag.createdAt);
@@ -1289,7 +1289,7 @@
             const now = Date.now();
             // ถ้าล็อกไว้ไม่เกิน 30 นาที (1800000 ms) ถือว่ากำลังแก้ไขอยู่จริง
             if (now - lockTime < 1800000) {
-                alert(`⚠️ ไม่สามารถแก้ไขได้ในขณะนี้\\nคุณ ${lock.lockedByName} กำลังแก้ไขโปรไฟล์นี้อยู่ครับ`);
+                alert(`⚠️ Cannot edit right now.\\nUser ${lock.lockedByName} is currently editing this profile.`);
                 return;
             }
         }
@@ -1759,7 +1759,7 @@
         // เช็คว่า Draft ห้ามปริ้น (ดักไว้เผื่อถูกเรียกผ่านทางอื่น)
         if (tag.status === "Draft") {
           alert(
-            "⚠️ โปรไฟล์นี้ยังตั้งสถานะเป็น Draft อยู่ (ยังทำไม่เสร็จ)\nหากต้องการพิมพ์ กรุณาเข้าไป Edit และกดเปลี่ยนสถานะเป็น Ready ก่อนครับ",
+            "⚠️ This profile is still in Draft status.\nIf you want to print, please edit and change the status to Ready first.",
           );
           return;
         }

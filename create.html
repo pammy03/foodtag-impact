@@ -529,6 +529,7 @@
             </div>
           </div>
 
+
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
             <div>
               <label
@@ -654,12 +655,12 @@
                 <div class="flex items-center gap-2.5">
                     <div id="currentColorDisplayTh" onclick="document.getElementById('fontColorPickerTh').click()" class="w-6 h-6 rounded-full shadow-sm ring-2 ring-offset-2 transition-all cursor-pointer" style="background-color: #d32f2f; --tw-ring-color: #d32f2f;"></div>
                     <div class="relative w-7 h-7">
-                      <input type="color" id="fontColorPickerTh" oninput="changeFontColorTh" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                      <input type="color" id="fontColorPickerTh" oninput="changeFontColorTh(this.value)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
                       <div class="absolute inset-0 w-full h-full rounded-md bg-[#2d3748] text-white flex items-center justify-center shadow-sm pointer-events-none">
                         <span class="material-symbols-outlined text-[14px]">colorize</span>
                       </div>
                     </div>
-                    <input type="text" id="hexInputTh" onchange="changeFontColorTh" onkeyup="if(event.key === 'Enter') changeFontColorTh" class="flex-1 min-w-[80px] px-2 py-1.5 text-[12px] font-mono uppercase text-slate-600 border border-slate-200 rounded-lg outline-none focus:border-[#006d4b] focus:ring-2 focus:ring-[#006d4b] placeholder:text-slate-300" placeholder="#HEX">
+                    <input type="text" id="hexInputTh" onchange="changeFontColorTh(this.value)" onkeyup="if(event.key === 'Enter') changeFontColorTh(this.value)" class="flex-1 min-w-[80px] px-2 py-1.5 text-[12px] font-mono uppercase text-slate-600 border border-slate-200 rounded-lg outline-none focus:border-[#006d4b] focus:ring-2 focus:ring-[#006d4b] placeholder:text-slate-300" placeholder="#HEX">
                   </div>
               </div>
             </div>
@@ -718,12 +719,12 @@
                 <div class="flex items-center gap-2.5">
                     <div id="currentColorDisplayEn" onclick="document.getElementById('fontColorPickerEn').click()" class="w-6 h-6 rounded-full shadow-sm ring-2 ring-offset-2 transition-all cursor-pointer" style="background-color: #d32f2f; --tw-ring-color: #d32f2f;"></div>
                     <div class="relative w-7 h-7">
-                      <input type="color" id="fontColorPickerEn" oninput="changeFontColorEn" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                      <input type="color" id="fontColorPickerEn" oninput="changeFontColorEn(this.value)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
                       <div class="absolute inset-0 w-full h-full rounded-md bg-[#2d3748] text-white flex items-center justify-center shadow-sm pointer-events-none">
                         <span class="material-symbols-outlined text-[14px]">colorize</span>
                       </div>
                     </div>
-                    <input type="text" id="hexInputEn" onchange="changeFontColorEn" onkeyup="if(event.key === 'Enter') changeFontColorEn" class="flex-1 min-w-[80px] px-2 py-1.5 text-[12px] font-mono uppercase text-slate-600 border border-slate-200 rounded-lg outline-none focus:border-[#006d4b] focus:ring-2 focus:ring-[#006d4b] placeholder:text-slate-300" placeholder="#HEX">
+                    <input type="text" id="hexInputEn" onchange="changeFontColorEn(this.value)" onkeyup="if(event.key === 'Enter') changeFontColorEn(this.value)" class="flex-1 min-w-[80px] px-2 py-1.5 text-[12px] font-mono uppercase text-slate-600 border border-slate-200 rounded-lg outline-none focus:border-[#006d4b] focus:ring-2 focus:ring-[#006d4b] placeholder:text-slate-300" placeholder="#HEX">
                   </div>
               </div>
             </div>
@@ -784,15 +785,8 @@
               <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Menu Divider</label>
               <select id="dividerStyle" onchange="changeDividerStyle(this.value)" class="w-full pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600 appearance-none font-semibold" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;">
                 <option value="line">Basic Line</option>
-                <option value="custom">Custom Image</option>
                 <option value="none">None</option>
               </select>
-              <div id="customDividerUploadSection" class="mt-2 hidden">
-                <input type="file" id="customDividerInput" accept="image/*" class="hidden" onchange="handleCustomDividerUpload(event)">
-                <button type="button" onclick="document.getElementById('customDividerInput').click()" class="w-full flex items-center justify-center gap-2 px-3 py-1.5 text-xs font-bold text-[#006d4b] bg-white border border-[#006d4b] hover:bg-[#f0f9f4] rounded-lg transition-colors">
-                  <span class="material-symbols-outlined text-[16px]">upload</span> Upload Custom Image
-                </button>
-              </div>
             </div>
           </div>
 
@@ -1122,17 +1116,17 @@
         <div class="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-amber-100">
           <span class="material-symbols-outlined text-3xl">warning</span>
         </div>
-        <h3 class="text-xl font-bold text-slate-800 mb-2">ต้องการบันทึกข้อมูลหรือไม่?</h3>
-        <p class="text-sm text-slate-500 mb-6 leading-relaxed">คุณมีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก<br>หากออกจากหน้านี้โดยไม่บันทึก ข้อมูลจะสูญหาย</p>
+        <h3 class="text-xl font-bold text-slate-800 mb-2">Do you want to save your changes?</h3>
+        <p class="text-sm text-slate-500 mb-6 leading-relaxed">You have unsaved changes.<br>If you leave this page without saving, your changes will be lost.</p>
         <div class="flex gap-3 w-full flex-col mt-2">
           <button type="button" onclick="closeLeaveModal(); showSaveModal();" class="w-full py-3 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-md transition-colors flex justify-center items-center gap-2">
-            <span class="material-symbols-outlined text-[18px]">save</span> บันทึกข้อมูล
+            <span class="material-symbols-outlined text-[18px]">save</span> Save Changes
           </button>
           <button type="button" onclick="window.location.href = 'dashboard.html'" class="w-full py-3 bg-red-50 border border-red-200 text-red-600 font-bold rounded-xl hover:bg-red-100 transition-colors">
-            ออกโดยไม่บันทึก
+            Leave without saving
           </button>
           <button type="button" onclick="closeLeaveModal()" class="w-full py-2 text-slate-500 font-medium hover:text-slate-700 transition-colors">
-            ยกเลิก
+            Cancel
           </button>
         </div>
       </div>
@@ -1351,10 +1345,10 @@
         >
           <div>
             <h3 class="text-[16px] font-bold text-slate-800">
-              ปรับ Ingredients สำหรับงานนี้
+              Adjust Ingredients for this tag
             </h3>
             <p class="text-xs text-slate-400 mt-0.5" id="adjustModalSlotLabel">
-              ไม่กระทบข้อมูลเมนูต้นฉบับ
+              Does not affect original menu data
             </p>
           </div>
           <button type="button"
@@ -1384,7 +1378,7 @@
                 class="flex items-center gap-1 px-3 py-1 bg-white border border-red-200 text-red-600 text-xs font-bold rounded-full hover:bg-red-50 transition-colors"
               >
                 <span class="material-symbols-outlined text-[14px]">add</span>
-                เพิ่ม
+                Add
               </button>
             </div>
             <div
@@ -1412,7 +1406,7 @@
                 class="flex items-center gap-1 px-3 py-1 bg-white border border-emerald-200 text-emerald-700 text-xs font-bold rounded-full hover:bg-emerald-50 transition-colors"
               >
                 <span class="material-symbols-outlined text-[14px]">add</span>
-                เพิ่ม
+                Add
               </button>
             </div>
             <div
@@ -1429,13 +1423,13 @@
             onclick="closeAdjustIngredientsModal()"
             class="px-5 py-2 border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-colors text-sm"
           >
-            ยกเลิก
+            Cancel
           </button>
           <button type="button"
             onclick="confirmAdjustIngredients()"
             class="px-5 py-2 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-sm transition-colors text-sm"
           >
-            ใช้งาน
+            Apply
           </button>
         </div>
       </div>
@@ -1552,6 +1546,8 @@
       let totalPages = 1;
       let currentSearchResults = [];
 
+      const globalSets = typeof getGlobalSettings === "function" ? getGlobalSettings() : {};
+
       const TEMPLATE_CONFIGS = {
         plate: {
           name: "Plate / Food Stall",
@@ -1559,13 +1555,15 @@
           slots_count: 2,
           grid_class: "grid-plate",
           hide_allergies: false,
+          padding: `${globalSets.safePlateTop || '15'}% 5% ${globalSets.safePlateBot || '15'}% 5%`,
         },
         western: {
           name: "Western Set",
           orientation: "portrait",
           slots_count: 4,
           grid_class: "grid-western",
-          hide_allergies: false,
+          hide_allergies: true,
+          padding: `${globalSets.safeWesternTop || '20'}% 5% ${globalSets.safeWesternBot || '15'}% 5%`,
         },
         buffet: {
           name: "Buffet / Coffee Break",
@@ -1573,6 +1571,7 @@
           slots_count: 4,
           grid_class: "grid-buffet",
           hide_allergies: false,
+          padding: `${globalSets.safeBuffetTop || '15'}% 5% ${globalSets.safeBuffetBot || '15'}% 5%`,
         },
         mini: {
           name: "Mini Tag",
@@ -1580,6 +1579,7 @@
           slots_count: 6,
           grid_class: "grid-mini",
           hide_allergies: false,
+          padding: `${globalSets.safeMiniTop || '12'}% 5% ${globalSets.safeMiniBot || '12'}% 5%`,
         },
       };
 
@@ -2040,20 +2040,6 @@
           return;
         }
 
-        let allMainAllergensMap = new Map();
-        let allAllergensMap = new Map();
-        menusToRender.forEach(m => {
-          if (m.main_allergens && Array.isArray(m.main_allergens)) {
-            m.main_allergens.forEach(a => { if (a.id) allMainAllergensMap.set(a.id, a); });
-          }
-          if (m.allergens && Array.isArray(m.allergens)) {
-            m.allergens.forEach(a => { if (a.id) allAllergensMap.set(a.id, a); });
-          }
-        });
-        const combinedMainAllergens = Array.from(allMainAllergensMap.values());
-        const combinedAllergens = Array.from(allAllergensMap.values());
-
-
         const fTh = menu.fontTh || globalSettings.fontTh;
         const sTh = menu.fontSizeTh || globalSettings.fontSizeTh;
         const cTh = menu.fontColorTh || globalSettings.fontColorTh || "#1e293b";
@@ -2068,106 +2054,11 @@
           ? `width: ${menu.allergenIconSizeContain}px !important; height: ${menu.allergenIconSizeContain}px !important;`
           : `width: ${globalSettings.iconSizeContain} !important; height: ${globalSettings.iconSizeContain} !important;`;
 
-        let fullAllergensHtml = "";
-
-        if (showAllergies) {
-          let mainHtml = "";
-          const labelContainText = menu.labelContainText !== undefined ? menu.labelContainText : (globalSettings.labelContainText || "CONTAIN");
-          const labelContainColor = menu.labelContainColor || globalSettings.labelContainColor || "#d32f2f";
-          const labelContainSize = menu.labelContainSize ? menu.labelContainSize + 'px' : (globalSettings.labelContainSize ? globalSettings.labelContainSize + 'px' : '10px');
-          const labelContainFont = menu.labelContainFont || globalSettings.labelContainFont || "'Aptos', sans-serif";
-
-          if (
-            combinedMainAllergens &&
-            Array.isArray(combinedMainAllergens) &&
-            combinedMainAllergens.length > 0
-          ) {
-            const sortedMainAllergens = sortMeatsFirst(combinedMainAllergens);
-            const icons = sortedMainAllergens
-              .map((a) => {
-                const imgUrl = a.icon_url || a.image_url || "";
-                const nameText = a.name_th || a.name_en || "";
-                if (!imgUrl || imgUrl.trim() === "") {
-                  return `<div class="allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-red-50 border border-dashed border-red-400 shadow-[0_0_10px_rgba(239,68,68,0.3)]" style="${sizeMainStyle}; display: flex !important; border-radius: 50%; padding: 2px;" title="${nameText}">
-                            <span style="font-size: 8px; font-weight: bold; color: #ef4444; line-height: 1.1;">NO IMG</span>
-                            <span style="font-size: 7px; color: #ef4444; line-height: 1; margin-top: 2px; word-break: break-word;">${nameText.substring(0, 12)}</span>
-                          </div>`;
-                }
-                return `<img src="${imgUrl}" class="allergen-icon" style="${sizeMainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.outerHTML='<div class=\\'allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-red-50 border border-dashed border-red-400\\' style=\\'${sizeMainStyle}; display: flex !important; border-radius: 50%; padding: 2px;\\'><span style=\\'font-size: 8px; font-weight: bold; color: #ef4444; line-height: 1.1;\\'>NO IMG</span></div>'">`;
-              })
-              .join("");
-
-            const labelText = menu.labelContainText !== undefined ? menu.labelContainText : "CONTAIN";
-            const labelColor = menu.labelContainColor || "#d32f2f";
-            const labelSize = menu.labelContainSize ? menu.labelContainSize + 'px' : '10px';
-            mainHtml = `
-              <div class="w-full mt-2">
-                <div class="font-black tracking-widest text-center mb-1 w-full uppercase" style="font-family: ${labelContainFont}; color: ${labelColor}; font-size: ${labelSize}; line-height: 1.1;">${labelText}</div>
-                <div class="allergen-container">${icons}</div>
-              </div>`;
-          }
-
-          let containHtml = "";
-          if (
-            combinedAllergens &&
-            Array.isArray(combinedAllergens) &&
-            combinedAllergens.length > 0
-          ) {
-            const sortedAllergens = sortMeatsFirst(combinedAllergens);
-            const icons = sortedAllergens
-              .map((a) => {
-                const imgUrl = a.icon_url || a.image_url || "";
-                const nameText = a.name_th || a.name_en || "";
-                if (!imgUrl || imgUrl.trim() === "") {
-                  return `<div class="allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-emerald-50 border border-dashed border-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.3)]" style="${sizeContainStyle}; display: flex !important; border-radius: 50%; padding: 2px;" title="${nameText}">
-                            <span style="font-size: 8px; font-weight: bold; color: #10b981; line-height: 1.1;">NO IMG</span>
-                            <span style="font-size: 7px; color: #10b981; line-height: 1; margin-top: 2px; word-break: break-word;">${nameText.substring(0, 12)}</span>
-                          </div>`;
-                }
-                return `<img src="${imgUrl}" class="allergen-icon" style="${sizeContainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.outerHTML='<div class=\\'allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-emerald-50 border border-dashed border-emerald-400\\' style=\\'${sizeContainStyle}; display: flex !important; border-radius: 50%; padding: 2px;\\'><span style=\\'font-size: 8px; font-weight: bold; color: #10b981; line-height: 1.1;\\'>NO IMG</span></div>'">`;
-              })
-              .join("");
-
-            const labelText = menu.labelMayContainText !== undefined ? menu.labelMayContainText : "MAY CONTAIN";
-            const labelColor = menu.labelMayContainColor || "#d32f2f";
-            const labelSize = menu.labelMayContainSize ? menu.labelMayContainSize + 'px' : '10px';
-            const labelMayContainFont = menu.labelMayContainFont || globalSettings.labelMayContainFont || "'Aptos', sans-serif";
-            containHtml = `
-              <div class="w-full mt-2">
-                <div class="font-black tracking-widest text-center mb-1 w-full uppercase" style="font-family: ${labelMayContainFont}; color: ${labelColor}; font-size: ${labelSize}; line-height: 1.1;">${labelText}</div>
-                <div class="allergen-container">${icons}</div>
-              </div>`;
-          }
-
-          if (mainHtml || containHtml) {
-            const titleText = menu.labelTitleText !== undefined ? menu.labelTitleText : (globalSettings.labelTitleText || "Allergens");
-            const titleColor = menu.labelTitleColor || globalSettings.labelTitleColor || "#d32f2f";
-            const titleSize = menu.labelTitleSize ? menu.labelTitleSize + 'px' : (globalSettings.labelTitleSize ? globalSettings.labelTitleSize + 'px' : '12px');
-            const showLines = menu.labelTitleLines !== undefined ? menu.labelTitleLines : (globalSettings.labelTitleLines !== undefined ? globalSettings.labelTitleLines : true);
-            const lineHtml = showLines ? '<div class="flex-grow border-t border-[#d4d4d4]"></div>' : '';
-            const titleFont = menu.labelTitleFont || globalSettings.labelTitleFont || "'Aptos', sans-serif";
-            
-            const allergensTitleHtml = `
-              <div class="w-[85%] mx-auto flex items-center justify-center mb-0.5 mt-1">
-                ${lineHtml}
-                <div class="mx-3 font-bold" style="font-family: ${titleFont}; color: ${titleColor}; font-size: ${titleSize};">${titleText}</div>
-                ${lineHtml}
-              </div>`;
-            fullAllergensHtml = `<div class="w-full flex flex-col items-center mt-1 space-y-1.5">${allergensTitleHtml}${mainHtml}${containHtml}</div>`;
-          }
-        }
-
         const currentDividerStyle = menu.dividerStyle || globalSettings.dividerStyle || "line";
         let dividerHtml = "";
         
         if (currentDividerStyle === "line") {
           dividerHtml = `<div class="w-full flex justify-center items-center my-3"><div class="w-2/3 border-t border-slate-400/60"></div></div>`;
-        } else if (currentDividerStyle === "custom" && menu.customDividerImage) {
-          dividerHtml = `
-            <div class="w-full flex justify-center items-center my-3">
-              <img src="${menu.customDividerImage}" alt="Custom Divider" style="max-height: 20px; width: auto; object-fit: contain;">
-            </div>
-          `;
         } else if (currentDividerStyle.startsWith("http")) {
           dividerHtml = `
             <div class="w-full flex justify-center items-center my-3">
@@ -2177,10 +2068,94 @@
         }
 
         const menuItemsHtml = menusToRender.map((m, idx) => {
+           const thSizeVal = parseInt(sTh) || 22;
+           const enSizeVal = parseInt(sEn) || 22;
+           const thWhitespaceClass = thSizeVal <= 19 ? '!whitespace-normal' : 'whitespace-pre-line';
+           const enWhitespaceClass = enSizeVal <= 19 ? '!whitespace-normal' : 'whitespace-pre-line';
+
+           let menuAllergensHtml = "";
+
+           if (showAllergies) {
+             let mainHtml = "";
+             const labelContainText = menu.labelContainText !== undefined ? menu.labelContainText : (globalSettings.labelContainText || "CONTAIN");
+             const labelContainColor = menu.labelContainColor || globalSettings.labelContainColor || "#d32f2f";
+             const labelContainSize = menu.labelContainSize ? menu.labelContainSize + 'px' : (globalSettings.labelContainSize ? globalSettings.labelContainSize + 'px' : '10px');
+             const labelContainFont = menu.labelContainFont || globalSettings.labelContainFont || "'Aptos', sans-serif";
+
+             if (m.main_allergens && Array.isArray(m.main_allergens) && m.main_allergens.length > 0) {
+               const sortedMainAllergens = sortMeatsFirst(m.main_allergens);
+               const icons = sortedMainAllergens
+                 .map((a) => {
+                   const imgUrl = a.icon_url || a.image_url || "";
+                   const nameText = a.name_th || a.name_en || "";
+                   if (!imgUrl || imgUrl.trim() === "") {
+                     return `<div class="allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-red-50 border border-dashed border-red-400 shadow-[0_0_10px_rgba(239,68,68,0.3)]" style="${sizeMainStyle}; display: flex !important; border-radius: 50%; padding: 2px;" title="${nameText}">
+                               <span style="font-size: 8px; font-weight: bold; color: #ef4444; line-height: 1.1;">NO IMG</span>
+                               <span style="font-size: 7px; color: #ef4444; line-height: 1; margin-top: 2px; word-break: break-word;">${nameText.substring(0, 12)}</span>
+                             </div>`;
+                   }
+                   return `<img src="${imgUrl}" class="allergen-icon" style="${sizeMainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.outerHTML='<div class=\\'allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-red-50 border border-dashed border-red-400\\' style=\\'${sizeMainStyle}; display: flex !important; border-radius: 50%; padding: 2px;\\'><span style=\\'font-size: 8px; font-weight: bold; color: #ef4444; line-height: 1.1;\\'>NO IMG</span></div>'">`;
+                 })
+                 .join("");
+
+               mainHtml = `
+                 <div class="w-full mt-2">
+                   <div class="font-black tracking-widest text-center mb-1 w-full uppercase" style="font-family: ${labelContainFont}; color: ${labelContainColor}; font-size: ${labelContainSize}; line-height: 1.1;">${labelContainText}</div>
+                   <div class="allergen-container">${icons}</div>
+                 </div>`;
+             }
+
+             let containHtml = "";
+             if (m.allergens && Array.isArray(m.allergens) && m.allergens.length > 0) {
+               const sortedAllergens = sortMeatsFirst(m.allergens);
+               const icons = sortedAllergens
+                 .map((a) => {
+                   const imgUrl = a.icon_url || a.image_url || "";
+                   const nameText = a.name_th || a.name_en || "";
+                   if (!imgUrl || imgUrl.trim() === "") {
+                     return `<div class="allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-emerald-50 border border-dashed border-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.3)]" style="${sizeContainStyle}; display: flex !important; border-radius: 50%; padding: 2px;" title="${nameText}">
+                               <span style="font-size: 8px; font-weight: bold; color: #10b981; line-height: 1.1;">NO IMG</span>
+                               <span style="font-size: 7px; color: #10b981; line-height: 1; margin-top: 2px; word-break: break-word;">${nameText.substring(0, 12)}</span>
+                             </div>`;
+                   }
+                   return `<img src="${imgUrl}" class="allergen-icon" style="${sizeContainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.outerHTML='<div class=\\'allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-emerald-50 border border-dashed border-emerald-400\\' style=\\'${sizeContainStyle}; display: flex !important; border-radius: 50%; padding: 2px;\\'><span style=\\'font-size: 8px; font-weight: bold; color: #10b981; line-height: 1.1;\\'>NO IMG</span></div>'">`;
+                 })
+                 .join("");
+
+               const labelText = menu.labelMayContainText !== undefined ? menu.labelMayContainText : "MAY CONTAIN";
+               const labelColor = menu.labelMayContainColor || "#d32f2f";
+               const labelSize = menu.labelMayContainSize ? menu.labelMayContainSize + 'px' : '10px';
+               const labelMayContainFont = menu.labelMayContainFont || globalSettings.labelMayContainFont || "'Aptos', sans-serif";
+               containHtml = `
+                 <div class="w-full mt-2">
+                   <div class="font-black tracking-widest text-center mb-1 w-full uppercase" style="font-family: ${labelMayContainFont}; color: ${labelColor}; font-size: ${labelSize}; line-height: 1.1;">${labelText}</div>
+                   <div class="allergen-container">${icons}</div>
+                 </div>`;
+             }
+
+             if (mainHtml || containHtml) {
+               const titleText = menu.labelTitleText !== undefined ? menu.labelTitleText : (globalSettings.labelTitleText || "Allergens");
+               const titleColor = menu.labelTitleColor || globalSettings.labelTitleColor || "#d32f2f";
+               const titleSize = menu.labelTitleSize ? menu.labelTitleSize + 'px' : (globalSettings.labelTitleSize ? globalSettings.labelTitleSize + 'px' : '12px');
+               const showLines = menu.labelTitleLines !== undefined ? menu.labelTitleLines : (globalSettings.labelTitleLines !== undefined ? globalSettings.labelTitleLines : true);
+               const lineHtml = showLines ? '<div class="flex-grow border-t border-[#d4d4d4]"></div>' : '';
+               const titleFont = menu.labelTitleFont || globalSettings.labelTitleFont || "'Aptos', sans-serif";
+               
+               const allergensTitleHtml = `
+                 <div class="w-[85%] mx-auto flex items-center justify-center mb-0.5 mt-1">
+                   ${lineHtml}
+                   <div class="mx-3 font-bold" style="font-family: ${titleFont}; color: ${titleColor}; font-size: ${titleSize};">${titleText}</div>
+                   ${lineHtml}
+                 </div>`;
+               menuAllergensHtml = `<div class="w-full flex flex-col items-center mt-1 space-y-1.5">${allergensTitleHtml}${mainHtml}${containHtml}</div>`;
+             }
+           }
+
            return `
                <div class="menu-item-group mb-2 last:mb-0 w-full flex flex-col items-center">
-               ${m.name_th ? `<div class="slot-text-th font-black mb-0.5 leading-tight text-center whitespace-pre-line w-full max-w-full break-words relative" style="font-family: ${fTh}; font-size: ${sTh}; color: ${cTh};">${m.name_th}</div>` : ''}
-               ${m.name_en ? `<div class="slot-text-en font-medium leading-tight text-center whitespace-pre-line w-full max-w-full break-words relative ${menu.uppercaseEn ? 'uppercase' : ''}" style="font-family: ${fEn}; font-size: ${sEn}; color: ${cEn};">${m.name_en}</div>` : ''}
+               ${m.name_th ? `<div class="slot-text-th font-black mb-0.5 leading-tight text-center ${thWhitespaceClass} w-full max-w-full break-words relative" style="font-family: ${fTh}; font-size: ${sTh}; color: ${cTh};">${m.name_th}</div>` : ''}
+               ${m.name_en ? `<div class="slot-text-en font-medium leading-tight text-center ${enWhitespaceClass} w-full max-w-full break-words relative ${menu.uppercaseEn ? 'uppercase' : ''}" style="font-family: ${fEn}; font-size: ${sEn}; color: ${cEn};">${m.name_en}</div>` : ''}
+               ${menuAllergensHtml}
              </div>
            `;
         }).join(dividerHtml);
@@ -2193,12 +2168,13 @@
             headerHtml = `<div class="w-full text-center mb-3 font-bold" style="font-family: ${hFont}; font-size: ${hSize}; color: ${hColor};">${menu.headerText}</div>`;
         }
 
+        const padStyle = currentTemplateConfig.padding ? `padding: ${currentTemplateConfig.padding}; box-sizing: border-box; height: 100%; display: flex; flex-direction: column; justify-content: center;` : '';
+
         element.innerHTML = `
             ${bgHtml}
-            <div class="slot-content">
+            <div class="slot-content" style="${padStyle}">
               ${headerHtml}
               ${menuItemsHtml}
-              ${fullAllergensHtml}
             </div>
         `;
       }
@@ -2547,7 +2523,7 @@
         document.getElementById("fontSizeEn").value = parseInt(
           menu.fontSizeEn || globalSettings.fontSizeEn,
         );
-        document.getElementById("uppercaseEn").checked = !!menu.uppercaseEn;
+        if(document.getElementById("uppercaseEn")) document.getElementById("uppercaseEn").checked = !!menu.uppercaseEn;
         
         const cTh = menu.fontColorTh || globalSettings.fontColorTh || "#1e293b";
         updateFontColorUI('th', cTh);
@@ -2821,7 +2797,7 @@
       function showMenuConfirmModal() {
         const currentMenu = slotsData[activeSlot];
         if (!currentMenu || (!currentMenu.name_th && !currentMenu.bgUrl)) {
-          alert("⚠️ ไม่มีข้อมูลในช่องนี้ให้คัดลอก");
+          alert("⚠️ No data in this slot to copy");
           return;
         }
         document.getElementById("copySlotNumber").innerText =
@@ -3149,7 +3125,7 @@
           .getElementById("profileName")
           .value.trim();
         if (!profileNameInput) {
-          alert("⚠️ กรุณากรอกช่อง Title (ชื่อโปรไฟล์) ก่อนทำการบันทึก");
+          alert("⚠️ Please enter a Title before saving");
           document.getElementById("profileName").focus();
           return;
         }
@@ -3366,7 +3342,7 @@
               console.log("Share failed:", error);
             }
           } else {
-            alert("⚠️ Browser ไม่รองรับการแชร์ไฟล์ภาพโดยตรง");
+            alert("⚠️ Browser does not support direct image sharing");
           }
         }, "image/png");
       }
@@ -3436,7 +3412,7 @@
         tempContainAllergens = JSON.parse(JSON.stringify(menu.allergens || []));
 
         document.getElementById("adjustModalSlotLabel").innerText =
-          `เฉพาะ Slot ${activeSlot} · ไม่กระทบข้อมูลเมนูต้นฉบับ`;
+          `Only for Slot ${activeSlot} · Does not affect original menu data`;
 
         renderAdjustLists();
 
@@ -3833,30 +3809,7 @@
       function changeDividerStyle(val) {
         if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
         slotsData[activeSlot].dividerStyle = val;
-        
-        const uploadSection = document.getElementById("customDividerUploadSection");
-        if (uploadSection) {
-            if (val === "custom") {
-                uploadSection.classList.remove("hidden");
-            } else {
-                uploadSection.classList.add("hidden");
-            }
-        }
-        
         renderActiveSlotOnly();
-      }
-
-      function handleCustomDividerUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
-          slotsData[activeSlot].customDividerImage = e.target.result;
-          renderActiveSlotOnly();
-        };
-        reader.readAsDataURL(file);
       }
 
       function changeSlotHeader() {
@@ -4109,17 +4062,17 @@
 
       function setTemplateDefaultBackground() {
         if (!currentTemplateConfig || !currentTemplateConfig.id) {
-          alert("ไม่พบข้อมูลเทมเพลต");
+          alert("Template data not found");
           return;
         }
         const select = document.getElementById("bgSelect");
         const selectedBg = select.value;
         if (!selectedBg) {
-          alert("กรุณาเลือกพื้นหลังที่ต้องการตั้งเป็นค่าเริ่มต้น");
+          alert("Please select a background to set as default");
           return;
         }
         localStorage.setItem("defaultBg_" + currentTemplateConfig.id, selectedBg);
-        alert("ตั้งเป็นค่าเริ่มต้นสำหรับเทมเพลต " + currentTemplateConfig.name + " แล้ว\\nในครั้งถัดไปที่คุณใช้งานเทมเพลตนี้ จะแสดงพื้นหลังนี้เป็นค่าเริ่มต้น");
+        alert("Default set for template " + currentTemplateConfig.name + ".\\nNext time you use this template, this background will be applied by default.");
       }
 
       async function populateFontDropdowns() {
