@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Divider Gallery | IMPACT Food Tag</title>
+    <title>Badge Gallery | IMPACT Food Tag</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -57,7 +57,7 @@
         <div>
           <div class="flex items-center gap-3">
             <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">
-              Divider Gallery
+              Badge Gallery
             </h2>
             <div
               id="totalBgCount"
@@ -66,7 +66,7 @@
               ...
             </div>
           </div>
-          <p class="text-slate-500 font-medium mt-1">Manage Menu Dividers</p>
+          <p class="text-slate-500 font-medium mt-1">Manage Menu Badges</p>
         </div>
 
         <div class="flex gap-3 items-center">
@@ -78,7 +78,7 @@
             <span class="material-symbols-outlined text-[20px]"
               >wallpaper</span
             >
-            Default Dividers
+            Default Badges
           </button>
           <button
             type="button"
@@ -88,7 +88,7 @@
             <span class="material-symbols-outlined text-[20px]"
               >add_photo_alternate</span
             >
-            Upload Divider
+            Upload Badge
           </button>
         </div>
       </header>
@@ -103,34 +103,18 @@
               <input
                 type="text"
                 id="searchInput"
-                onkeyup="renderDividerList()"
-                placeholder="Search dividers..."
+                onkeyup="renderBadgeList()"
+                placeholder="Search badges..."
                 class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all shadow-sm text-sm h-[42px]"
               />
             </div>
-            <select id="sortFilter" onchange="renderDividerList()" class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10 shrink-0 ml-2 h-[42px]" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.2em;">
+            <select id="sortFilter" onchange="renderBadgeList()" class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10 shrink-0 ml-2 h-[42px]" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.2em;">
                <option value="newest">Newest First</option>
                <option value="oldest">Oldest First</option>
             </select>
           </div>
 
-          <select
-            id="dividerFilter"
-            onchange="renderDividerList()"
-            class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10 h-[42px]"
-            style="
-              background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;);
-              background-repeat: no-repeat;
-              background-position: right 1rem center;
-              background-size: 1.2em;
-            "
-          >
-            <option value="all">All Template Sizes</option>
-            <option value="Plate / Food Stall">Plate Service / Food Stall (13 × 18 cm)</option>
-            <option value="Western Set">Western Set (10.5 × 14.8 cm)</option>
-            <option value="Buffet / Coffee Break">Buffet / Coffee Break (10.2 × 9.7 cm)</option>
-            <option value="Mini Tag">Mini Tag (9 × 9 cm)</option>
-          </select>
+
           <button type="button" id="bulkDeleteBtn" onclick="confirmBulkDelete()" class="hidden ml-auto px-5 py-2.5 bg-red-50 text-red-500 font-bold rounded-xl border border-red-200 hover:bg-red-100 hover:text-red-600 transition-all items-center gap-2 text-sm shadow-sm cursor-pointer whitespace-nowrap">
              <span class="material-symbols-outlined text-[20px]">delete_sweep</span>
              Delete Selected (<span id="selectedCount">0</span>)
@@ -149,10 +133,7 @@
                   </div>
                 </th>
                 <th class="px-6 py-4 font-bold text-left w-[40%]">
-                  Divider Name
-                </th>
-                <th class="px-6 py-4 font-bold">
-                  Template Size
+                  Badge Name
                 </th>
                 <th class="px-6 py-4 font-bold w-32 text-center">
                   Actions
@@ -161,7 +142,7 @@
             </thead>
             <tbody id="bgTableBody" class="divide-y divide-slate-100">
               <tr>
-                <td colspan="4" class="py-20 text-center">
+                <td colspan="3" class="py-20 text-center">
                   <div class="flex flex-col items-center opacity-30">
                     <span
                       class="material-symbols-outlined text-5xl animate-spin"
@@ -195,9 +176,9 @@
           class="px-8 py-6 border-b flex justify-between items-center bg-slate-50"
         >
           <div>
-            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Upload Divider</h2>
+            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Upload Badge</h2>
             <p class="text-sm text-slate-500 font-medium mt-1">
-              Upload a new divider image to the system
+              Upload a new badge image to the system
             </p>
           </div>
           <button
@@ -212,7 +193,7 @@
           <div>
             <label
               class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
-              >Divider Name</label
+              >Badge Name</label
             >
             <input
               type="text"
@@ -221,34 +202,31 @@
               placeholder="e.g. พื้นหลัง Buffet ลายไทย"
             />
           </div>
+
           <div>
             <label
               class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
-              >For Template Size</label
+              >Badge Type</label
             >
-            <select
-              id="inputBgSize"
-              class="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] text-sm cursor-pointer transition-all appearance-none h-[42px]"
-              style="
-                background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;);
-                background-repeat: no-repeat;
-                background-position: right 1rem center;
-                background-size: 1.2em;
-              "
-            >
-              <option value="Plate / Food Stall">Plate Service / Food Stall (13 × 18 cm)</option>
-              <option value="Western Set">Western Set (10.5 × 14.8 cm)</option>
-              <option value="Buffet / Coffee Break">Buffet / Coffee Break (10.2 × 9.7 cm)</option>
-              <option value="Mini Tag">Mini Tag (9 × 9 cm)</option>
-            </select>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="inputType" value="image" checked class="w-4 h-4 text-[#006d4b] focus:ring-[#006d4b]" onchange="toggleUploadType()" />
+                <span class="text-sm font-bold text-slate-700">Image</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="inputType" value="text" class="w-4 h-4 text-[#006d4b] focus:ring-[#006d4b]" onchange="toggleUploadType()" />
+                <span class="text-sm font-bold text-slate-700">Text</span>
+              </label>
+            </div>
           </div>
-          <div>
+
+          <div id="uploadImageSection">
             <div class="flex flex-col gap-1 mb-3 ml-1">
               <label
                 class="block text-[13px] font-black text-slate-500 uppercase tracking-widest"
                 >Image File</label
               >
-              <span class="text-[11px] font-medium text-slate-400">ขนาดแนะนำ: กว้าง 300-600px / สูงไม่เกิน 30px</span>
+              <span class="text-[11px] font-medium text-slate-400">Recommended size: Square (1:1), 200x200px</span>
             </div>
             <div
               class="border-2 border-dashed border-slate-300 rounded-2xl p-6 flex flex-col items-center justify-center relative hover:bg-emerald-50 hover:border-[#006d4b]/50 transition-all cursor-pointer bg-slate-50 group"
@@ -284,7 +262,21 @@
                 <span class="text-sm font-bold uppercase tracking-widest"
                   >Click to browse</span
                 >
-                <span class="text-[10px] mt-0.5 opacity-60 font-bold text-slate-400">ขนาดแนะนำ: กว้าง 300-600px / สูงไม่เกิน 30px</span>
+                <span class="text-[10px] mt-0.5 opacity-60 font-bold text-slate-400">Recommended size: Square (1:1), 200x200px</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="uploadTextSection" class="hidden space-y-5">
+            <div>
+              <label class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Text Content</label>
+              <input type="text" id="inputTextContent" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all font-bold" placeholder="e.g. Halal, Vegan" />
+            </div>
+            <div>
+              <label class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Text Color</label>
+              <div class="flex gap-3 items-center">
+                <input type="color" id="inputTextColor" value="#10b981" class="w-12 h-12 rounded-lg cursor-pointer border-0 p-0" oninput="document.getElementById('inputTextColorHex').value = this.value" />
+                <input type="text" id="inputTextColorHex" value="#10b981" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all font-bold uppercase" oninput="document.getElementById('inputTextColor').value = this.value" />
               </div>
             </div>
           </div>
@@ -320,7 +312,7 @@
           <div>
             <h2 class="text-2xl font-black text-slate-800 tracking-tight">Edit Background</h2>
             <p class="text-sm text-slate-500 font-medium mt-1">
-              แก้ไขชื่อ ขนาด หรือเปลี่ยนรูปภาพพื้นหลังใหม่
+              Edit badge name or update badge image
             </p>
           </div>
           <button
@@ -333,19 +325,13 @@
         </div>
         <div class="p-8 space-y-5">
           <input type="hidden" id="editBgId" />
+          <input type="hidden" id="editBgType" />
 
-          <div>
-            <div class="flex flex-col gap-1 mb-2">
-              <label
-                class="block text-xs font-black text-slate-400 uppercase tracking-widest"
-                >Divider Image</label
-              >
-              <span class="text-[10px] font-medium text-slate-400">ขนาดแนะนำ: กว้าง 300-600px / สูงไม่เกิน 30px</span>
-            </div>
+          <div id="editImageSection">
+            <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Image File</label>
             <div
-              class="flex justify-center relative group w-full h-40 mx-auto cursor-pointer"
+              class="relative group cursor-pointer w-full h-40"
               onclick="document.getElementById('editBgImageInput').click()"
-              title="คลิกเพื่อเปลี่ยนรูปภาพ"
             >
               <div
                 class="w-full h-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-2 flex items-center justify-center shadow-sm overflow-hidden hover:border-[#006d4b]/50 hover:bg-[#f0fdf4] transition-all"
@@ -365,7 +351,7 @@
                 >
                 <span
                   class="text-xs font-bold text-white tracking-wider uppercase"
-                  >เปลี่ยนรูปภาพ</span
+                  >Change Image</span
                 >
               </div>
               <input
@@ -376,12 +362,27 @@
                 onchange="previewEditBgImage(event)"
               />
             </div>
+            <p class="text-center text-[11px] font-medium text-slate-400 mt-2">Recommended size: Square (1:1), 200x200px</p>
+          </div>
+
+          <div id="editTextSection" class="hidden space-y-5">
+            <div>
+              <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Text Content</label>
+              <input type="text" id="editBgTextContent" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all font-bold text-slate-800" />
+            </div>
+            <div>
+              <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Text Color</label>
+              <div class="flex gap-3 items-center">
+                <input type="color" id="editBgTextColor" class="w-12 h-12 rounded-lg cursor-pointer border-0 p-0" oninput="document.getElementById('editBgTextColorHex').value = this.value" />
+                <input type="text" id="editBgTextColorHex" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all font-bold uppercase text-slate-800" oninput="document.getElementById('editBgTextColor').value = this.value" />
+              </div>
+            </div>
           </div>
 
           <div>
             <label
               class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
-              >Divider Name</label
+              >Badge Name</label
             >
             <input
               type="text"
@@ -389,27 +390,7 @@
               class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all font-bold text-slate-800"
             />
           </div>
-          <div>
-            <label
-              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
-              >Template Size</label
-            >
-            <select
-              id="editBgSize"
-              class="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] text-sm cursor-pointer transition-all appearance-none text-slate-800 font-medium h-[42px]"
-              style="
-                background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;);
-                background-repeat: no-repeat;
-                background-position: right 1rem center;
-                background-size: 1.2em;
-              "
-            >
-              <option value="Plate / Food Stall">Plate Service / Food Stall (13 × 18 cm)</option>
-              <option value="Western Set">Western Set (10.5 × 14.8 cm)</option>
-              <option value="Buffet / Coffee Break">Buffet / Coffee Break (10.2 × 9.7 cm)</option>
-              <option value="Mini Tag">Mini Tag (9 × 9 cm)</option>
-            </select>
-          </div>
+
         </div>
         <div class="p-6 bg-slate-50 border-t flex justify-end gap-3">
           <button
@@ -454,31 +435,25 @@
           class="p-8 overflow-y-auto custom-scroll flex-1 flex flex-col items-center"
         >
           <div
-            class="w-full bg-slate-100 rounded-2xl p-4 flex justify-center mb-6 border border-slate-200"
+            class="w-full bg-slate-100 rounded-2xl p-4 flex justify-center mb-6 border border-slate-200 min-h-[150px] items-center"
           >
             <img
               id="viewImage"
               src=""
               class="max-w-full max-h-[300px] object-contain rounded-lg shadow-sm"
             />
+            <div
+              id="viewTextPreview"
+              class="hidden font-bold flex items-center justify-center px-6 py-4 text-2xl leading-tight text-center rounded-lg border border-slate-200"
+            ></div>
           </div>
           <div class="w-full space-y-4">
             <div>
               <label
                 class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1"
-                >Divider Name</label
+                >Badge Name</label
               >
               <div id="viewName" class="text-lg font-bold text-slate-800"></div>
-            </div>
-            <div>
-              <label
-                class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1"
-                >Template Size</label
-              >
-              <div
-                id="viewSize"
-                class="inline-flex items-center gap-1.5 text-[12px] font-black text-[#006d4b] bg-[#006d4b]/10 px-3 py-1.5 rounded-lg uppercase tracking-widest"
-              ></div>
             </div>
           </div>
         </div>
@@ -498,16 +473,16 @@
         </div>
 
         <h2 class="text-2xl font-bold text-slate-800 mb-3 tracking-tight">
-          ยืนยันการลบรูปภาพพื้นหลัง
+          Confirm Badge Deletion
         </h2>
 
         <div class="text-slate-600 text-[15px] leading-relaxed mb-8 w-full">
-          <p>คุณต้องการลบรูปภาพพื้นหลัง</p>
+          <p>Are you sure you want to delete badge</p>
           <p
             id="deleteItemName"
             class="text-red-500 font-bold my-1 text-base truncate px-2"
           ></p>
-          <p>ออกจากระบบใช่หรือไม่? ข้อมูลจะไม่สามารถกู้คืนได้</p>
+          <p>from the system? This data cannot be recovered.</p>
         </div>
 
         <input type="hidden" id="deleteBgId" />
@@ -517,14 +492,16 @@
             type="button"
             onclick="closeDeleteModal()"
             class="flex-1 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all cursor-pointer text-base"
-          >Cancel</button>
+          >
+            Cancel
+          </button>
           <button
             type="button"
             id="confirmDeleteBtn"
             onclick="executeDelete()"
             class="flex-1 py-3.5 bg-[#e14d45] hover:bg-[#cf3c34] text-white font-bold rounded-2xl shadow-lg shadow-red-500/20 transition-all cursor-pointer text-base flex items-center justify-center gap-2"
           >
-            ลบข้อมูล
+            Delete
           </button>
         </div>
       </div>
@@ -539,25 +516,27 @@
         >
           <span class="material-symbols-outlined text-3xl">delete_sweep</span>
         </div>
-        <h2 class="text-xl font-bold text-slate-800 mb-2">ยืนยันการลบหลายรายการ</h2>
+        <h2 class="text-xl font-bold text-slate-800 mb-2">Confirm Bulk Deletion</h2>
         <p
           class="text-xs text-slate-500 font-medium leading-relaxed mb-6"
         >
-          คุณต้องการลบรูปภาพพื้นหลังที่เลือกจำนวน <strong id="bulkDeleteCountDisplay" class="text-red-500 font-bold">0</strong> รายการใช่หรือไม่? ข้อมูลจะไม่สามารถกู้คืนได้
+          Are you sure you want to delete <strong id="bulkDeleteCountDisplay" class="text-red-500 font-bold">0</strong> selected badge(s)? This data cannot be recovered.
         </p>
         <div class="flex gap-3 justify-center">
           <button
             type="button"
             onclick="closeModal('bulkDeleteModal')"
             class="flex-1 py-3 text-slate-500 font-bold bg-slate-100 hover:bg-slate-200 rounded-xl transition-all cursor-pointer text-xs uppercase tracking-wider"
-          >Cancel</button>
+          >
+            Cancel
+          </button>
           <button
             type="button"
             id="confirmBulkDeleteBtn"
             onclick="executeBulkDeleteBg()"
             class="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 shadow-lg shadow-red-500/20 transition-all cursor-pointer text-xs uppercase tracking-wider"
           >
-            ลบข้อมูลทั้งหมด
+            Delete All
           </button>
         </div>
       </div>
@@ -573,24 +552,26 @@
           <span class="material-symbols-outlined text-blue-500 text-3xl">save</span>
         </div>
         <h2 class="text-2xl font-bold text-slate-800 mb-3 tracking-tight">
-          ยืนยันการบันทึกข้อมูล
+          Confirm Save
         </h2>
         <div class="text-slate-600 text-[15px] leading-relaxed mb-8 w-full">
-          <p id="confirmSaveMessage">คุณต้องการบันทึกข้อมูลรูปภาพพื้นหลังนี้ใช่หรือไม่?</p>
+          <p id="confirmSaveMessage">Are you sure you want to save this badge data?</p>
         </div>
         <div class="flex gap-4 w-full">
           <button
             type="button"
             onclick="closeModal('confirmSaveModal')"
             class="flex-1 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all cursor-pointer text-base"
-          >Cancel</button>
+          >
+            Cancel
+          </button>
           <button
             type="button"
             id="confirmSaveExecuteBtn"
             onclick="executePendingSave()"
             class="flex-1 py-3.5 bg-[#006d4b] hover:bg-[#005a3d] text-white font-bold rounded-2xl shadow-lg shadow-[#006d4b]/20 transition-all cursor-pointer text-base flex items-center justify-center gap-2"
           >
-            ยืนยัน
+            Confirm
           </button>
         </div>
       </div>
@@ -601,7 +582,7 @@
         <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-3">
           <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
             <span class="material-symbols-outlined text-[#006d4b]">image</span>
-            Set Default Dividers
+            Set Default Badges
           </h3>
           <button type="button" onclick="closeModal('defaultBgModal')" class="text-slate-400 hover:text-slate-600 transition-colors">
             <span class="material-symbols-outlined">close</span>
@@ -645,10 +626,10 @@
         return map[sizeVal] || sizeVal;
       }
 
-      let dbDividers = [];
+      let dbBadges = [];
       let editBgImageFile = null;
 
-      async function fetchDividers() {
+      async function fetchBadges() {
         try {
           const fetchAll = async (table, orderCol = null) => {
             let allData = [];
@@ -672,13 +653,13 @@
             return allData;
           };
 
-          const data = await fetchAll("dividers", "id");
-          dbDividers = data || [];
-          renderDividerList();
+          const data = await fetchAll("badges", "id");
+          dbBadges = data || [];
+          renderBadgeList();
         } catch (err) {
           console.error("Error fetching backgrounds", err);
           document.getElementById("bgTableBody").innerHTML =
-            `<tr><td colspan="4" class="py-20 text-center text-red-500 font-bold bg-red-50 rounded-b-2xl">⚠️ CONNECTION ERROR: ${err.message}</td></tr>`;
+            `<tr><td colspan="3" class="py-20 text-center text-red-500 font-bold bg-red-50 rounded-b-2xl">⚠️ CONNECTION ERROR: ${err.message}</td></tr>`;
         }
       }
 
@@ -687,25 +668,21 @@
       let currentSearchQuery = "";
       let currentFilterValue = "all";
 
-      function renderDividerList() {
+      function renderBadgeList() {
         const tbody = document.getElementById("bgTableBody");
         const query = document
           .getElementById("searchInput")
           .value.toLowerCase();
-        const filterValue = document.getElementById("dividerFilter").value;
         const sortValue = document.getElementById("sortFilter") ? document.getElementById("sortFilter").value : "newest";
         
-        if (query !== currentSearchQuery || filterValue !== currentFilterValue) {
+        if (query !== currentSearchQuery) {
           currentPage = 1;
           currentSearchQuery = query;
-          currentFilterValue = filterValue;
         }
 
-        const filteredBgs = dbDividers.filter((bg) => {
+        const filteredBgs = dbBadges.filter((bg) => {
           const matchName = (bg.name || "").toLowerCase().includes(query);
-          const matchSize =
-            filterValue === "all" || bg.template_size === filterValue;
-          return matchName && matchSize;
+          return matchName;
         });
 
         if (query) {
@@ -742,9 +719,9 @@
         if (currentPage < 1) currentPage = 1;
 
         if (totalItems === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" class="py-24 text-center">
+          tbody.innerHTML = `<tr><td colspan="3" class="py-24 text-center">
               <span class="material-symbols-outlined text-6xl mb-4 text-slate-200">search_off</span>
-              <p class="text-slate-400 font-bold tracking-widest uppercase">No Dividers Found</p>
+              <p class="text-slate-400 font-bold tracking-widest uppercase">No Badges Found</p>
           </td></tr>`;
           const pc = document.getElementById("paginationControls");
           if (pc) pc.classList.add("hidden");
@@ -763,6 +740,13 @@
           const bgDataStr = encodeURIComponent(JSON.stringify(bg));
           const safeName = (bg.name || "").replace(/'/g, "\\'");
 
+          let previewHtml = "";
+          if ((bg.badge_type || 'image') === 'image') {
+            previewHtml = `<img src="${bg.image_url}" class="w-10 h-10 object-contain rounded-lg border border-slate-200 bg-white" />`;
+          } else {
+            previewHtml = `<div class="font-bold flex items-center justify-center w-10 h-10 text-[10px] leading-tight text-center rounded-lg border border-slate-200 bg-white" style="color: ${bg.text_color || '#10b981'};">${bg.text_content}</div>`;
+          }
+
           html += `
           <tr class="bg-row hover:bg-slate-50 transition-colors">
             <td class="px-6 py-4 whitespace-nowrap">
@@ -772,13 +756,12 @@
                 </div>
             </td>
             <td class="px-6 py-4">
-                <div class="font-medium text-slate-700 cursor-pointer hover:text-[#006d4b]" onclick="openViewModal('${bgDataStr}')">${bg.name}</div>
-            </td>
-            <td class="px-6 py-4">
-                <div class="inline-block text-[11px] font-black text-[#006d4b] bg-[#006d4b]/10 px-3 py-1.5 rounded-lg uppercase tracking-widest leading-relaxed">
-                 ${getTemplateSizeLabel(bg.template_size)}
+                <div class="flex items-center gap-4 cursor-pointer group" onclick="openViewModal('${bgDataStr}')">
+                    ${previewHtml}
+                    <div class="font-medium text-slate-700 group-hover:text-[#006d4b] transition-colors">${bg.name}</div>
                 </div>
             </td>
+
             <td class="px-6 py-4 text-center">
                 <div class="flex items-center justify-center gap-1">
                     <button type="button" onclick="openViewModal('${bgDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-[#006d4b] hover:bg-emerald-50 rounded-full transition-all cursor-pointer" title="View Details">
@@ -787,7 +770,7 @@
                     <button type="button" onclick="openEditModal('${bgDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all cursor-pointer" title="Edit Background">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
-                    <button type="button" onclick="deleteDivider('${bg.id}', '${safeName}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer" title="Delete">
+                    <button type="button" onclick="deleteBadge('${bg.id}', '${safeName}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer" title="Delete">
                         <span class="material-symbols-outlined text-[20px]">delete</span>
                     </button>
                 </div>
@@ -812,7 +795,7 @@
         }
 
         paginationControls.classList.remove("hidden");
-        document.getElementById("paginationInfo").innerText = `Showing ${totalItems === 0 ? 0 : startIndex + 1} to ${endIndex} of ${totalItems} dividers`;
+        document.getElementById("paginationInfo").innerText = `Showing ${totalItems === 0 ? 0 : startIndex + 1} to ${endIndex} of ${totalItems} badges`;
         
         let buttonsHtml = '';
         
@@ -845,7 +828,7 @@
 
       function goToPage(page) {
         currentPage = page;
-        renderDividerList();
+        renderBadgeList();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
@@ -925,20 +908,20 @@
 
         try {
           // get the background records to delete images from storage
-          const toDelete = dbDividers.filter(bg => idsToDelete.includes(bg.id.toString()));
+          const toDelete = dbBadges.filter(bg => idsToDelete.includes(bg.id.toString()));
           
           for(const bg of toDelete) {
             if (bg.image_url) {
                 try {
                     const urlParts = bg.image_url.split("/");
                     const fileName = urlParts[urlParts.length - 1];
-                    await dbClient.storage.from("dividers").remove([fileName]);
+                    await dbClient.storage.from("badges").remove([fileName]);
                 } catch(e) {}
             }
           }
 
           // Send bulk delete request
-          await dbClient.from("dividers").delete().in("id", idsToDelete);
+          await dbClient.from("badges").delete().in("id", idsToDelete);
           await logSystemActivity(
             "DELETE",
             `ลบรูปภาพพื้นหลังจำนวน: ${idsToDelete.length} รายการ`
@@ -946,7 +929,7 @@
           closeModal("bulkDeleteModal");
           document.getElementById("selectAllCheckbox").checked = false;
           updateBulkDeleteButton();
-          fetchDividers();
+          fetchBadges();
         } catch (e) {
           alert("Error deleting backgrounds: " + e.message);
         } finally {
@@ -957,16 +940,42 @@
 
       function openViewModal(bgDataEncoded) {
         const bg = JSON.parse(decodeURIComponent(bgDataEncoded));
-        document.getElementById("viewImage").src = bg.image_url;
+
+        if ((bg.badge_type || 'image') === 'image') {
+          document.getElementById("viewImage").src = bg.image_url;
+          document.getElementById("viewImage").classList.remove('hidden');
+          document.getElementById("viewTextPreview").classList.add('hidden');
+        } else {
+          document.getElementById("viewImage").classList.add('hidden');
+          document.getElementById("viewTextPreview").classList.remove('hidden');
+          document.getElementById("viewTextPreview").innerText = bg.text_content;
+          document.getElementById("viewTextPreview").style.color = bg.text_color || '#10b981';
+          document.getElementById("viewTextPreview").style.backgroundColor = bg.text_color ? bg.text_color + '1a' : '#10b9811a';
+        }
+
         document.getElementById("viewName").innerText = bg.name;
-        document.getElementById("viewSize").innerHTML =
-          `${getTemplateSizeLabel(bg.template_size)}`;
         document.getElementById("viewModal").classList.add("active");
+      }
+
+      function toggleUploadType() {
+        const type = document.querySelector('input[name="inputType"]:checked').value;
+        if (type === 'image') {
+          document.getElementById('uploadImageSection').classList.remove('hidden');
+          document.getElementById('uploadTextSection').classList.add('hidden');
+        } else {
+          document.getElementById('uploadImageSection').classList.add('hidden');
+          document.getElementById('uploadTextSection').classList.remove('hidden');
+        }
       }
 
       function openUploadModal() {
         document.getElementById("inputBgName").value = "";
         document.getElementById("inputBgImage").value = "";
+        document.getElementById("inputTextContent").value = "";
+        document.getElementById("inputTextColor").value = "#10b981";
+        document.getElementById("inputTextColorHex").value = "#10b981";
+        document.querySelector('input[name="inputType"][value="image"]').checked = true;
+        toggleUploadType();
         document.getElementById("bgUploadPrompt").classList.remove("hidden");
         document
           .getElementById("bgImagePreviewContainer")
@@ -991,39 +1000,50 @@
 
       async function saveBackground() {
         const name = document.getElementById("inputBgName").value.trim();
-        const size = document.getElementById("inputBgSize").value;
+        const type = document.querySelector('input[name="inputType"]:checked').value;
         const file = document.getElementById("inputBgImage").files[0];
+        const textContent = document.getElementById("inputTextContent").value.trim();
+        const textColor = document.getElementById("inputTextColor").value;
 
-        if (!name || !file) return alert("Please enter a name and upload an image");
+        if (!name) return alert("Please enter a name");
+        if (type === 'image' && !file) return alert("Please upload an image");
+        if (type === 'text' && !textContent) return alert("Please enter text content");
 
         const btn = document.getElementById("saveBgBtn");
         const originalText = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = `<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> Uploading...`;
+        btn.innerHTML = `<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> Saving...`;
 
         try {
-          const fileName = `bg_${Date.now()}_${Math.floor(Math.random() * 1000)}.png`;
-          const { error: uploadError } = await dbClient.storage
-            .from("dividers")
-            .upload(fileName, file);
-          if (uploadError) throw uploadError;
-
-          const { data: urlData } = dbClient.storage
-            .from("dividers")
-            .getPublicUrl(fileName);
-
-          const { error: dbError } = await dbClient.from("dividers").insert({
+          let payload = {
             name: name,
-            template_size: size,
-            image_url: urlData.publicUrl,
-          });
+            badge_type: type,
+            text_content: textContent,
+            text_color: textColor
+          };
+
+          if (type === 'image') {
+            const fileName = `bg_${Date.now()}_${Math.floor(Math.random() * 1000)}.png`;
+            const { error: uploadError } = await dbClient.storage
+              .from("badges")
+              .upload(fileName, file);
+            if (uploadError) throw uploadError;
+
+            const { data: urlData } = dbClient.storage
+              .from("badges")
+              .getPublicUrl(fileName);
+              
+            payload.image_url = urlData.publicUrl;
+          }
+
+          const { error: dbError } = await dbClient.from("badges").insert(payload);
 
           if (dbError) throw dbError;
 
           await logSystemActivity("CREATE", `อัปโหลดพื้นหลังใหม่: ${name}`);
 
           closeModal("uploadModal");
-          fetchDividers();
+          fetchBadges();
         } catch (e) {
           alert("Error: " + e.message);
         } finally {
@@ -1037,9 +1057,19 @@
 
         document.getElementById("editBgId").value = bg.id;
         document.getElementById("editBgName").value = bg.name;
-        document.getElementById("editBgSize").value = bg.template_size;
+        document.getElementById("editBgType").value = bg.badge_type || 'image';
 
-        document.getElementById("editBgImagePreview").src = bg.image_url;
+        if ((bg.badge_type || 'image') === 'image') {
+          document.getElementById("editImageSection").classList.remove('hidden');
+          document.getElementById("editTextSection").classList.add('hidden');
+          document.getElementById("editBgImagePreview").src = bg.image_url || '';
+        } else {
+          document.getElementById("editImageSection").classList.add('hidden');
+          document.getElementById("editTextSection").classList.remove('hidden');
+          document.getElementById("editBgTextContent").value = bg.text_content || '';
+          document.getElementById("editBgTextColor").value = bg.text_color || '#10b981';
+          document.getElementById("editBgTextColorHex").value = bg.text_color || '#10b981';
+        }
 
         document.getElementById("editBgImageInput").value = "";
         editBgImageFile = null;
@@ -1063,9 +1093,8 @@
       async function saveEditBackground() {
         const id = document.getElementById("editBgId").value;
         const name = document.getElementById("editBgName").value.trim();
-        const size = document.getElementById("editBgSize").value;
 
-        if (!name) return alert("Please enter a divider name");
+        if (!name) return alert("Please enter a badge name");
 
         const btn = document.getElementById("saveEditBgBtn");
         const originalText = btn.innerHTML;
@@ -1073,28 +1102,32 @@
         btn.innerHTML = `<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> Saving...`;
 
         try {
+          const type = document.getElementById("editBgType").value;
+          
           let updatePayload = {
             name: name,
-            template_size: size,
           };
 
-          if (editBgImageFile) {
+          if (type === 'text') {
+            updatePayload.text_content = document.getElementById("editBgTextContent").value.trim();
+            updatePayload.text_color = document.getElementById("editBgTextColor").value;
+          } else if (type === 'image' && editBgImageFile) {
             const fileName = `bg_update_${Date.now()}_${Math.floor(Math.random() * 1000)}.png`;
             const { error: uploadError } = await dbClient.storage
-              .from("dividers")
+              .from("badges")
               .upload(fileName, editBgImageFile);
 
             if (uploadError) throw uploadError;
 
             const { data: urlData } = dbClient.storage
-              .from("dividers")
+              .from("badges")
               .getPublicUrl(fileName);
 
             updatePayload.image_url = urlData.publicUrl;
           }
 
           const { error: dbError } = await dbClient
-            .from("dividers")
+            .from("badges")
             .update(updatePayload)
             .eq("id", id);
 
@@ -1103,7 +1136,7 @@
           await logSystemActivity("EDIT", `แก้ไขพื้นหลัง: ${name}`);
 
           closeModal("editModal");
-          fetchDividers();
+          fetchBadges();
         } catch (e) {
           alert("Error: " + e.message);
         } finally {
@@ -1113,7 +1146,7 @@
       }
 
       // 🎯 เปิด Delete Modal สไตล์ใหม่
-      function deleteDivider(id, name) {
+      function deleteBadge(id, name) {
         document.getElementById("deleteBgId").value = id;
         document.getElementById("deleteItemName").innerText = name;
         document.getElementById("deleteModal").classList.add("active");
@@ -1136,7 +1169,7 @@
 
         try {
           const { error } = await dbClient
-            .from("dividers")
+            .from("badges")
             .delete()
             .eq("id", id);
 
@@ -1145,7 +1178,7 @@
           await logSystemActivity("DELETE", `ลบรูปภาพพื้นหลัง: ${name}`);
 
           closeDeleteModal();
-          fetchDividers();
+          fetchBadges();
         } catch (e) {
           alert("Cannot delete: " + e.message);
         } finally {
@@ -1167,18 +1200,18 @@
             "Mini Tag"
           ];
           
-          const storedDefaults = localStorage.getItem("defaultDividers");
+          const storedDefaults = localStorage.getItem("defaultBadges");
           let defaultBgData = {};
           if (storedDefaults) {
              try { defaultBgData = JSON.parse(storedDefaults); } catch(e) {}
           }
           
-          const { data: bgs, error } = await dbClient.from("dividers").select("*");
+          const { data: bgs, error } = await dbClient.from("badges").select("*");
           if (error) throw error;
           
           let html = "";
           sizes.forEach(size => {
-             const sizeBgs = bgs.filter(b => b.template_size === size);
+             const sizeBgs = bgs;
              const selectedUrl = defaultBgData[size] || "";
              
              html += `
@@ -1197,7 +1230,7 @@
                       "
                    >
                       <option value="">Default (Auto-pull latest)</option>
-                      ${sizeBgs.map(bg => `<option value="${bg.image_url}" ${bg.image_url === selectedUrl ? 'selected' : ''}>${bg.name || 'Untitled'}</option>`).join('')}
+                      ${sizeBgs.map(bg => `<option value="${bg.id}" ${bg.id == selectedUrl ? 'selected' : ''}>${bg.name || 'Untitled'}</option>`).join('')}
                    </select>
                 </div>
              `;
@@ -1212,7 +1245,7 @@
       function confirmSaveDefaultBackgrounds() {
         showConfirmModal(
           "Confirm Save",
-          "Are you sure you want to save these Default Dividers?",
+          "Are you sure you want to save these Default Badges?",
           "Save",
           "Cancel",
           () => {
@@ -1238,12 +1271,12 @@
            }
         });
         
-        localStorage.setItem("defaultDividers", JSON.stringify(defaultBgData));
-        showSuccessModal("Success", "Default Dividers saved successfully");
+        localStorage.setItem("defaultBadges", JSON.stringify(defaultBgData));
+        showSuccessModal("Success", "Default Badges saved successfully");
         closeModal("defaultBgModal");
       }
 
-      window.onload = fetchDividers;
+      window.onload = fetchBadges;
     </script>
   </body>
 </html>

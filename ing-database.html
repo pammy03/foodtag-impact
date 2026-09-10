@@ -63,14 +63,14 @@
             </div>
           </div>
           <p class="text-slate-500 font-medium mt-1">
-            คลังส่วนผสมและข้อมูลภูมิแพ้
+            Ingredients and Allergens Database
           </p>
         </div>
       </header>
 
       <main class="flex-1 flex flex-col p-8 overflow-hidden z-10">
         <div
-          class="bg-white p-5 rounded-t-2xl border border-slate-200 border-b-0 flex justify-between items-center shrink-0"
+          class="bg-white px-6 pt-6 pb-3 rounded-t-2xl border border-slate-200 border-b-0 flex justify-between items-center shrink-0"
         >
           <div class="flex items-center gap-3 w-full max-w-2xl">
             <div class="w-full relative">
@@ -120,9 +120,7 @@
           </div>
         </div>
 
-        <div
-          class="bg-white border border-slate-200 rounded-b-2xl flex-1 overflow-auto shadow-xl shadow-slate-200/50 custom-scroll p-6"
-        >
+        <div class="bg-white border-x border-b border-slate-200 rounded-b-2xl flex-1 overflow-y-auto px-6 pb-6 pt-0 custom-scroll">
           <div
             id="ingGallery"
             class="flex flex-col gap-4 w-full"
@@ -616,22 +614,20 @@
             .join("");
 
         } else {
-          gallery.className = "flex flex-col w-full";
+          gallery.className = "w-full text-left text-sm flex flex-col rounded-xl border border-slate-200 bg-white shadow-sm mb-4 overflow-hidden";
           const headerRow = `
-              <div class="flex items-center justify-between px-6 py-5 bg-slate-50 border-b border-slate-200 rounded-t-2xl -mx-6 -mt-6">
-                 <div class="flex items-center w-full overflow-hidden pr-4 gap-4">
-                    <div class="flex items-center justify-center shrink-0 w-5">
+              <div class="flex items-center justify-between bg-slate-50 border-b border-slate-200 py-4 px-6 sticky top-0 z-10 text-sm text-slate-700">
+                 <div class="flex items-center w-full pr-4 gap-4">
+                     <div class="flex items-center justify-center shrink-0 w-5">
                         <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll()" class="w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all">
-                    </div>
-                    <div class="text-[16px] font-extrabold text-slate-600 w-8 text-center shrink-0">No.</div>
-                    <div class="w-[60px] text-[16px] font-extrabold text-slate-600 text-center shrink-0 mr-5">Image</div>
-                    <div class="flex-1 min-w-0">
-                        <span class="text-[16px] font-extrabold text-slate-600">Ingredient Name</span>
-                    </div>
+                     </div>
+                     <div class="font-bold w-8 text-center shrink-0">No.</div>
+                     <div class="font-bold w-[60px] text-center shrink-0 mr-5">Image</div>
+                     <div class="font-bold flex-1">Ingredient Name</div>
                  </div>
                  
                  <div class="flex items-center justify-center shrink-0 pr-4 w-[110px]">
-                     <span class="text-[16px] font-extrabold text-slate-600">Manage</span>
+                     <span class="font-bold">Manage</span>
                  </div>
               </div>
           `;
@@ -653,12 +649,12 @@
               const boxStyle = hasImage ? "bg-white border-b border-slate-100 last:border-0" : "bg-red-50/30 border-b border-red-200 last:border-0";
 
               return `
-              <div class="ing-item flex items-center justify-between ${boxStyle} py-4 px-6 hover:bg-slate-50 transition-all group -mx-6" data-name="${(ing.name_th || "").toLowerCase()} ${(ing.name_en || "").toLowerCase()}" data-has-image="${hasImage}">
+              <div class="ing-item flex items-center justify-between ${boxStyle} py-4 px-6 hover:bg-slate-50 transition-all group" data-name="${(ing.name_th || "").toLowerCase()} ${(ing.name_en || "").toLowerCase()}" data-has-image="${hasImage}">
                  <div class="flex items-center w-full overflow-hidden pr-4 gap-4">
                     <div class="flex items-center justify-center shrink-0 w-5">
                        <input type="checkbox" value="${ing.id}" class="row-checkbox w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all" onclick="updateBulkDeleteButton()">
                     </div>
-                    <div class="text-[14px] font-extrabold text-slate-500 w-8 text-center shrink-0">
+                    <div class="font-medium text-slate-500 w-8 text-center shrink-0">
                         ${displayNo}
                     </div>
 
@@ -666,7 +662,7 @@
                         ${hasImage ? `<img src="${ing.icon_url}" class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'">` : `<span class="material-symbols-outlined text-[28px]">image_not_supported</span>`}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h4 class="text-[14px] font-extrabold ${hasImage ? 'text-slate-700' : 'text-red-700'} tracking-wide truncate" title="${displayName}">${displayName || "-"}</h4>
+                        <h4 class="font-medium ${hasImage ? 'text-slate-700' : 'text-red-700'} tracking-wide truncate" title="${displayName}">${displayName || "-"}</h4>
                         ${!hasImage ? `<span class="text-[10px] text-red-500 font-bold bg-white px-2 py-0.5 rounded shadow-sm mt-1 inline-block">ไม่มีรูปภาพ</span>` : ''}
                     </div>
                  </div>
@@ -708,7 +704,7 @@
         if (!paginationControls) return;
 
         paginationControls.classList.remove("hidden");
-        document.getElementById("paginationInfo").innerText = `Showing ${totalItems === 0 ? 0 : startIndex + 1} to ${endIndex} of ${totalItems} items`;
+        document.getElementById("paginationInfo").innerText = `Showing ${totalItems === 0 ? 0 : startIndex + 1} to ${endIndex} of ${totalItems} ingredients`;
         
         if (totalItems === 0) {
           document.getElementById("paginationButtons").innerHTML = '';

@@ -66,7 +66,7 @@
               ...
             </div>
           </div>
-          <p class="text-slate-500 font-medium mt-1">จัดการรูปภาพพื้นหลัง</p>
+          <p class="text-slate-500 font-medium mt-1">Manage background images</p>
         </div>
 
         <div class="flex gap-3 items-center">
@@ -95,7 +95,7 @@
 
       <main class="flex-1 flex flex-col p-8 overflow-hidden z-10">
         <div
-          class="bg-white p-5 rounded-t-2xl border border-slate-200 border-b-0 flex gap-4 items-center shrink-0"
+          class="bg-white px-6 pt-6 pb-3 rounded-t-2xl border border-slate-200 border-b-0 flex gap-4 items-center shrink-0"
         >
           <div class="w-full max-w-lg relative flex items-center gap-3">
             <div class="w-full relative">
@@ -109,8 +109,8 @@
               />
             </div>
             <select id="sortFilter" onchange="renderBgList()" class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-600 outline-none focus:ring-2 focus:ring-[#006d4b] text-sm shadow-sm cursor-pointer font-semibold appearance-none pr-10 shrink-0 ml-2 h-[42px]" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.2em;">
-               <option value="newest">อัปโหลดล่าสุด (Newest First)</option>
-               <option value="oldest">อัปโหลดเก่าสุด (Oldest First)</option>
+               <option value="newest">Newest First</option>
+               <option value="oldest">Oldest First</option>
             </select>
           </div>
 
@@ -137,33 +137,24 @@
           </button>
         </div>
 
-        <div
-          class="bg-white border border-slate-200 rounded-b-2xl flex-1 overflow-auto shadow-xl shadow-slate-200/50 custom-scroll"
-        >
-          <table class="w-full text-left border-collapse">
-            <thead class="bg-slate-50 sticky top-0 shadow-sm z-10">
+        <div class="bg-white border-x border-b border-slate-200 rounded-b-2xl flex-1 overflow-y-auto px-6 pb-6 pt-0 custom-scroll">
+          <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm mb-4">
+            <table class="w-full text-left text-sm table-fixed">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-700">
               <tr>
-                <th
-                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 w-32 border-b"
-                >
+                <th class="px-6 py-4 font-bold w-28 text-left">
                   <div class="flex items-center gap-4">
                     <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll()" class="w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all">
-                    <span class="w-6 text-center">No.</span>
+                    <span class="w-6 flex-shrink-0 text-center text-[#006d4b] font-bold">No.</span>
                   </div>
                 </th>
-                <th
-                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 w-[40%] border-b"
-                >
+                <th class="px-6 py-4 font-bold text-left w-[40%]">
                   Background Name
                 </th>
-                <th
-                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 border-b"
-                >
+                <th class="px-6 py-4 font-bold">
                   Template Size
                 </th>
-                <th
-                  class="py-5 px-8 text-[16px] font-extrabold text-slate-600 w-32 border-b text-center"
-                >
+                <th class="px-6 py-4 font-bold w-32 text-center">
                   Actions
                 </th>
               </tr>
@@ -184,6 +175,7 @@
               </tr>
             </tbody>
           </table>
+          </div>
         </div>
 
         <div id="paginationControls" class="flex justify-between items-center mt-6 px-2 hidden">
@@ -325,7 +317,7 @@
           <div>
             <h2 class="text-2xl font-black text-slate-800 tracking-tight">Edit Background</h2>
             <p class="text-sm text-slate-500 font-medium mt-1">
-              แก้ไขชื่อ ขนาด หรือเปลี่ยนรูปภาพพื้นหลังใหม่
+              Edit name, size, or change background image
             </p>
           </div>
           <button
@@ -347,7 +339,7 @@
             <div
               class="flex justify-center relative group w-full h-40 mx-auto cursor-pointer"
               onclick="document.getElementById('editBgImageInput').click()"
-              title="คลิกเพื่อเปลี่ยนรูปภาพ"
+              title="Click to change image"
             >
               <div
                 class="w-full h-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-2 flex items-center justify-center shadow-sm overflow-hidden hover:border-[#006d4b]/50 hover:bg-[#f0fdf4] transition-all"
@@ -367,7 +359,7 @@
                 >
                 <span
                   class="text-xs font-bold text-white tracking-wider uppercase"
-                  >เปลี่ยนรูปภาพ</span
+                  >Change Image</span
                 >
               </div>
               <input
@@ -500,16 +492,16 @@
         </div>
 
         <h2 class="text-2xl font-bold text-slate-800 mb-3 tracking-tight">
-          ยืนยันการลบรูปภาพพื้นหลัง
+          Confirm Background Deletion
         </h2>
 
         <div class="text-slate-600 text-[15px] leading-relaxed mb-8 w-full">
-          <p>คุณต้องการลบรูปภาพพื้นหลัง</p>
+          <p>Are you sure you want to delete background</p>
           <p
             id="deleteItemName"
             class="text-red-500 font-bold my-1 text-base truncate px-2"
           ></p>
-          <p>ออกจากระบบใช่หรือไม่? ข้อมูลจะไม่สามารถกู้คืนได้</p>
+          <p>from the system? This action cannot be undone.</p>
         </div>
 
         <input type="hidden" id="deleteBgId" />
@@ -520,7 +512,7 @@
             onclick="closeDeleteModal()"
             class="flex-1 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all cursor-pointer text-base"
           >
-            ยกเลิก
+            Cancel
           </button>
           <button
             type="button"
@@ -528,7 +520,7 @@
             onclick="executeDelete()"
             class="flex-1 py-3.5 bg-[#e14d45] hover:bg-[#cf3c34] text-white font-bold rounded-2xl shadow-lg shadow-red-500/20 transition-all cursor-pointer text-base flex items-center justify-center gap-2"
           >
-            ลบข้อมูล
+            Delete
           </button>
         </div>
       </div>
@@ -543,11 +535,11 @@
         >
           <span class="material-symbols-outlined text-3xl">delete_sweep</span>
         </div>
-        <h2 class="text-xl font-bold text-slate-800 mb-2">ยืนยันการลบหลายรายการ</h2>
+        <h2 class="text-xl font-bold text-slate-800 mb-2">Confirm Bulk Deletion</h2>
         <p
           class="text-xs text-slate-500 font-medium leading-relaxed mb-6"
         >
-          คุณต้องการลบรูปภาพพื้นหลังที่เลือกจำนวน <strong id="bulkDeleteCountDisplay" class="text-red-500 font-bold">0</strong> รายการใช่หรือไม่? ข้อมูลจะไม่สามารถกู้คืนได้
+          Are you sure you want to delete the selected <strong id="bulkDeleteCountDisplay" class="text-red-500 font-bold">0</strong> background(s)? This action cannot be undone.
         </p>
         <div class="flex gap-3 justify-center">
           <button
@@ -555,7 +547,7 @@
             onclick="closeModal('bulkDeleteModal')"
             class="flex-1 py-3 text-slate-500 font-bold bg-slate-100 hover:bg-slate-200 rounded-xl transition-all cursor-pointer text-xs uppercase tracking-wider"
           >
-            ยกเลิก
+            Cancel
           </button>
           <button
             type="button"
@@ -563,7 +555,7 @@
             onclick="executeBulkDeleteBg()"
             class="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 shadow-lg shadow-red-500/20 transition-all cursor-pointer text-xs uppercase tracking-wider"
           >
-            ลบข้อมูลทั้งหมด
+            Delete All
           </button>
         </div>
       </div>
@@ -579,10 +571,10 @@
           <span class="material-symbols-outlined text-blue-500 text-3xl">save</span>
         </div>
         <h2 class="text-2xl font-bold text-slate-800 mb-3 tracking-tight">
-          ยืนยันการบันทึกข้อมูล
+          Confirm Save
         </h2>
         <div class="text-slate-600 text-[15px] leading-relaxed mb-8 w-full">
-          <p id="confirmSaveMessage">คุณต้องการบันทึกข้อมูลรูปภาพพื้นหลังนี้ใช่หรือไม่?</p>
+          <p id="confirmSaveMessage">Are you sure you want to save this background information?</p>
         </div>
         <div class="flex gap-4 w-full">
           <button
@@ -590,7 +582,7 @@
             onclick="closeModal('confirmSaveModal')"
             class="flex-1 py-3.5 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all cursor-pointer text-base"
           >
-            ยกเลิก
+            Cancel
           </button>
           <button
             type="button"
@@ -598,7 +590,7 @@
             onclick="executePendingSave()"
             class="flex-1 py-3.5 bg-[#006d4b] hover:bg-[#005a3d] text-white font-bold rounded-2xl shadow-lg shadow-[#006d4b]/20 transition-all cursor-pointer text-base flex items-center justify-center gap-2"
           >
-            ยืนยัน
+            Confirm
           </button>
         </div>
       </div>
@@ -608,8 +600,8 @@
       <div class="bg-white rounded-2xl shadow-2xl w-[600px] p-6 transform scale-95 transition-transform duration-300">
         <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-3">
           <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-            <span class="material-symbols-outlined text-[#006d4b]">wallpaper</span>
-            ตั้งค่า Default Backgrounds
+            <span class="material-symbols-outlined text-[#006d4b]">image</span>
+            Set Default Backgrounds
           </h3>
           <button type="button" onclick="closeModal('defaultBgModal')" class="text-slate-400 hover:text-slate-600 transition-colors">
             <span class="material-symbols-outlined">close</span>
@@ -618,13 +610,13 @@
         
         <div class="space-y-4" id="defaultBgList">
           <div class="flex items-center justify-center p-4">
-             <span class="material-symbols-outlined text-slate-400 animate-spin mr-2">progress_activity</span> กำลังโหลด...
+             <span class="material-symbols-outlined text-slate-400 animate-spin mr-2">progress_activity</span> Loading...
           </div>
         </div>
 
         <div class="mt-6 flex gap-3">
-          <button type="button" onclick="closeModal('defaultBgModal')" class="flex-1 py-2 border border-slate-200 text-slate-600 font-bold rounded-lg hover:bg-slate-50 transition-colors text-sm">ยกเลิก</button>
-          <button type="button" onclick="confirmSaveDefaultBackgrounds()" class="flex-1 py-2 bg-[#006d4b] text-white font-bold rounded-lg hover:bg-[#005a3d] transition-colors text-sm">บันทึกค่าเริ่มต้น</button>
+          <button type="button" onclick="closeModal('defaultBgModal')" class="flex-1 py-2 border border-slate-200 text-slate-600 font-bold rounded-lg hover:bg-slate-50 transition-colors text-sm">Cancel</button>
+          <button type="button" onclick="confirmSaveDefaultBackgrounds()" class="flex-1 py-2 bg-[#006d4b] text-white font-bold rounded-lg hover:bg-[#005a3d] transition-colors text-sm">Save defaults</button>
         </div>
       </div>
     </div>
@@ -770,22 +762,22 @@
           const safeName = (bg.name || "").replace(/'/g, "\\'");
 
           html += `
-          <tr class="bg-row border-b border-slate-100 last:border-0">
-            <td class="py-5 px-6">
+          <tr class="bg-row hover:bg-slate-50 transition-colors">
+            <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center gap-4">
-                    <input type="checkbox" value="${bg.id}" class="row-checkbox w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all" onclick="updateBulkDeleteButton()">
-                    <span class="w-6 text-center text-[14px] font-extrabold text-slate-500">${displayNo}</span>
+                  <input type="checkbox" value="${bg.id}" class="row-checkbox w-5 h-5 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all mt-0.5" onclick="updateBulkDeleteButton()">
+                  <span class="text-sm font-bold text-slate-500 bg-slate-100 w-8 h-7 flex items-center justify-center rounded-md">${displayNo}</span>
                 </div>
             </td>
-            <td class="py-5 px-6">
-                <div class="text-[14px] font-extrabold text-slate-700 cursor-pointer hover:text-[#006d4b]" onclick="openViewModal('${bgDataStr}')">${bg.name}</div>
+            <td class="px-6 py-4">
+                <div class="font-medium text-slate-700 cursor-pointer hover:text-[#006d4b]" onclick="openViewModal('${bgDataStr}')">${bg.name}</div>
             </td>
-            <td class="py-5 px-6">
+            <td class="px-6 py-4">
                 <div class="inline-block text-[11px] font-black text-[#006d4b] bg-[#006d4b]/10 px-3 py-1.5 rounded-lg uppercase tracking-widest leading-relaxed">
                  ${getTemplateSizeLabel(bg.template_size)}
                 </div>
             </td>
-            <td class="py-5 px-8 text-center">
+            <td class="px-6 py-4 text-center">
                 <div class="flex items-center justify-center gap-1">
                     <button type="button" onclick="openViewModal('${bgDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-[#006d4b] hover:bg-emerald-50 rounded-full transition-all cursor-pointer" title="View Details">
                         <span class="material-symbols-outlined text-[20px]">visibility</span>
@@ -812,13 +804,13 @@
         let paginationControls = document.getElementById("paginationControls");
         if (!paginationControls) return;
 
-        if (totalPages <= 1) {
+        if (totalItems === 0) {
           paginationControls.classList.add("hidden");
           return;
         }
 
         paginationControls.classList.remove("hidden");
-        document.getElementById("paginationInfo").innerText = `Showing ${startIndex + 1} to ${endIndex} of ${totalItems} backgrounds`;
+        document.getElementById("paginationInfo").innerText = `Showing ${totalItems === 0 ? 0 : startIndex + 1} to ${endIndex} of ${totalItems} backgrounds`;
         
         let buttonsHtml = '';
         
@@ -1163,7 +1155,7 @@
       async function openDefaultBgModal() {
         document.getElementById("defaultBgModal").classList.add("active");
         const listDiv = document.getElementById("defaultBgList");
-        listDiv.innerHTML = '<div class="flex items-center justify-center p-4"><span class="material-symbols-outlined text-slate-400 animate-spin mr-2">progress_activity</span> กำลังโหลด...</div>';
+        listDiv.innerHTML = '<div class="flex items-center justify-center p-4"><span class="material-symbols-outlined text-slate-400 animate-spin mr-2">progress_activity</span> Loading...</div>';
         
         try {
           const sizes = [
@@ -1202,7 +1194,7 @@
                         background-size: 1.2em;
                       "
                    >
-                      <option value="">Default (ดึงรูปภาพล่าสุดอัตโนมัติ)</option>
+                      <option value="">Default (Auto-pull latest)</option>
                       ${sizeBgs.map(bg => `<option value="${bg.image_url}" ${bg.image_url === selectedUrl ? 'selected' : ''}>${bg.name || 'Untitled'}</option>`).join('')}
                    </select>
                 </div>
@@ -1211,7 +1203,7 @@
           
           listDiv.innerHTML = html;
         } catch(err) {
-          listDiv.innerHTML = '<div class="text-red-500 text-sm text-center">เกิดข้อผิดพลาด: ' + err.message + '</div>';
+          listDiv.innerHTML = '<div class="text-red-500 text-sm text-center">Error: ' + err.message + '</div>';
         }
       }
 

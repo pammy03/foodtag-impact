@@ -32,6 +32,9 @@ function injectSidebar() {
       <a href="divider-database.html" id="nav-divider-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
         <span class="material-symbols-outlined text-[24px]">horizontal_rule</span> Divider Gallery
       </a>
+      <a href="badge-database.html" id="nav-badge-db" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all">
+        <span class="material-symbols-outlined text-[24px]">verified</span> Badge Gallery
+      </a>
       <button type="button" onclick="openSettingsModal()" id="nav-global-settings" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg font-semibold text-base transition-all w-full text-left">
         <span class="material-symbols-outlined text-[24px]">settings</span> Global Settings
       </button>
@@ -109,6 +112,7 @@ function injectSidebar() {
       "bg-database": "nav-bg-db",
       "font-database": "nav-font-db",
       "divider-database": "nav-divider-db",
+      "badge-database": "nav-badge-db",
       "logs": "nav-logs",
       "users-management": "nav-users",
     };
@@ -146,7 +150,7 @@ function injectSidebar() {
 
           <form id="profileForm" onsubmit="saveMyProfile(event)" class="space-y-6">
             <div class="bg-[#f8fafc] p-5 rounded-3xl border-2 border-slate-200 transition-all" id="currentPassWrapper">
-              <label class="block text-[16px] font-black text-slate-800 mb-3 ml-1">ยืนยันรหัสผ่านปัจจุบันเพื่อแก้ไข</label>
+              <label class="block text-[16px] font-black text-slate-800 mb-3 ml-1">Verify current password to edit</label>
               <div class="flex flex-col gap-3">
                 <div class="relative flex-1">
                   <input id="prof_current_password" 
@@ -164,9 +168,9 @@ function injectSidebar() {
 
             <div id="lockedSection" class="opacity-30 pointer-events-none transition-all duration-500 space-y-5">
                 <div>
-                  <label class="block text-[16px] font-black text-slate-800 mb-2 ml-1">เปลี่ยนรหัสผ่านใหม่</label>
+                  <label class="block text-[16px] font-black text-slate-800 mb-2 ml-1">New password</label>
                   <div class="relative">
-                    <input id="prof_password" class="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl outline-none text-sm font-semibold pr-14" placeholder="เว้นว่างไว้ถ้าไม่เปลี่ยน" type="password" />
+                    <input id="prof_password" class="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-2xl outline-none text-sm font-semibold pr-14" placeholder="Leave blank to keep current" type="password" />
                     <button type="button" onclick="togglePasswordVisibility('prof_password', 'eye_icon_new')" class="absolute right-4 top-3 text-slate-400">
                       <span id="eye_icon_new" class="material-symbols-outlined text-2xl">visibility_off</span>
                     </button>
@@ -174,7 +178,7 @@ function injectSidebar() {
                 </div>
                 
                 <div>
-                  <label class="block text-[16px] font-black text-[#006d4b] mb-2 ml-1">ตั้งรหัส PIN 4 หลัก (กู้รหัสผ่าน)</label>
+                  <label class="block text-[16px] font-black text-[#006d4b] mb-2 ml-1">Set 4-digit PIN (for recovery)</label>
                   <input id="prof_pin" class="w-full px-5 py-3.5 bg-[#f0fdf4] border border-[#006d4b]/30 rounded-2xl outline-none text-xl tracking-[0.5em] font-black text-center shadow-inner" placeholder="0000" type="password" maxlength="4" />
                 </div>
             </div>
@@ -183,7 +187,7 @@ function injectSidebar() {
             
             <div class="pt-2">
               <button type="submit" id="profSaveBtn" disabled class="w-full bg-slate-300 text-white font-black py-4 rounded-2xl transition-all flex items-center justify-center space-x-2 cursor-not-allowed text-base">
-                <span id="profBtnText" class="text-[16px] font-black">บันทึกข้อมูลส่วนตัว</span>
+                <span id="profBtnText" class="text-[16px] font-black">Save changes</span>
               </button>
             </div>
           </form>
@@ -426,7 +430,7 @@ function injectSidebar() {
             <!-- Layout Style -->
             <div class="space-y-4">
               <h4 class="text-base font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-2"><span class="material-symbols-outlined text-[20px]">view_quilt</span> Layout Style Defaults</h4>
-              <div class="grid grid-cols-2 gap-5 p-5 bg-slate-50 rounded-xl border border-slate-200">
+              <div class="grid grid-cols-2 gap-5 p-5 bg-slate-50 rounded-xl border border-slate-200 items-end">
                 <div>
                   <label class="block text-sm font-bold text-slate-600 mb-2">Menu Divider</label>
                   <select id="defDividerStyle" class="w-full pl-3 pr-8 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-[#006d4b] appearance-none" style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;">
@@ -434,12 +438,21 @@ function injectSidebar() {
                     <option value="none">None</option>
                   </select>
                 </div>
+                <div>
+                  <div class="flex items-center gap-3 h-[42px]">
+                    <label class="text-sm font-bold text-slate-600 whitespace-nowrap">Show Badges</label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" id="defShowBadge" class="sr-only peer" checked>
+                      <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#006d4b]"></div>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
             
             <!-- Safe Area Settings -->
             <div class="space-y-4">
-              <h4 class="text-base font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-2"><span class="material-symbols-outlined text-[20px]">margin</span> Safe Area Padding (%)</h4>
+              <h4 class="text-base font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-2"><span class="material-symbols-outlined text-[20px]">margin</span> Safe Area Padding (px)</h4>
               <div class="grid grid-cols-2 md:grid-cols-4 gap-5 p-5 bg-slate-50 rounded-xl border border-slate-200">
                 <div>
                   <label class="block text-[11px] font-bold text-slate-600 mb-3 border-b border-slate-200 pb-1">Plate Service</label>
@@ -448,14 +461,14 @@ function injectSidebar() {
                       <span class="text-[10px] font-bold text-slate-400 w-8 uppercase">Top:</span>
                       <div class="relative w-full">
                         <input type="number" id="defSafePlateTop" class="w-full pl-2 pr-6 py-1.5 text-xs text-right bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="15">
-                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">%</span>
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">px</span>
                       </div>
                     </div>
                     <div class="flex items-center gap-2">
                       <span class="text-[10px] font-bold text-slate-400 w-8 uppercase">Bot:</span>
                       <div class="relative w-full">
                         <input type="number" id="defSafePlateBot" class="w-full pl-2 pr-6 py-1.5 text-xs text-right bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="15">
-                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">%</span>
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">px</span>
                       </div>
                     </div>
                   </div>
@@ -467,14 +480,14 @@ function injectSidebar() {
                       <span class="text-[10px] font-bold text-slate-400 w-8 uppercase">Top:</span>
                       <div class="relative w-full">
                         <input type="number" id="defSafeWesternTop" class="w-full pl-2 pr-6 py-1.5 text-xs text-right bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="20">
-                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">%</span>
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">px</span>
                       </div>
                     </div>
                     <div class="flex items-center gap-2">
                       <span class="text-[10px] font-bold text-slate-400 w-8 uppercase">Bot:</span>
                       <div class="relative w-full">
                         <input type="number" id="defSafeWesternBot" class="w-full pl-2 pr-6 py-1.5 text-xs text-right bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="15">
-                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">%</span>
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">px</span>
                       </div>
                     </div>
                   </div>
@@ -486,14 +499,14 @@ function injectSidebar() {
                       <span class="text-[10px] font-bold text-slate-400 w-8 uppercase">Top:</span>
                       <div class="relative w-full">
                         <input type="number" id="defSafeBuffetTop" class="w-full pl-2 pr-6 py-1.5 text-xs text-right bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="15">
-                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">%</span>
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">px</span>
                       </div>
                     </div>
                     <div class="flex items-center gap-2">
                       <span class="text-[10px] font-bold text-slate-400 w-8 uppercase">Bot:</span>
                       <div class="relative w-full">
                         <input type="number" id="defSafeBuffetBot" class="w-full pl-2 pr-6 py-1.5 text-xs text-right bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="15">
-                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">%</span>
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">px</span>
                       </div>
                     </div>
                   </div>
@@ -505,14 +518,14 @@ function injectSidebar() {
                       <span class="text-[10px] font-bold text-slate-400 w-8 uppercase">Top:</span>
                       <div class="relative w-full">
                         <input type="number" id="defSafeMiniTop" class="w-full pl-2 pr-6 py-1.5 text-xs text-right bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="12">
-                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">%</span>
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">px</span>
                       </div>
                     </div>
                     <div class="flex items-center gap-2">
                       <span class="text-[10px] font-bold text-slate-400 w-8 uppercase">Bot:</span>
                       <div class="relative w-full">
                         <input type="number" id="defSafeMiniBot" class="w-full pl-2 pr-6 py-1.5 text-xs text-right bg-white border border-slate-200 rounded outline-none focus:border-[#006d4b]" value="12">
-                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">%</span>
+                        <span class="absolute right-2 top-1.5 text-[10px] text-slate-400 pointer-events-none">px</span>
                       </div>
                     </div>
                   </div>
@@ -809,8 +822,9 @@ async function syncGlobalSettings() {
 
 function getGlobalSettings() {
   const stored = localStorage.getItem("globalDefaultSettings");
-  if (stored) return JSON.parse(stored);
-  return {
+  let settings = stored ? JSON.parse(stored) : {};
+  
+  const defaults = {
     fontTh: "'Prompt', sans-serif",
     fontSizeTh: "22px",
     fontEn: "'Aptos', sans-serif",
@@ -818,11 +832,25 @@ function getGlobalSettings() {
     iconSizeMain: "61px",
     iconSizeContain: "61px",
     dividerStyle: "line",
-    safePlateTop: "15", safePlateBot: "15",
-    safeWesternTop: "20", safeWesternBot: "15",
-    safeBuffetTop: "15", safeBuffetBot: "15",
-    safeMiniTop: "12", safeMiniBot: "12"
+    safePlateTop: "80", safePlateBot: "60",
+    safeWesternTop: "70", safeWesternBot: "50",
+    safeBuffetTop: "60", safeBuffetBot: "40",
+    safeMiniTop: "40", safeMiniBot: "30"
   };
+
+  // Use default if key is completely missing
+  const ensureDefault = (key) => {
+    if (!settings[key]) {
+      settings[key] = defaults[key];
+    }
+  };
+
+  ensureDefault('safePlateTop'); ensureDefault('safePlateBot');
+  ensureDefault('safeWesternTop'); ensureDefault('safeWesternBot');
+  ensureDefault('safeBuffetTop'); ensureDefault('safeBuffetBot');
+  ensureDefault('safeMiniTop'); ensureDefault('safeMiniBot');
+
+  return { ...defaults, ...settings };
 }
 
 function openSettingsModal() {
@@ -914,6 +942,7 @@ function openSettingsModal() {
   setVal("defLabelMayContainFont", settings.labelMayContainFont);
 
   setCheck("defShowHeader", settings.showHeader);
+  setCheck("defShowBadge", settings.showBadge !== false);
   setVal("defHeaderText", settings.headerText);
   setVal("defHeaderFont", settings.headerFont);
   setVal("defHeaderFontSize", settings.headerFontSize ? parseInt(settings.headerFontSize) : undefined);
@@ -1003,6 +1032,7 @@ async function saveGlobalSettings() {
     labelMayContainSize: document.getElementById("defLabelMayContainSize").value,
     labelMayContainFont: document.getElementById("defLabelMayContainFont").value,
     showHeader: document.getElementById("defShowHeader").checked,
+    showBadge: document.getElementById("defShowBadge").checked,
     headerText: document.getElementById("defHeaderText").value,
     headerFont: document.getElementById("defHeaderFont").value,
     headerFontSize: document.getElementById("defHeaderFontSize").value + "px",

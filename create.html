@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Tag Profile | IMPACT Food Tag</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link
@@ -773,6 +773,27 @@
                     <input type="text" id="headerHexInput" value="#1E293B" onchange="changeSlotHeaderColor(this.value)" onkeyup="if(event.key === 'Enter') changeSlotHeaderColor(this.value)" class="flex-1 min-w-[80px] px-2 py-1.5 text-[12px] font-mono uppercase text-slate-600 border border-slate-200 rounded-lg outline-none focus:border-[#006d4b] focus:ring-2 focus:ring-[#006d4b] placeholder:text-slate-300" placeholder="#HEX">
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative border border-slate-200 rounded-xl bg-white p-4 pt-10 flex flex-col mb-4">
+            <div class="bg-indigo-600 text-white text-[11px] font-bold px-3 py-1 absolute top-0 left-0 rounded-br-lg rounded-tl-xl uppercase shadow-sm">
+              Slot Badge
+            </div>
+            <div class="mt-auto border-t border-slate-100 pt-1">
+              <div class="flex items-center justify-between mb-3">
+                <label class="block text-[12px] font-bold text-slate-700">Enable Badge</label>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="badgeEnabledToggle" class="sr-only peer" onchange="changeSlotBadge()">
+                  <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                </label>
+              </div>
+              <div id="slotBadgeSettings" class="space-y-3 hidden mt-3">
+                <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Select Badge</label>
+                <select id="badgeSelect" onchange="changeSlotBadge()" class="w-full pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600 appearance-none font-semibold" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;">
+                  <option value="">-- None --</option>
+                </select>
               </div>
             </div>
           </div>
@@ -1839,7 +1860,8 @@
 
         return Promise.all([
           loadBackgrounds(temp.name),
-          loadDividers(temp.name)
+          loadDividers(temp.name),
+          loadBadges()
         ]).then(() => {
           setupGridStructure();
           renderSlotControls(temp.slots_count);
@@ -2070,8 +2092,8 @@
         const menuItemsHtml = menusToRender.map((m, idx) => {
            const thSizeVal = parseInt(sTh) || 22;
            const enSizeVal = parseInt(sEn) || 22;
-           const thWhitespaceClass = thSizeVal <= 19 ? '!whitespace-normal' : 'whitespace-pre-line';
-           const enWhitespaceClass = enSizeVal <= 19 ? '!whitespace-normal' : 'whitespace-pre-line';
+           const thWhitespaceClass = 'whitespace-pre-line';
+           const enWhitespaceClass = 'whitespace-pre-line';
 
            let menuAllergensHtml = "";
 
@@ -2168,10 +2190,31 @@
             headerHtml = `<div class="w-full text-center mb-3 font-bold" style="font-family: ${hFont}; font-size: ${hSize}; color: ${hColor};">${menu.headerText}</div>`;
         }
 
-        const padStyle = currentTemplateConfig.padding ? `padding: ${currentTemplateConfig.padding}; box-sizing: border-box; height: 100%; display: flex; flex-direction: column; justify-content: center;` : '';
+        let badgeHtml = "";
+        const badgeEnabled = menu.badgeEnabled !== undefined ? menu.badgeEnabled : (globalSettings.showBadge !== false);
+        if (badgeEnabled) {
+            if (menu.badgeType === 'image' && menu.badgeImageUrl) {
+                badgeHtml = `<div class="absolute top-4 right-4 z-20 flex items-center justify-center"><img src="${menu.badgeImageUrl}" class="w-12 h-12 object-contain" crossorigin="anonymous"></div>`;
+            } else if (menu.badgeType !== 'image' && menu.badgeText) {
+                const bColor = menu.badgeColor || "#10b981";
+                const bFont = globalSettings.fontTh || "'Prompt', sans-serif";
+                badgeHtml = `<div class="absolute top-4 right-4 z-20 flex items-center justify-center font-bold" style="color: ${bColor}; font-family: ${bFont}; font-size: 16px;">${menu.badgeText}</div>`;
+            }
+        }
+
+        let currentPadding = '';
+        const globalSetsTemp = typeof getGlobalSettings === "function" ? getGlobalSettings() : {};
+        if (currentTemplateConfig) {
+           if (currentTemplateConfig.name === "Plate / Food Stall") currentPadding = `${globalSetsTemp.safePlateTop || '84'}px 5% ${globalSetsTemp.safePlateBot || '84'}px 5%`;
+           else if (currentTemplateConfig.name === "Western Set") currentPadding = `${globalSetsTemp.safeWesternTop || '112'}px 5% ${globalSetsTemp.safeWesternBot || '84'}px 5%`;
+           else if (currentTemplateConfig.name === "Buffet / Coffee Break") currentPadding = `${globalSetsTemp.safeBuffetTop || '84'}px 5% ${globalSetsTemp.safeBuffetBot || '84'}px 5%`;
+           else if (currentTemplateConfig.name === "Mini Tag") currentPadding = `${globalSetsTemp.safeMiniTop || '67'}px 5% ${globalSetsTemp.safeMiniBot || '67'}px 5%`;
+        }
+        const padStyle = currentPadding ? `padding: ${currentPadding}; box-sizing: border-box; height: 100%; display: flex; flex-direction: column; justify-content: flex-start;` : '';
 
         element.innerHTML = `
             ${bgHtml}
+            ${badgeHtml}
             <div class="slot-content" style="${padStyle}">
               ${headerHtml}
               ${menuItemsHtml}
@@ -2601,6 +2644,21 @@
         }
         const headerHexInput = document.getElementById("headerHexInput");
         if (headerHexInput) headerHexInput.value = hColor.toUpperCase();
+
+        const badgeEnabledToggle = document.getElementById("badgeEnabledToggle");
+        const slotBadgeSettings = document.getElementById("slotBadgeSettings");
+        if (badgeEnabledToggle) {
+            badgeEnabledToggle.checked = !!menu.badgeEnabled;
+            const badgeEnabled = menu.badgeEnabled !== undefined ? menu.badgeEnabled : (globalSettings.showBadge !== false);
+        if (badgeEnabled) {
+                if(slotBadgeSettings) slotBadgeSettings.classList.remove("hidden");
+            } else {
+                if(slotBadgeSettings) slotBadgeSettings.classList.add("hidden");
+            }
+        }
+        
+        const badgeSelect = document.getElementById("badgeSelect");
+        if (badgeSelect) badgeSelect.value = menu.badgeId || "";
 
         const sizeMainDisplay = document.getElementById("sizeMainDisplay");
         if (sizeMainDisplay) {
@@ -3117,6 +3175,35 @@
           }
         } catch (err) {
           console.error("Error loading dividers:", err);
+        }
+      }
+
+      async function loadBadges() {
+        const select = document.getElementById("badgeSelect");
+        if (!select) return;
+
+        try {
+          const { data: badges, error } = await dbClient
+            .from("badges")
+            .select("*")
+            .order("created_at", { ascending: true });
+          
+          if (error) throw error;
+          
+          window.dbBadges = badges || [];
+
+          select.innerHTML = '<option value="">None</option>';
+
+          if (window.dbBadges.length > 0) {
+             window.dbBadges.forEach(b => {
+                const newOption = document.createElement('option');
+                newOption.value = b.id;
+                newOption.textContent = b.name;
+                select.appendChild(newOption);
+             });
+          }
+        } catch (err) {
+          console.error("Error loading badges:", err);
         }
       }
 
@@ -3872,6 +3959,43 @@
         renderActiveSlotOnly();
       }
 
+      function changeSlotBadge() {
+        if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
+        
+        const enabledToggle = document.getElementById("badgeEnabledToggle");
+        const select = document.getElementById("badgeSelect");
+        const settingsDiv = document.getElementById("slotBadgeSettings");
+
+        const enabled = enabledToggle ? enabledToggle.checked : false;
+        slotsData[activeSlot].badgeEnabled = enabled;
+
+        if (enabled && settingsDiv) {
+            settingsDiv.classList.remove("hidden");
+        } else if (settingsDiv) {
+            settingsDiv.classList.add("hidden");
+        }
+
+        if (select && select.value) {
+            const badgeId = select.value;
+            slotsData[activeSlot].badgeId = badgeId;
+            
+            const badge = (window.dbBadges || []).find(b => b.id == badgeId);
+            if (badge) {
+                slotsData[activeSlot].badgeType = badge.badge_type || 'image';
+                slotsData[activeSlot].badgeText = badge.text_content || '';
+                slotsData[activeSlot].badgeColor = badge.text_color || '#10b981';
+                slotsData[activeSlot].badgeImageUrl = badge.image_url || '';
+            }
+        } else {
+            slotsData[activeSlot].badgeId = '';
+            slotsData[activeSlot].badgeType = 'image';
+            slotsData[activeSlot].badgeImageUrl = '';
+        }
+
+        renderActiveSlotOnly();
+      }
+
+
       function changeFontEn(font) {
         if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
         slotsData[activeSlot].fontEn = font;
@@ -4055,8 +4179,21 @@
         const count = currentTemplateConfig ? currentTemplateConfig.slots_count : 0;
         if (count > 0) {
            updateInputs(slotsData[activeSlot] || {});
+           setupGridStructure();
+           setTimeout(resizePaper, 50);
            renderSlotControls(count);
-           changePage(currentPage);
+           
+           // Ensure pagination highlight is correct
+           document.querySelectorAll('.a4-paper').forEach(paper => {
+             const p = parseInt(paper.id.split('-').pop(), 10);
+             if (p === currentPage) {
+               paper.classList.remove('hidden-page');
+               paper.classList.add('active-page');
+             } else {
+               paper.classList.remove('active-page');
+               paper.classList.add('hidden-page');
+             }
+           });
         }
       });
 

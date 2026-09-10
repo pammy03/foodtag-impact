@@ -72,7 +72,7 @@
             </div>
           </div>
           <p class="text-sm text-slate-500 font-medium mt-1">
-            จัดการบัญชีผู้ใช้งานและกำหนดสิทธิ์ในระบบ (Super Admin Only)
+            Manage user accounts and system permissions (Super Admin Only)
           </p>
         </div>
 
@@ -92,7 +92,7 @@
 
       <main class="flex-1 flex flex-col p-8 overflow-hidden z-10">
         <div
-          class="bg-white p-5 rounded-t-2xl border border-slate-200 border-b-0 flex gap-4 items-center shrink-0"
+          class="bg-white px-6 pt-6 pb-3 rounded-t-2xl border border-slate-200 border-b-0 flex gap-4 items-center shrink-0"
         >
           <div class="w-full max-w-lg relative">
             <span
@@ -132,40 +132,27 @@
           </div>
         </div>
 
-        <div
-          class="bg-white border border-slate-200 rounded-b-2xl flex-1 overflow-auto shadow-xl shadow-slate-200/50 custom-scroll"
-        >
-          <table class="w-full text-left border-collapse">
-            <thead class="bg-slate-50 sticky top-0 shadow-sm z-10">
+        <div class="bg-white border-x border-b border-slate-200 rounded-b-2xl flex-1 overflow-y-auto px-6 pb-6 pt-0 custom-scroll">
+          <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm mb-4">
+            <table class="w-full text-left text-sm table-fixed">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-700">
               <tr>
-                <th
-                  class="py-5 px-8 text-[16px] font-extrabold text-slate-600 w-24 border-b text-center"
-                >
+                <th class="px-6 py-4 font-bold w-24 text-center">
                   No.
                 </th>
-                <th
-                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 border-b"
-                >
+                <th class="px-6 py-4 font-bold">
                   Emp ID
                 </th>
-                <th
-                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 border-b"
-                >
+                <th class="px-6 py-4 font-bold">
                   Name
                 </th>
-                <th
-                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 border-b"
-                >
+                <th class="px-6 py-4 font-bold">
                   Role
                 </th>
-                <th
-                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 border-b"
-                >
+                <th class="px-6 py-4 font-bold">
                   Password
                 </th>
-                <th
-                  class="py-5 px-8 text-[16px] font-extrabold text-slate-600 w-32 border-b text-center"
-                >
+                <th class="px-6 py-4 font-bold w-32 text-center">
                   Actions
                 </th>
               </tr>
@@ -186,6 +173,7 @@
               </tr>
             </tbody>
           </table>
+          </div>
         </div>
 
         <div id="paginationControls" class="flex justify-between items-center mt-6 px-2 hidden">
@@ -616,19 +604,19 @@
           const safeName = (u.name || "").replace(/'/g, "\\'");
 
           html += `
-          <tr class="user-row border-b border-slate-100 last:border-0">
-            <td class="py-5 px-8 text-center"><span class="text-[14px] font-extrabold text-slate-500">${displayNo}</span></td>
-            <td class="py-5 px-6 text-[14px] font-bold text-slate-500">${u.emp_id}</td>
-            <td class="py-5 px-6 text-[14px] font-extrabold text-slate-700">${u.name}</td>
-            <td class="py-5 px-6">${getRoleBadge(u.role)}</td>
-            <td class="py-5 px-6">
+          <tr class="user-row hover:bg-slate-50 transition-colors">
+            <td class="px-6 py-4 text-center"><span class="text-slate-500 font-medium">${displayNo}</span></td>
+            <td class="px-6 py-4 font-medium text-slate-500">${u.emp_id}</td>
+            <td class="px-6 py-4 font-medium text-slate-700">${u.name}</td>
+            <td class="px-6 py-4">${getRoleBadge(u.role)}</td>
+            <td class="px-6 py-4">
                 <div class="flex items-center gap-2 cursor-pointer w-max" onclick="togglePassword(this)">
-                    <span class="pwd-mask text-[14px] font-bold text-slate-500 tracking-[0.2em]">••••••••</span>
-                    <span class="pwd-text hidden text-blue-600 font-bold text-[14px]">${u.password}</span>
+                    <span class="pwd-mask font-medium text-slate-500 tracking-[0.2em]">••••••••</span>
+                    <span class="pwd-text hidden text-blue-600 font-medium">${u.password}</span>
                     <span class="pwd-icon material-symbols-outlined text-[18px] text-slate-400 hover:text-slate-600 transition-colors">visibility_off</span>
                 </div>
             </td>
-            <td class="py-5 px-8 text-center">
+            <td class="px-6 py-4 text-center">
                 <div class="flex items-center justify-center gap-1">
                     <button type="button" onclick="openEditModal('${userDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all cursor-pointer" title="Edit User">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
@@ -654,13 +642,13 @@
         let paginationControls = document.getElementById("paginationControls");
         if (!paginationControls) return;
 
-        if (totalPages <= 1) {
+        if (totalItems === 0) {
           paginationControls.classList.add("hidden");
           return;
         }
 
         paginationControls.classList.remove("hidden");
-        document.getElementById("paginationInfo").innerText = `Showing ${startIndex + 1} to ${endIndex} of ${totalItems} items`;
+        document.getElementById("paginationInfo").innerText = `Showing ${totalItems === 0 ? 0 : startIndex + 1} to ${endIndex} of ${totalItems} users`;
         
         let buttonsHtml = '';
         

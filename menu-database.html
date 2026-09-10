@@ -87,7 +87,7 @@
             </div>
           </div>
           <p class="text-slate-500 font-medium mt-1">
-            จัดการข้อมูลเมนูอาหารและการจับคู่ส่วนผสม
+            Manage menu data and ingredient matching
           </p>
         </div>
 
@@ -121,7 +121,7 @@
 
       <main class="flex-1 flex flex-col p-8 overflow-hidden z-10">
         <div
-          class="bg-white p-5 rounded-t-2xl border border-slate-200 border-b-0 flex gap-4 items-center shrink-0"
+          class="bg-white px-6 pt-6 pb-3 rounded-t-2xl border border-slate-200 border-b-0 flex gap-4 items-center shrink-0"
         >
           <div class="w-full max-w-lg relative">
             <span
@@ -162,13 +162,12 @@
           </button>
         </div>
 
-        <div
-          class="bg-white border border-slate-200 rounded-b-2xl flex-1 overflow-auto shadow-xl shadow-slate-200/50 custom-scroll"
-        >
-          <table class="w-full text-left border-collapse table-fixed">
-            <thead class="bg-slate-50 sticky top-0 shadow-sm z-10">
+        <div class="bg-white border-x border-b border-slate-200 rounded-b-2xl flex-1 overflow-y-auto px-6 pb-6 pt-0 custom-scroll">
+          <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm mb-4">
+            <table class="w-full text-left text-sm table-fixed">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-700">
               <tr>
-                <th class="py-5 px-6 border-b w-52">
+                <th class="px-6 py-4 font-bold w-52">
                   <div class="flex items-center gap-4">
                     <input
                       type="checkbox"
@@ -176,34 +175,20 @@
                       onclick="toggleSelectAll()"
                       class="w-5 h-5 flex-shrink-0 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all"
                     />
-                    <span
-                      class="w-6 flex-shrink-0 text-center text-[16px] font-extrabold text-slate-600"
-                      >No.</span
-                    >
-                    <span
-                      class="text-[16px] font-extrabold text-slate-600 whitespace-nowrap"
-                      >Menu ID</span
-                    >
+                    <span class="w-6 flex-shrink-0 text-center">No.</span>
+                    <span class="whitespace-nowrap">Menu ID</span>
                   </div>
                 </th>
-                <th
-                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 w-[28%] border-b"
-                >
+                <th class="px-6 py-4 font-bold w-[28%]">
                   Menu Details
                 </th>
-                <th
-                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 w-[22%] border-b"
-                >
+                <th class="px-6 py-4 font-bold w-[22%]">
                   Contain
                 </th>
-                <th
-                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 w-[22%] border-b"
-                >
+                <th class="px-6 py-4 font-bold w-[22%]">
                   May Contain
                 </th>
-                <th
-                  class="py-5 px-8 text-[16px] font-extrabold text-slate-600 w-28 border-b text-center"
-                >
+                <th class="px-6 py-4 font-bold w-28 text-center">
                   Manage
                 </th>
               </tr>
@@ -224,6 +209,7 @@
               </tr>
             </tbody>
           </table>
+          </div>
         </div>
         
         <div id="paginationControls" class="flex justify-between items-center mt-6 px-2 hidden">
@@ -721,22 +707,22 @@
           const noDataHtml = `<span class='text-slate-300 text-xs italic mt-2'>- ไม่มีข้อมูล -</span>`;
 
           html += `
-          <tr class="${trClass}">
-            <td class="py-5 px-6">
+          <tr class="${trClass.replace('border-b border-slate-100 last:border-0 align-top', 'hover:bg-slate-50 transition-colors align-top')}">
+            <td class="px-6 py-4">
                 <div class="flex items-start gap-4">
                     <input type="checkbox" value="${menu.id}" class="row-checkbox w-5 h-5 flex-shrink-0 rounded border-slate-300 accent-[#006d4b] cursor-pointer transition-all mt-0.5" onclick="updateBulkDeleteButton()">
-                    <span class="text-[14px] font-extrabold text-slate-500 w-6 flex-shrink-0 text-center leading-6">${displayNo}</span>
-                    <span class="text-[14px] font-extrabold text-slate-600 whitespace-nowrap leading-6">${displayId}</span>
+                    <span class="font-medium text-slate-500 w-6 flex-shrink-0 text-center leading-6">${displayNo}</span>
+                    <span class="font-medium text-slate-600 whitespace-nowrap leading-6">${displayId}</span>
                 </div>
             </td>
-            <td class="py-5 px-6">
-                <div class="text-[16px] font-extrabold text-slate-700 leading-tight">${menu.name_th || "-"}</div>
-                <div class="text-[14px] font-bold text-slate-500 leading-tight mt-1.5">${menu.name_en || "-"}</div>
+            <td class="px-6 py-4">
+                <div class="font-medium text-slate-700 leading-tight">${menu.name_th || "-"}</div>
+                <div class="font-medium text-slate-500 leading-tight mt-1.5">${menu.name_en || "-"}</div>
                 ${needsWarning ? `<div class="mt-2 text-xs font-bold text-red-500 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">warning</span> ข้อมูลส่วนผสมบางตัวไม่มีรูปภาพ</div>` : ''}
             </td>
-            <td class="py-5 px-6"><div class="flex flex-wrap">${mainIngHtml || noDataHtml}</div></td>
-            <td class="py-5 px-6"><div class="flex flex-wrap">${containIngHtml || noDataHtml}</div></td>
-            <td class="py-5 px-8 text-center">
+            <td class="px-6 py-4"><div class="flex flex-wrap">${mainIngHtml || noDataHtml}</div></td>
+            <td class="px-6 py-4"><div class="flex flex-wrap">${containIngHtml || noDataHtml}</div></td>
+            <td class="px-6 py-4 text-center">
                 <div class="flex items-center justify-center gap-2">
                     <button type="button" onclick="openMenuModal('${menuDataStr}')" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-[#006d4b] hover:bg-emerald-50 rounded-full transition-all cursor-pointer"><span class="material-symbols-outlined text-[18px]">edit</span></button>
                     <button type="button" onclick="confirmDelete('${menu.id}', '${displayId}', '${safeMenuName}')" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer"><span class="material-symbols-outlined text-[18px]">delete</span></button>
@@ -758,13 +744,13 @@
         let paginationControls = document.getElementById("paginationControls");
         if (!paginationControls) return;
 
-        if (totalPages <= 1) {
+        if (totalItems === 0) {
           paginationControls.classList.add("hidden");
           return;
         }
 
         paginationControls.classList.remove("hidden");
-        document.getElementById("paginationInfo").innerText = `Showing ${startIndex + 1} to ${endIndex} of ${totalItems} menus`;
+        document.getElementById("paginationInfo").innerText = `Showing ${totalItems === 0 ? 0 : startIndex + 1} to ${endIndex} of ${totalItems} menus`;
         
         let buttonsHtml = '';
         

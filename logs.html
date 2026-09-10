@@ -62,7 +62,7 @@
             </div>
           </div>
           <p class="text-slate-500 font-medium mt-1">
-            ตรวจสอบและติดตามความเคลื่อนไหวของระบบแบบเรียลไทม์
+            Monitor and track system activity in real-time
           </p>
         </div>
         <div class="flex items-center gap-1.5 text-sm text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 shadow-sm">
@@ -73,7 +73,7 @@
 
       <main class="flex-1 flex flex-col p-8 overflow-hidden z-10">
         <div
-          class="bg-white p-5 rounded-t-2xl border border-slate-200 border-b-0 flex flex-wrap gap-4 items-center shrink-0 w-full relative z-20"
+          class="bg-white px-6 pt-6 pb-3 rounded-t-2xl border border-slate-200 border-b-0 flex flex-wrap gap-4 items-center shrink-0 w-full relative z-20"
         >
           <div class="w-[420px] shrink-0 relative">
             <span
@@ -134,40 +134,27 @@
           </div>
         </div>
 
-        <div
-          class="bg-white border border-slate-200 rounded-b-2xl flex-1 overflow-auto shadow-xl shadow-slate-200/50 custom-scroll"
-        >
-          <table class="w-full text-left border-collapse">
-            <thead class="bg-slate-50 sticky top-0 shadow-sm z-10">
+        <div class="bg-white border-x border-b border-slate-200 rounded-b-2xl flex-1 overflow-y-auto px-6 pb-6 pt-0 custom-scroll">
+          <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm mb-4">
+            <table class="w-full text-left text-sm table-fixed">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-700">
               <tr>
-                <th
-                  class="py-5 px-8 text-[16px] font-extrabold text-slate-600 w-24 border-b text-center"
-                >
+                <th class="px-6 py-4 font-bold w-24 text-center">
                   No.
                 </th>
-                <th
-                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 w-52 border-b"
-                >
+                <th class="px-6 py-4 font-bold w-52">
                   Date & Time
                 </th>
-                <th
-                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 w-56 border-b"
-                >
+                <th class="px-6 py-4 font-bold w-56">
                   Name / User
                 </th>
-                <th
-                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 w-40 border-b text-center"
-                >
+                <th class="px-6 py-4 font-bold w-40 text-center">
                   Role / Staff
                 </th>
-                <th
-                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 w-32 border-b text-center"
-                >
+                <th class="px-6 py-4 font-bold w-32 text-center">
                   Action
                 </th>
-                <th
-                  class="py-5 px-6 text-[16px] font-extrabold text-slate-600 border-b"
-                >
+                <th class="px-6 py-4 font-bold">
                   Details
                 </th>
               </tr>
@@ -188,6 +175,7 @@
               </tr>
             </tbody>
           </table>
+          </div>
         </div>
 
         <div id="paginationControls" class="flex justify-between items-center mt-6 px-2 hidden">
@@ -379,19 +367,19 @@
             roleBadge = `<span class="bg-slate-100 text-slate-500 text-[10px] px-2.5 py-1 rounded-lg font-black uppercase tracking-wider">Staff</span>`;
 
           html += `
-          <tr class="log-row border-b border-slate-100">
-            <td class="py-5 px-8 text-center"><span class="text-[14px] font-extrabold text-slate-500">${displayNo}</span></td>
-            <td class="py-5 px-6"><div class="text-[14px] font-bold text-slate-500 whitespace-nowrap">${formatDate(log.created_at)}</div></td>
-            <td class="py-5 px-6">
-                <div class="text-[14px] font-extrabold text-slate-700">${log.user_name}</div>
+          <tr class="log-row hover:bg-slate-50 transition-colors">
+            <td class="px-6 py-4 text-center"><span class="font-medium text-slate-500">${displayNo}</span></td>
+            <td class="px-6 py-4"><div class="font-medium text-slate-500 whitespace-nowrap">${formatDate(log.created_at)}</div></td>
+            <td class="px-6 py-4">
+                <div class="font-medium text-slate-700">${log.user_name}</div>
             </td>
-            <td class="py-5 px-6 text-center">${roleBadge}</td>
-            <td class="py-5 px-6 text-center">
+            <td class="px-6 py-4 text-center">${roleBadge}</td>
+            <td class="px-6 py-4 text-center">
                 <div class="inline-flex items-center gap-1.5 ${style.bg} ${style.color} px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-widest">
                     <span class="material-symbols-outlined text-[15px]">${style.icon}</span> ${log.action}
                 </div>
             </td>
-            <td class="py-5 px-6"><div class="text-[14px] font-bold text-slate-500 leading-relaxed">${log.details}</div></td>
+            <td class="px-6 py-4"><div class="font-medium text-slate-500 leading-relaxed">${log.details}</div></td>
           </tr>`;
         });
         tbody.innerHTML = html;
@@ -403,13 +391,13 @@
         let paginationControls = document.getElementById("paginationControls");
         if (!paginationControls) return;
 
-        if (totalPages <= 1) {
+        if (totalItems === 0) {
           paginationControls.classList.add("hidden");
           return;
         }
 
         paginationControls.classList.remove("hidden");
-        document.getElementById("paginationInfo").innerText = `Showing ${startIndex + 1} to ${endIndex} of ${totalItems} logs`;
+        document.getElementById("paginationInfo").innerText = `Showing ${totalItems === 0 ? 0 : startIndex + 1} to ${endIndex} of ${totalItems} logs`;
         
         let buttonsHtml = '';
         

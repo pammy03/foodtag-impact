@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Saved Tags | IMPACT Food Tag</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link
@@ -61,7 +61,7 @@
         print-color-adjust: exact;
       }
       body {
-        font-family: "Poppins", "Sarabun", sans-serif;
+        font-family: "Poppins", sans-serif;
       }
       .material-symbols-outlined {
         font-variation-settings:
@@ -530,7 +530,7 @@
             </div>
           </div>
           <p class="text-slate-500 font-medium mt-1">
-            จัดการ แก้ไข และสั่งพิมพ์ป้ายอาหารของคุณ
+            Manage, edit, and print your food tags
           </p>
         </div>
         <div class="flex gap-3 items-center">
@@ -548,7 +548,7 @@
 
       <div class="p-8 max-w-[1600px] w-full mx-auto flex flex-col flex-1">
         <div
-          class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-6 shrink-0"
+          class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-3 shrink-0"
         >
           <div class="flex flex-col md:flex-row gap-4 mb-4">
             <div class="flex-1 relative">
@@ -1028,14 +1028,33 @@
       }
 
       function clearFilters() {
-        document.getElementById("searchInput").value = "";
-        document.getElementById("statusFilter").value = "all";
-        document.getElementById("sizeFilter").value = "all";
-        document.getElementById("paperSizeFilter").value = "all";
-        document.getElementById("creatorFilter").value = "all";
-        document.getElementById("dateStart").value = "";
-        document.getElementById("dateEnd").value = "";
-        applyFiltersAndRender(true);
+        const searchInput = document.getElementById("searchInput");
+        if (searchInput) searchInput.value = "";
+        
+        const selects = ["statusFilter", "sizeFilter", "paperSizeFilter", "creatorFilter"];
+        selects.forEach(id => {
+          const el = document.getElementById(id);
+          if (el && el.options) {
+            el.value = "all";
+            for (let i = 0; i < el.options.length; i++) {
+              if (el.options[i].value === "all") {
+                el.options[i].selected = true;
+              } else {
+                el.options[i].selected = false;
+              }
+            }
+          }
+        });
+
+        const dateStart = document.getElementById("dateStart");
+        if (dateStart) dateStart.value = "";
+        
+        const dateEnd = document.getElementById("dateEnd");
+        if (dateEnd) dateEnd.value = "";
+        
+        setTimeout(() => {
+          applyFiltersAndRender(true);
+        }, 10);
       }
 
       function applyFiltersAndRender(resetPage = false) {
@@ -1064,9 +1083,9 @@
           : null;
 
         filteredTags = allTags.filter((tag) => {
-          const name = tag.title.toLowerCase();
+          const name = (tag.title || "").toLowerCase();
           const tCreator = (tag.createdBy || "UNKNOWN").toLowerCase();
-          const tDate = new Date(tag.createdAt).getTime();
+          const tDate = tag.createdAt ? new Date(tag.createdAt).getTime() : 0;
           const tStatus = (tag.status || "Ready").toLowerCase();
 
           let match =
@@ -1520,10 +1539,31 @@
                 headerHtml = `<div class="w-full text-center mb-3 font-bold" style="font-family: ${hFont}; font-size: ${hSize}; color: ${hColor};">${menu.headerText}</div>`;
             }
 
+            let badgeHtml = "";
+            if (menu.badgeEnabled) {
+                if (menu.badgeType === 'image' && menu.badgeImageUrl) {
+                    badgeHtml = `<div class="absolute top-4 right-4 z-20 flex items-center justify-center"><img src="${menu.badgeImageUrl}" class="w-12 h-12 object-contain" crossorigin="anonymous"></div>`;
+                } else if (menu.badgeType !== 'image' && menu.badgeText) {
+                    const bColor = menu.badgeColor || "#10b981";
+                    const bFont = profile.globalSettings?.fontTh || globalSettings?.fontTh || "'Prompt', sans-serif";
+                    badgeHtml = `<div class="absolute top-4 right-4 z-20 flex items-center justify-center font-bold" style="color: ${bColor}; font-family: ${bFont}; font-size: 16px;">${menu.badgeText}</div>`;
+                }
+            }
+
+            let currentPadding = '';
+            if (config) {
+               if (config.name === "Plate / Food Stall") currentPadding = `${globalSettings.safePlateTop || '84'}px 5% ${globalSettings.safePlateBot || '84'}px 5%`;
+               else if (config.name === "Western Set") currentPadding = `${globalSettings.safeWesternTop || '112'}px 5% ${globalSettings.safeWesternBot || '84'}px 5%`;
+               else if (config.name === "Buffet / Coffee Break") currentPadding = `${globalSettings.safeBuffetTop || '84'}px 5% ${globalSettings.safeBuffetBot || '84'}px 5%`;
+               else if (config.name === "Mini Tag") currentPadding = `${globalSettings.safeMiniTop || '67'}px 5% ${globalSettings.safeMiniBot || '67'}px 5%`;
+            }
+            const padStyle = currentPadding ? `padding: ${currentPadding}; box-sizing: border-box; height: 100%; display: flex; flex-direction: column; justify-content: flex-start;` : '';
+
             slotsHTML += `
               <div class="slot relative overflow-hidden flex flex-col justify-center items-center">
                   ${bgHtml}
-                  <div class="slot-content relative z-10 flex flex-col items-center w-full">
+                  ${badgeHtml}
+                  <div class="slot-content relative z-10 flex flex-col items-center w-full" style="${padStyle}">
                       ${headerHtml}
                       <div class="slot-text-th font-black mb-1 leading-tight text-center whitespace-pre-line" style="font-family: ${fTh}; font-size: ${sTh}; color: ${cTh};">${menu.name_th || ""}</div>
                       <div class="slot-text-en font-medium mb-1 leading-tight text-center whitespace-pre-line ${menu.uppercaseEn ? 'uppercase' : ''}" style="font-family: ${fEn}; font-size: ${sEn}; color: ${cEn};">${menu.name_en || ""}</div>
