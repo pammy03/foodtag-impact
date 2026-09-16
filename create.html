@@ -572,6 +572,63 @@
               </button>
             </div>
           </div>
+          <div class="relative border border-slate-200 rounded-xl bg-white p-4 pt-10 flex flex-col mb-4">
+            <div class="bg-indigo-600 text-white text-[11px] font-bold px-3 py-1 absolute top-0 left-0 rounded-br-lg rounded-tl-xl uppercase shadow-sm">
+              Slot Header
+            </div>
+            <div class="mt-auto border-t border-slate-100 pt-1">
+              <div class="flex items-center justify-between mb-3">
+                <label class="block text-[12px] font-bold text-slate-700">Show Header</label>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="showHeaderToggle" class="sr-only peer" onchange="changeSlotHeader()">
+                  <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                </label>
+              </div>
+              <div id="slotHeaderSettings" class="space-y-3">
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Header Text</label>
+                  <input type="text" id="headerTextInput" value="" oninput="changeSlotHeader()" class="w-full px-3 py-2 text-[13px] bg-white border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-600">
+                </div>
+                <div class="grid grid-cols-[1.5fr_1fr] gap-3">
+                  <div>
+                    <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Font Style</label>
+                    <select id="headerFontSelect" onchange="changeSlotHeader()" class="w-full  py-1.5 text-[12px] bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-600 appearance-none cursor-pointer pr-8 pl-3 font-semibold" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;" >
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Size</label>
+                    <div class="flex items-center gap-1">
+                      <input type="number" id="headerFontSizeInput" value="30" onchange="changeSlotHeader()" class="w-full px-2 py-1.5 text-[12px] bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-600 text-center">
+                      <span class="text-[10px] text-slate-400 font-bold uppercase">px</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Text Color</label>
+                    <div class="flex items-center gap-2.5">
+                      <div id="headerColorDisplay" onclick="document.getElementById('headerColorPicker').click()" class="w-6 h-6 rounded-full shadow-sm ring-2 ring-offset-2 transition-all cursor-pointer" style="background-color: #1e293b; --tw-ring-color: #1e293b;"></div>
+                      <div class="relative w-7 h-7 shrink-0">
+                        <input type="color" id="headerColorPicker" value="#1e293b" oninput="changeSlotHeaderColor(this.value)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                        <div class="absolute inset-0 w-full h-full rounded-md bg-[#2d3748] text-white flex items-center justify-center shadow-sm pointer-events-none">
+                          <span class="material-symbols-outlined text-[14px]">colorize</span>
+                        </div>
+                      </div>
+                      <input type="text" id="headerHexInput" value="#1E293B" onchange="changeSlotHeaderColor(this.value)" onkeyup="if(event.key === 'Enter') changeSlotHeaderColor(this.value)" class="flex-1 w-full min-w-0 px-2 py-1.5 text-[12px] font-mono uppercase text-slate-600 border border-slate-200 rounded-lg outline-none focus:border-[#006d4b] focus:ring-2 focus:ring-[#006d4b] placeholder:text-slate-300" placeholder="#HEX">
+                    </div>
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Top Spacing</label>
+                    <div class="flex items-center gap-1">
+                      <input type="number" id="headerMarginTopInput" value="0" onchange="changeSlotHeader()" oninput="changeSlotHeader()" class="w-full px-2 py-1.5 text-[12px] bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-600 text-center">
+                      <span class="text-[10px] text-slate-400 font-bold uppercase">mm</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="relative mt-2">
             <label class="block text-[18px] font-bold text-slate-700 mb-2"
               >Menu Search</label
@@ -729,54 +786,6 @@
               </div>
             </div>
           </div>
-          <div class="relative border border-slate-200 rounded-xl bg-white p-4 pt-10 flex flex-col mb-4">
-            <div class="bg-indigo-600 text-white text-[11px] font-bold px-3 py-1 absolute top-0 left-0 rounded-br-lg rounded-tl-xl uppercase shadow-sm">
-              Slot Header
-            </div>
-            <div class="mt-auto border-t border-slate-100 pt-1">
-              <div class="flex items-center justify-between mb-3">
-                <label class="block text-[12px] font-bold text-slate-700">Show Header</label>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" id="showHeaderToggle" class="sr-only peer" onchange="changeSlotHeader()">
-                  <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-                </label>
-              </div>
-              <div id="slotHeaderSettings" class="space-y-3 hidden">
-                <div>
-                  <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Header Text</label>
-                  <input type="text" id="headerTextInput" value="Menu" oninput="changeSlotHeader()" class="w-full px-3 py-2 text-[13px] bg-white border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-600">
-                </div>
-                <div class="grid grid-cols-[1.5fr_1fr] gap-3">
-                  <div>
-                    <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Font Style</label>
-                    <select id="headerFontSelect" onchange="changeSlotHeader()" class="w-full  py-1.5 text-[12px] bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-600 appearance-none cursor-pointer pr-8 pl-3 font-semibold" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;" >
-                    </select>
-                  </div>
-                  <div>
-                    <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Size</label>
-                    <div class="flex items-center gap-1">
-                      <input type="number" id="headerFontSizeInput" value="30" onchange="changeSlotHeader()" class="w-full px-2 py-1.5 text-[12px] bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-600 text-center">
-                      <span class="text-[10px] text-slate-400 font-bold uppercase">px</span>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Text Color</label>
-                  <div class="flex items-center gap-2.5">
-                    <div id="headerColorDisplay" onclick="document.getElementById('headerColorPicker').click()" class="w-6 h-6 rounded-full shadow-sm ring-2 ring-offset-2 transition-all cursor-pointer" style="background-color: #1e293b; --tw-ring-color: #1e293b;"></div>
-                    <div class="relative w-7 h-7">
-                      <input type="color" id="headerColorPicker" value="#1e293b" oninput="changeSlotHeaderColor(this.value)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                      <div class="absolute inset-0 w-full h-full rounded-md bg-[#2d3748] text-white flex items-center justify-center shadow-sm pointer-events-none">
-                        <span class="material-symbols-outlined text-[14px]">colorize</span>
-                      </div>
-                    </div>
-                    <input type="text" id="headerHexInput" value="#1E293B" onchange="changeSlotHeaderColor(this.value)" onkeyup="if(event.key === 'Enter') changeSlotHeaderColor(this.value)" class="flex-1 min-w-[80px] px-2 py-1.5 text-[12px] font-mono uppercase text-slate-600 border border-slate-200 rounded-lg outline-none focus:border-[#006d4b] focus:ring-2 focus:ring-[#006d4b] placeholder:text-slate-300" placeholder="#HEX">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div class="relative border border-slate-200 rounded-xl bg-white p-4 pt-10 flex flex-col mb-4">
             <div class="bg-indigo-600 text-white text-[11px] font-bold px-3 py-1 absolute top-0 left-0 rounded-br-lg rounded-tl-xl uppercase shadow-sm">
               Slot Badge
@@ -1854,6 +1863,7 @@
             for (let i = startSlot; i < startSlot + count; i++) {
                 if (slotsData[i]) {
                     slotsData[i].bgUrl = undefined;
+                    delete slotsData[i].headerMarginTop;
                 }
             }
         }
@@ -1865,6 +1875,7 @@
         ]).then(() => {
           setupGridStructure();
           renderSlotControls(temp.slots_count);
+          updateInputs(slotsData[activeSlot] || {});
           setTimeout(resizePaper, 50);
         });
       }
@@ -2058,8 +2069,7 @@
         }
 
         if (menusToRender.length === 0) {
-          element.innerHTML = bgHtml + `<div class="slot-content"></div>`;
-          return;
+          // Do not early return, so that header and badge can still be rendered
         }
 
         const fTh = menu.fontTh || globalSettings.fontTh;
@@ -2183,11 +2193,13 @@
         }).join(dividerHtml);
 
         let headerHtml = "";
-        if (menu.showHeader && menu.headerText) {
-            const hFont = menu.headerFont || globalSettings.fontEn || "'Aptos', sans-serif";
-            const hSize = menu.headerFontSize || "30px";
-            const hColor = menu.headerFontColor || "#1e293b";
-            headerHtml = `<div class="w-full text-center mb-3 font-bold" style="font-family: ${hFont}; font-size: ${hSize}; color: ${hColor};">${menu.headerText}</div>`;
+        const finalShowHeader = menu.showHeader !== undefined ? menu.showHeader : globalSettings.showHeader;
+        const finalHeaderText = menu.headerText || globalSettings.headerText || "Menu";
+        if (finalShowHeader && finalHeaderText) {
+            const hFont = menu.headerFont || globalSettings.headerFont || "'Aptos', sans-serif";
+            const hSize = menu.headerFontSize || globalSettings.headerFontSize || "30px";
+            const hColor = menu.headerFontColor || globalSettings.headerFontColor || "#1e293b";
+            headerHtml = `<div class="w-full text-center mb-3 font-bold relative" style="font-family: ${hFont}; font-size: ${hSize}; color: ${hColor};">${finalHeaderText}</div>`;
         }
 
         let badgeHtml = "";
@@ -2205,10 +2217,17 @@
         let currentPadding = '';
         const globalSetsTemp = typeof getGlobalSettings === "function" ? getGlobalSettings() : {};
         if (currentTemplateConfig) {
-           if (currentTemplateConfig.name === "Plate / Food Stall") currentPadding = `${globalSetsTemp.safePlateTop || '84'}px 5% ${globalSetsTemp.safePlateBot || '84'}px 5%`;
-           else if (currentTemplateConfig.name === "Western Set") currentPadding = `${globalSetsTemp.safeWesternTop || '112'}px 5% ${globalSetsTemp.safeWesternBot || '84'}px 5%`;
-           else if (currentTemplateConfig.name === "Buffet / Coffee Break") currentPadding = `${globalSetsTemp.safeBuffetTop || '84'}px 5% ${globalSetsTemp.safeBuffetBot || '84'}px 5%`;
-           else if (currentTemplateConfig.name === "Mini Tag") currentPadding = `${globalSetsTemp.safeMiniTop || '67'}px 5% ${globalSetsTemp.safeMiniBot || '67'}px 5%`;
+           let defaultTop = 0;
+           let defaultBot = 0;
+           if (currentTemplateConfig.name === "Plate / Food Stall") { defaultTop = parseFloat(globalSetsTemp.safePlateTopMm || '22'); defaultBot = parseFloat(globalSetsTemp.safePlateBotMm || '22'); }
+           else if (currentTemplateConfig.name === "Western Set") { defaultTop = parseFloat(globalSetsTemp.safeWesternTopMm || '30'); defaultBot = parseFloat(globalSetsTemp.safeWesternBotMm || '22'); }
+           else if (currentTemplateConfig.name === "Buffet / Coffee Break") { defaultTop = parseFloat(globalSetsTemp.safeBuffetTopMm || '22'); defaultBot = parseFloat(globalSetsTemp.safeBuffetBotMm || '22'); }
+           else if (currentTemplateConfig.name === "Mini Tag") { defaultTop = parseFloat(globalSetsTemp.safeMiniTopMm || '18'); defaultBot = parseFloat(globalSetsTemp.safeMiniBotMm || '18'); }
+           
+           let topUnit = 'mm';
+           if (menu.headerMarginTop !== undefined && String(menu.headerMarginTop).includes('px')) topUnit = 'px';
+           const topPadding = menu.headerMarginTop !== undefined ? parseFloat(menu.headerMarginTop) : defaultTop;
+           currentPadding = `${topPadding}${topUnit} 5% ${defaultBot}mm 5%`;
         }
         const padStyle = currentPadding ? `padding: ${currentPadding}; box-sizing: border-box; height: 100%; display: flex; flex-direction: column; justify-content: flex-start;` : '';
 
@@ -2618,25 +2637,24 @@
         if (labelMayContainFontInput) setCustomDropdownUI("labelMayContainFont", menu.labelMayContainFont || globalSettings.labelMayContainFont || "'Aptos', sans-serif");
 
         const showHeaderToggle = document.getElementById("showHeaderToggle");
+        if (showHeaderToggle) {
+            showHeaderToggle.checked = menu.showHeader !== undefined ? !!menu.showHeader : !!globalSettings.showHeader;
+        }
+
         const slotHeaderSettings = document.getElementById("slotHeaderSettings");
         const headerTextInput = document.getElementById("headerTextInput");
         const headerFontSizeInput = document.getElementById("headerFontSizeInput");
         const headerColorPicker = document.getElementById("headerColorPicker");
         const headerColorDisplay = document.getElementById("headerColorDisplay");
 
-        if (showHeaderToggle) {
-            showHeaderToggle.checked = !!menu.showHeader;
-            if (menu.showHeader) {
-                if(slotHeaderSettings) slotHeaderSettings.classList.remove("hidden");
-            } else {
-                if(slotHeaderSettings) slotHeaderSettings.classList.add("hidden");
-            }
+        if (headerTextInput) headerTextInput.value = menu.headerText || globalSettings.headerText || "Menu";
+        setCustomDropdownUI("headerFontSelect", menu.headerFont || globalSettings.headerFont || "'Aptos', sans-serif");
+        if (headerFontSizeInput) {
+           let hSize = menu.headerFontSize || globalSettings.headerFontSize || "30";
+           headerFontSizeInput.value = parseInt(hSize);
         }
-        if (headerTextInput) headerTextInput.value = menu.headerText || "Menu";
-        setCustomDropdownUI("headerFontSelect", menu.headerFont || globalSettings.fontEn || "'Aptos', sans-serif");
-        if (headerFontSizeInput) headerFontSizeInput.value = parseInt(menu.headerFontSize || "30");
         
-        const hColor = menu.headerFontColor || "#1e293b";
+        const hColor = menu.headerFontColor || globalSettings.headerFontColor || "#1e293b";
         if (headerColorPicker) headerColorPicker.value = hColor;
         if (headerColorDisplay) {
             headerColorDisplay.style.backgroundColor = hColor;
@@ -2644,6 +2662,29 @@
         }
         const headerHexInput = document.getElementById("headerHexInput");
         if (headerHexInput) headerHexInput.value = hColor.toUpperCase();
+        
+        const headerMarginTopInput = document.getElementById("headerMarginTopInput");
+        if (headerMarginTopInput) {
+            let defaultTop = 0;
+            if (currentTemplateConfig) {
+               if (currentTemplateConfig.name === "Plate / Food Stall") defaultTop = parseFloat(globalSettings.safePlateTopMm || '22');
+               else if (currentTemplateConfig.name === "Western Set") defaultTop = parseFloat(globalSettings.safeWesternTopMm || '30');
+               else if (currentTemplateConfig.name === "Buffet / Coffee Break") defaultTop = parseFloat(globalSettings.safeBuffetTopMm || '22');
+               else if (currentTemplateConfig.name === "Mini Tag") defaultTop = parseFloat(globalSettings.safeMiniTopMm || '18');
+            }
+            let val = defaultTop;
+            let isPx = false;
+            if (menu.headerMarginTop !== undefined) {
+                val = parseFloat(menu.headerMarginTop);
+                if (String(menu.headerMarginTop).includes('px')) {
+                    isPx = true;
+                }
+            }
+            if (isPx) {
+                val = Math.round(val * 0.264583 * 10) / 10;
+            }
+            headerMarginTopInput.value = val;
+        }
 
         const badgeEnabledToggle = document.getElementById("badgeEnabledToggle");
         const slotBadgeSettings = document.getElementById("slotBadgeSettings");
@@ -2740,26 +2781,34 @@
 
       function removeMenu(index) {
           if (slotsData[activeSlot] && slotsData[activeSlot].menus) {
-              slotsData[activeSlot].menus.splice(index, 1);
-              
-              if (slotsData[activeSlot].menus.length === 0) {
-                  slotsData[activeSlot].name_th = "";
-                  slotsData[activeSlot].name_en = "";
-                  slotsData[activeSlot].allergens = [];
-                  slotsData[activeSlot].main_allergens = [];
-                  slotsData[activeSlot].main_ingredient_ids = [];
-                  slotsData[activeSlot].main_ingredient_names = [];
-              } else {
-                  slotsData[activeSlot].name_th = slotsData[activeSlot].menus[0].name_th;
-                  slotsData[activeSlot].name_en = slotsData[activeSlot].menus[0].name_en;
-                  slotsData[activeSlot].allergens = slotsData[activeSlot].menus[0].allergens;
-                  slotsData[activeSlot].main_allergens = slotsData[activeSlot].menus[0].main_allergens;
-                  slotsData[activeSlot].main_ingredient_ids = slotsData[activeSlot].menus[0].main_ingredient_ids;
-                  slotsData[activeSlot].main_ingredient_names = slotsData[activeSlot].menus[0].main_ingredient_names;
-              }
-              
-              updateInputs(slotsData[activeSlot]);
-              renderActiveSlotOnly();
+              const menuName = slotsData[activeSlot].menus[index].name_th || "เมนูนี้";
+              showGenericConfirmModal(
+                  "ยืนยันการลบเมนู",
+                  `คุณต้องการลบ "${menuName}" ออกจาก Slot ใช่หรือไม่?`,
+                  "delete",
+                  () => {
+                      slotsData[activeSlot].menus.splice(index, 1);
+                      
+                      if (slotsData[activeSlot].menus.length === 0) {
+                          slotsData[activeSlot].name_th = "";
+                          slotsData[activeSlot].name_en = "";
+                          slotsData[activeSlot].allergens = [];
+                          slotsData[activeSlot].main_allergens = [];
+                          slotsData[activeSlot].main_ingredient_ids = [];
+                          slotsData[activeSlot].main_ingredient_names = [];
+                      } else {
+                          slotsData[activeSlot].name_th = slotsData[activeSlot].menus[0].name_th;
+                          slotsData[activeSlot].name_en = slotsData[activeSlot].menus[0].name_en;
+                          slotsData[activeSlot].allergens = slotsData[activeSlot].menus[0].allergens;
+                          slotsData[activeSlot].main_allergens = slotsData[activeSlot].menus[0].main_allergens;
+                          slotsData[activeSlot].main_ingredient_ids = slotsData[activeSlot].menus[0].main_ingredient_ids;
+                          slotsData[activeSlot].main_ingredient_names = slotsData[activeSlot].menus[0].main_ingredient_names;
+                      }
+                      
+                      updateInputs(slotsData[activeSlot]);
+                      renderActiveSlotOnly();
+                  }
+              );
           }
       }
 
@@ -3493,10 +3542,21 @@
 
       function showAdjustIngredientsModal() {
         const menu = slotsData[activeSlot] || {};
+        
+        let initialMain = menu.main_allergens;
+        let initialContain = menu.allergens;
+        
+        if ((!initialMain || initialMain.length === 0) && menu.menus && menu.menus.length > 0) {
+            initialMain = menu.menus[0].main_allergens;
+        }
+        if ((!initialContain || initialContain.length === 0) && menu.menus && menu.menus.length > 0) {
+            initialContain = menu.menus[0].allergens;
+        }
+
         tempMainAllergens = JSON.parse(
-          JSON.stringify(menu.main_allergens || []),
+          JSON.stringify(initialMain || []),
         );
-        tempContainAllergens = JSON.parse(JSON.stringify(menu.allergens || []));
+        tempContainAllergens = JSON.parse(JSON.stringify(initialContain || []));
 
         document.getElementById("adjustModalSlotLabel").innerText =
           `Only for Slot ${activeSlot} · Does not affect original menu data`;
@@ -3630,6 +3690,13 @@
             slotsData[activeSlot].allergens = JSON.parse(
               JSON.stringify(tempContainAllergens),
             );
+            
+            if (slotsData[activeSlot].menus && slotsData[activeSlot].menus.length > 0) {
+                slotsData[activeSlot].menus.forEach(m => {
+                    m.main_allergens = JSON.parse(JSON.stringify(tempMainAllergens));
+                    m.allergens = JSON.parse(JSON.stringify(tempContainAllergens));
+                });
+            }
 
             closeAdjustIngredientsModal();
             updateInputs(slotsData[activeSlot]);
@@ -3883,13 +3950,23 @@
 
       function changeFontTh(font) {
         if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
-        slotsData[activeSlot].fontTh = font;
+        const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {};
+        if (font === (globalSettings.fontTh || "'Prompt', sans-serif")) {
+            delete slotsData[activeSlot].fontTh;
+        } else {
+            slotsData[activeSlot].fontTh = font;
+        }
         renderActiveSlotOnly();
       }
 
       function changeFontSizeTh(size) {
         if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
-        slotsData[activeSlot].fontSizeTh = size + "px";
+        const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {};
+        if (size + "px" === (globalSettings.fontSizeTh || "22px")) {
+            delete slotsData[activeSlot].fontSizeTh;
+        } else {
+            slotsData[activeSlot].fontSizeTh = size + "px";
+        }
         renderActiveSlotOnly();
       }
 
@@ -3901,32 +3978,105 @@
 
       function changeSlotHeader() {
         if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
+        const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {};
         
         const showHeaderToggle = document.getElementById("showHeaderToggle");
         const headerTextInput = document.getElementById("headerTextInput");
         const headerFontSelect = document.getElementById("headerFontSelect");
         const headerFontSizeInput = document.getElementById("headerFontSizeInput");
         const headerColorPicker = document.getElementById("headerColorPicker");
+        const headerMarginTopInput = document.getElementById("headerMarginTopInput");
         const slotHeaderSettings = document.getElementById("slotHeaderSettings");
 
-        const show = showHeaderToggle ? showHeaderToggle.checked : false;
-        slotsData[activeSlot].showHeader = show;
+        const wasOff = !slotsData[activeSlot].showHeader;
+        const isEnabling = showHeaderToggle && showHeaderToggle.checked;
+        const justTurnedOn = wasOff && isEnabling;
         
-        if (show && slotHeaderSettings) {
-            slotHeaderSettings.classList.remove("hidden");
-        } else if (slotHeaderSettings) {
-            slotHeaderSettings.classList.add("hidden");
+        if (showHeaderToggle) slotsData[activeSlot].showHeader = isEnabling;
+
+        // Auto-fill or force-reset inputs when explicitly turning the toggle ON
+        if (justTurnedOn) {
+            if (headerTextInput) {
+                headerTextInput.value = globalSettings.headerText || "Menu";
+            }
+            if (headerFontSelect) {
+                setCustomDropdownUI("headerFontSelect", globalSettings.headerFont || "'Aptos', sans-serif");
+            }
+            if (headerFontSizeInput) {
+                headerFontSizeInput.value = parseInt(globalSettings.headerFontSize || "30");
+            }
+            if (headerColorPicker) {
+                const defColor = globalSettings.headerFontColor || "#1e293b";
+                headerColorPicker.value = defColor;
+                const display = document.getElementById("headerColorDisplay");
+                if (display) {
+                    display.style.backgroundColor = defColor;
+                    display.style.setProperty('--tw-ring-color', defColor);
+                }
+            }
+            if (headerMarginTopInput) {
+                let defaultTop = 0;
+                if (typeof currentTemplateConfig !== "undefined" && currentTemplateConfig) {
+                   if (currentTemplateConfig.name === "Plate / Food Stall") defaultTop = parseFloat(globalSettings.safePlateTopMm || '22');
+                   else if (currentTemplateConfig.name === "Western Set") defaultTop = parseFloat(globalSettings.safeWesternTopMm || '30');
+                   else if (currentTemplateConfig.name === "Buffet / Coffee Break") defaultTop = parseFloat(globalSettings.safeBuffetTopMm || '22');
+                   else if (currentTemplateConfig.name === "Mini Tag") defaultTop = parseFloat(globalSettings.safeMiniTopMm || '18');
+                }
+                headerMarginTopInput.value = defaultTop;
+            }
         }
 
-        if (headerTextInput) slotsData[activeSlot].headerText = headerTextInput.value;
-        if (headerFontSelect) slotsData[activeSlot].headerFont = headerFontSelect.value;
-        if (headerFontSizeInput) slotsData[activeSlot].headerFontSize = headerFontSizeInput.value + "px";
+        if (headerTextInput) {
+            if (headerTextInput.value === (globalSettings.headerText || "Menu")) {
+                delete slotsData[activeSlot].headerText;
+            } else {
+                slotsData[activeSlot].headerText = headerTextInput.value;
+            }
+        }
+        
+        if (headerFontSelect) {
+            if (headerFontSelect.value === (globalSettings.headerFont || "'Aptos', sans-serif")) {
+                delete slotsData[activeSlot].headerFont;
+            } else {
+                slotsData[activeSlot].headerFont = headerFontSelect.value;
+            }
+        }
+        
+        if (headerFontSizeInput) {
+            if (headerFontSizeInput.value + "px" === (globalSettings.headerFontSize || "30px")) {
+                delete slotsData[activeSlot].headerFontSize;
+            } else {
+                slotsData[activeSlot].headerFontSize = headerFontSizeInput.value + "px";
+            }
+        }
+        
         if (headerColorPicker) {
-            slotsData[activeSlot].headerFontColor = headerColorPicker.value;
+            if (headerColorPicker.value.toUpperCase() === (globalSettings.headerFontColor || "#1e293b").toUpperCase()) {
+                delete slotsData[activeSlot].headerFontColor;
+            } else {
+                slotsData[activeSlot].headerFontColor = headerColorPicker.value;
+            }
             const display = document.getElementById("headerColorDisplay");
             if (display) {
                 display.style.backgroundColor = headerColorPicker.value;
                 display.style.setProperty('--tw-ring-color', headerColorPicker.value);
+            }
+        }
+        
+        if (headerMarginTopInput) {
+            let defaultTop = 0;
+            if (typeof currentTemplateConfig !== "undefined" && currentTemplateConfig) {
+               if (currentTemplateConfig.name === "Plate / Food Stall") defaultTop = parseFloat(globalSettings.safePlateTopMm || '22');
+               else if (currentTemplateConfig.name === "Western Set") defaultTop = parseFloat(globalSettings.safeWesternTopMm || '30');
+               else if (currentTemplateConfig.name === "Buffet / Coffee Break") defaultTop = parseFloat(globalSettings.safeBuffetTopMm || '22');
+               else if (currentTemplateConfig.name === "Mini Tag") defaultTop = parseFloat(globalSettings.safeMiniTopMm || '18');
+            }
+            const marginVal = parseFloat(headerMarginTopInput.value) || 0;
+            const defaultMm = defaultTop;
+            if (marginVal === defaultMm) {
+                delete slotsData[activeSlot].headerMarginTop;
+            } else {
+                slotsData[activeSlot].headerMarginTop = marginVal + "mm";
             }
         }
         
@@ -3998,26 +4148,46 @@
 
       function changeFontEn(font) {
         if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
-        slotsData[activeSlot].fontEn = font;
+        const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {};
+        if (font === (globalSettings.fontEn || "'Aptos', sans-serif")) {
+            delete slotsData[activeSlot].fontEn;
+        } else {
+            slotsData[activeSlot].fontEn = font;
+        }
         renderActiveSlotOnly();
       }
 
       function changeFontSizeEn(size) {
         if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
-        slotsData[activeSlot].fontSizeEn = size + "px";
+        const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {};
+        if (size + "px" === (globalSettings.fontSizeEn || "22px")) {
+            delete slotsData[activeSlot].fontSizeEn;
+        } else {
+            slotsData[activeSlot].fontSizeEn = size + "px";
+        }
         renderActiveSlotOnly();
       }
 
       function changeFontColorTh(color) {
         if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
-        slotsData[activeSlot].fontColorTh = color;
+        const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {};
+        if (color.toUpperCase() === (globalSettings.fontColorTh || "#1e293b").toUpperCase()) {
+            delete slotsData[activeSlot].fontColorTh;
+        } else {
+            slotsData[activeSlot].fontColorTh = color;
+        }
         updateFontColorUI('th', color);
         renderActiveSlotOnly();
       }
 
       function changeFontColorEn(color) {
         if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
-        slotsData[activeSlot].fontColorEn = color;
+        const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {};
+        if (color.toUpperCase() === (globalSettings.fontColorEn || "#64748b").toUpperCase()) {
+            delete slotsData[activeSlot].fontColorEn;
+        } else {
+            slotsData[activeSlot].fontColorEn = color;
+        }
         updateFontColorUI('en', color);
         renderActiveSlotOnly();
       }
@@ -4070,24 +4240,32 @@
 
       function changeAllergenLabelSize(type, size) {
         if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
+        const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {};
         if (type === 'contain') {
-          slotsData[activeSlot].labelContainSize = size;
+          if (size.toString() === (globalSettings.labelContainSize || "10").toString()) delete slotsData[activeSlot].labelContainSize;
+          else slotsData[activeSlot].labelContainSize = size;
         } else if (type === 'maycontain') {
-          slotsData[activeSlot].labelMayContainSize = size;
+          if (size.toString() === (globalSettings.labelMayContainSize || "10").toString()) delete slotsData[activeSlot].labelMayContainSize;
+          else slotsData[activeSlot].labelMayContainSize = size;
         } else if (type === 'title') {
-          slotsData[activeSlot].labelTitleSize = size;
+          if (size.toString() === (globalSettings.labelTitleSize || "12").toString()) delete slotsData[activeSlot].labelTitleSize;
+          else slotsData[activeSlot].labelTitleSize = size;
         }
         renderActiveSlotOnly();
       }
 
       function changeAllergenLabelFont(type, font) {
         if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
+        const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {};
         if (type === 'contain') {
-          slotsData[activeSlot].labelContainFont = font;
+          if (font === (globalSettings.labelContainFont || "'Aptos', sans-serif")) delete slotsData[activeSlot].labelContainFont;
+          else slotsData[activeSlot].labelContainFont = font;
         } else if (type === 'maycontain') {
-          slotsData[activeSlot].labelMayContainFont = font;
+          if (font === (globalSettings.labelMayContainFont || "'Aptos', sans-serif")) delete slotsData[activeSlot].labelMayContainFont;
+          else slotsData[activeSlot].labelMayContainFont = font;
         } else if (type === 'title') {
-          slotsData[activeSlot].labelTitleFont = font;
+          if (font === (globalSettings.labelTitleFont || "'Aptos', sans-serif")) delete slotsData[activeSlot].labelTitleFont;
+          else slotsData[activeSlot].labelTitleFont = font;
         }
         renderActiveSlotOnly();
       }

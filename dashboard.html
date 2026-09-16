@@ -1034,13 +1034,14 @@
         const selects = ["statusFilter", "sizeFilter", "paperSizeFilter", "creatorFilter"];
         selects.forEach(id => {
           const el = document.getElementById(id);
-          if (el && el.options) {
+          if (el) {
             el.value = "all";
-            for (let i = 0; i < el.options.length; i++) {
-              if (el.options[i].value === "all") {
-                el.options[i].selected = true;
-              } else {
-                el.options[i].selected = false;
+            if (el.options && el.options.length > 0) {
+              for (let i = 0; i < el.options.length; i++) {
+                if (el.options[i].value === "all") {
+                  el.selectedIndex = i;
+                  break;
+                }
               }
             }
           }
@@ -1552,10 +1553,10 @@
 
             let currentPadding = '';
             if (config) {
-               if (config.name === "Plate / Food Stall") currentPadding = `${globalSettings.safePlateTop || '84'}px 5% ${globalSettings.safePlateBot || '84'}px 5%`;
-               else if (config.name === "Western Set") currentPadding = `${globalSettings.safeWesternTop || '112'}px 5% ${globalSettings.safeWesternBot || '84'}px 5%`;
-               else if (config.name === "Buffet / Coffee Break") currentPadding = `${globalSettings.safeBuffetTop || '84'}px 5% ${globalSettings.safeBuffetBot || '84'}px 5%`;
-               else if (config.name === "Mini Tag") currentPadding = `${globalSettings.safeMiniTop || '67'}px 5% ${globalSettings.safeMiniBot || '67'}px 5%`;
+               if (config.name === "Plate / Food Stall") currentPadding = `${globalSettings.safePlateTopMm || '22'}mm 5% ${globalSettings.safePlateBotMm || '22'}mm 5%`;
+               else if (config.name === "Western Set") currentPadding = `${globalSettings.safeWesternTopMm || '30'}mm 5% ${globalSettings.safeWesternBotMm || '22'}mm 5%`;
+               else if (config.name === "Buffet / Coffee Break") currentPadding = `${globalSettings.safeBuffetTopMm || '22'}mm 5% ${globalSettings.safeBuffetBotMm || '22'}mm 5%`;
+               else if (config.name === "Mini Tag") currentPadding = `${globalSettings.safeMiniTopMm || '18'}mm 5% ${globalSettings.safeMiniBotMm || '18'}mm 5%`;
             }
             const padStyle = currentPadding ? `padding: ${currentPadding}; box-sizing: border-box; height: 100%; display: flex; flex-direction: column; justify-content: flex-start;` : '';
 

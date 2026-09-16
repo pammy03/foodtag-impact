@@ -199,7 +199,7 @@
               type="text"
               id="inputBgName"
               class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all font-bold"
-              placeholder="e.g. พื้นหลัง Buffet ลายไทย"
+              placeholder="e.g. ป้าย Buffet ลายไทย"
             />
           </div>
 
@@ -310,7 +310,7 @@
           class="px-8 py-6 border-b flex justify-between items-center bg-slate-50"
         >
           <div>
-            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Edit Background</h2>
+            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Edit Badge</h2>
             <p class="text-sm text-slate-500 font-medium mt-1">
               Edit badge name or update badge image
             </p>
@@ -421,7 +421,7 @@
           class="px-8 py-6 border-b flex justify-between items-center bg-slate-50 shrink-0"
         >
           <div>
-            <h2 class="text-xl font-bold text-slate-800">Background Details</h2>
+            <h2 class="text-xl font-bold text-slate-800">Badge Details</h2>
           </div>
           <button
             type="button"
@@ -657,7 +657,7 @@
           dbBadges = data || [];
           renderBadgeList();
         } catch (err) {
-          console.error("Error fetching backgrounds", err);
+          console.error("Error fetching badges", err);
           document.getElementById("bgTableBody").innerHTML =
             `<tr><td colspan="3" class="py-20 text-center text-red-500 font-bold bg-red-50 rounded-b-2xl">⚠️ CONNECTION ERROR: ${err.message}</td></tr>`;
         }
@@ -767,7 +767,7 @@
                     <button type="button" onclick="openViewModal('${bgDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-[#006d4b] hover:bg-emerald-50 rounded-full transition-all cursor-pointer" title="View Details">
                         <span class="material-symbols-outlined text-[20px]">visibility</span>
                     </button>
-                    <button type="button" onclick="openEditModal('${bgDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all cursor-pointer" title="Edit Background">
+                    <button type="button" onclick="openEditModal('${bgDataStr}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all cursor-pointer" title="Edit Badge">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
                     <button type="button" onclick="deleteBadge('${bg.id}', '${safeName}')" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer" title="Delete">
@@ -842,9 +842,9 @@
         pendingSaveType = type;
         const msgEl = document.getElementById("confirmSaveMessage");
         if (type === "upload") {
-          msgEl.innerText = "คุณต้องการยืนยันการเพิ่มรูปภาพพื้นหลังใหม่เข้าสู่ระบบใช่หรือไม่?";
+          msgEl.innerText = "คุณต้องการยืนยันการเพิ่มรูปภาพ Badge ใหม่เข้าสู่ระบบใช่หรือไม่?";
         } else {
-          msgEl.innerText = "คุณต้องการยืนยันการแก้ไขข้อมูลพื้นหลังนี้ใช่หรือไม่?";
+          msgEl.innerText = "คุณต้องการยืนยันการแก้ไขข้อมูล Badge นี้ใช่หรือไม่?";
         }
         document.getElementById("confirmSaveModal").classList.add("active");
       }
@@ -924,14 +924,14 @@
           await dbClient.from("badges").delete().in("id", idsToDelete);
           await logSystemActivity(
             "DELETE",
-            `ลบรูปภาพพื้นหลังจำนวน: ${idsToDelete.length} รายการ`
+            `ลบรูปภาพ Badge จำนวน: ${idsToDelete.length} รายการ`
           );
           closeModal("bulkDeleteModal");
           document.getElementById("selectAllCheckbox").checked = false;
           updateBulkDeleteButton();
           fetchBadges();
         } catch (e) {
-          alert("Error deleting backgrounds: " + e.message);
+          alert("Error deleting badges: " + e.message);
         } finally {
           btn.disabled = false;
           btn.innerHTML = "ลบข้อมูลทั้งหมด";
@@ -1040,7 +1040,7 @@
 
           if (dbError) throw dbError;
 
-          await logSystemActivity("CREATE", `อัปโหลดพื้นหลังใหม่: ${name}`);
+          await logSystemActivity("CREATE", `อัปโหลด Badge ใหม่: ${name}`);
 
           closeModal("uploadModal");
           fetchBadges();
@@ -1133,7 +1133,7 @@
 
           if (dbError) throw dbError;
 
-          await logSystemActivity("EDIT", `แก้ไขพื้นหลัง: ${name}`);
+          await logSystemActivity("EDIT", `แก้ไข Badge: ${name}`);
 
           closeModal("editModal");
           fetchBadges();
@@ -1175,7 +1175,7 @@
 
           if (error) throw error;
 
-          await logSystemActivity("DELETE", `ลบรูปภาพพื้นหลัง: ${name}`);
+          await logSystemActivity("DELETE", `ลบรูปภาพ Badge: ${name}`);
 
           closeDeleteModal();
           fetchBadges();
