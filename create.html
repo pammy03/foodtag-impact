@@ -548,16 +548,6 @@
                   background-size: 1.2em;
                 "
               ></select>
-
-              <button type="button"
-                onclick="showBgConfirmModal()"
-                class="w-full mt-2 py-2 text-[13px] font-bold text-[#006d4b] bg-white border border-[#006d4b]/30 hover:bg-emerald-50 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
-              >
-                <span class="material-symbols-outlined text-[16px]"
-                  >imagesmode</span
-                >
-                Apply background to all slots
-              </button>
             </div>
 
             <div class="mt-4 pt-2">
@@ -584,15 +574,15 @@
                   <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
                 </label>
               </div>
-              <div id="slotHeaderSettings" class="space-y-3">
+              <div id="slotHeaderSettings" class="space-y-3 hidden">
                 <div>
                   <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Header Text</label>
                   <input type="text" id="headerTextInput" value="" oninput="changeSlotHeader()" class="w-full px-3 py-2 text-[13px] bg-white border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-600">
                 </div>
-                <div class="grid grid-cols-[1.5fr_1fr] gap-3">
+                <div class="grid grid-cols-[2fr_1fr] gap-3">
                   <div>
                     <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Font Style</label>
-                    <select id="headerFontSelect" onchange="changeSlotHeader()" class="w-full  py-1.5 text-[12px] bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-600 appearance-none cursor-pointer pr-8 pl-3 font-semibold" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;" >
+                    <select id="headerFontSelect" onchange="changeSlotHeader()" class="w-full py-1.5 text-[12px] bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-600 appearance-none cursor-pointer pr-8 pl-3 font-semibold" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;">
                     </select>
                   </div>
                   <div>
@@ -603,24 +593,23 @@
                     </div>
                   </div>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
+
+                <div class="grid grid-cols-[1fr_1fr] gap-3">
                   <div>
                     <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Text Color</label>
-                    <div class="flex items-center gap-2.5">
-                      <div id="headerColorDisplay" onclick="document.getElementById('headerColorPicker').click()" class="w-6 h-6 rounded-full shadow-sm ring-2 ring-offset-2 transition-all cursor-pointer" style="background-color: #1e293b; --tw-ring-color: #1e293b;"></div>
-                      <div class="relative w-7 h-7 shrink-0">
-                        <input type="color" id="headerColorPicker" value="#1e293b" oninput="changeSlotHeaderColor(this.value)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                        <div class="absolute inset-0 w-full h-full rounded-md bg-[#2d3748] text-white flex items-center justify-center shadow-sm pointer-events-none">
-                          <span class="material-symbols-outlined text-[14px]">colorize</span>
-                        </div>
-                      </div>
-                      <input type="text" id="headerHexInput" value="#1E293B" onchange="changeSlotHeaderColor(this.value)" onkeyup="if(event.key === 'Enter') changeSlotHeaderColor(this.value)" class="flex-1 w-full min-w-0 px-2 py-1.5 text-[12px] font-mono uppercase text-slate-600 border border-slate-200 rounded-lg outline-none focus:border-[#006d4b] focus:ring-2 focus:ring-[#006d4b] placeholder:text-slate-300" placeholder="#HEX">
+                    <div class="flex items-center gap-1.5">
+                      <div id="headerColorDisplay" onclick="document.getElementById('headerColorPicker').click()" class="w-6 h-6 rounded-full shadow-sm ring-2 ring-slate-700 ring-offset-1 transition-all cursor-pointer shrink-0" style="background-color: #1e293b;"></div>
+                      <input type="color" id="headerColorPicker" value="#1e293b" oninput="changeSlotHeaderColor(this.value)" class="absolute w-0 h-0 opacity-0 pointer-events-none">
+                      <button type="button" onclick="document.getElementById('headerColorPicker').click()" class="w-6 h-6 rounded bg-slate-700 text-white flex items-center justify-center cursor-pointer shrink-0 hover:bg-slate-800 transition-colors">
+                        <span class="material-symbols-outlined text-[13px]">colorize</span>
+                      </button>
+                      <input type="text" id="headerHexInput" value="#1E293B" onchange="changeSlotHeaderColor(this.value)" onkeyup="if(event.key === 'Enter') changeSlotHeaderColor(this.value)" class="flex-1 w-full min-w-0 px-1 py-1.5 text-[10px] font-mono uppercase text-slate-600 border border-slate-200 rounded-lg outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 placeholder:text-slate-300 text-center" placeholder="#HEX">
                     </div>
                   </div>
                   <div>
                     <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Top Spacing</label>
                     <div class="flex items-center gap-1">
-                      <input type="number" id="headerMarginTopInput" value="0" onchange="changeSlotHeader()" oninput="changeSlotHeader()" class="w-full px-2 py-1.5 text-[12px] bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-600 text-center">
+                      <input type="number" id="headerSafeTop" onchange="changeSlotHeader()" oninput="changeSlotHeader()" class="w-full px-2 py-1.5 text-[12px] bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-600 text-center">
                       <span class="text-[10px] text-slate-400 font-bold uppercase">mm</span>
                     </div>
                   </div>
@@ -798,11 +787,33 @@
                   <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
                 </label>
               </div>
-              <div id="slotBadgeSettings" class="space-y-3 hidden mt-3">
-                <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Select Badge</label>
-                <select id="badgeSelect" onchange="changeSlotBadge()" class="w-full pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600 appearance-none font-semibold" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;">
-                  <option value="">-- None --</option>
-                </select>
+              <div id="slotBadgeSettings" class="space-y-4 hidden mt-3">
+                  <div>
+                    <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Select Badge</label>
+                    <select id="badgeSelectTemplate" onchange="changeSlotBadge()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-600 text-[12px] text-slate-700 font-medium appearance-none box-border" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1em;">
+                      <option value="none">-- None --</option>
+                    </select>
+                  </div>
+                  <div id="slotBadgeFontSettings" class="grid grid-cols-2 gap-3 hidden">
+                    <div>
+                      <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Font Family</label>
+                      <select id="badgeTextFont" onchange="changeSlotBadgeSettings()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-600 text-[12px] text-slate-700 font-medium appearance-none box-border" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1em;">
+                        <option value="'Prompt', sans-serif">Prompt</option>
+                        <option value="'Kanit', sans-serif">Kanit</option>
+                        <option value="'Sarabun', sans-serif">Sarabun</option>
+                        <option value="'Aptos', sans-serif">Aptos</option>
+                        <option value="'Roboto', sans-serif">Roboto</option>
+                        <option value="'Inter', sans-serif">Inter</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Font Size</label>
+                      <div class="flex items-center gap-2">
+                        <input type="text" inputmode="numeric" pattern="[0-9]*" id="badgeTextSize" onchange="changeSlotBadgeSettings()" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-600 text-[12px] font-bold text-slate-800 text-center box-border" />
+                        <span class="text-[10px] font-bold text-slate-400">PX</span>
+                      </div>
+                    </div>
+                  </div>
               </div>
             </div>
           </div>
@@ -811,12 +822,21 @@
             <div class="bg-slate-700 text-white text-[11px] font-bold px-3 py-1 absolute top-0 left-0 rounded-br-lg rounded-tl-xl uppercase shadow-sm">
               Layout Style
             </div>
-            <div class="mt-auto border-t border-slate-100 pt-1">
-              <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Menu Divider</label>
-              <select id="dividerStyle" onchange="changeDividerStyle(this.value)" class="w-full pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-xs text-slate-600 appearance-none font-semibold" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;">
-                <option value="line">Basic Line</option>
-                <option value="none">None</option>
-              </select>
+            <div class="mt-auto border-t border-slate-100 pt-1 grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Menu Divider</label>
+                <select id="dividerStyle" onchange="changeDividerStyle(this.value)" class="w-full pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-[12px] text-slate-600 appearance-none font-semibold" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;">
+                  <option value="line">Basic Line</option>
+                  <option value="none">None</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Menu Top Margin</label>
+                <div class="flex items-center gap-1">
+                  <input type="number" id="menuMarginTop" onchange="changeMenuMarginTop(this.value)" oninput="changeMenuMarginTop(this.value)" class="w-full px-2 py-1.5 text-[12px] bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-center" placeholder="0">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase">px</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1053,17 +1073,17 @@
             <div id="allergenList" class="space-y-3"></div>
 
             <div class="pt-2">
-              <button type="button"
-                onclick="showMenuConfirmModal()"
-                class="w-full py-3.5 text-[15px] font-bold text-[#006d4b] bg-[#eaf4ed] border-2 border-[#006d4b]/30 hover:bg-[#d1eadd] rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
+            <button type="button"
+              onclick="showMenuConfirmModal()"
+              class="w-full py-3.5 text-[15px] font-bold text-[#006d4b] bg-[#eaf4ed] border-2 border-[#006d4b]/30 hover:bg-[#d1eadd] rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
+            >
+              <span class="material-symbols-outlined text-[20px]"
+                >content_copy</span
               >
-                <span class="material-symbols-outlined text-[20px]"
-                  >content_copy</span
-                >
-                Apply to all slots in this page
-              </button>
-            </div>
+              Apply to all slots in this page
+            </button>
           </div>
+        </div>
         </div>
 
         <div class="p-6 bg-[#ebf0f4] border-t border-slate-200 shrink-0">
@@ -1341,7 +1361,7 @@
           ยืนยันการคัดลอกข้อมูล
         </h3>
         <p class="text-sm text-slate-500 mb-6 leading-relaxed">
-          คุณต้องการคัดลอกข้อมูลเมนู การตั้งค่าฟอนต์<br />และพื้นหลังของ
+          คุณต้องการคัดลอกข้อมูลเมนู การตั้งค่าฟอนต์ รูปพื้นหลัง<br />และป้ายสัญลักษณ์ (Badge) ของ
           <span id="copySlotNumber" class="font-bold text-[#006d4b]"></span
           ><br />ไปยังป้ายอาหารทุกช่องในหน้านี้ใช่หรือไม่?
         </p>
@@ -2102,8 +2122,8 @@
         const menuItemsHtml = menusToRender.map((m, idx) => {
            const thSizeVal = parseInt(sTh) || 22;
            const enSizeVal = parseInt(sEn) || 22;
-           const thWhitespaceClass = 'whitespace-pre-line';
-           const enWhitespaceClass = 'whitespace-pre-line';
+           const thWhitespaceClass = 'whitespace-normal';
+           const enWhitespaceClass = 'whitespace-normal';
 
            let menuAllergensHtml = "";
 
@@ -2205,12 +2225,65 @@
         let badgeHtml = "";
         const badgeEnabled = menu.badgeEnabled !== undefined ? menu.badgeEnabled : (globalSettings.showBadge !== false);
         if (badgeEnabled) {
-            if (menu.badgeType === 'image' && menu.badgeImageUrl) {
-                badgeHtml = `<div class="absolute top-4 right-4 z-20 flex items-center justify-center"><img src="${menu.badgeImageUrl}" class="w-12 h-12 object-contain" crossorigin="anonymous"></div>`;
-            } else if (menu.badgeType !== 'image' && menu.badgeText) {
-                const bColor = menu.badgeColor || "#10b981";
-                const bFont = globalSettings.fontTh || "'Prompt', sans-serif";
-                badgeHtml = `<div class="absolute top-4 right-4 z-20 flex items-center justify-center font-bold" style="color: ${bColor}; font-family: ${bFont}; font-size: 16px;">${menu.badgeText}</div>`;
+            let activeBadgeId = menu.badgeId;
+            const storedDef = localStorage.getItem("defaultBadges");
+            let defaultBgData = {};
+            if (storedDef) {
+                try { defaultBgData = JSON.parse(storedDef); } catch(e) {}
+            }
+            if (currentTemplateConfig) {
+                if (currentTemplateConfig.name === "plate" || currentTemplateConfig.name === "Plate / Food Stall") {
+                    if (menu.badgePlateId !== undefined) activeBadgeId = menu.badgePlateId;
+                    else if (!activeBadgeId) activeBadgeId = defaultBgData["Plate / Food Stall"] || activeBadgeId;
+                } else if (currentTemplateConfig.name === "western" || currentTemplateConfig.name === "Western Set") {
+                    if (menu.badgeWesternId !== undefined) activeBadgeId = menu.badgeWesternId;
+                    else if (!activeBadgeId) activeBadgeId = defaultBgData["Western Set"] || activeBadgeId;
+                } else if (currentTemplateConfig.name === "buffet" || currentTemplateConfig.name === "Buffet / Coffee Break") {
+                    if (menu.badgeBuffetId !== undefined) activeBadgeId = menu.badgeBuffetId;
+                    else if (!activeBadgeId) activeBadgeId = defaultBgData["Buffet / Coffee Break"] || activeBadgeId;
+                } else if (currentTemplateConfig.name === "mini" || currentTemplateConfig.name === "Mini Tag") {
+                    if (menu.badgeMiniId !== undefined) activeBadgeId = menu.badgeMiniId;
+                    else if (!activeBadgeId) activeBadgeId = defaultBgData["Mini Tag"] || activeBadgeId;
+                }
+            }
+
+            let currentBadgeType = menu.badgeType;
+            let currentBadgeImageUrl = menu.badgeImageUrl;
+            let currentBadgeText = menu.badgeText;
+            let currentBadgeColor = menu.badgeColor;
+            let currentBadgeFont = menu.badgeFont;
+            let currentBadgeSize = menu.badgeSize;
+
+            if (activeBadgeId === 'none') {
+                currentBadgeType = null;
+            } else if (activeBadgeId) {
+                const b = (window.dbBadges || []).find(x => x.id == activeBadgeId);
+                if (b) {
+                    currentBadgeType = b.badge_type || 'image';
+                    currentBadgeImageUrl = b.image_url || '';
+                    currentBadgeText = b.text_content || '';
+                    currentBadgeColor = b.text_color || '#10b981';
+                    currentBadgeFont = menu.badgeTextFont !== undefined ? menu.badgeTextFont : (b.text_font || "'Prompt', sans-serif");
+                    currentBadgeSize = menu.badgeTextSize !== undefined ? menu.badgeTextSize : (b.text_size || '16');
+                }
+            } else if (!activeBadgeId && !menu.badgeId) {
+                // If it is entirely empty, make sure nothing renders
+                currentBadgeType = null;
+            }
+
+            if (currentBadgeType === 'image' && currentBadgeImageUrl) {
+                badgeHtml = `<div class="absolute top-4 right-4 z-20 flex items-center justify-center"><img src="${currentBadgeImageUrl}" class="w-12 h-12 object-contain" crossorigin="anonymous"></div>`;
+            } else if (currentBadgeType === 'text' && currentBadgeText) {
+                const bColor = currentBadgeColor || "#10b981";
+                const bFont = currentBadgeFont || globalSettings.fontTh || "'Prompt', sans-serif";
+                const bSize = currentBadgeSize ? currentBadgeSize + 'px' : '16px';
+                badgeHtml = `<div class="absolute top-4 right-4 z-20 flex items-center justify-center font-bold leading-tight text-center" style="color: ${bColor}; font-family: ${bFont}; font-size: ${bSize};">${currentBadgeText}</div>`;
+            } else if (currentBadgeType !== 'image' && currentBadgeType !== 'text' && currentBadgeText) {
+                // Legacy fallback
+                const bColor = currentBadgeColor || "#10b981";
+                const bFont = currentBadgeFont || globalSettings.fontTh || "'Prompt', sans-serif";
+                const bSize = currentBadgeSize ? currentBadgeSize + 'px' : '16px';
+                badgeHtml = `<div class="absolute top-4 right-4 z-20 flex items-center justify-center font-bold leading-tight text-center" style="color: ${bColor}; font-family: ${bFont}; font-size: ${bSize};">${currentBadgeText}</div>`;
             }
         }
 
@@ -2218,25 +2291,42 @@
         const globalSetsTemp = typeof getGlobalSettings === "function" ? getGlobalSettings() : {};
         if (currentTemplateConfig) {
            let defaultTop = 0;
-           let defaultBot = 0;
-           if (currentTemplateConfig.name === "Plate / Food Stall") { defaultTop = parseFloat(globalSetsTemp.safePlateTopMm || '22'); defaultBot = parseFloat(globalSetsTemp.safePlateBotMm || '22'); }
-           else if (currentTemplateConfig.name === "Western Set") { defaultTop = parseFloat(globalSetsTemp.safeWesternTopMm || '30'); defaultBot = parseFloat(globalSetsTemp.safeWesternBotMm || '22'); }
-           else if (currentTemplateConfig.name === "Buffet / Coffee Break") { defaultTop = parseFloat(globalSetsTemp.safeBuffetTopMm || '22'); defaultBot = parseFloat(globalSetsTemp.safeBuffetBotMm || '22'); }
-           else if (currentTemplateConfig.name === "Mini Tag") { defaultTop = parseFloat(globalSetsTemp.safeMiniTopMm || '18'); defaultBot = parseFloat(globalSetsTemp.safeMiniBotMm || '18'); }
+           let customTop = 0;
+           if (currentTemplateConfig.name === "plate" || currentTemplateConfig.name === "Plate / Food Stall") {
+               defaultTop = parseFloat(globalSetsTemp.safePlateTopMm || "20");
+               customTop = menu.safePlateTopMm !== undefined ? parseFloat(menu.safePlateTopMm) : defaultTop;
+           } else if (currentTemplateConfig.name === "western" || currentTemplateConfig.name === "Western Set") {
+               defaultTop = parseFloat(globalSetsTemp.safeWesternTopMm || "30");
+               customTop = menu.safeWesternTopMm !== undefined ? parseFloat(menu.safeWesternTopMm) : defaultTop;
+           } else if (currentTemplateConfig.name === "buffet" || currentTemplateConfig.name === "Buffet / Coffee Break") {
+               defaultTop = parseFloat(globalSetsTemp.safeBuffetTopMm || "22");
+               customTop = menu.safeBuffetTopMm !== undefined ? parseFloat(menu.safeBuffetTopMm) : defaultTop;
+           } else if (currentTemplateConfig.name === "mini" || currentTemplateConfig.name === "Mini Tag") {
+               defaultTop = parseFloat(globalSetsTemp.safeMiniTopMm || "20");
+               customTop = menu.safeMiniTopMm !== undefined ? parseFloat(menu.safeMiniTopMm) : defaultTop;
+           }
+           
+           // Backwards compatibility for old slots
+           if (menu.headerMarginTop !== undefined && menu.headerMarginTop !== null && menu.headerMarginTop !== "") {
+               customTop = parseFloat(menu.headerMarginTop);
+           }
            
            let topUnit = 'mm';
            if (menu.headerMarginTop !== undefined && String(menu.headerMarginTop).includes('px')) topUnit = 'px';
-           const topPadding = menu.headerMarginTop !== undefined ? parseFloat(menu.headerMarginTop) : defaultTop;
-           currentPadding = `${topPadding}${topUnit} 5% ${defaultBot}mm 5%`;
+           const topPadding = customTop;
+           currentPadding = `${topPadding}${topUnit} 5% 22mm 5%`;
         }
         const padStyle = currentPadding ? `padding: ${currentPadding}; box-sizing: border-box; height: 100%; display: flex; flex-direction: column; justify-content: flex-start;` : '';
 
+        const mTop = menu.menuMarginTop !== undefined ? menu.menuMarginTop : 0;
         element.innerHTML = `
             ${bgHtml}
             ${badgeHtml}
             <div class="slot-content" style="${padStyle}">
               ${headerHtml}
-              ${menuItemsHtml}
+              <div class="w-full flex flex-col items-center flex-grow" style="margin-top: ${mTop}px;">
+                ${menuItemsHtml}
+              </div>
             </div>
         `;
       }
@@ -2637,11 +2727,16 @@
         if (labelMayContainFontInput) setCustomDropdownUI("labelMayContainFont", menu.labelMayContainFont || globalSettings.labelMayContainFont || "'Aptos', sans-serif");
 
         const showHeaderToggle = document.getElementById("showHeaderToggle");
+        const slotHeaderSettings = document.getElementById("slotHeaderSettings");
         if (showHeaderToggle) {
-            showHeaderToggle.checked = menu.showHeader !== undefined ? !!menu.showHeader : !!globalSettings.showHeader;
+            const showHeader = menu.showHeader !== undefined ? !!menu.showHeader : !!globalSettings.showHeader;
+            showHeaderToggle.checked = showHeader;
+            if (slotHeaderSettings) {
+                if (showHeader) slotHeaderSettings.classList.remove("hidden");
+                else slotHeaderSettings.classList.add("hidden");
+            }
         }
 
-        const slotHeaderSettings = document.getElementById("slotHeaderSettings");
         const headerTextInput = document.getElementById("headerTextInput");
         const headerFontSizeInput = document.getElementById("headerFontSizeInput");
         const headerColorPicker = document.getElementById("headerColorPicker");
@@ -2662,44 +2757,61 @@
         }
         const headerHexInput = document.getElementById("headerHexInput");
         if (headerHexInput) headerHexInput.value = hColor.toUpperCase();
-        
-        const headerMarginTopInput = document.getElementById("headerMarginTopInput");
-        if (headerMarginTopInput) {
-            let defaultTop = 0;
-            if (currentTemplateConfig) {
-               if (currentTemplateConfig.name === "Plate / Food Stall") defaultTop = parseFloat(globalSettings.safePlateTopMm || '22');
-               else if (currentTemplateConfig.name === "Western Set") defaultTop = parseFloat(globalSettings.safeWesternTopMm || '30');
-               else if (currentTemplateConfig.name === "Buffet / Coffee Break") defaultTop = parseFloat(globalSettings.safeBuffetTopMm || '22');
-               else if (currentTemplateConfig.name === "Mini Tag") defaultTop = parseFloat(globalSettings.safeMiniTopMm || '18');
+        const hTop = document.getElementById("headerSafeTop");
+        if (hTop && currentTemplateConfig) {
+            if (currentTemplateConfig.name === "plate" || currentTemplateConfig.name === "Plate / Food Stall") {
+                hTop.value = menu.safePlateTopMm !== undefined ? menu.safePlateTopMm : (globalSettings.safePlateTopMm || '22');
+            } else if (currentTemplateConfig.name === "western" || currentTemplateConfig.name === "Western Set") {
+                hTop.value = menu.safeWesternTopMm !== undefined ? menu.safeWesternTopMm : (globalSettings.safeWesternTopMm || '30');
+            } else if (currentTemplateConfig.name === "buffet" || currentTemplateConfig.name === "Buffet / Coffee Break") {
+                hTop.value = menu.safeBuffetTopMm !== undefined ? menu.safeBuffetTopMm : (globalSettings.safeBuffetTopMm || '22');
+            } else if (currentTemplateConfig.name === "mini" || currentTemplateConfig.name === "Mini Tag") {
+                hTop.value = menu.safeMiniTopMm !== undefined ? menu.safeMiniTopMm : (globalSettings.safeMiniTopMm || '18');
             }
-            let val = defaultTop;
-            let isPx = false;
-            if (menu.headerMarginTop !== undefined) {
-                val = parseFloat(menu.headerMarginTop);
-                if (String(menu.headerMarginTop).includes('px')) {
-                    isPx = true;
-                }
-            }
-            if (isPx) {
-                val = Math.round(val * 0.264583 * 10) / 10;
-            }
-            headerMarginTopInput.value = val;
         }
 
         const badgeEnabledToggle = document.getElementById("badgeEnabledToggle");
         const slotBadgeSettings = document.getElementById("slotBadgeSettings");
         if (badgeEnabledToggle) {
-            badgeEnabledToggle.checked = !!menu.badgeEnabled;
-            const badgeEnabled = menu.badgeEnabled !== undefined ? menu.badgeEnabled : (globalSettings.showBadge !== false);
-        if (badgeEnabled) {
-                if(slotBadgeSettings) slotBadgeSettings.classList.remove("hidden");
-            } else {
-                if(slotBadgeSettings) slotBadgeSettings.classList.add("hidden");
+            const badgeEnabled = menu.badgeEnabled !== undefined ? !!menu.badgeEnabled : (globalSettings.showBadge !== false);
+            badgeEnabledToggle.checked = badgeEnabled;
+            if (slotBadgeSettings) {
+                if (badgeEnabled) slotBadgeSettings.classList.remove("hidden");
+                else slotBadgeSettings.classList.add("hidden");
             }
         }
         
-        const badgeSelect = document.getElementById("badgeSelect");
-        if (badgeSelect) badgeSelect.value = menu.badgeId || "";
+        const bTemplate = document.getElementById("badgeSelectTemplate");
+        if (bTemplate && currentTemplateConfig) {
+            let slotVal;
+            let globalVal;
+            if (currentTemplateConfig.name === "plate" || currentTemplateConfig.name === "Plate / Food Stall") {
+                slotVal = menu.badgePlateId;
+                globalVal = globalSettings.badgePlateId;
+            } else if (currentTemplateConfig.name === "western" || currentTemplateConfig.name === "Western Set") {
+                slotVal = menu.badgeWesternId;
+                globalVal = globalSettings.badgeWesternId;
+            } else if (currentTemplateConfig.name === "buffet" || currentTemplateConfig.name === "Buffet / Coffee Break") {
+                slotVal = menu.badgeBuffetId;
+                globalVal = globalSettings.badgeBuffetId;
+            } else if (currentTemplateConfig.name === "mini" || currentTemplateConfig.name === "Mini Tag") {
+                slotVal = menu.badgeMiniId;
+                globalVal = globalSettings.badgeMiniId;
+            }
+            bTemplate.value = slotVal !== undefined ? slotVal : (globalVal || "none");
+
+            const fontSettingsDiv = document.getElementById("slotBadgeFontSettings");
+            if (fontSettingsDiv) {
+                const b = (window.dbBadges || []).find(x => x.id == bTemplate.value);
+                if (b && b.badge_type === 'text') {
+                    fontSettingsDiv.classList.remove('hidden');
+                    document.getElementById("badgeTextFont").value = menu.badgeTextFont !== undefined ? menu.badgeTextFont : (b.text_font || "'Prompt', sans-serif");
+                    document.getElementById("badgeTextSize").value = menu.badgeTextSize !== undefined ? menu.badgeTextSize : (b.text_size || "16");
+                } else {
+                    fontSettingsDiv.classList.add('hidden');
+                }
+            }
+        }
 
         const sizeMainDisplay = document.getElementById("sizeMainDisplay");
         if (sizeMainDisplay) {
@@ -3228,9 +3340,6 @@
       }
 
       async function loadBadges() {
-        const select = document.getElementById("badgeSelect");
-        if (!select) return;
-
         try {
           const { data: badges, error } = await dbClient
             .from("badges")
@@ -3241,15 +3350,18 @@
           
           window.dbBadges = badges || [];
 
-          select.innerHTML = '<option value="">None</option>';
-
-          if (window.dbBadges.length > 0) {
-             window.dbBadges.forEach(b => {
-                const newOption = document.createElement('option');
-                newOption.value = b.id;
-                newOption.textContent = b.name;
-                select.appendChild(newOption);
-             });
+          const select = document.getElementById("badgeSelectTemplate");
+          
+          if (select) {
+             select.innerHTML = '<option value="none">-- None --</option>';
+             if (window.dbBadges.length > 0) {
+                window.dbBadges.forEach(b => {
+                   const newOption = document.createElement('option');
+                   newOption.value = b.id;
+                   newOption.textContent = b.name;
+                   select.appendChild(newOption);
+                });
+             }
           }
         } catch (err) {
           console.error("Error loading badges:", err);
@@ -3976,6 +4088,12 @@
         renderActiveSlotOnly();
       }
 
+      function changeMenuMarginTop(val) {
+        if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
+        slotsData[activeSlot].menuMarginTop = val;
+        renderActiveSlotOnly();
+      }
+
       function changeSlotHeader() {
         if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
         const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {};
@@ -3985,14 +4103,24 @@
         const headerFontSelect = document.getElementById("headerFontSelect");
         const headerFontSizeInput = document.getElementById("headerFontSizeInput");
         const headerColorPicker = document.getElementById("headerColorPicker");
-        const headerMarginTopInput = document.getElementById("headerMarginTopInput");
         const slotHeaderSettings = document.getElementById("slotHeaderSettings");
 
         const wasOff = !slotsData[activeSlot].showHeader;
         const isEnabling = showHeaderToggle && showHeaderToggle.checked;
         const justTurnedOn = wasOff && isEnabling;
         
-        if (showHeaderToggle) slotsData[activeSlot].showHeader = isEnabling;
+        if (showHeaderToggle) {
+            const enabled = showHeaderToggle.checked;
+            if (enabled === (globalSettings.showHeader === true)) {
+                delete slotsData[activeSlot].showHeader;
+            } else {
+                slotsData[activeSlot].showHeader = enabled;
+            }
+            if (slotHeaderSettings) {
+                if (enabled) slotHeaderSettings.classList.remove("hidden");
+                else slotHeaderSettings.classList.add("hidden");
+            }
+        }
 
         // Auto-fill or force-reset inputs when explicitly turning the toggle ON
         if (justTurnedOn) {
@@ -4014,16 +4142,17 @@
                     display.style.setProperty('--tw-ring-color', defColor);
                 }
             }
-            if (headerMarginTopInput) {
-                let defaultTop = 0;
-                if (typeof currentTemplateConfig !== "undefined" && currentTemplateConfig) {
-                   if (currentTemplateConfig.name === "Plate / Food Stall") defaultTop = parseFloat(globalSettings.safePlateTopMm || '22');
-                   else if (currentTemplateConfig.name === "Western Set") defaultTop = parseFloat(globalSettings.safeWesternTopMm || '30');
-                   else if (currentTemplateConfig.name === "Buffet / Coffee Break") defaultTop = parseFloat(globalSettings.safeBuffetTopMm || '22');
-                   else if (currentTemplateConfig.name === "Mini Tag") defaultTop = parseFloat(globalSettings.safeMiniTopMm || '18');
-                }
-                headerMarginTopInput.value = defaultTop;
-            }
+            const hPlate = document.getElementById("headerSafePlateTop");
+            if (hPlate) hPlate.value = globalSettings.safePlateTopMm || '22';
+            
+            const hWestern = document.getElementById("headerSafeWesternTop");
+            if (hWestern) hWestern.value = globalSettings.safeWesternTopMm || '30';
+            
+            const hBuffet = document.getElementById("headerSafeBuffetTop");
+            if (hBuffet) hBuffet.value = globalSettings.safeBuffetTopMm || '22';
+            
+            const hMini = document.getElementById("headerSafeMiniTop");
+            if (hMini) hMini.value = globalSettings.safeMiniTopMm || '18';
         }
 
         if (headerTextInput) {
@@ -4063,20 +4192,22 @@
             }
         }
         
-        if (headerMarginTopInput) {
-            let defaultTop = 0;
-            if (typeof currentTemplateConfig !== "undefined" && currentTemplateConfig) {
-               if (currentTemplateConfig.name === "Plate / Food Stall") defaultTop = parseFloat(globalSettings.safePlateTopMm || '22');
-               else if (currentTemplateConfig.name === "Western Set") defaultTop = parseFloat(globalSettings.safeWesternTopMm || '30');
-               else if (currentTemplateConfig.name === "Buffet / Coffee Break") defaultTop = parseFloat(globalSettings.safeBuffetTopMm || '22');
-               else if (currentTemplateConfig.name === "Mini Tag") defaultTop = parseFloat(globalSettings.safeMiniTopMm || '18');
-            }
-            const marginVal = parseFloat(headerMarginTopInput.value) || 0;
-            const defaultMm = defaultTop;
-            if (marginVal === defaultMm) {
-                delete slotsData[activeSlot].headerMarginTop;
-            } else {
-                slotsData[activeSlot].headerMarginTop = marginVal + "mm";
+        const hTop = document.getElementById("headerSafeTop")?.value;
+        if (hTop !== undefined && hTop !== "") {
+            if (currentTemplateConfig) {
+                if (currentTemplateConfig.name === "plate" || currentTemplateConfig.name === "Plate / Food Stall") {
+                    if (parseFloat(hTop) !== parseFloat(globalSettings.safePlateTopMm || "22")) slotsData[activeSlot].safePlateTopMm = hTop;
+                    else delete slotsData[activeSlot].safePlateTopMm;
+                } else if (currentTemplateConfig.name === "western" || currentTemplateConfig.name === "Western Set") {
+                    if (parseFloat(hTop) !== parseFloat(globalSettings.safeWesternTopMm || "30")) slotsData[activeSlot].safeWesternTopMm = hTop;
+                    else delete slotsData[activeSlot].safeWesternTopMm;
+                } else if (currentTemplateConfig.name === "buffet" || currentTemplateConfig.name === "Buffet / Coffee Break") {
+                    if (parseFloat(hTop) !== parseFloat(globalSettings.safeBuffetTopMm || "22")) slotsData[activeSlot].safeBuffetTopMm = hTop;
+                    else delete slotsData[activeSlot].safeBuffetTopMm;
+                } else if (currentTemplateConfig.name === "mini" || currentTemplateConfig.name === "Mini Tag") {
+                    if (parseFloat(hTop) !== parseFloat(globalSettings.safeMiniTopMm || "18")) slotsData[activeSlot].safeMiniTopMm = hTop;
+                    else delete slotsData[activeSlot].safeMiniTopMm;
+                }
             }
         }
         
@@ -4111,13 +4242,22 @@
 
       function changeSlotBadge() {
         if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
+        const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {};
         
         const enabledToggle = document.getElementById("badgeEnabledToggle");
         const select = document.getElementById("badgeSelect");
         const settingsDiv = document.getElementById("slotBadgeSettings");
 
+        if (enabledToggle) {
+            const enabled = enabledToggle.checked;
+            if (enabled === (globalSettings.showBadge !== false)) {
+                delete slotsData[activeSlot].badgeEnabled;
+            } else {
+                slotsData[activeSlot].badgeEnabled = enabled;
+            }
+        }
+        
         const enabled = enabledToggle ? enabledToggle.checked : false;
-        slotsData[activeSlot].badgeEnabled = enabled;
 
         if (enabled && settingsDiv) {
             settingsDiv.classList.remove("hidden");
@@ -4125,23 +4265,52 @@
             settingsDiv.classList.add("hidden");
         }
 
-        if (select && select.value) {
-            const badgeId = select.value;
-            slotsData[activeSlot].badgeId = badgeId;
-            
-            const badge = (window.dbBadges || []).find(b => b.id == badgeId);
-            if (badge) {
-                slotsData[activeSlot].badgeType = badge.badge_type || 'image';
-                slotsData[activeSlot].badgeText = badge.text_content || '';
-                slotsData[activeSlot].badgeColor = badge.text_color || '#10b981';
-                slotsData[activeSlot].badgeImageUrl = badge.image_url || '';
+        const bTemplate = document.getElementById("badgeSelectTemplate");
+
+        if (bTemplate && currentTemplateConfig) {
+            const v = bTemplate.value;
+            if (currentTemplateConfig.name === "plate" || currentTemplateConfig.name === "Plate / Food Stall") {
+                if (v === (globalSettings.badgePlateId || "none")) delete slotsData[activeSlot].badgePlateId;
+                else slotsData[activeSlot].badgePlateId = v;
+            } else if (currentTemplateConfig.name === "western" || currentTemplateConfig.name === "Western Set") {
+                if (v === (globalSettings.badgeWesternId || "none")) delete slotsData[activeSlot].badgeWesternId;
+                else slotsData[activeSlot].badgeWesternId = v;
+            } else if (currentTemplateConfig.name === "buffet" || currentTemplateConfig.name === "Buffet / Coffee Break") {
+                if (v === (globalSettings.badgeBuffetId || "none")) delete slotsData[activeSlot].badgeBuffetId;
+                else slotsData[activeSlot].badgeBuffetId = v;
+            } else if (currentTemplateConfig.name === "mini" || currentTemplateConfig.name === "Mini Tag") {
+                if (v === (globalSettings.badgeMiniId || "none")) delete slotsData[activeSlot].badgeMiniId;
+                else slotsData[activeSlot].badgeMiniId = v;
             }
-        } else {
-            slotsData[activeSlot].badgeId = '';
-            slotsData[activeSlot].badgeType = 'image';
-            slotsData[activeSlot].badgeImageUrl = '';
+
+            const fontSettingsDiv = document.getElementById("slotBadgeFontSettings");
+            if (fontSettingsDiv) {
+                if (v !== 'none') {
+                    const b = (window.dbBadges || []).find(x => x.id == v);
+                    if (b && b.badge_type === 'text') {
+                        fontSettingsDiv.classList.remove('hidden');
+                        if (slotsData[activeSlot].badgeTextFont === undefined) {
+                            document.getElementById("badgeTextFont").value = b.text_font || "'Prompt', sans-serif";
+                        }
+                        if (slotsData[activeSlot].badgeTextSize === undefined) {
+                            document.getElementById("badgeTextSize").value = b.text_size || "16";
+                        }
+                    } else {
+                        fontSettingsDiv.classList.add('hidden');
+                    }
+                } else {
+                    fontSettingsDiv.classList.add('hidden');
+                }
+            }
         }
 
+        renderActiveSlotOnly();
+      }
+
+      function changeSlotBadgeSettings() {
+        if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
+        slotsData[activeSlot].badgeTextFont = document.getElementById("badgeTextFont").value;
+        slotsData[activeSlot].badgeTextSize = document.getElementById("badgeTextSize").value;
         renderActiveSlotOnly();
       }
 

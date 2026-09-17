@@ -278,6 +278,26 @@ function injectSidebar() {
               </div>
             </div>
             
+            <!-- Slot Badge Defaults -->
+            <div class="space-y-4">
+              <h4 class="text-base font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-2"><span class="material-symbols-outlined text-[20px]">sell</span> Slot Badge Defaults</h4>
+              <div class="grid grid-cols-1 gap-5 p-5 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="flex items-center gap-3">
+                  <label class="text-sm font-bold text-slate-600 whitespace-nowrap">Enable Badge</label>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="defShowBadge" class="sr-only peer" checked>
+                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#006d4b]"></div>
+                  </label>
+                </div>
+                
+                <div id="globalSettingsBadgeList">
+                  <div class="flex items-center justify-center p-4 text-sm text-slate-500">
+                     <span class="material-symbols-outlined animate-spin mr-2">progress_activity</span> Loading badges...
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Slot Header Defaults -->
             <div class="space-y-4">
               <h4 class="text-base font-bold text-[#006d4b] uppercase tracking-wider flex items-center gap-2"><span class="material-symbols-outlined text-[20px]">title</span> Slot Header Defaults</h4>
@@ -492,15 +512,6 @@ function injectSidebar() {
                     <option value="line">Basic Line</option>
                     <option value="none">None</option>
                   </select>
-                </div>
-                <div>
-                  <div class="flex items-center gap-3 h-[42px]">
-                    <label class="text-sm font-bold text-slate-600 whitespace-nowrap">Show Badges</label>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" id="defShowBadge" class="sr-only peer" checked>
-                      <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#006d4b]"></div>
-                    </label>
-                  </div>
                 </div>
               </div>
             </div>
@@ -861,7 +872,23 @@ function getGlobalSettings() {
   ensureDefault('headerFontSize');
   ensureDefault('headerFontColor');
 
-  return { ...defaults, ...settings };
+  const finalSettings = { ...defaults, ...settings };
+
+  // Pull default badges if available
+  const storedBadges = localStorage.getItem("defaultBadges");
+  if (storedBadges) {
+    try {
+      const bgs = JSON.parse(storedBadges);
+      if (bgs["Plate / Food Stall"]) finalSettings.badgePlateId = bgs["Plate / Food Stall"];
+      if (bgs["Western Set"]) finalSettings.badgeWesternId = bgs["Western Set"];
+      if (bgs["Buffet / Coffee Break"]) finalSettings.badgeBuffetId = bgs["Buffet / Coffee Break"];
+      if (bgs["Mini Tag"]) finalSettings.badgeMiniId = bgs["Mini Tag"];
+    } catch (e) {
+      console.error("Error parsing defaultBadges:", e);
+    }
+  }
+
+  return finalSettings;
 }
 
 function openSettingsModal() {
@@ -978,6 +1005,62 @@ function openSettingsModal() {
   }
   
   if(typeof window.syncGenericDropdowns === 'function') window.syncGenericDropdowns();
+
+  // Load Default Badges dropdowns
+  (async () => {
+    const listDiv = document.getElementById("globalSettingsBadgeList");
+    if (!listDiv) return;
+    try {
+      const sizes = [
+        "Plate / Food Stall",
+        "Western Set",
+        "Buffet / Coffee Break",
+        "Mini Tag"
+      ];
+      
+      const storedDefaults = localStorage.getItem("defaultBadges");
+      let defaultBgData = {};
+      if (storedDefaults) {
+         try { defaultBgData = JSON.parse(storedDefaults); } catch(e) {}
+      }
+      
+      let bgs = [];
+      if (typeof window.supabase !== 'undefined') {
+        const client = window.supabase.createClient("https://nexvompdeubppbkvnwor.supabase.co", "sb_publishable_cMshOGrGdX829-KmtIxOWw_HeC04-aI");
+        const { data, error } = await client.from("badges").select("*");
+        if (!error && data) bgs = data;
+      }
+      
+      let html = '<div class="grid grid-cols-2 gap-5">';
+      sizes.forEach(size => {
+         const selectedUrl = defaultBgData[size] || "";
+         html += `
+            <div>
+               <label class="block text-sm font-bold text-slate-600 mb-2">${size}</label>
+               <select id="defBadge_${size.replace(/\s+/g, '_').replace(/[/]/g, '')}" 
+                  class="w-full pl-3 pr-8 py-2.5 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-[#006d4b] appearance-none"
+                  style="
+                    -webkit-appearance: none;
+                    -moz-appearance: none;
+                    appearance: none;
+                    background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;);
+                    background-repeat: no-repeat;
+                    background-position: right 0.75rem center;
+                    background-size: 1.2em;
+                  "
+               >
+                  <option value="">Default (Auto-pull latest)</option>
+                  ${bgs.map(bg => `<option value="${bg.id}" ${bg.id == selectedUrl ? 'selected' : ''}>${bg.name || 'Untitled'}</option>`).join('')}
+               </select>
+            </div>
+         `;
+      });
+      html += '</div>';
+      listDiv.innerHTML = html;
+    } catch(err) {
+      listDiv.innerHTML = '<div class="text-red-500 text-sm text-center py-2">Error loading badges</div>';
+    }
+  })();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -1053,10 +1136,28 @@ async function saveGlobalSettings() {
     safeBuffetTopMm: document.getElementById("defSafeBuffetTop").value,
     safeBuffetBotMm: oldSettings.safeBuffetBotMm || "22",
     safeMiniTopMm: document.getElementById("defSafeMiniTop").value,
-    safeMiniBotMm: oldSettings.safeMiniBotMm || "18"
+    safeMiniBotMm: oldSettings.safeMiniBotMm || "18",
+    dividerStyle: document.getElementById("defDividerStyle").value
   };
 
   localStorage.setItem("globalDefaultSettings", JSON.stringify(settings));
+
+  // Save Default Badges
+  const sizes = [
+    "Plate / Food Stall",
+    "Western Set",
+    "Buffet / Coffee Break",
+    "Mini Tag"
+  ];
+  let defaultBgData = {};
+  sizes.forEach(size => {
+     const selectId = "defBadge_" + size.replace(/\s+/g, '_').replace(/[/]/g, '');
+     const select = document.getElementById(selectId);
+     if (select && select.value) {
+        defaultBgData[size] = select.value;
+     }
+  });
+  localStorage.setItem("defaultBadges", JSON.stringify(defaultBgData));
   
   if (typeof window.supabase !== 'undefined') {
     let client = window.dbClient;

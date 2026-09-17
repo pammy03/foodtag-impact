@@ -192,20 +192,20 @@
         <div class="p-8 space-y-5">
           <div>
             <label
-              class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
+              class="block text-[13px] font-black text-slate-700 uppercase tracking-widest mb-3 ml-1"
               >Badge Name</label
             >
             <input
               type="text"
               id="inputBgName"
-              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all font-bold"
+              class="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all text-[13px] font-medium"
               placeholder="e.g. ป้าย Buffet ลายไทย"
             />
           </div>
 
           <div>
             <label
-              class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1"
+              class="block text-[13px] font-black text-slate-700 uppercase tracking-widest mb-3 ml-1"
               >Badge Type</label
             >
             <div class="flex gap-4">
@@ -223,7 +223,7 @@
           <div id="uploadImageSection">
             <div class="flex flex-col gap-1 mb-3 ml-1">
               <label
-                class="block text-[13px] font-black text-slate-500 uppercase tracking-widest"
+                class="block text-[13px] font-black text-slate-700 uppercase tracking-widest"
                 >Image File</label
               >
               <span class="text-[11px] font-medium text-slate-400">Recommended size: Square (1:1), 200x200px</span>
@@ -268,15 +268,31 @@
           </div>
 
           <div id="uploadTextSection" class="hidden space-y-5">
-            <div>
-              <label class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Text Content</label>
-              <input type="text" id="inputTextContent" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all font-bold" placeholder="e.g. Halal, Vegan" />
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-[13px] font-black text-slate-700 uppercase tracking-widest mb-3 ml-1">Font Family</label>
+                <select id="inputTextFont" class="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all text-[13px] font-medium text-slate-700 appearance-none" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.2em;">
+                  <option value="'Prompt', sans-serif">Prompt</option>
+                  <option value="'Kanit', sans-serif">Kanit</option>
+                  <option value="'Sarabun', sans-serif">Sarabun</option>
+                  <option value="'Aptos', sans-serif">Aptos</option>
+                  <option value="'Roboto', sans-serif">Roboto</option>
+                  <option value="'Inter', sans-serif">Inter</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[13px] font-black text-slate-700 uppercase tracking-widest mb-3 ml-1">Font Size</label>
+                <div class="flex items-center gap-2">
+                  <input type="text" inputmode="numeric" pattern="[0-9]*" id="inputTextSize" value="16" class="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all text-[13px] font-bold text-center box-border" />
+                  <span class="text-[12px] font-bold text-slate-400">PX</span>
+                </div>
+              </div>
             </div>
             <div>
-              <label class="block text-[13px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Text Color</label>
+              <label class="block text-[13px] font-black text-slate-700 uppercase tracking-widest mb-3 ml-1">Text Color</label>
               <div class="flex gap-3 items-center">
-                <input type="color" id="inputTextColor" value="#10b981" class="w-12 h-12 rounded-lg cursor-pointer border-0 p-0" oninput="document.getElementById('inputTextColorHex').value = this.value" />
-                <input type="text" id="inputTextColorHex" value="#10b981" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all font-bold uppercase" oninput="document.getElementById('inputTextColor').value = this.value" />
+                <input type="color" id="inputTextColor" value="#10b981" class="w-12 h-12 rounded-lg cursor-pointer border-0 p-0 shrink-0" oninput="document.getElementById('inputTextColorHex').value = this.value" />
+                <input type="text" id="inputTextColorHex" value="#10b981" class="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all text-[13px] font-medium uppercase" oninput="document.getElementById('inputTextColor').value = this.value" />
               </div>
             </div>
           </div>
@@ -328,7 +344,7 @@
           <input type="hidden" id="editBgType" />
 
           <div id="editImageSection">
-            <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Image File</label>
+            <label class="block text-[13px] font-black text-slate-700 uppercase tracking-widest mb-3 ml-1">Image File</label>
             <div
               class="relative group cursor-pointer w-full h-40"
               onclick="document.getElementById('editBgImageInput').click()"
@@ -366,28 +382,44 @@
           </div>
 
           <div id="editTextSection" class="hidden space-y-5">
-            <div>
-              <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Text Content</label>
-              <input type="text" id="editBgTextContent" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all font-bold text-slate-800" />
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-[13px] font-black text-slate-700 uppercase tracking-widest mb-3 ml-1">Font Family</label>
+                <select id="editBgTextFont" class="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all text-[13px] font-medium text-slate-700 appearance-none" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.2em;">
+                  <option value="'Prompt', sans-serif">Prompt</option>
+                  <option value="'Kanit', sans-serif">Kanit</option>
+                  <option value="'Sarabun', sans-serif">Sarabun</option>
+                  <option value="'Aptos', sans-serif">Aptos</option>
+                  <option value="'Roboto', sans-serif">Roboto</option>
+                  <option value="'Inter', sans-serif">Inter</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[13px] font-black text-slate-700 uppercase tracking-widest mb-3 ml-1">Font Size</label>
+                <div class="flex items-center gap-2">
+                  <input type="text" inputmode="numeric" pattern="[0-9]*" id="editBgTextSize" class="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all text-[13px] font-bold text-center box-border" />
+                  <span class="text-[12px] font-bold text-slate-400">PX</span>
+                </div>
+              </div>
             </div>
             <div>
-              <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Text Color</label>
+              <label class="block text-[13px] font-black text-slate-700 uppercase tracking-widest mb-3 ml-1">Text Color</label>
               <div class="flex gap-3 items-center">
-                <input type="color" id="editBgTextColor" class="w-12 h-12 rounded-lg cursor-pointer border-0 p-0" oninput="document.getElementById('editBgTextColorHex').value = this.value" />
-                <input type="text" id="editBgTextColorHex" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all font-bold uppercase text-slate-800" oninput="document.getElementById('editBgTextColor').value = this.value" />
+                <input type="color" id="editBgTextColor" class="w-12 h-12 rounded-lg cursor-pointer border-0 p-0 shrink-0" oninput="document.getElementById('editBgTextColorHex').value = this.value" />
+                <input type="text" id="editBgTextColorHex" class="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all text-[13px] font-medium uppercase text-slate-800" oninput="document.getElementById('editBgTextColor').value = this.value" />
               </div>
             </div>
           </div>
 
           <div>
             <label
-              class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2"
+              class="block text-[13px] font-black text-slate-700 uppercase tracking-widest mb-3 ml-1"
               >Badge Name</label
             >
             <input
               type="text"
               id="editBgName"
-              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all font-bold text-slate-800"
+              class="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#006d4b] focus:bg-white transition-all text-[13px] font-medium text-slate-800"
             />
           </div>
 
@@ -744,7 +776,9 @@
           if ((bg.badge_type || 'image') === 'image') {
             previewHtml = `<img src="${bg.image_url}" class="w-10 h-10 object-contain rounded-lg border border-slate-200 bg-white" />`;
           } else {
-            previewHtml = `<div class="font-bold flex items-center justify-center w-10 h-10 text-[10px] leading-tight text-center rounded-lg border border-slate-200 bg-white" style="color: ${bg.text_color || '#10b981'};">${bg.text_content}</div>`;
+            const fontStyle = bg.text_font ? `font-family: ${bg.text_font};` : `font-family: 'Prompt', sans-serif;`;
+            const sizeStyle = bg.text_size ? `font-size: ${bg.text_size}px;` : `font-size: 10px;`;
+            previewHtml = `<div class="font-bold flex items-center justify-center w-10 h-10 leading-tight text-center rounded-lg border border-slate-200 bg-white" style="color: ${bg.text_color || '#10b981'}; ${fontStyle} ${sizeStyle}">${bg.text_content}</div>`;
           }
 
           html += `
@@ -951,6 +985,10 @@
           document.getElementById("viewTextPreview").innerText = bg.text_content;
           document.getElementById("viewTextPreview").style.color = bg.text_color || '#10b981';
           document.getElementById("viewTextPreview").style.backgroundColor = bg.text_color ? bg.text_color + '1a' : '#10b9811a';
+          document.getElementById("viewTextPreview").style.fontFamily = bg.text_font || "'Prompt', sans-serif";
+          if (bg.text_size) {
+              document.getElementById("viewTextPreview").style.fontSize = bg.text_size + 'px';
+          }
         }
 
         document.getElementById("viewName").innerText = bg.name;
@@ -971,7 +1009,6 @@
       function openUploadModal() {
         document.getElementById("inputBgName").value = "";
         document.getElementById("inputBgImage").value = "";
-        document.getElementById("inputTextContent").value = "";
         document.getElementById("inputTextColor").value = "#10b981";
         document.getElementById("inputTextColorHex").value = "#10b981";
         document.querySelector('input[name="inputType"][value="image"]').checked = true;
@@ -1002,12 +1039,11 @@
         const name = document.getElementById("inputBgName").value.trim();
         const type = document.querySelector('input[name="inputType"]:checked').value;
         const file = document.getElementById("inputBgImage").files[0];
-        const textContent = document.getElementById("inputTextContent").value.trim();
+        const textContent = type === 'text' ? name : '';
         const textColor = document.getElementById("inputTextColor").value;
 
         if (!name) return alert("Please enter a name");
         if (type === 'image' && !file) return alert("Please upload an image");
-        if (type === 'text' && !textContent) return alert("Please enter text content");
 
         const btn = document.getElementById("saveBgBtn");
         const originalText = btn.innerHTML;
@@ -1019,7 +1055,9 @@
             name: name,
             badge_type: type,
             text_content: textContent,
-            text_color: textColor
+            text_color: textColor,
+            text_font: document.getElementById("inputTextFont").value,
+            text_size: document.getElementById("inputTextSize").value
           };
 
           if (type === 'image') {
@@ -1066,9 +1104,10 @@
         } else {
           document.getElementById("editImageSection").classList.add('hidden');
           document.getElementById("editTextSection").classList.remove('hidden');
-          document.getElementById("editBgTextContent").value = bg.text_content || '';
           document.getElementById("editBgTextColor").value = bg.text_color || '#10b981';
           document.getElementById("editBgTextColorHex").value = bg.text_color || '#10b981';
+          document.getElementById("editBgTextFont").value = bg.text_font || "'Prompt', sans-serif";
+          document.getElementById("editBgTextSize").value = bg.text_size || '16';
         }
 
         document.getElementById("editBgImageInput").value = "";
@@ -1093,6 +1132,7 @@
       async function saveEditBackground() {
         const id = document.getElementById("editBgId").value;
         const name = document.getElementById("editBgName").value.trim();
+        const type = document.getElementById("editBgType").value;
 
         if (!name) return alert("Please enter a badge name");
 
@@ -1102,15 +1142,16 @@
         btn.innerHTML = `<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> Saving...`;
 
         try {
-          const type = document.getElementById("editBgType").value;
-          
           let updatePayload = {
             name: name,
+            badge_type: type
           };
 
           if (type === 'text') {
-            updatePayload.text_content = document.getElementById("editBgTextContent").value.trim();
+            updatePayload.text_content = name;
             updatePayload.text_color = document.getElementById("editBgTextColor").value;
+            updatePayload.text_font = document.getElementById("editBgTextFont").value;
+            updatePayload.text_size = document.getElementById("editBgTextSize").value;
           } else if (type === 'image' && editBgImageFile) {
             const fileName = `bg_update_${Date.now()}_${Math.floor(Math.random() * 1000)}.png`;
             const { error: uploadError } = await dbClient.storage
