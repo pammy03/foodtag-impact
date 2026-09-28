@@ -577,7 +577,7 @@
               <div id="slotHeaderSettings" class="space-y-3 hidden">
                 <div>
                   <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Header Text</label>
-                  <input type="text" id="headerTextInput" value="" oninput="changeSlotHeader()" class="w-full px-3 py-2 text-[13px] bg-white border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-600">
+                  <textarea id="headerTextInput" rows="2" oninput="changeSlotHeader()" class="w-full px-3 py-2 text-[13px] bg-white border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-600 resize-none"></textarea>
                 </div>
                 <div class="grid grid-cols-[2fr_1fr] gap-3">
                   <div>
@@ -2219,7 +2219,7 @@
             const hFont = menu.headerFont || globalSettings.headerFont || "'Aptos', sans-serif";
             const hSize = menu.headerFontSize || globalSettings.headerFontSize || "30px";
             const hColor = menu.headerFontColor || globalSettings.headerFontColor || "#1e293b";
-            headerHtml = `<div class="w-full text-center mb-3 font-bold relative" style="font-family: ${hFont}; font-size: ${hSize}; color: ${hColor};">${finalHeaderText}</div>`;
+            headerHtml = `<div class="w-full text-center mb-3 font-bold relative whitespace-pre-wrap" style="font-family: ${hFont}; font-size: ${hSize}; color: ${hColor}; line-height: 1.2;">${finalHeaderText}</div>`;
         }
 
         let badgeHtml = "";
