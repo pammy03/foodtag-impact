@@ -301,7 +301,7 @@
         inset: 0;
         width: 100%;
         height: 100%;
-        object-fit: fill;
+        object-fit: cover;
         z-index: 0;
       }
       .slot-content {
@@ -864,7 +864,7 @@
           orientation: "portrait",
           slots_count: 4,
           grid_class: "grid-western",
-          hide_allergies: false,
+          hide_allergies: true,
           w: 794,
           h: 1123,
         },
@@ -1233,7 +1233,7 @@
             const miniPreview = document.getElementById(
               `mini-preview-${tag.id}`,
             );
-            miniPreview.innerHTML = generatePaperHTML(tag);
+            miniPreview.innerHTML = generatePaperHTML(tag, true);
             const scale = Math.min(110 / dims.w, 70 / dims.h);
             miniPreview.style.transform = `scale(${scale})`;
           } else {
@@ -1287,7 +1287,7 @@
             const miniPreview = document.getElementById(
               `mini-preview-${tag.id}`,
             );
-            miniPreview.innerHTML = generatePaperHTML(tag);
+            miniPreview.innerHTML = generatePaperHTML(tag, true);
             const scale = Math.min(260 / dims.w, 150 / dims.h);
             miniPreview.style.transform = `scale(${scale})`;
           }
@@ -1377,7 +1377,7 @@
         container.innerHTML = html;
       }
 
-      function generatePaperHTML(tagData) {
+      function generatePaperHTML(tagData, firstPageOnly = false) {
         let totalHTML = "";
         const slotsData = tagData.slotsData || {};
         const pageConfigsObj = slotsData.__pageConfigs || { "1": tagData.templateName };
@@ -1386,6 +1386,8 @@
         let globalStartSlot = 1;
 
         for (let p = 1; p <= totalPages; p++) {
+          if (firstPageOnly && p > 1) break;
+          
           const pTempName = pageConfigsObj[p] || tagData.templateName;
           const config = TEMPLATE_CONFIGS[pTempName];
           if (!config) continue;
@@ -1396,9 +1398,20 @@
 
           for (let i = globalStartSlot; i <= endSlot; i++) {
             const menu = slotsData[i] || {};
-            const slotBgUrl = menu.bgUrl || "";
+            let slotBgUrl = "";
+            if (menu.bgUrl !== undefined) {
+              slotBgUrl = menu.bgUrl;
+            } else {
+              const storedDefaults = localStorage.getItem("defaultBackgrounds");
+              if (storedDefaults && pTempName) {
+                try {
+                  const parsed = JSON.parse(storedDefaults);
+                  slotBgUrl = parsed[pTempName] || "";
+                } catch(e) {}
+              }
+            }
             const bgHtml = slotBgUrl
-              ? `<img src="${slotBgUrl}" class="slot-bg">`
+              ? `<div class="slot-bg" style="background-image: url('${slotBgUrl}'); background-size: cover; background-position: bottom center; background-repeat: no-repeat;"></div>`
               : "";
 
             if (!menu.name_th && !menu.name_en) {
@@ -1427,111 +1440,138 @@
               ? `width: ${menu.allergenIconSizeContain}px !important; height: ${menu.allergenIconSizeContain}px !important;`
               : `width: ${globalSettings.iconSizeContain} !important; height: ${globalSettings.iconSizeContain} !important;`;
 
-            let fullAllergensHtml = "";
-
-            if (!config.hide_allergies) {
-              let mainHtml = "";
-              const labelContainText = menu.labelContainText !== undefined ? menu.labelContainText : (globalSettings.labelContainText || "CONTAIN");
-              const labelContainColor = menu.labelContainColor || globalSettings.labelContainColor || "#d32f2f";
-              const labelContainSize = menu.labelContainSize ? menu.labelContainSize + 'px' : (globalSettings.labelContainSize ? globalSettings.labelContainSize + 'px' : '10px');
-              const labelContainFont = menu.labelContainFont || globalSettings.labelContainFont || "'Aptos', sans-serif";
-
-              if (
-                menu.main_allergens &&
-                Array.isArray(menu.main_allergens) &&
-                menu.main_allergens.length > 0
-              ) {
-                const sortMeatsFirst = (allergens) => {
-                  return allergens.sort((a, b) => {
-                    const isMeatA = (a.type || "").toLowerCase() === "meat";
-                    const isMeatB = (b.type || "").toLowerCase() === "meat";
-                    if (isMeatA && !isMeatB) return -1;
-                    if (!isMeatA && isMeatB) return 1;
-                    return 0;
-                  });
-                };
-                const sortedMainAllergens = sortMeatsFirst(menu.main_allergens);
-                const icons = sortedMainAllergens
-                  .map((a) => {
-                    const imgUrl = a.icon_url || a.image_url || "";
-                    const nameText = a.name_th || a.name_en || "";
-                    if (!imgUrl || imgUrl.trim() === "") {
-                      return `<div class="allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-red-50 border border-dashed border-red-400 shadow-[0_0_10px_rgba(239,68,68,0.3)]" style="${sizeMainStyle}; display: flex !important; border-radius: 50%; padding: 2px;" title="${nameText}">
-                                <span style="font-size: 8px; font-weight: bold; color: #ef4444; line-height: 1.1;">NO IMG</span>
-                                <span style="font-size: 7px; color: #ef4444; line-height: 1; margin-top: 2px; word-break: break-word;">${nameText.substring(0, 12)}</span>
-                              </div>`;
-                    }
-                    return `<img src="${imgUrl}" class="allergen-icon" style="${sizeMainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.outerHTML='<div class=\\'allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-red-50 border border-dashed border-red-400\\' style=\\'${sizeMainStyle}; display: flex !important; border-radius: 50%; padding: 2px;\\'><span style=\\'font-size: 8px; font-weight: bold; color: #ef4444; line-height: 1.1;\\'>NO IMG</span></div>'">`;
-                  })
-                  .join("");
-
-                mainHtml = `
-                  <div class="w-full mt-2">
-                    <div class="font-black tracking-widest text-center mb-1 w-full uppercase" style="font-family: ${labelContainFont}; color: ${labelContainColor}; font-size: ${labelContainSize}; line-height: 1.1; font-weight: 900 !important; -webkit-text-stroke: 0.5px currentColor;">${labelContainText}</div>
-                    <div class="allergen-container">${icons}</div>
-                  </div>`;
-              }
-
-              let containHtml = "";
-              const labelMayContainText = menu.labelMayContainText !== undefined ? menu.labelMayContainText : (globalSettings.labelMayContainText || "MAY CONTAIN");
-              const labelMayContainColor = menu.labelMayContainColor || globalSettings.labelMayContainColor || "#d32f2f";
-              const labelMayContainSize = menu.labelMayContainSize ? menu.labelMayContainSize + 'px' : (globalSettings.labelMayContainSize ? globalSettings.labelMayContainSize + 'px' : '10px');
-              const labelMayContainFont = menu.labelMayContainFont || globalSettings.labelMayContainFont || "'Aptos', sans-serif";
-
-              if (
-                menu.allergens &&
-                Array.isArray(menu.allergens) &&
-                menu.allergens.length > 0
-              ) {
-                const sortMeatsFirst = (allergens) => {
-                  return allergens.sort((a, b) => {
-                    const isMeatA = (a.type || "").toLowerCase() === "meat";
-                    const isMeatB = (b.type || "").toLowerCase() === "meat";
-                    if (isMeatA && !isMeatB) return -1;
-                    if (!isMeatA && isMeatB) return 1;
-                    return 0;
-                  });
-                };
-                const sortedAllergens = sortMeatsFirst(menu.allergens);
-                const icons = sortedAllergens
-                  .map((a) => {
-                    const imgUrl = a.icon_url || a.image_url || "";
-                    const nameText = a.name_th || a.name_en || "";
-                    if (!imgUrl || imgUrl.trim() === "") {
-                      return `<div class="allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-emerald-50 border border-dashed border-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.3)]" style="${sizeContainStyle}; display: flex !important; border-radius: 50%; padding: 2px;" title="${nameText}">
-                                <span style="font-size: 8px; font-weight: bold; color: #10b981; line-height: 1.1;">NO IMG</span>
-                                <span style="font-size: 7px; color: #10b981; line-height: 1; margin-top: 2px; word-break: break-word;">${nameText.substring(0, 12)}</span>
-                              </div>`;
-                    }
-                    return `<img src="${imgUrl}" class="allergen-icon" style="${sizeContainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.outerHTML='<div class=\\'allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-emerald-50 border border-dashed border-emerald-400\\' style=\\'${sizeContainStyle}; display: flex !important; border-radius: 50%; padding: 2px;\\'><span style=\\'font-size: 8px; font-weight: bold; color: #10b981; line-height: 1.1;\\'>NO IMG</span></div>'">`;
-                  })
-                  .join("");
-
-                containHtml = `
-                  <div class="w-full mt-2">
-                    <div class="font-black tracking-widest text-center mb-1 w-full uppercase" style="font-family: ${labelMayContainFont}; color: ${labelMayContainColor}; font-size: ${labelMayContainSize}; line-height: 1.1; font-weight: 900 !important; -webkit-text-stroke: 0.5px currentColor;">${labelMayContainText}</div>
-                    <div class="allergen-container">${icons}</div>
-                  </div>`;
-              }
-
-              if (mainHtml || containHtml) {
-                const titleText = menu.labelTitleText !== undefined ? menu.labelTitleText : (globalSettings.labelTitleText || "Allergens");
-                const titleColor = menu.labelTitleColor || globalSettings.labelTitleColor || "#d32f2f";
-                const titleSize = menu.labelTitleSize ? menu.labelTitleSize + 'px' : (globalSettings.labelTitleSize ? globalSettings.labelTitleSize + 'px' : '12px');
-                const titleFont = menu.labelTitleFont || globalSettings.labelTitleFont || "'Aptos', sans-serif";
-                const showLines = menu.labelTitleLines !== undefined ? menu.labelTitleLines : (globalSettings.labelTitleLines !== undefined ? globalSettings.labelTitleLines : true);
-                const lineHtml = showLines ? '<div class="flex-grow border-t border-[#d4d4d4]"></div>' : '';
-                
-                const allergensTitleHtml = `
-                  <div class="w-[85%] mx-auto flex items-center justify-center mb-0.5 mt-1">
-                    ${lineHtml}
-                    <div class="mx-3 font-black" style="font-family: ${titleFont}; color: ${titleColor}; font-size: ${titleSize}; font-weight: 900 !important; -webkit-text-stroke: 0.5px currentColor;">${titleText}</div>
-                    ${lineHtml}
-                  </div>`;
-                fullAllergensHtml = `<div class="w-full flex flex-col items-center mt-1 space-y-1.5">${allergensTitleHtml}${mainHtml}${containHtml}</div>`;
-              }
+            let menusToRender = menu.menus || [];
+            if (menusToRender.length === 0 && (menu.name_th || menu.name_en)) {
+              menusToRender = [{
+                name_th: menu.name_th,
+                name_en: menu.name_en,
+                allergens: menu.allergens,
+                main_allergens: menu.main_allergens
+              }];
             }
+
+            const currentDividerStyle = menu.dividerStyle || globalSettings.dividerStyle || "line";
+            let dividerHtml = "";
             
+            if (currentDividerStyle === "line") {
+              dividerHtml = `<div class="w-full flex justify-center items-center my-3"><div class="w-2/3 border-t border-slate-400/60"></div></div>`;
+            } else if (currentDividerStyle.startsWith("http")) {
+              dividerHtml = `
+                <div class="w-full flex justify-center items-center my-3">
+                  <img src="${currentDividerStyle}" alt="Divider" style="max-height: 20px; width: auto; object-fit: contain;">
+                </div>
+              `;
+            }
+
+            const menuItemsHtml = menusToRender.map((m, idx) => {
+               const thWhitespaceClass = 'whitespace-normal';
+               const enWhitespaceClass = 'whitespace-normal';
+
+               let menuAllergensHtml = "";
+
+               if (!config.hide_allergies) {
+                 let mainHtml = "";
+                 const labelContainText = menu.labelContainText !== undefined ? menu.labelContainText : (globalSettings.labelContainText || "CONTAIN");
+                 const labelContainColor = menu.labelContainColor || globalSettings.labelContainColor || "#d32f2f";
+                 const labelContainSize = menu.labelContainSize ? menu.labelContainSize + 'px' : (globalSettings.labelContainSize ? globalSettings.labelContainSize + 'px' : '10px');
+                 const labelContainFont = menu.labelContainFont || globalSettings.labelContainFont || "'Aptos', sans-serif";
+
+                 if (m.main_allergens && Array.isArray(m.main_allergens) && m.main_allergens.length > 0) {
+                   const sortMeatsFirst = (allergens) => {
+                     return allergens.sort((a, b) => {
+                       const isMeatA = (a.type || "").toLowerCase() === "meat";
+                       const isMeatB = (b.type || "").toLowerCase() === "meat";
+                       if (isMeatA && !isMeatB) return -1;
+                       if (!isMeatA && isMeatB) return 1;
+                       return 0;
+                     });
+                   };
+                   const sortedMainAllergens = sortMeatsFirst(m.main_allergens);
+                   const icons = sortedMainAllergens
+                     .map((a) => {
+                       const imgUrl = a.icon_url || a.image_url || "";
+                       const nameText = a.name_th || a.name_en || "";
+                       if (!imgUrl || imgUrl.trim() === "") {
+                         return `<div class="allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-red-50 border border-dashed border-red-400 shadow-[0_0_10px_rgba(239,68,68,0.3)]" style="${sizeMainStyle}; display: flex !important; border-radius: 50%; padding: 2px;" title="${nameText}">
+                                   <span style="font-size: 8px; font-weight: bold; color: #ef4444; line-height: 1.1;">NO IMG</span>
+                                   <span style="font-size: 7px; color: #ef4444; line-height: 1; margin-top: 2px; word-break: break-word;">${nameText.substring(0, 12)}</span>
+                                 </div>`;
+                       }
+                       return `<img src="${imgUrl}" class="allergen-icon" style="${sizeMainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.outerHTML='<div class=\\'allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-red-50 border border-dashed border-red-400\\' style=\\'${sizeMainStyle}; display: flex !important; border-radius: 50%; padding: 2px;\\'><span style=\\'font-size: 8px; font-weight: bold; color: #ef4444; line-height: 1.1;\\'>NO IMG</span></div>'">`;
+                     })
+                     .join("");
+
+                   mainHtml = `
+                     <div class="w-full mt-2">
+                       <div class="font-black tracking-widest text-center mb-1 w-full uppercase" style="font-family: ${labelContainFont}; color: ${labelContainColor}; font-size: ${labelContainSize}; line-height: 1.1;">${labelContainText}</div>
+                       <div class="allergen-container">${icons}</div>
+                     </div>`;
+                 }
+
+                 let containHtml = "";
+                 if (m.allergens && Array.isArray(m.allergens) && m.allergens.length > 0) {
+                   const sortMeatsFirst = (allergens) => {
+                     return allergens.sort((a, b) => {
+                       const isMeatA = (a.type || "").toLowerCase() === "meat";
+                       const isMeatB = (b.type || "").toLowerCase() === "meat";
+                       if (isMeatA && !isMeatB) return -1;
+                       if (!isMeatA && isMeatB) return 1;
+                       return 0;
+                     });
+                   };
+                   const sortedAllergens = sortMeatsFirst(m.allergens);
+                   const icons = sortedAllergens
+                     .map((a) => {
+                       const imgUrl = a.icon_url || a.image_url || "";
+                       const nameText = a.name_th || a.name_en || "";
+                       if (!imgUrl || imgUrl.trim() === "") {
+                         return `<div class="allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-emerald-50 border border-dashed border-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.3)]" style="${sizeContainStyle}; display: flex !important; border-radius: 50%; padding: 2px;" title="${nameText}">
+                                   <span style="font-size: 8px; font-weight: bold; color: #10b981; line-height: 1.1;">NO IMG</span>
+                                   <span style="font-size: 7px; color: #10b981; line-height: 1; margin-top: 2px; word-break: break-word;">${nameText.substring(0, 12)}</span>
+                                 </div>`;
+                       }
+                       return `<img src="${imgUrl}" class="allergen-icon" style="${sizeContainStyle}" title="${nameText}" crossorigin="anonymous" onerror="this.outerHTML='<div class=\\'allergen-icon flex flex-col items-center justify-center text-center overflow-hidden bg-emerald-50 border border-dashed border-emerald-400\\' style=\\'${sizeContainStyle}; display: flex !important; border-radius: 50%; padding: 2px;\\'><span style=\\'font-size: 8px; font-weight: bold; color: #10b981; line-height: 1.1;\\'>NO IMG</span></div>'">`;
+                     })
+                     .join("");
+
+                   const labelText = menu.labelMayContainText !== undefined ? menu.labelMayContainText : "MAY CONTAIN";
+                   const labelColor = menu.labelMayContainColor || "#d32f2f";
+                   const labelSize = menu.labelMayContainSize ? menu.labelMayContainSize + 'px' : '10px';
+                   const labelMayContainFont = menu.labelMayContainFont || globalSettings.labelMayContainFont || "'Aptos', sans-serif";
+                   containHtml = `
+                     <div class="w-full mt-2">
+                       <div class="font-black tracking-widest text-center mb-1 w-full uppercase" style="font-family: ${labelMayContainFont}; color: ${labelColor}; font-size: ${labelSize}; line-height: 1.1;">${labelText}</div>
+                       <div class="allergen-container">${icons}</div>
+                     </div>`;
+                 }
+
+                 if (mainHtml || containHtml) {
+                   const titleText = menu.labelTitleText !== undefined ? menu.labelTitleText : (globalSettings.labelTitleText || "Allergens");
+                   const titleColor = menu.labelTitleColor || globalSettings.labelTitleColor || "#d32f2f";
+                   const titleSize = menu.labelTitleSize ? menu.labelTitleSize + 'px' : (globalSettings.labelTitleSize ? globalSettings.labelTitleSize + 'px' : '12px');
+                   const showLines = menu.labelTitleLines !== undefined ? menu.labelTitleLines : (globalSettings.labelTitleLines !== undefined ? globalSettings.labelTitleLines : true);
+                   const lineHtml = showLines ? '<div class="flex-grow border-t border-[#d4d4d4]"></div>' : '';
+                   const titleFont = menu.labelTitleFont || globalSettings.labelTitleFont || "'Aptos', sans-serif";
+                   
+                   const allergensTitleHtml = `
+                     <div class="w-[85%] mx-auto flex items-center justify-center mb-0.5 mt-1">
+                       ${lineHtml}
+                       <div class="mx-3 font-bold" style="font-family: ${titleFont}; color: ${titleColor}; font-size: ${titleSize};">${titleText}</div>
+                       ${lineHtml}
+                     </div>`;
+                   menuAllergensHtml = `<div class="w-full flex flex-col items-center mt-1 space-y-1.5">${allergensTitleHtml}${mainHtml}${containHtml}</div>`;
+                 }
+               }
+
+               return `
+                   <div class="menu-item-group mb-2 last:mb-0 w-full flex flex-col items-center">
+                   ${m.name_th ? `<div class="slot-text-th font-black mb-0.5 leading-tight text-center ${thWhitespaceClass} w-full max-w-full break-words relative" style="font-family: ${fTh}; font-size: ${sTh}; color: ${cTh};">${m.name_th}</div>` : ''}
+                   ${m.name_en ? `<div class="slot-text-en font-medium leading-tight text-center ${enWhitespaceClass} w-full max-w-full break-words relative ${menu.uppercaseEn ? 'uppercase' : ''}" style="font-family: ${fEn}; font-size: ${sEn}; color: ${cEn};">${m.name_en}</div>` : ''}
+                   ${menuAllergensHtml}
+                 </div>
+               `;
+            }).join(dividerHtml);
+
             let headerHtml = "";
             if (menu.showHeader && menu.headerText) {
                 const hFont = menu.headerFont || globalSettings.fontEn || "'Aptos', sans-serif";
@@ -1546,7 +1586,7 @@
                     badgeHtml = `<div class="absolute top-4 right-4 z-20 flex items-center justify-center"><img src="${menu.badgeImageUrl}" class="w-12 h-12 object-contain" crossorigin="anonymous"></div>`;
                 } else if (menu.badgeType !== 'image' && menu.badgeText) {
                     const bColor = menu.badgeColor || "#10b981";
-                    const bFont = profile.globalSettings?.fontTh || globalSettings?.fontTh || "'Prompt', sans-serif";
+                    const bFont = typeof profile !== 'undefined' && profile.globalSettings?.fontTh ? profile.globalSettings.fontTh : (globalSettings?.fontTh || "'Prompt', sans-serif");
                     badgeHtml = `<div class="absolute top-4 right-4 z-20 flex items-center justify-center font-bold" style="color: ${bColor}; font-family: ${bFont}; font-size: 16px;">${menu.badgeText}</div>`;
                 }
             }
@@ -1566,11 +1606,12 @@
                   ${badgeHtml}
                   <div class="slot-content relative z-10 flex flex-col items-center w-full" style="${padStyle}">
                       ${headerHtml}
-                      <div class="slot-text-th font-black mb-1 leading-tight text-center whitespace-pre-line" style="font-family: ${fTh}; font-size: ${sTh}; color: ${cTh};">${menu.name_th || ""}</div>
-                      <div class="slot-text-en font-medium mb-1 leading-tight text-center whitespace-pre-line ${menu.uppercaseEn ? 'uppercase' : ''}" style="font-family: ${fEn}; font-size: ${sEn}; color: ${cEn};">${menu.name_en || ""}</div>
-                      ${fullAllergensHtml}
+                      <div class="w-full flex flex-col items-center flex-grow">
+                        ${menuItemsHtml}
+                      </div>
                   </div>
               </div>`;
+
           }
 
           totalHTML += `<div class="paper-container mb-6 flex-shrink-0 relative mx-auto"><div class="preview-paper shadow-md" style="width: ${dims.w}px; height: ${dims.h}px; background: white; padding: 0; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; align-items: center;"><div class="inner-grid ${config.grid_class}">${slotsHTML}</div></div></div>`;

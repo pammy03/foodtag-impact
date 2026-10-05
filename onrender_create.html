@@ -99,30 +99,29 @@
         background-color: white;
         box-sizing: border-box;
         border: 1px solid #64748b !important;
-        flex-shrink: 0;
       }
 
       .grid-plate {
-        width: 26cm !important;
-        height: 18cm !important;
+        width: 26cm;
+        height: 18cm;
         grid-template-columns: repeat(2, 50%);
         grid-template-rows: repeat(1, 100%);
       }
       .grid-western {
-        width: 20cm !important;
-        height: 28cm !important;
+        width: 20cm;
+        height: 28cm;
         grid-template-columns: repeat(2, 50%);
         grid-template-rows: repeat(2, 50%);
       }
       .grid-buffet {
-        width: 20.4cm !important;
-        height: 19.4cm !important;
+        width: 20.4cm;
+        height: 19.4cm;
         grid-template-columns: repeat(2, 50%);
         grid-template-rows: repeat(2, 50%);
       }
       .grid-mini {
-        width: 27cm !important;
-        height: 18cm !important;
+        width: 27cm;
+        height: 18cm;
         grid-template-columns: repeat(3, 33.3333%);
         grid-template-rows: repeat(2, 50%);
       }
@@ -823,13 +822,20 @@
             <div class="bg-slate-700 text-white text-[11px] font-bold px-3 py-1 absolute top-0 left-0 rounded-br-lg rounded-tl-xl uppercase shadow-sm">
               Layout Style
             </div>
-            <div class="mt-auto border-t border-slate-100 pt-1 grid grid-cols-1 gap-3">
+            <div class="mt-auto border-t border-slate-100 pt-1 grid grid-cols-2 gap-3">
               <div>
                 <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Menu Divider</label>
                 <select id="dividerStyle" onchange="changeDividerStyle(this.value)" class="w-full pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-[12px] text-slate-600 appearance-none font-semibold" style="background-image: url(&quot;data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e&quot;); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.2em;">
                   <option value="line">Basic Line</option>
                   <option value="none">None</option>
                 </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Menu Top Margin</label>
+                <div class="flex items-center gap-1">
+                  <input type="number" id="menuMarginTop" onchange="changeMenuMarginTop(this.value)" oninput="changeMenuMarginTop(this.value)" class="w-full px-2 py-1.5 text-[12px] bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-[#006d4b] text-center" placeholder="0">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase">px</span>
+                </div>
               </div>
             </div>
           </div>
@@ -1065,9 +1071,8 @@
             </div>
 
             <div id="allergenList" class="space-y-3"></div>
-          </div>
 
-          <div class="pt-2 pb-4">
+            <div class="pt-2">
             <button type="button"
               onclick="showMenuConfirmModal()"
               class="w-full py-3.5 text-[15px] font-bold text-[#006d4b] bg-[#eaf4ed] border-2 border-[#006d4b]/30 hover:bg-[#d1eadd] rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
@@ -1075,9 +1080,10 @@
               <span class="material-symbols-outlined text-[20px]"
                 >content_copy</span
               >
-              Apply to all slots on this page
+              Apply to all slots in this page
             </button>
           </div>
+        </div>
         </div>
 
         <div class="p-6 bg-[#ebf0f4] border-t border-slate-200 shrink-0">
@@ -1184,54 +1190,6 @@
         class="bg-white rounded-2xl shadow-2xl w-[400px] p-6 transform scale-95 transition-transform duration-300"
         id="saveModalContent"
       ></div>
-    </div>
-
-    <div
-      id="exportImageModal"
-      class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300"
-    >
-      <div class="bg-white rounded-2xl shadow-2xl w-[450px] p-8 text-center transform scale-95 transition-transform duration-300">
-        <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-5 border-2 border-blue-100">
-          <span class="material-symbols-outlined text-4xl">imagesmode</span>
-        </div>
-        <h3 class="text-xl font-bold text-slate-800 mb-3">บันทึกไฟล์รูปภาพ</h3>
-        <p class="text-sm text-slate-500 mb-5 leading-relaxed">
-          มีป้ายชื่อทั้งหมด <strong id="exportModalTotalPages" class="text-blue-600 font-black">...</strong> หน้า กรุณาเลือกหน้าที่ต้องการบันทึก
-        </p>
-        
-        <div class="flex flex-col gap-3 text-left mb-6">
-          <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
-            <input type="radio" name="exportPageOption" value="single" checked class="w-4 h-4 text-blue-600 focus:ring-blue-500">
-            <span class="text-slate-700 font-semibold text-sm">เฉพาะหน้าปัจจุบัน</span>
-          </label>
-          <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
-            <input type="radio" name="exportPageOption" value="all" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
-            <span class="text-slate-700 font-semibold text-sm">ทุกหน้า</span>
-          </label>
-          <label class="flex flex-col gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
-            <div class="flex items-center gap-3">
-              <input type="radio" name="exportPageOption" value="custom" class="w-4 h-4 text-blue-600 focus:ring-blue-500" onchange="document.getElementById('exportPageInput').focus()">
-              <span class="text-slate-700 font-semibold text-sm">กำหนดเอง</span>
-            </div>
-            <input type="text" id="exportPageInput" placeholder="เช่น 1, 3, 5-7" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 mt-1" onclick="document.querySelector('input[name=exportPageOption][value=custom]').checked = true">
-          </label>
-        </div>
-
-        <div class="flex gap-3 w-full">
-          <button type="button"
-            onclick="closeExportImageModal()"
-            class="flex-1 py-3 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors"
-          >
-            ยกเลิก
-          </button>
-          <button type="button"
-            onclick="proceedExportImage()"
-            class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-sm transition-colors"
-          >
-            บันทึก
-          </button>
-        </div>
-      </div>
     </div>
 
     <div
@@ -1826,8 +1784,8 @@
               
               for (let i = 1; i <= maxSlot; i++) {
                 const slotDiv = document.getElementById(`slot-${i}`);
-                if (slotDiv && slotDiv.children.length > 1) {
-                  const wrapper = slotDiv.children[1];
+                if (slotDiv) {
+                  const wrapper = slotDiv.querySelector("div:last-child");
                   const menu = slotsData[i] || {};
                   renderSlotContent(wrapper, menu, i);
                 }
@@ -1853,9 +1811,22 @@
       function resizePaper() {
         const container = document.getElementById("paperContainer");
         const papers = document.querySelectorAll(".a4-paper");
-        if (!container || papers.length === 0) return;
+        if (!container || papers.length === 0 || !currentTemplateConfig.orientation) return;
         const cWidth = container.clientWidth - 40;
         const cHeight = container.clientHeight - 40;
+
+        let pWidth, pHeight;
+        if (selectedPaperSize === "A3") {
+          pWidth =
+            currentTemplateConfig.orientation === "landscape" ? 1587 : 1123;
+          pHeight =
+            currentTemplateConfig.orientation === "landscape" ? 1123 : 1587;
+        } else {
+          pWidth =
+            currentTemplateConfig.orientation === "landscape" ? 1123 : 794;
+          pHeight =
+            currentTemplateConfig.orientation === "landscape" ? 794 : 1123;
+        }
 
         let style = document.getElementById("dynamicPrintStyle");
         if (!style) {
@@ -1863,28 +1834,16 @@
           style.id = "dynamicPrintStyle";
           document.head.appendChild(style);
         }
-        if (currentTemplateConfig && currentTemplateConfig.orientation) {
-          style.innerHTML = `@media print { @page { size: ${selectedPaperSize} ${currentTemplateConfig.orientation}; margin: 0; } }`;
-        }
+        style.innerHTML = `@media print { @page { size: ${selectedPaperSize} ${currentTemplateConfig.orientation}; margin: 0; } }`;
 
-        papers.forEach((paper, index) => {
-          const config = pageConfigs[index + 1] || TEMPLATE_CONFIGS["buffet"];
-          let pWidth, pHeight;
-          if (selectedPaperSize === "A3") {
-            pWidth = config.orientation === "landscape" ? 1587 : 1123;
-            pHeight = config.orientation === "landscape" ? 1123 : 1587;
-          } else {
-            pWidth = config.orientation === "landscape" ? 1123 : 794;
-            pHeight = config.orientation === "landscape" ? 794 : 1123;
-          }
-
-          const scale = Math.min(cWidth / pWidth, cHeight / pHeight);
-          
+        const scale = Math.min(cWidth / pWidth, cHeight / pHeight);
+        
+        papers.forEach(paper => {
           paper.style.width = `${pWidth}px`;
           paper.style.height = `${pHeight}px`;
           paper.style.transform = `scale(${scale})`;
 
-          if (config.orientation === "landscape") {
+          if (currentTemplateConfig.orientation === "landscape") {
             paper.classList.add("landscape");
             paper.classList.remove("portrait");
           } else {
@@ -2012,7 +1971,9 @@
             innerGrid.appendChild(div);
 
             if (!slotsData[i]) {
-              slotsData[i] = {};
+              slotsData[i] = { bgUrl: "" };
+            } else if (!slotsData[i].bgUrl) {
+              slotsData[i].bgUrl = "";
             }
 
             renderSlotContent(contentWrapper, slotsData[i], i);
@@ -2120,7 +2081,7 @@
           }
         }
         const bgHtml = slotBgUrl
-          ? `<div class="slot-bg" style="background-image: url('${slotBgUrl}'); background-size: cover; background-position: bottom center; background-repeat: no-repeat;"></div>`
+          ? `<div class="slot-bg" style="background-image: url('${slotBgUrl}'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat;"></div>`
           : "";
 
         const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {
@@ -2370,12 +2331,13 @@
         }
         const padStyle = currentPadding ? `padding: ${currentPadding}; box-sizing: border-box; height: 100%; display: flex; flex-direction: column; justify-content: flex-start;` : '';
 
+        const mTop = menu.menuMarginTop !== undefined ? menu.menuMarginTop : 0;
         element.innerHTML = `
             ${bgHtml}
             ${badgeHtml}
             <div class="slot-content" style="${padStyle}">
               ${headerHtml}
-              <div class="w-full flex flex-col items-center flex-grow">
+              <div class="w-full flex flex-col items-center flex-grow" style="margin-top: ${mTop}px;">
                 ${menuItemsHtml}
               </div>
             </div>
@@ -2464,12 +2426,11 @@
         if (delBtn) delBtn.disabled = totalPages <= 1;
       }
 
-      async function changePage(newPage) {
+      function changePage(newPage) {
         if (newPage < 1 || newPage > totalPages) return;
         currentPage = newPage;
         
         currentTemplateConfig = pageConfigs[currentPage] || TEMPLATE_CONFIGS["buffet"];
-        await loadBackgrounds(currentTemplateConfig.name);
         
         let startSlot = 1;
         for (let p = 1; p < currentPage; p++) {
@@ -2546,12 +2507,9 @@
            newPageStartSlot += pageConfigs[p].slots_count;
         }
         
+        const defaultBgUrl = slotsData[1]?.bgUrl || "";
         for (let i = 0; i < pageConfigs[nextTotal].slots_count; i++) {
-          const newSlotData = {};
-          if (slotsData[1] && slotsData[1].bgUrl !== undefined) {
-             newSlotData.bgUrl = slotsData[1].bgUrl;
-          }
-          slotsData[newPageStartSlot + i] = newSlotData; 
+          slotsData[newPageStartSlot + i] = { bgUrl: defaultBgUrl }; 
         }
         
         totalPages = nextTotal;
@@ -2643,13 +2601,7 @@
             });
         }
 
-        if (!optionExists && currentBg) {
-             // Keep the user's saved background even if it's not in the standard list
-             const newOpt = document.createElement('option');
-             newOpt.value = currentBg;
-             newOpt.textContent = "Saved Background (Custom)";
-             select.appendChild(newOpt);
-        }
+
 
         select.value = currentBg;
       }
@@ -3043,8 +2995,8 @@
           if (!slotsData[i]) slotsData[i] = {};
           slotsData[i].bgUrl = bgUrl;
           const slotDiv = document.getElementById(`slot-${i}`);
-          if (slotDiv && slotDiv.children.length > 1) {
-            const wrapper = slotDiv.children[1];
+          if (slotDiv) {
+            const wrapper = slotDiv.querySelector("div:last-child");
             renderSlotContent(wrapper, slotsData[i], i);
           }
         }
@@ -3115,10 +3067,6 @@
           iconContainer.className = "w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-emerald-100";
           icon.innerText = "add_circle";
           btn.className = "flex-1 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-md transition-colors";
-        } else if (type === 'share') {
-          iconContainer.className = "w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-blue-100";
-          icon.innerText = "share";
-          btn.className = "flex-1 py-2.5 bg-[#006d4b] text-white font-bold rounded-xl hover:bg-[#005a3d] shadow-md transition-colors";
         } else {
           iconContainer.className = "w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-blue-100";
           icon.innerText = "help";
@@ -3150,13 +3098,13 @@
         for (let p = 1; p < currentPage; p++) {
            startSlot += pageConfigs[p].slots_count;
         }
-        const endSlot = startSlot + pageConfigs[currentPage].slots_count - 1;
+        const endSlot = startSlot + currentTemplateConfig.slots_count - 1;
 
         for (let i = startSlot; i <= endSlot; i++) {
           slotsData[i] = JSON.parse(JSON.stringify(currentMenu));
           const slotDiv = document.getElementById(`slot-${i}`);
-          if (slotDiv && slotDiv.children.length > 1) {
-            const wrapper = slotDiv.children[1];
+          if (slotDiv) {
+            const wrapper = slotDiv.querySelector("div:last-child");
             renderSlotContent(wrapper, slotsData[i], i);
           }
         }
@@ -3164,8 +3112,8 @@
 
       function renderActiveSlotOnly() {
         const slotDiv = document.getElementById(`slot-${activeSlot}`);
-        if (slotDiv && slotDiv.children.length > 1) {
-          const wrapper = slotDiv.children[1];
+        if (slotDiv) {
+          const wrapper = slotDiv.querySelector("div:last-child");
           renderSlotContent(wrapper, slotsData[activeSlot] || {}, activeSlot);
         }
       }
@@ -3284,7 +3232,7 @@
           menus: menus,
           name_th: menus.length > 0 ? menus[0].name_th : "",
           name_en: menus.length > 0 ? menus[0].name_en : "",
-          bgUrl: currentSlotData.bgUrl,
+          bgUrl: currentSlotData.bgUrl || "",
           fontTh: currentSlotData.fontTh || globalSettings.fontTh,
           fontSizeTh: currentSlotData.fontSizeTh || globalSettings.fontSizeTh,
           fontEn: currentSlotData.fontEn || globalSettings.fontEn,
@@ -3349,8 +3297,21 @@
             }
           }
 
-          // Removed the logic that hardcodes `firstBgUrl` into `slotsData` for the current page,
-          // because it prevented slots from properly falling back to the global default background.
+          if (firstBgUrl) {
+            let startSlot = 1;
+            for (let p = 1; p < currentPage; p++) {
+              startSlot += pageConfigs[p].slots_count;
+            }
+            const count = currentTemplateConfig.slots_count;
+            const endSlot = startSlot + count - 1;
+            for (let i = startSlot; i <= endSlot; i++) {
+              if (!slotsData[i]) {
+                slotsData[i] = { bgUrl: firstBgUrl };
+              } else if (slotsData[i].bgUrl === undefined) {
+                slotsData[i].bgUrl = firstBgUrl;
+              }
+            }
+          }
 
           syncBgSelectWithCurrentSlot();
         } catch (err) {
@@ -3525,9 +3486,9 @@
         }, 1500);
       }
 
-      async function capturePaper(paperEl) {
+      async function capturePaper() {
         document.body.style.cursor = "wait";
-        const paper = paperEl || document.querySelector(".a4-paper.active-page");
+        const paper = document.querySelector(".a4-paper.active-page");
         if (!paper) {
           document.body.style.cursor = "default";
           return null;
@@ -3581,126 +3542,8 @@
         return canvas;
       }
 
-      let pendingExportType = "";
-
-      function showExportImageModal() {
-        const totalPages = document.querySelectorAll(".a4-paper").length;
-        document.getElementById("exportModalTotalPages").innerText = totalPages;
-
-        const modal = document.getElementById("exportImageModal");
-        modal.classList.remove("hidden");
-        setTimeout(() => {
-          modal.classList.remove("opacity-0");
-          modal.querySelector("div").classList.remove("scale-95");
-        }, 10);
-      }
-
-      function closeExportImageModal() {
-        const modal = document.getElementById("exportImageModal");
-        modal.classList.add("opacity-0");
-        modal.querySelector("div").classList.add("scale-95");
-        setTimeout(() => {
-          modal.classList.add("hidden");
-        }, 300);
-      }
-
-      async function proceedExportImage(modeOverride) {
-        const option = modeOverride || document.querySelector('input[name="exportPageOption"]:checked').value;
-        const type = pendingExportType;
-        const fileName = `Food-Tag_${document.getElementById("profileName").value || "Export"}`;
-        
-        const papers = document.querySelectorAll(".a4-paper");
-        let pagesToExport = [];
-        
-        if (option === 'single') {
-           const activeIndex = Array.from(papers).findIndex(p => p.classList.contains("active-page"));
-           pagesToExport.push(activeIndex !== -1 ? activeIndex : 0);
-        } else if (option === 'all') {
-           for (let i = 0; i < papers.length; i++) pagesToExport.push(i);
-        } else if (option === 'custom') {
-           const input = document.getElementById("exportPageInput").value;
-           const parts = input.split(",");
-           parts.forEach(part => {
-             part = part.trim();
-             if (part.includes("-")) {
-               const [start, end] = part.split("-").map(n => parseInt(n));
-               if (!isNaN(start) && !isNaN(end)) {
-                 for (let i = start; i <= end; i++) {
-                   if (i >= 1 && i <= papers.length) pagesToExport.push(i - 1);
-                 }
-               }
-             } else {
-               const num = parseInt(part);
-               if (!isNaN(num) && num >= 1 && num <= papers.length) pagesToExport.push(num - 1);
-             }
-           });
-           pagesToExport = [...new Set(pagesToExport)].sort((a, b) => a - b);
-           if (pagesToExport.length === 0) {
-             alert("⚠️ กรุณาระบุหน้าที่ต้องการบันทึกให้ถูกต้อง เช่น 1, 3, 5-7");
-             return;
-           }
-        }
-        
-        closeExportImageModal();
-        
-        await logSystemActivity(
-          "PRINT",
-          `ดาวน์โหลดไฟล์ป้ายชื่อเป็นรูปภาพ (${option}) (ชื่อไฟล์: ${fileName})`,
-          { menu_name: document.getElementById("profileName").value || "Export", paper_size: selectedPaperSize }
-        );
-
-        const originalStates = Array.from(papers).map(p => ({
-          el: p,
-          isActive: p.classList.contains("active-page"),
-          isHidden: p.classList.contains("hidden-page")
-        }));
-
-        for (let i = 0; i < pagesToExport.length; i++) {
-          const pageIndex = pagesToExport[i];
-          papers.forEach(p => {
-            p.classList.remove("active-page");
-            p.classList.add("hidden-page");
-          });
-          papers[pageIndex].classList.add("active-page");
-          papers[pageIndex].classList.remove("hidden-page");
-
-          const canvas = await capturePaper(papers[pageIndex]);
-          if (!canvas) continue;
-
-          const link = document.createElement("a");
-          link.download = pagesToExport.length === 1 ? `${fileName}.${type}` : `${fileName}_Page_${pageIndex + 1}.${type}`;
-          link.href = canvas.toDataURL(`image/${type === "jpg" ? "jpeg" : "png"}`, 1.0);
-          link.click();
-          
-          if (pagesToExport.length > 1) {
-            await new Promise(r => setTimeout(r, 400));
-          }
-        }
-
-        originalStates.forEach(state => {
-          if (state.isActive) {
-            state.el.classList.add("active-page");
-            state.el.classList.remove("hidden-page");
-          } else {
-            state.el.classList.remove("active-page");
-            state.el.classList.add("hidden-page");
-          }
-        });
-      }
-
       async function exportFile(type) {
         const fileName = `Food-Tag_${document.getElementById("profileName").value || "Export"}`;
-
-        if (type === "jpg" || type === "png") {
-          pendingExportType = type;
-          const totalPages = document.querySelectorAll(".a4-paper").length;
-          if (totalPages > 1) {
-            showExportImageModal();
-          } else {
-            proceedExportImage("single");
-          }
-          return;
-        }
 
         await logSystemActivity(
           "PRINT",
@@ -3708,165 +3551,61 @@
           { menu_name: document.getElementById("profileName").value || "Export", paper_size: selectedPaperSize }
         );
 
+        const canvas = await capturePaper();
+
         if (type === "pdf") {
           const { jsPDF } = window.jspdf;
-          
-          const firstPageConfig = pageConfigs[1] || currentTemplateConfig;
-          const firstOrientation = firstPageConfig.orientation === "landscape" ? "l" : "p";
+          const orientation =
+            currentTemplateConfig.orientation === "landscape" ? "l" : "p";
           const pdfFormat = selectedPaperSize.toLowerCase();
 
           const pdf = new jsPDF({
-            orientation: firstOrientation,
+            orientation: orientation,
             unit: "mm",
             format: pdfFormat,
           });
-
-          const papers = document.querySelectorAll(".a4-paper");
-          
-          // Store original visibility state of all papers
-          const originalStates = Array.from(papers).map(p => ({
-            el: p,
-            isActive: p.classList.contains("active-page"),
-            isHidden: p.classList.contains("hidden-page")
-          }));
-
-          for (let i = 0; i < papers.length; i++) {
-            // Make only the current paper visible for capturing
-            papers.forEach(p => {
-              p.classList.remove("active-page");
-              p.classList.add("hidden-page");
-            });
-            papers[i].classList.add("active-page");
-            papers[i].classList.remove("hidden-page");
-
-            const canvas = await capturePaper(papers[i]);
-            if (!canvas) continue;
-
-            const pageConfig = pageConfigs[i + 1] || currentTemplateConfig;
-            const pageOrientation = pageConfig.orientation === "landscape" ? "l" : "p";
-
-            if (i > 0) {
-              pdf.addPage(pdfFormat, pageOrientation);
-            }
-
-            const imgData = canvas.toDataURL("image/jpeg", 1.0);
-            
-            // pdf.internal.pageSize gives the size of the CURRENT page (which we just added or initialized)
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
-            
-            pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
-          }
-
-          // Restore original visibility states
-          originalStates.forEach(state => {
-            if (state.isActive) {
-              state.el.classList.add("active-page");
-              state.el.classList.remove("hidden-page");
-            } else {
-              state.el.classList.remove("active-page");
-              state.el.classList.add("hidden-page");
-            }
-          });
-
+          const imgData = canvas.toDataURL("image/jpeg", 1.0);
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = pdf.internal.pageSize.getHeight();
+          pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
           pdf.save(`${fileName}.pdf`);
+        } else {
+          const link = document.createElement("a");
+          link.download = `${fileName}.${type}`;
+          link.href = canvas.toDataURL(
+            `image/${type === "jpg" ? "jpeg" : "png"}`,
+          );
+          link.click();
         }
       }
 
       async function shareDirectly() {
-        const shareBtn = document.querySelector("button[onclick='shareDirectly()']");
-        const originalHtml = shareBtn ? shareBtn.innerHTML : "SHARE";
-        if (shareBtn) {
-           shareBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span>...`;
-           shareBtn.disabled = true;
-        }
+        const fileName = `Food-Tag_${document.getElementById("profileName").value || "Export"}.png`;
 
-        try {
-            const fileNameBase = document.getElementById("profileName").value || "Export";
+        await logSystemActivity(
+          "PRINT",
+          `แชร์ไฟล์ป้ายชื่อ (ชื่อไฟล์: ${fileName}) (Size: ${selectedPaperSize})`,
+          { menu_name: document.getElementById("profileName").value || "Export", paper_size: selectedPaperSize }
+        );
 
-            await logSystemActivity(
-              "PRINT",
-              `แชร์ไฟล์ป้ายชื่อ (ชื่อไฟล์: Food-Tag_${fileNameBase}) (Size: ${selectedPaperSize})`,
-              { menu_name: fileNameBase, paper_size: selectedPaperSize }
-            );
+        const canvas = await capturePaper();
 
-            const papers = document.querySelectorAll(".a4-paper");
-            const originalStates = Array.from(papers).map(p => ({
-              el: p,
-              isActive: p.classList.contains("active-page"),
-              isHidden: p.classList.contains("hidden-page")
-            }));
-
-            let filesToShare = [];
-
-            for (let i = 0; i < papers.length; i++) {
-              papers.forEach(p => {
-                p.classList.remove("active-page");
-                p.classList.add("hidden-page");
+        canvas.toBlob(async (blob) => {
+          const file = new File([blob], fileName, { type: "image/png" });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({
+                title: "IMPACT Food Tag",
+                text: `Tag ป้ายอาหาร: ${document.getElementById("profileName").value || "ไม่ระบุชื่อ"}`,
+                files: [file],
               });
-              papers[i].classList.add("active-page");
-              papers[i].classList.remove("hidden-page");
-
-              const canvas = await capturePaper(papers[i]);
-              if (!canvas) continue;
-
-              const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
-              const pageFileName = papers.length > 1 ? `Food-Tag_${fileNameBase}_Page_${i + 1}.png` : `Food-Tag_${fileNameBase}.png`;
-              const file = new File([blob], pageFileName, { type: "image/png" });
-              filesToShare.push(file);
+            } catch (error) {
+              console.log("Share failed:", error);
             }
-
-            // Restore original visibility states
-            originalStates.forEach(state => {
-              if (state.isActive) {
-                state.el.classList.add("active-page");
-                state.el.classList.remove("hidden-page");
-              } else {
-                state.el.classList.remove("active-page");
-                state.el.classList.add("hidden-page");
-              }
-            });
-
-            if (filesToShare.length === 0) return;
-
-            if (navigator.canShare && navigator.canShare({ files: filesToShare })) {
-              try {
-                await navigator.share({
-                  files: filesToShare,
-                });
-              } catch (error) {
-                console.log("Share failed:", error);
-                if (error.name === 'NotAllowedError' || error.message.includes('user activation')) {
-                   showGenericConfirmModal(
-                     "พร้อมแชร์แล้ว!",
-                     "รูปภาพสร้างเสร็จแล้ว กรุณากดปุ่มด้านล่างเพื่อแชร์",
-                     "info",
-                     async () => {
-                        closeGenericConfirmModal();
-                        try {
-                          await navigator.share({ files: filesToShare });
-                        } catch(e) {
-                          if (e.name !== 'AbortError') {
-                             alert("แชร์ไม่สำเร็จ: " + e.message);
-                          }
-                        }
-                     }
-                   );
-                   const btn = document.getElementById("genericConfirmBtn");
-                   if(btn) btn.innerHTML = "Share Now";
-                } else if (error.name !== 'AbortError') {
-                   alert("แชร์ไม่สำเร็จ: " + error.message);
-                }
-              }
-            } else {
-              alert("⚠️ เบราว์เซอร์ของคุณไม่รองรับการแชร์ไฟล์ภาพโดยตรง (แนะนำให้ใช้ปุ่มดาวน์โหลด JPG/PDF แทน)");
-            }
-        } finally {
-            if (shareBtn) {
-               shareBtn.innerHTML = originalHtml;
-               shareBtn.disabled = false;
-            }
-        }
+          } else {
+            alert("⚠️ Browser does not support direct image sharing");
+          }
+        }, "image/png");
       }
 
       function showPrintWarningModal() {
@@ -4359,6 +4098,12 @@
       function changeDividerStyle(val) {
         if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
         slotsData[activeSlot].dividerStyle = val;
+        renderActiveSlotOnly();
+      }
+
+      function changeMenuMarginTop(val) {
+        if (!slotsData[activeSlot]) slotsData[activeSlot] = {};
+        slotsData[activeSlot].menuMarginTop = val;
         renderActiveSlotOnly();
       }
 

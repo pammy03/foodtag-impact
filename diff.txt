@@ -1,0 +1,325 @@
+--- onrender_create.html	2026-10-02 18:18:14
++++ create.html	2026-10-02 18:03:16
+@@ -99,29 +99,30 @@
+         background-color: white;
+         box-sizing: border-box;
+         border: 1px solid #64748b !important;
++        flex-shrink: 0;
+       }
+ 
+       .grid-plate {
+-        width: 26cm;
+-        height: 18cm;
++        width: 26cm !important;
++        height: 18cm !important;
+         grid-template-columns: repeat(2, 50%);
+         grid-template-rows: repeat(1, 100%);
+       }
+       .grid-western {
+-        width: 20cm;
+-        height: 28cm;
++        width: 20cm !important;
++        height: 28cm !important;
+         grid-template-columns: repeat(2, 50%);
+         grid-template-rows: repeat(2, 50%);
+       }
+       .grid-buffet {
+-        width: 20.4cm;
+-        height: 19.4cm;
++        width: 20.4cm !important;
++        height: 19.4cm !important;
+         grid-template-columns: repeat(2, 50%);
+         grid-template-rows: repeat(2, 50%);
+       }
+       .grid-mini {
+-        width: 27cm;
+-        height: 18cm;
++        width: 27cm !important;
++        height: 18cm !important;
+         grid-template-columns: repeat(3, 33.3333%);
+         grid-template-rows: repeat(2, 50%);
+       }
+@@ -1193,6 +1194,54 @@
+     </div>
+ 
+     <div
++      id="exportImageModal"
++      class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300"
++    >
++      <div class="bg-white rounded-2xl shadow-2xl w-[450px] p-8 text-center transform scale-95 transition-transform duration-300">
++        <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-5 border-2 border-blue-100">
++          <span class="material-symbols-outlined text-4xl">imagesmode</span>
++        </div>
++        <h3 class="text-xl font-bold text-slate-800 mb-3">บันทึกไฟล์รูปภาพ</h3>
++        <p class="text-sm text-slate-500 mb-5 leading-relaxed">
++          มีป้ายชื่อทั้งหมด <strong id="exportModalTotalPages" class="text-blue-600 font-black">...</strong> หน้า กรุณาเลือกหน้าที่ต้องการบันทึก
++        </p>
++        
++        <div class="flex flex-col gap-3 text-left mb-6">
++          <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
++            <input type="radio" name="exportPageOption" value="single" checked class="w-4 h-4 text-blue-600 focus:ring-blue-500">
++            <span class="text-slate-700 font-semibold text-sm">เฉพาะหน้าปัจจุบัน</span>
++          </label>
++          <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
++            <input type="radio" name="exportPageOption" value="all" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
++            <span class="text-slate-700 font-semibold text-sm">ทุกหน้า</span>
++          </label>
++          <label class="flex flex-col gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
++            <div class="flex items-center gap-3">
++              <input type="radio" name="exportPageOption" value="custom" class="w-4 h-4 text-blue-600 focus:ring-blue-500" onchange="document.getElementById('exportPageInput').focus()">
++              <span class="text-slate-700 font-semibold text-sm">กำหนดเอง</span>
++            </div>
++            <input type="text" id="exportPageInput" placeholder="เช่น 1, 3, 5-7" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 mt-1" onclick="document.querySelector('input[name=exportPageOption][value=custom]').checked = true">
++          </label>
++        </div>
++
++        <div class="flex gap-3 w-full">
++          <button type="button"
++            onclick="closeExportImageModal()"
++            class="flex-1 py-3 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors"
++          >
++            ยกเลิก
++          </button>
++          <button type="button"
++            onclick="proceedExportImage()"
++            class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-sm transition-colors"
++          >
++            บันทึก
++          </button>
++        </div>
++      </div>
++    </div>
++
++    <div
+       id="printWarningModal"
+       class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300"
+     >
+@@ -3473,9 +3522,9 @@
+         }, 1500);
+       }
+ 
+-      async function capturePaper() {
++      async function capturePaper(paperEl) {
+         document.body.style.cursor = "wait";
+-        const paper = document.querySelector(".a4-paper.active-page");
++        const paper = paperEl || document.querySelector(".a4-paper.active-page");
+         if (!paper) {
+           document.body.style.cursor = "default";
+           return null;
+@@ -3527,19 +3576,135 @@
+ 
+         document.body.style.cursor = "default";
+         return canvas;
++      }
++
++      let pendingExportType = "";
++
++      function showExportImageModal() {
++        const totalPages = document.querySelectorAll(".a4-paper").length;
++        document.getElementById("exportModalTotalPages").innerText = totalPages;
++
++        const modal = document.getElementById("exportImageModal");
++        modal.classList.remove("hidden");
++        setTimeout(() => {
++          modal.classList.remove("opacity-0");
++          modal.querySelector("div").classList.remove("scale-95");
++        }, 10);
+       }
+ 
++      function closeExportImageModal() {
++        const modal = document.getElementById("exportImageModal");
++        modal.classList.add("opacity-0");
++        modal.querySelector("div").classList.add("scale-95");
++        setTimeout(() => {
++          modal.classList.add("hidden");
++        }, 300);
++      }
++
++      async function proceedExportImage(modeOverride) {
++        const option = modeOverride || document.querySelector('input[name="exportPageOption"]:checked').value;
++        const type = pendingExportType;
++        const fileName = `Food-Tag_${document.getElementById("profileName").value || "Export"}`;
++        
++        const papers = document.querySelectorAll(".a4-paper");
++        let pagesToExport = [];
++        
++        if (option === 'single') {
++           const activeIndex = Array.from(papers).findIndex(p => p.classList.contains("active-page"));
++           pagesToExport.push(activeIndex !== -1 ? activeIndex : 0);
++        } else if (option === 'all') {
++           for (let i = 0; i < papers.length; i++) pagesToExport.push(i);
++        } else if (option === 'custom') {
++           const input = document.getElementById("exportPageInput").value;
++           const parts = input.split(",");
++           parts.forEach(part => {
++             part = part.trim();
++             if (part.includes("-")) {
++               const [start, end] = part.split("-").map(n => parseInt(n));
++               if (!isNaN(start) && !isNaN(end)) {
++                 for (let i = start; i <= end; i++) {
++                   if (i >= 1 && i <= papers.length) pagesToExport.push(i - 1);
++                 }
++               }
++             } else {
++               const num = parseInt(part);
++               if (!isNaN(num) && num >= 1 && num <= papers.length) pagesToExport.push(num - 1);
++             }
++           });
++           pagesToExport = [...new Set(pagesToExport)].sort((a, b) => a - b);
++           if (pagesToExport.length === 0) {
++             alert("⚠️ กรุณาระบุหน้าที่ต้องการบันทึกให้ถูกต้อง เช่น 1, 3, 5-7");
++             return;
++           }
++        }
++        
++        closeExportImageModal();
++        
++        await logSystemActivity(
++          "PRINT",
++          `ดาวน์โหลดไฟล์ป้ายชื่อเป็นรูปภาพ (${option}) (ชื่อไฟล์: ${fileName})`,
++          { menu_name: document.getElementById("profileName").value || "Export", paper_size: selectedPaperSize }
++        );
++
++        const originalStates = Array.from(papers).map(p => ({
++          el: p,
++          isActive: p.classList.contains("active-page"),
++          isHidden: p.classList.contains("hidden-page")
++        }));
++
++        for (let i = 0; i < pagesToExport.length; i++) {
++          const pageIndex = pagesToExport[i];
++          papers.forEach(p => {
++            p.classList.remove("active-page");
++            p.classList.add("hidden-page");
++          });
++          papers[pageIndex].classList.add("active-page");
++          papers[pageIndex].classList.remove("hidden-page");
++
++          const canvas = await capturePaper(papers[pageIndex]);
++          if (!canvas) continue;
++
++          const link = document.createElement("a");
++          link.download = pagesToExport.length === 1 ? `${fileName}.${type}` : `${fileName}_Page_${pageIndex + 1}.${type}`;
++          link.href = canvas.toDataURL(`image/${type === "jpg" ? "jpeg" : "png"}`, 1.0);
++          link.click();
++          
++          if (pagesToExport.length > 1) {
++            await new Promise(r => setTimeout(r, 400));
++          }
++        }
++
++        originalStates.forEach(state => {
++          if (state.isActive) {
++            state.el.classList.add("active-page");
++            state.el.classList.remove("hidden-page");
++          } else {
++            state.el.classList.remove("active-page");
++            state.el.classList.add("hidden-page");
++          }
++        });
++      }
++
+       async function exportFile(type) {
+         const fileName = `Food-Tag_${document.getElementById("profileName").value || "Export"}`;
+ 
++        if (type === "jpg" || type === "png") {
++          pendingExportType = type;
++          const totalPages = document.querySelectorAll(".a4-paper").length;
++          if (totalPages > 1) {
++            showExportImageModal();
++          } else {
++            proceedExportImage("single");
++          }
++          return;
++        }
++
+         await logSystemActivity(
+           "PRINT",
+           `ดาวน์โหลดไฟล์ป้ายชื่อเป็นนามสกุล .${type.toUpperCase()} (ชื่อไฟล์: ${fileName}) (Size: ${selectedPaperSize})`,
+           { menu_name: document.getElementById("profileName").value || "Export", paper_size: selectedPaperSize }
+         );
+ 
+-        const canvas = await capturePaper();
+-
+         if (type === "pdf") {
+           const { jsPDF } = window.jspdf;
+           const orientation =
+@@ -3551,18 +3716,50 @@
+             unit: "mm",
+             format: pdfFormat,
+           });
+-          const imgData = canvas.toDataURL("image/jpeg", 1.0);
+-          const pdfWidth = pdf.internal.pageSize.getWidth();
+-          const pdfHeight = pdf.internal.pageSize.getHeight();
+-          pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
++
++          const papers = document.querySelectorAll(".a4-paper");
++          
++          // Store original visibility state of all papers
++          const originalStates = Array.from(papers).map(p => ({
++            el: p,
++            isActive: p.classList.contains("active-page"),
++            isHidden: p.classList.contains("hidden-page")
++          }));
++
++          for (let i = 0; i < papers.length; i++) {
++            // Make only the current paper visible for capturing
++            papers.forEach(p => {
++              p.classList.remove("active-page");
++              p.classList.add("hidden-page");
++            });
++            papers[i].classList.add("active-page");
++            papers[i].classList.remove("hidden-page");
++
++            const canvas = await capturePaper(papers[i]);
++            if (!canvas) continue;
++
++            if (i > 0) {
++              pdf.addPage();
++            }
++
++            const imgData = canvas.toDataURL("image/jpeg", 1.0);
++            const pdfWidth = pdf.internal.pageSize.getWidth();
++            const pdfHeight = pdf.internal.pageSize.getHeight();
++            pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
++          }
++
++          // Restore original visibility states
++          originalStates.forEach(state => {
++            if (state.isActive) {
++              state.el.classList.add("active-page");
++              state.el.classList.remove("hidden-page");
++            } else {
++              state.el.classList.remove("active-page");
++              state.el.classList.add("hidden-page");
++            }
++          });
++
+           pdf.save(`${fileName}.pdf`);
+-        } else {
+-          const link = document.createElement("a");
+-          link.download = `${fileName}.${type}`;
+-          link.href = canvas.toDataURL(
+-            `image/${type === "jpg" ? "jpeg" : "png"}`,
+-          );
+-          link.click();
+         }
+       }
+ 
+@@ -3576,14 +3773,14 @@
+         );
+ 
+         const canvas = await capturePaper();
++        if (!canvas) return;
+ 
+         canvas.toBlob(async (blob) => {
+           const file = new File([blob], fileName, { type: "image/png" });
+           if (navigator.canShare && navigator.canShare({ files: [file] })) {
+             try {
+               await navigator.share({
+-                title: "IMPACT Food Tag",
+-                text: `Tag ป้ายอาหาร: ${document.getElementById("profileName").value || "ไม่ระบุชื่อ"}`,
++                // Removed title and text to fix sharing to Line/Email which often ignore files if text is present
+                 files: [file],
+               });
+             } catch (error) {
