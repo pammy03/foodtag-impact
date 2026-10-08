@@ -1433,12 +1433,20 @@
               continue;
             }
 
-            const globalSettings = typeof getGlobalSettings === "function" ? getGlobalSettings() : {
+            let globalSettings = {
               fontTh: "'2006_iannnnnbkk', sans-serif", fontSizeTh: "22px",
               fontEn: "'Aptos', sans-serif", fontSizeEn: "22px",
               iconSizeMain: "61px",
               iconSizeContain: "61px"
             };
+            try {
+              const savedGlobal = localStorage.getItem("globalSettings");
+              if (savedGlobal) {
+                globalSettings = { ...globalSettings, ...JSON.parse(savedGlobal) };
+              }
+            } catch (e) {
+              console.error("Error loading globalSettings in dashboard:", e);
+            }
 
             const fTh = menu.fontTh || globalSettings.fontTh;
             const sTh = menu.fontSizeTh || globalSettings.fontSizeTh;
