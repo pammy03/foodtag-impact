@@ -1027,6 +1027,20 @@
         }
       }
 
+      async function loadBadges() {
+        try {
+          const { data: badges, error } = await dbClient
+            .from("badges")
+            .select("*")
+            .order("created_at", { ascending: true });
+          
+          if (error) throw error;
+          window.dbBadges = badges || [];
+        } catch (err) {
+          console.error("Error loading badges:", err);
+        }
+      }
+
       function clearFilters() {
         const searchInput = document.getElementById("searchInput");
         if (searchInput) searchInput.value = "";
@@ -1581,13 +1595,59 @@
             }
 
             let badgeHtml = "";
-            if (menu.badgeEnabled) {
-                if (menu.badgeType === 'image' && menu.badgeImageUrl) {
-                    badgeHtml = `<div class="absolute top-4 right-4 z-20 flex items-center justify-center"><img src="${menu.badgeImageUrl}" class="w-12 h-12 object-contain" crossorigin="anonymous"></div>`;
-                } else if (menu.badgeType !== 'image' && menu.badgeText) {
-                    const bColor = menu.badgeColor || "#10b981";
-                    const bFont = typeof profile !== 'undefined' && profile.globalSettings?.fontTh ? profile.globalSettings.fontTh : (globalSettings?.fontTh || "'Prompt', sans-serif");
-                    badgeHtml = `<div class="absolute top-4 right-4 z-20 flex items-center justify-center font-bold" style="color: ${bColor}; font-family: ${bFont}; font-size: 16px;">${menu.badgeText}</div>`;
+            const badgeEnabled = menu.badgeEnabled !== undefined ? menu.badgeEnabled : (globalSettings.showBadge !== false);
+            
+            if (badgeEnabled) {
+                let activeBadgeId = menu.badgeId;
+                const storedDef = localStorage.getItem("defaultBadges");
+                const defaultBgData = storedDef ? JSON.parse(storedDef) : {};
+
+                if (!activeBadgeId && activeBadgeId !== 'none') {
+                    if (config) {
+                        if (menu.badgePlateId !== undefined) activeBadgeId = menu.badgePlateId;
+                        else if (!activeBadgeId) activeBadgeId = defaultBgData["Plate / Food Stall"] || activeBadgeId;
+                        
+                        if (menu.badgeWesternId !== undefined) activeBadgeId = menu.badgeWesternId;
+                        else if (!activeBadgeId) activeBadgeId = defaultBgData["Western Set"] || activeBadgeId;
+                        
+                        if (menu.badgeBuffetId !== undefined) activeBadgeId = menu.badgeBuffetId;
+                        else if (!activeBadgeId) activeBadgeId = defaultBgData["Buffet / Coffee Break"] || activeBadgeId;
+                        
+                        if (menu.badgeMiniId !== undefined) activeBadgeId = menu.badgeMiniId;
+                        else if (!activeBadgeId) activeBadgeId = defaultBgData["Mini Tag"] || activeBadgeId;
+                    }
+                }
+
+                let currentBadgeType = menu.badgeType;
+                let currentBadgeImageUrl = menu.badgeImageUrl;
+                let currentBadgeText = menu.badgeText;
+                let currentBadgeColor = menu.badgeColor;
+                let currentBadgeFont = menu.badgeFont;
+                let currentBadgeSize = menu.badgeSize;
+
+                if (activeBadgeId === 'none') {
+                    currentBadgeType = null;
+                } else if (activeBadgeId) {
+                    const b = (window.dbBadges || []).find(x => x.id == activeBadgeId);
+                    if (b) {
+                        currentBadgeType = b.badge_type || 'image';
+                        currentBadgeImageUrl = b.image_url || '';
+                        currentBadgeText = b.text_content || '';
+                        currentBadgeColor = b.text_color || '#10b981';
+                        currentBadgeFont = menu.badgeTextFont !== undefined ? menu.badgeTextFont : (b.text_font || "'Prompt', sans-serif");
+                        currentBadgeSize = menu.badgeTextSize !== undefined ? menu.badgeTextSize : (b.text_size || '16');
+                    }
+                } else if (!activeBadgeId && !menu.badgeId) {
+                    currentBadgeType = null;
+                }
+
+                if (currentBadgeType === 'image' && currentBadgeImageUrl) {
+                    badgeHtml = `<div class="absolute top-4 right-4 z-20 flex items-center justify-center"><img src="${currentBadgeImageUrl}" class="w-12 h-12 object-contain" crossorigin="anonymous"></div>`;
+                } else if (currentBadgeType === 'text' && currentBadgeText) {
+                    const bColor = currentBadgeColor || "#10b981";
+                    const bFont = currentBadgeFont || (typeof profile !== 'undefined' && profile.globalSettings?.fontTh ? profile.globalSettings.fontTh : (globalSettings?.fontTh || "'Prompt', sans-serif"));
+                    const bSize = currentBadgeSize ? currentBadgeSize + 'px' : '16px';
+                    badgeHtml = `<div class="absolute top-4 right-4 z-20 flex items-center justify-center font-bold" style="color: ${bColor}; font-family: ${bFont}; font-size: ${bSize};">${currentBadgeText}</div>`;
                 }
             }
 
@@ -1892,7 +1952,11 @@
         currentPrintTag = null;
       });
 
-      loadSavedTags();
+      async function init() {
+        await loadBadges();
+        await loadSavedTags();
+      }
+      init();
     </script>
   </body>
 </html>
