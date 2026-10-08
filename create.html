@@ -1117,6 +1117,12 @@
               <span class="material-symbols-outlined text-[18px]">share</span
               >SHARE
             </button>
+            <button type="button"
+              onclick="exportFile('copy')"
+              class="col-span-2 py-2.5 bg-white border border-slate-200 rounded-lg font-bold text-slate-600 hover:bg-slate-50 flex items-center justify-center gap-2 text-[13px] shadow-sm transition-all"
+            >
+              <span class="material-symbols-outlined text-[18px]">content_copy</span>COPY IMAGE
+            </button>
           </div>
         </div>
       </aside>
@@ -3655,26 +3661,92 @@
           isHidden: p.classList.contains("hidden-page")
         }));
 
-        for (let i = 0; i < pagesToExport.length; i++) {
-          const pageIndex = pagesToExport[i];
-          papers.forEach(p => {
-            p.classList.remove("active-page");
-            p.classList.add("hidden-page");
-          });
-          papers[pageIndex].classList.add("active-page");
-          papers[pageIndex].classList.remove("hidden-page");
+        if (type === "copy") {
+            const copyBtn = document.querySelector("button[onclick=\"exportFile('copy')\"]");
+            const originalHtml = copyBtn ? copyBtn.innerHTML : "COPY IMAGE";
+            if (copyBtn) {
+               copyBtn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span>...`;
+               copyBtn.disabled = true;
+            }
+            
+            try {
+                const canvases = [];
+                for (let i = 0; i < pagesToExport.length; i++) {
+                  const pageIndex = pagesToExport[i];
+                  papers.forEach(p => {
+                    p.classList.remove("active-page");
+                    p.classList.add("hidden-page");
+                  });
+                  papers[pageIndex].classList.add("active-page");
+                  papers[pageIndex].classList.remove("hidden-page");
 
-          const canvas = await capturePaper(papers[pageIndex]);
-          if (!canvas) continue;
+                  const canvas = await capturePaper(papers[pageIndex]);
+                  if (canvas) canvases.push(canvas);
+                }
+                
+                if (canvases.length > 0) {
+                   const totalHeight = canvases.reduce((sum, c) => sum + c.height, 0);
+                   const maxWidth = Math.max(...canvases.map(c => c.width));
+                   
+                   const combinedCanvas = document.createElement("canvas");
+                   combinedCanvas.width = maxWidth;
+                   combinedCanvas.height = totalHeight;
+                   const ctx = combinedCanvas.getContext("2d");
+                   
+                   let y = 0;
+                   for (const c of canvases) {
+                       const x = (maxWidth - c.width) / 2;
+                       ctx.drawImage(c, x, y);
+                       y += c.height;
+                   }
+                   
+                   const blob = await new Promise(resolve => combinedCanvas.toBlob(resolve, "image/png"));
+                   
+                   await navigator.clipboard.write([
+                       new ClipboardItem({ [blob.type]: blob })
+                   ]);
+                   
+                   let pageMsg = pagesToExport.length > 1 ? ` (จำนวน ${pagesToExport.length} หน้า)` : "";
+                   showGenericConfirmModal(
+                       "คัดลอกสำเร็จ",
+                       `ระบบได้ทำการคัดลอกรูปภาพ${pageMsg}ไปยังคลิปบอร์ดเรียบร้อยแล้ว`,
+                       "success",
+                       () => closeGenericConfirmModal()
+                   );
+                   const btn = document.getElementById("genericConfirmBtn");
+                   if (btn) btn.innerHTML = "ตกลง";
+                }
+            } catch(err) {
+                console.error(err);
+                alert("❌ เบราว์เซอร์ของคุณไม่รองรับการคัดลอกรูปภาพ หรือถูกปฏิเสธสิทธิ์ (Error: " + err.message + ")");
+            } finally {
+                if (copyBtn) {
+                   copyBtn.innerHTML = originalHtml;
+                   copyBtn.disabled = false;
+                }
+            }
+        } else {
+            for (let i = 0; i < pagesToExport.length; i++) {
+              const pageIndex = pagesToExport[i];
+              papers.forEach(p => {
+                p.classList.remove("active-page");
+                p.classList.add("hidden-page");
+              });
+              papers[pageIndex].classList.add("active-page");
+              papers[pageIndex].classList.remove("hidden-page");
 
-          const link = document.createElement("a");
-          link.download = pagesToExport.length === 1 ? `${fileName}.${type}` : `${fileName}_Page_${pageIndex + 1}.${type}`;
-          link.href = canvas.toDataURL(`image/${type === "jpg" ? "jpeg" : "png"}`, 1.0);
-          link.click();
-          
-          if (pagesToExport.length > 1) {
-            await new Promise(r => setTimeout(r, 400));
-          }
+              const canvas = await capturePaper(papers[pageIndex]);
+              if (!canvas) continue;
+
+              const link = document.createElement("a");
+              link.download = pagesToExport.length === 1 ? `${fileName}.${type}` : `${fileName}_Page_${pageIndex + 1}.${type}`;
+              link.href = canvas.toDataURL(`image/${type === "jpg" ? "jpeg" : "png"}`, 1.0);
+              link.click();
+              
+              if (pagesToExport.length > 1) {
+                await new Promise(r => setTimeout(r, 400));
+              }
+            }
         }
 
         originalStates.forEach(state => {
@@ -3690,6 +3762,12 @@
 
       async function exportFile(type) {
         const fileName = `Food-Tag_${document.getElementById("profileName").value || "Export"}`;
+
+        if (type === "copy") {
+          pendingExportType = type;
+          proceedExportImage("single");
+          return;
+        }
 
         if (type === "jpg" || type === "png") {
           pendingExportType = type;
