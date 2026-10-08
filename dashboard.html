@@ -1652,11 +1652,31 @@
             }
 
             let currentPadding = '';
-            if (config) {
-               if (config.name === "Plate / Food Stall") currentPadding = `${globalSettings.safePlateTopMm || '22'}mm 5% ${globalSettings.safePlateBotMm || '22'}mm 5%`;
-               else if (config.name === "Western Set") currentPadding = `${globalSettings.safeWesternTopMm || '30'}mm 5% ${globalSettings.safeWesternBotMm || '22'}mm 5%`;
-               else if (config.name === "Buffet / Coffee Break") currentPadding = `${globalSettings.safeBuffetTopMm || '22'}mm 5% ${globalSettings.safeBuffetBotMm || '22'}mm 5%`;
-               else if (config.name === "Mini Tag") currentPadding = `${globalSettings.safeMiniTopMm || '18'}mm 5% ${globalSettings.safeMiniBotMm || '18'}mm 5%`;
+            if (pTempName) {
+               let defaultTop = 0;
+               let customTop = 0;
+               if (pTempName === "Plate / Food Stall" || pTempName === "plate") {
+                   defaultTop = parseFloat(globalSettings.safePlateTopMm || "20");
+                   customTop = menu.safePlateTopMm !== undefined ? parseFloat(menu.safePlateTopMm) : defaultTop;
+               } else if (pTempName === "Western Set" || pTempName === "western") {
+                   defaultTop = parseFloat(globalSettings.safeWesternTopMm || "30");
+                   customTop = menu.safeWesternTopMm !== undefined ? parseFloat(menu.safeWesternTopMm) : defaultTop;
+               } else if (pTempName === "Buffet / Coffee Break" || pTempName === "buffet") {
+                   defaultTop = parseFloat(globalSettings.safeBuffetTopMm || "22");
+                   customTop = menu.safeBuffetTopMm !== undefined ? parseFloat(menu.safeBuffetTopMm) : defaultTop;
+               } else if (pTempName === "Mini Tag" || pTempName === "mini") {
+                   defaultTop = parseFloat(globalSettings.safeMiniTopMm || "20");
+                   customTop = menu.safeMiniTopMm !== undefined ? parseFloat(menu.safeMiniTopMm) : defaultTop;
+               }
+               
+               if (menu.headerMarginTop !== undefined && menu.headerMarginTop !== null && menu.headerMarginTop !== "") {
+                   customTop = parseFloat(menu.headerMarginTop);
+               }
+               
+               let topUnit = 'mm';
+               if (menu.headerMarginTop !== undefined && String(menu.headerMarginTop).includes('px')) topUnit = 'px';
+               const topPadding = customTop;
+               currentPadding = `${topPadding}${topUnit} 5% 22mm 5%`;
             }
             const padStyle = currentPadding ? `padding: ${currentPadding}; box-sizing: border-box; height: 100%; display: flex; flex-direction: column; justify-content: flex-start;` : '';
 
