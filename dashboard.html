@@ -1603,20 +1603,18 @@
                 const defaultBgData = storedDef ? JSON.parse(storedDef) : {};
 
                 if (!activeBadgeId && activeBadgeId !== 'none') {
-                    if (config) {
-                        if (config.name === "Plate / Food Stall" || config.name === "plate") {
-                            if (menu.badgePlateId !== undefined) activeBadgeId = menu.badgePlateId;
-                            else if (!activeBadgeId) activeBadgeId = defaultBgData["Plate / Food Stall"] || activeBadgeId;
-                        } else if (config.name === "Western Set" || config.name === "western") {
-                            if (menu.badgeWesternId !== undefined) activeBadgeId = menu.badgeWesternId;
-                            else if (!activeBadgeId) activeBadgeId = defaultBgData["Western Set"] || activeBadgeId;
-                        } else if (config.name === "Buffet / Coffee Break" || config.name === "buffet") {
-                            if (menu.badgeBuffetId !== undefined) activeBadgeId = menu.badgeBuffetId;
-                            else if (!activeBadgeId) activeBadgeId = defaultBgData["Buffet / Coffee Break"] || activeBadgeId;
-                        } else if (config.name === "Mini Tag" || config.name === "mini") {
-                            if (menu.badgeMiniId !== undefined) activeBadgeId = menu.badgeMiniId;
-                            else if (!activeBadgeId) activeBadgeId = defaultBgData["Mini Tag"] || activeBadgeId;
-                        }
+                    if (pTempName === "Plate / Food Stall" || pTempName === "plate") {
+                        if (menu.badgePlateId !== undefined) activeBadgeId = menu.badgePlateId;
+                        else if (!activeBadgeId) activeBadgeId = defaultBgData["Plate / Food Stall"] || (globalSettings && globalSettings.badgePlateId) || activeBadgeId;
+                    } else if (pTempName === "Western Set" || pTempName === "western") {
+                        if (menu.badgeWesternId !== undefined) activeBadgeId = menu.badgeWesternId;
+                        else if (!activeBadgeId) activeBadgeId = defaultBgData["Western Set"] || (globalSettings && globalSettings.badgeWesternId) || activeBadgeId;
+                    } else if (pTempName === "Buffet / Coffee Break" || pTempName === "buffet") {
+                        if (menu.badgeBuffetId !== undefined) activeBadgeId = menu.badgeBuffetId;
+                        else if (!activeBadgeId) activeBadgeId = defaultBgData["Buffet / Coffee Break"] || (globalSettings && globalSettings.badgeBuffetId) || activeBadgeId;
+                    } else if (pTempName === "Mini Tag" || pTempName === "mini") {
+                        if (menu.badgeMiniId !== undefined) activeBadgeId = menu.badgeMiniId;
+                        else if (!activeBadgeId) activeBadgeId = defaultBgData["Mini Tag"] || (globalSettings && globalSettings.badgeMiniId) || activeBadgeId;
                     }
                 }
 
